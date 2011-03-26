@@ -4,18 +4,20 @@
 ** Copyright 2011 OmegaSDG **
 ****************************/
 
-#include "resourcer.h"
-#include "world.h"
+//#include "resourcer.h"
+//#include "world.h"
+#include <Gosu/Gosu.hpp>
 
-class Window : public Gosu::Window
+class GameWindow : public Gosu::Window
 {
 public:
-	Window(hash_t params);
+	GameWindow();
 	void button_down(int id);
 	void draw();
+	void update();
 	bool needs_redraw();
 
 private:
-	string get_datadir();
+//	string get_datadir();
 };
 
