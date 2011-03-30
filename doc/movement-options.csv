@@ -1,0 +1,8 @@
+,"Must end movement on tile","Must be drawn on tile","Hit box constrained to tile"
+"Rogue-like","yes","yes","yes"
+"Yume Nikki","yes","no","yes"
+"Zelda","no","no","no"
+,,,
+"Engine options we must support",,,
+"bool","Must be drawn to tile",,
+"bool","Hitbox and movement constrained to tile",,
