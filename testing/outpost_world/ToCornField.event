@@ -1,0 +1,11 @@
+class ToCornField
+	def init rcsc
+	end
+
+	def on_enter area, x, y, entity
+		if entity.class == Player
+			entity.go_to 'cornfield', 1, 3
+		end
+	end
+end
+

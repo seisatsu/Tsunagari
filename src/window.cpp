@@ -11,7 +11,7 @@
 GameWindow::GameWindow() : Gosu::Window(640, 480, false)
 {
 	Resourcer rc(this);
-	player = new Entity(&rc, L"player.png");
+	player = new Entity(&rc, L"../testing/outpost_world/player.image");
 }
 
 void GameWindow::update()
