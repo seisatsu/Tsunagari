@@ -11,18 +11,19 @@
 
 //#include "area.h"
 #include "resourcer.h"
+#include "sprite.h"
 //#include "tilegrid.h"
 //#include "world.h"
 
 class Resourcer;
-
-using std::wstring;
+class Sprite;
 
 class Entity
 {
 public:
-	Entity(Resourcer* rc, wstring img_fn);
+	Entity(Resourcer* rc, std::wstring img_fn);
 	void draw();
+
 /*
 	Entity(World* world, Resource* rc);
 	void set_area(Area* area);
@@ -34,7 +35,8 @@ public:
 */
 
 protected:
-	Gosu::Image* img;
+	Sprite* sprite;
+
 /*
 	World* world;
 	TileGrid* grid;

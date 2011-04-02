@@ -1,6 +1,6 @@
 all: tsu
 
-tsu: entity.o main.o resourcer.o window.o
+tsu: entity.o main.o resourcer.o sprite.o window.o
 	$(CXX) -o tsu *.o -lgosu
 
 clean:
