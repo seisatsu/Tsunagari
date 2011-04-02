@@ -1,0 +1,5 @@
+name: Outpost
+author: Paul Merrill
+type: local
+entrypoint: [outpost.area, 1, 1, 0]
+

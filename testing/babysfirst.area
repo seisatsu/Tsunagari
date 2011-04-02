@@ -1,0 +1,33 @@
+Name: Baby's First Area
+Author: Michael Reiley
+music: wind.ogg
+tileset: tileset.sprite
+map:
+    - - {img: dirt, walk: false}
+      - {img: dirt, walk: false}
+      - {img: dirt, walk: false}
+      - {img: dirt, walk: false}
+      - {img: dirt, walk: false}
+    - - {img: dirt, walk: false}
+      - {img: yellow, walk: true}
+      - {img: green, walk: true, attribute: [attributes.event, slow, unslow]}
+      - {img: yellow, walk: true}
+      - {img: dirt, walk: false}
+    - - {img: dirt, walk: false}
+      - {img: yellow, walk: true}
+      - {img: yellow, walk: true}
+      - {img: yellow, walk: true}
+      - {img: dirt, walk: false}
+    - - {img: dirt, walk: false}
+      - {img: yellow, walk: true}
+      - {img: yellow, walk: true}
+      - {img: teleblue, walk: true, on_enter: [warp.event, random]}
+      - {img: dirt, walk: false}
+    - - {img: dirt, walk: false}
+      - {img: orange, walk: true, door: [grassfield.area, 1, 1, 0]}
+      - {img: dirt, walk: false}
+      - {img: dirt, walk: false}
+      - {img: dirt, walk: false}
+events:
+    on_load: [entityplacer.event, babysfirst]
+

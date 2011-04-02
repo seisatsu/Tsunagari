@@ -1,0 +1,21 @@
+sheet: tileset.sheet
+tilesize: 64
+phases:
+    wall: 0
+    red: 1
+    yellow: 2
+    blue: 3
+    purple: 4
+    green: 5
+    orange: 6
+    lightblue: 7
+    dirt: 8
+    water: 9
+    marble: 10
+    checker: 11
+    teleblue: 12
+    telered: 13
+    testanimation:
+        members: [14, 15]
+        speed: 4
+

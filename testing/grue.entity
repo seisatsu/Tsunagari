@@ -1,13 +1,13 @@
 name: Grue
 type: monster
 drops:
-  lantern.entity:
-    chance: 20
-    count: [1, 2]
-  bone.entity:
-    chance: 80
-    count: [1, 8]
+    lantern.entity:
+        chance: 20
+        count: [1, 2]
+    bone.entity:
+        chance: 80
+        count: [1, 8]
 
 events:
-  on_sight: [grue.event, onsight]
+    on_sight: [grue.event, onsight]
 
