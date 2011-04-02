@@ -1,12 +1,12 @@
 #include "entity.h"
 
-Entity::Entity(Resourcer* rc, wstring img_fn)
+Entity::Entity(Resourcer* rc, std::wstring img_fn)
 {
-	img = rc->get_image(img_fn);
+	sprite = new Sprite(rc, img_fn);
 }
 
 void Entity::draw()
 {
-	img->draw(0, 0, 0);
+	sprite->draw();
 }
 

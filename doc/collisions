@@ -1,11 +1,11 @@
-Collisions are based on Map Chunks
+Collisions are based on Map Sectors
 
 collision check {
-	check current chunk you're on
-	check x adjacent chunks outward
-		where x is ((Collision Area / Chunk Area) + 1)
+	check current sector you're on
+	check x adjacent sector outward
+		where x is ((Collision Area / Sector Area) + 1)
 		where adjacent means +x, +y, +xy (make sure diagonals)
 	
-	+1 comes from if you're in between chunks
+	+1 comes from if you're in between sector
 }
 

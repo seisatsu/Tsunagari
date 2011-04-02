@@ -4,19 +4,26 @@
 ** Copyright 2011 OmegaSDG **
 ****************************/
 
-#ifndef ENTITY_H
-#define ENTITY_H
+#ifndef SPRITE_H
+#define SPRITE_H
 
-#include "entity.h"
+#include <string>
+
+#include <Gosu/Gosu.hpp>
+
 #include "resourcer.h"
 
-class resourcer;
+class Resourcer;
 
 class Sprite
 {
 public:
+	Sprite(Resourcer* rc, std::wstring img_fn);
+	void draw();
 
 private:
-}
+	Gosu::Image* img;
+};
 
 #endif
+
