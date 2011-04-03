@@ -6,6 +6,11 @@
 
 #include "window.h"
 
+/**
+ * Engine entrypoint.
+ *
+ * The entire engine is encompassed in the GameWindow class.
+ */
 int main()
 {
 	GameWindow window;

@@ -7,6 +7,8 @@
 #ifndef AREA_H
 #define AREA_H
 
+#include <Gosu/Gosu.hpp>
+
 #include "common.h"
 #include "entity.h"
 #include "resourcer.h"

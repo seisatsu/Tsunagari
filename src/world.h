@@ -7,6 +7,8 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <Gosu/Gosu.hpp>
+
 #include "area.h"
 #include "entity.h"
 #include "resourcer.h"
