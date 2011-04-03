@@ -7,10 +7,12 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <stdint.h>
+
 struct coord_t {
-	unsigned long x;
-	unsigned long y;
-}
+	int32_t x;
+	int32_t y;
+};
 
 #endif
 
