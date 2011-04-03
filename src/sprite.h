@@ -21,6 +21,8 @@ class Sprite
 {
 public:
 	Sprite(Resourcer* rc, std::string img_fn);
+	~Sprite();
+
 	void draw();
 
 private:

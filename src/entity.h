@@ -22,7 +22,10 @@ class Entity
 {
 public:
 	Entity(Resourcer* rc, std::string img_fn);
+	~Entity();
+
 	void draw();
+	bool needs_redraw();
 
 /*
 	Entity(World* world, Resource* rc);
@@ -31,16 +34,15 @@ public:
 	coord_t get_coords();
 	void transport(coord_t coords);
 	void move(int dx, int dy);
-	bool needs_redraw();
 */
 
 protected:
 	Sprite* sprite;
+	bool redraw;
 
 /*
 	World* world;
 	TileGrid* grid;
-	bool redraw;
 */
 };
 

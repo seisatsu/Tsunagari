@@ -6,8 +6,19 @@ World::World(GameWindow* window, Resourcer* rc)
 	area = new Area(window, rc, player, "../testing/babysfirst.area");
 }
 
+World::~World()
+{
+	delete player;
+	delete area;
+}
+
 void World::draw()
 {
 	area->draw();
+}
+
+bool World::needs_redraw()
+{
+	return area->needs_redraw();
 }
 

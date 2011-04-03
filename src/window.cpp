@@ -13,6 +13,11 @@ GameWindow::GameWindow() : Gosu::Window(640, 480, false)
 	world = new World(this, &rc);
 }
 
+GameWindow::~GameWindow()
+{
+	delete world;
+}
+
 void GameWindow::update()
 {
 }
@@ -20,5 +25,10 @@ void GameWindow::update()
 void GameWindow::draw()
 {
 	world->draw();
+}
+
+bool GameWindow::needsRedraw()
+{
+	return world->needs_redraw();
 }
 

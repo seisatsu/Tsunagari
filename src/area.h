@@ -21,8 +21,11 @@ class Area
 {
 public:
 	Area(GameWindow* window, Resourcer* rc, Entity* player, const char* filename);
+	~Area();
+
 	void button_down(int id);
 	void draw();
+	bool needs_redraw();
 	coord_t translate_coords();
 
 private:

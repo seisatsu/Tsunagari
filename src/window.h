@@ -19,10 +19,12 @@ class GameWindow : public Gosu::Window
 {
 public:
 	GameWindow();
+	virtual ~GameWindow();
+
 	void button_down(int id);
 	void draw();
 	void update();
-	bool needs_redraw();
+	bool needsRedraw();
 
 private:
 //	string get_datadir();

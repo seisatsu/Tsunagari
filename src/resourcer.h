@@ -21,6 +21,8 @@ class Resourcer
 {
 public:
 	Resourcer(GameWindow* window/*, string filename*/);
+	~Resourcer();
+
 //	Gosu::Font get_font(string name, float size);
 	Gosu::Image* get_image(string name);
 //	vector<Tile*> get_tiles(string name, int tile_size);

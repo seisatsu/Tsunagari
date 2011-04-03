@@ -12,6 +12,11 @@ Sprite::Sprite(Resourcer* rc, std::string img_fn)
 	c.x = c.y = 0;
 }
 
+Sprite::~Sprite()
+{
+	delete img;
+}
+
 void Sprite::draw()
 {
 	img->draw(c.x, c.y, 0);

@@ -1,11 +1,11 @@
 CXXFLAGS = -g -Wall -Wextra -Werror -pedantic -ansi
-LDFLAGS = -g
+LDFLAGS = -g -lgosu
 
 all: tsu
 
 tsu: area.o entity.o main.o resourcer.o sprite.o window.o world.o
-	$(CXX) -o tsu *.o -lgosu $(LDFLAGS)
+	$(CXX) -o tsu *.o $(LDFLAGS)
 
 clean:
-	$(RM) *.o tsu
+	$(RM) tsu *.o
 

@@ -21,11 +21,13 @@ class World
 {
 public:
 	World(GameWindow* window, Resourcer* rc);
+	~World();
+
 	void draw();
+	bool needs_redraw();
 
 /*
 	void button_down(int id);
-	bool needs_redraw();
 	void load_area(Area* area);
 */
 
