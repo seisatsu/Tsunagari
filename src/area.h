@@ -1,8 +1,8 @@
-/****************************
-** Tsunagari Tile Engine   **
-** area.h - Area           **
-** Copyright 2011 OmegaSDG **
-****************************/
+/******************************
+** Tsunagari Tile Engine     **
+** area.h - Area             **
+** Copyright 2011 OmegaSDG   **
+******************************/
 
 #include "player.h"
 #include "resourcer.h"

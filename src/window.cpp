@@ -1,8 +1,8 @@
-/****************************
-** Tsunagari Tile Engine   **
-** window.cpp              **
-** Copyright 2011 OmegaSDG **
-****************************/
+/******************************
+** Tsunagari Tile Engine     **
+** window.cpp                **
+** Copyright 2011 OmegaSDG   **
+******************************/
 
 #include "resourcer.h"
 #include "window.h"

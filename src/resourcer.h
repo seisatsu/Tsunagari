@@ -1,8 +1,8 @@
-/****************************
-** Tsunagari Tile Engine   **
-** resourcer.h - Resourcer **
-** Copyright 2011 OmegaSDG **
-****************************/
+/******************************
+** Tsunagari Tile Engine     **
+** resourcer.h - Resourcer   **
+** Copyright 2011 OmegaSDG   **
+******************************/
 
 #ifndef RESOURCER_H
 #define RESOURCER_H

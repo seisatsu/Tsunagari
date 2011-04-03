@@ -1,8 +1,8 @@
-/****************************
-** Tsunagari Tile Engine   **
-** sprite.h - Sprite       **
-** Copyright 2011 OmegaSDG **
-****************************/
+/******************************
+** Tsunagari Tile Engine     **
+** sprite.h - Sprite         **
+** Copyright 2011 OmegaSDG   **
+******************************/
 
 #ifndef SPRITE_H
 #define SPRITE_H

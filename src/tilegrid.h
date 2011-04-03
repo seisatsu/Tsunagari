@@ -1,11 +1,18 @@
-/****************************
-** Tsunagari Tile Engine   **
-** tilegrid.h - TileGrid   **
-** Copyright 2011 OmegaSDG **
-****************************/
+/******************************
+** Tsunagari Tile Engine     **
+** tilegrid.h - TileGrid     **
+** Copyright 2011 OmegaSDG   **
+******************************/
 
+#ifndef TILEGRID_H
+#define TILEGRID_H
+
+#include "common.h"
 #include "resourcer.h"
 #include "tile.h"
+
+class Resourcer;
+class Tile;
 
 class TileGrid
 {
@@ -18,6 +25,8 @@ public:
 	Tile* get_tile(coord_t coords);
 
 private:
-	vector<vector<Tile*>*> tiles;
+	vector<vector<vector<Tile*>*>*> grid;
 };
+
+#endif
 

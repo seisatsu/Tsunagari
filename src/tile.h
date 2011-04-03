@@ -1,8 +1,8 @@
-/****************************
-** Tsunagari Tile Engine   **
-** tile.h - Tile           **
-** Copyright 2011 OmegaSDG **
-****************************/
+/******************************
+** Tsunagari Tile Engine     **
+** tile.h - Tile             **
+** Copyright 2011 OmegaSDG   **
+******************************/
 
 #include "entity.h"
 #include "event.h"

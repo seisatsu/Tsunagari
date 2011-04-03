@@ -1,14 +1,16 @@
 /******************************
 ** Tsunagari Tile Engine     **
-** main.cpp                  **
+** common.h                  **
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include "window.h"
+#ifndef COMMON_H
+#define COMMON_H
 
-int main()
-{
-	GameWindow window;
-	window.show();
+struct coord_t {
+	unsigned long x;
+	unsigned long y;
 }
+
+#endif
 

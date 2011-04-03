@@ -1,8 +1,8 @@
-/****************************
-** Tsunagari Tile Engine   **
-** door.h - Door           **
-** Copyright 2011 OmegaSDG **
-****************************/
+/******************************
+** Tsunagari Tile Engine     **
+** door.h - Door             **
+** Copyright 2011 OmegaSDG   **
+******************************/
 
 #include "tile.h"
 
