@@ -27,13 +27,14 @@ public:
 	void draw();
 	bool needs_redraw();
 
+	void move(int dx, int dy);
+
 /*
 	Entity(World* world, Resource* rc);
 	void set_area(Area* area);
 	void go_to(Area* area, coord_t coords);
 	coord_t get_coords();
 	void transport(coord_t coords);
-	void move(int dx, int dy);
 */
 
 protected:

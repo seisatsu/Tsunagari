@@ -22,3 +22,9 @@ void Sprite::draw()
 	img->draw(c.x, c.y, 0);
 }
 
+void Sprite::move(int dx, int dy)
+{
+	c.x += dx;
+	c.y += dy;
+}
+

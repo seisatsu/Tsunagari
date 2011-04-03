@@ -39,7 +39,8 @@ private:
 	GameWindow* window;
 //	list<libarchive_entry> files;
 	
-/*	map<string,Gosu::Font> fonts;
+/*
+	map<string,Gosu::Font> fonts;
 	map<string,Gosu::Image> images;
 	map<string,Tile> tiles;
 	map<string,Event> events;

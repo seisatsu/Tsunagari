@@ -25,6 +25,8 @@ public:
 
 	void draw();
 
+	void move(int dx, int dy);
+
 private:
 	Gosu::Image* img;
 	coord_t c;

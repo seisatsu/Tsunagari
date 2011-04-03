@@ -12,6 +12,11 @@ World::~World()
 	delete area;
 }
 
+void World::button_down(Gosu::Button btn)
+{
+	area->button_down(btn);
+}
+
 void World::draw()
 {
 	area->draw();

@@ -18,8 +18,12 @@ GameWindow::~GameWindow()
 	delete world;
 }
 
-void GameWindow::update()
+void GameWindow::buttonDown(Gosu::Button btn)
 {
+	if (btn == Gosu::kbEscape)
+		close();
+	else
+		world->button_down(btn);
 }
 
 void GameWindow::draw()
@@ -30,5 +34,9 @@ void GameWindow::draw()
 bool GameWindow::needsRedraw()
 {
 	return world->needs_redraw();
+}
+
+void GameWindow::update()
+{
 }
 

@@ -23,6 +23,7 @@ public:
 	World(GameWindow* window, Resourcer* rc);
 	~World();
 
+	void button_down(Gosu::Button btn);
 	void draw();
 	bool needs_redraw();
 

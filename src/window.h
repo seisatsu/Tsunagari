@@ -21,10 +21,10 @@ public:
 	GameWindow();
 	virtual ~GameWindow();
 
-	void button_down(int id);
+	void buttonDown(Gosu::Button btn);
 	void draw();
-	void update();
 	bool needsRedraw();
+	void update();
 
 private:
 //	string get_datadir();
