@@ -4,6 +4,9 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#ifndef WORLD_H
+#define WORLD_H
+
 #include "area.h"
 #include "entity.h"
 #include "resourcer.h"
@@ -37,4 +40,6 @@ private:
 */
 
 };
+
+#endif
 

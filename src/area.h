@@ -4,6 +4,10 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#ifndef AREA_H
+#define AREA_H
+
+#include "common.h"
 #include "entity.h"
 #include "resourcer.h"
 //#include "tilegrid.h"
@@ -27,4 +31,6 @@ private:
 	Entity* player;
 //	TileGrid* grid;
 };
+
+#endif
 
