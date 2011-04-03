@@ -15,6 +15,13 @@
 
 class Resourcer;
 
+
+struct coord
+{
+	int x, y;
+};
+
+
 class Sprite
 {
 public:
@@ -23,6 +30,7 @@ public:
 
 private:
 	Gosu::Image* img;
+	coord c;
 };
 
 #endif

@@ -7,12 +7,13 @@
 #include "sprite.h"
 
 Sprite::Sprite(Resourcer* rc, std::wstring img_fn)
+	: x(0), y(0)
 {
 	img = rc->get_image(img_fn);
 }
 
 void Sprite::draw()
 {
-	img->draw(0, 0, 0);
+	img->draw(x, y, 0);
 }
 
