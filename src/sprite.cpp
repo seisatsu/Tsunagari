@@ -6,14 +6,14 @@
 
 #include "sprite.h"
 
-Sprite::Sprite(Resourcer* rc, std::wstring img_fn)
-	: x(0), y(0)
+Sprite::Sprite(Resourcer* rc, std::string img_fn)
 {
 	img = rc->get_image(img_fn);
+	c.x = c.y = 0;
 }
 
 void Sprite::draw()
 {
-	img->draw(x, y, 0);
+	img->draw(c.x, c.y, 0);
 }
 

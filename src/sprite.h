@@ -11,26 +11,21 @@
 
 #include <Gosu/Gosu.hpp>
 
+#include "common.h"
 #include "resourcer.h"
 
+
 class Resourcer;
-
-
-struct coord
-{
-	int x, y;
-};
-
 
 class Sprite
 {
 public:
-	Sprite(Resourcer* rc, std::wstring img_fn);
+	Sprite(Resourcer* rc, std::string img_fn);
 	void draw();
 
 private:
 	Gosu::Image* img;
-	coord c;
+	coord_t c;
 };
 
 #endif

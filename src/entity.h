@@ -21,7 +21,7 @@ class Sprite;
 class Entity
 {
 public:
-	Entity(Resourcer* rc, std::wstring img_fn);
+	Entity(Resourcer* rc, std::string img_fn);
 	void draw();
 
 /*

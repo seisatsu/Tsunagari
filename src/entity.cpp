@@ -6,7 +6,7 @@
 
 #include "entity.h"
 
-Entity::Entity(Resourcer* rc, std::wstring img_fn)
+Entity::Entity(Resourcer* rc, std::string img_fn)
 {
 	sprite = new Sprite(rc, img_fn);
 }

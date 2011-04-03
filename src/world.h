@@ -9,20 +9,32 @@
 #include "resourcer.h"
 #include "window.h"
 
+class Area;
+class Entity;
+class GameWindow;
+class Resourcer;
+
 class World
 {
 public:
-	World(Window* window, Resourcer* rc);
-	void button_down(int id);
+	World(GameWindow* window, Resourcer* rc);
 	void draw();
+
+/*
+	void button_down(int id);
 	bool needs_redraw();
 	void load_area(Area* area);
+*/
 
 private:
-	Window* window;
-	Resourcer* rc;
 	Area* area;
 	Entity* player;
+
+/*
+	Window* window;
+	Resourcer* rc;
 	bool redraw;
+*/
+
 };
 

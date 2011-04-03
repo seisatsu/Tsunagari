@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include "Gosu/Utility.hpp"
+
 #include "resourcer.h"
 
 Resourcer::Resourcer(GameWindow* window/*, string filename*/)
@@ -11,8 +13,8 @@ Resourcer::Resourcer(GameWindow* window/*, string filename*/)
 	this->window = window;
 }
 
-Gosu::Image* Resourcer::get_image(wstring name)
+Gosu::Image* Resourcer::get_image(string name)
 {
-	return new Gosu::Image(window->graphics(), name, false);
+	return new Gosu::Image(window->graphics(), Gosu::widen(name), false);
 }
 
