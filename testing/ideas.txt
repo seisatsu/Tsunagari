@@ -1,0 +1,6 @@
+Plugins:
+Dynamically linked libraries which extend core functionality of the engine through an API. Each plugin has its own descriptor file using the Descriptor class, which defines options.
+
+Wanderlust Plugin:
+Dynamic lazy map generator. As the player explores, the plugin dynamically generates new area descriptors for large chunks of the map, which are seamlessly stitched together into one giant area. The landscape is dotted with random towns, monsters, NPCs, shops, dungeons, and other special tidbits, allowing an infinite exploration experience.
+
