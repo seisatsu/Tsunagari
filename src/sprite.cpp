@@ -6,13 +6,25 @@
 
 #include "sprite.h"
 
-Sprite::Sprite(Resourcer* rc, std::wstring img_fn)
+Sprite::Sprite(Resourcer* rc, std::string img_fn)
 {
 	img = rc->get_image(img_fn);
+	c.x = c.y = 0;
+}
+
+Sprite::~Sprite()
+{
+	delete img;
 }
 
 void Sprite::draw()
 {
-	img->draw(0, 0, 0);
+	img->draw(c.x, c.y, 0);
+}
+
+void Sprite::move(int dx, int dy)
+{
+	c.x += dx;
+	c.y += dy;
 }
 

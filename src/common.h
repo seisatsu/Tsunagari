@@ -8,10 +8,11 @@
 #define COMMON_H
 
 #include <string>
+#include <stdint.h>
 
 struct coord_t {
-	unsigned long x;
-	unsigned long y;
+	uint32_t x;
+	uint32_t y;
 };
 
 char* strtochar(std::string str);

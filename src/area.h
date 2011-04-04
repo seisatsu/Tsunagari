@@ -4,23 +4,38 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include "player.h"
+#ifndef AREA_H
+#define AREA_H
+
+#include <Gosu/Gosu.hpp>
+
+#include "common.h"
+#include "entity.h"
 #include "resourcer.h"
-#include "tilegrid.h"
+//#include "tilegrid.h"
 #include "window.h"
+
+class Entity;
+class GameWindow;
+class Resourcer;
 
 class Area
 {
 public:
-	Area(Window* window, Resourcer* rc, Entity* player, const char* filename);
-	void button_down(int id);
+	Area(GameWindow* window, Resourcer* rc, Entity* player, const char* filename);
+	~Area();
+
+	void button_down(Gosu::Button btn);
 	void draw();
+	bool needs_redraw();
 	coord_t translate_coords();
 
 private:
-	void build(Resourcer* rc, yaml_t* yaml);
-	Window* window;
+//	void build(Resourcer* rc, yaml_t* yaml);
+//	GameWindow* window;
 	Entity* player;
-	TileGrid* grid;
+//	TileGrid* grid;
 };
+
+#endif
 

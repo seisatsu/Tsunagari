@@ -21,8 +21,13 @@ class Sprite;
 class Entity
 {
 public:
-	Entity(Resourcer* rc, std::wstring img_fn);
+	Entity(Resourcer* rc, std::string img_fn);
+	~Entity();
+
 	void draw();
+	bool needs_redraw();
+
+	void move(int dx, int dy);
 
 /*
 	Entity(World* world, Resource* rc);
@@ -30,17 +35,15 @@ public:
 	void go_to(Area* area, coord_t coords);
 	coord_t get_coords();
 	void transport(coord_t coords);
-	void move(int dx, int dy);
-	bool needs_redraw();
 */
 
 protected:
 	Sprite* sprite;
+	bool redraw;
 
 /*
 	World* world;
 	TileGrid* grid;
-	bool redraw;
 */
 };
 

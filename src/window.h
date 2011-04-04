@@ -9,24 +9,26 @@
 
 #include <Gosu/Gosu.hpp>
 
-#include "entity.h"
 //#include "resourcer.h"
-//#include "world.h"
+#include "world.h"
 
 class Entity;
+class World;
 
 class GameWindow : public Gosu::Window
 {
 public:
 	GameWindow();
-	void button_down(int id);
+	virtual ~GameWindow();
+
+	void buttonDown(Gosu::Button btn);
 	void draw();
+	bool needsRedraw();
 	void update();
-	bool needs_redraw();
 
 private:
 //	string get_datadir();
-	Entity* player;
+	World* world;
 };
 
 #endif
