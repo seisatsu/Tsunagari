@@ -1,0 +1,5 @@
+name: Baby's First World
+author: Paul Merrill
+type: local
+entrypoint: [babysfirst.area, 1, 1, 0]
+

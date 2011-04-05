@@ -3,4 +3,4 @@ Dynamically linked libraries which extend core functionality of the engine throu
 
 Wanderlust Plugin:
 Dynamic lazy map generator. As the player explores, the plugin dynamically generates new area descriptors for large chunks of the map, which are seamlessly stitched together into one giant area. The landscape is dotted with random towns, monsters, NPCs, shops, dungeons, and other special tidbits, allowing an infinite exploration experience.
-
+We would release the plugin as open source, and then sell our official game data to players. It might require less work than Eraclipse for a first game.
