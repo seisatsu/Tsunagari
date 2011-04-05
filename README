@@ -9,5 +9,5 @@ Requirements:
 libgosu		- http://www.libgosu.org/
 sdl		- http://www.libsdl.org/
 sdl_mixer	- http://www.libsdl.org/projects/SDL_mixer/
-libyaml		- http://pyyaml.org/wiki/LibYAML
+jsoncpp		- http://jsoncpp.sourceforge.net/
 

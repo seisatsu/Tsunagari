@@ -15,7 +15,5 @@ struct coord_t {
 	uint32_t y;
 };
 
-char* strtochar(std::string str);
-
 #endif
 
