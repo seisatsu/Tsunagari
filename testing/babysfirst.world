@@ -1,5 +1,7 @@
-name: Baby's First World
-author: Paul Merrill
-type: local
-entrypoint: [babysfirst.area, 1, 1, 0]
+{
+	"name": "Baby's First World",
+	"author": "Michael Reiley",
+	"type": "local",
+	"entrypoint": ["babysfirst.area", 1, 1, 0]
+}
 
