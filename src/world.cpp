@@ -17,16 +17,20 @@ World::World(GameWindow* window, Resourcer* rc)
 	// Temporary
 	player = new Entity(rc, "testworld/player.sheet");
 	area = new Area(window, rc, player, "testworld/babysfirst.area");
+	values = new WorldValues;
+	values->entry = new WorldEntry;
 }
 
 World::~World()
 {
 	delete player;
 	delete area;
+	delete values->entry;
+	delete values;
 }
 
 bool World::processDescriptor(std::string descriptor)
-{
+{	
 	std::ifstream file(descriptor.c_str());
 	
 	// Here we load in the world descriptor file. It's a little messy.
@@ -58,16 +62,16 @@ bool World::processDescriptor(std::string descriptor)
 	tilesize = root["tilesize"]; // tilesize
 	if (tilesize.size() != 2)
 		return false;
-	values->tilesize->x = tilesize[uint(0)].asInt(); // I don't understand why I have to do this.
-	values->tilesize->y = tilesize[1].asInt();
+	values->tilesize->x = tilesize[uint(0)].asUInt(); // I don't understand why I have to do this.
+	values->tilesize->y = tilesize[1].asUInt();
 	
 	entrypoint = root["entrypoint"]; // entrypoint
 	if (entrypoint.size() != 4)
 		return false;
 	values->entry->area = entrypoint[uint(0)].asString(); // Same thing here. The compiler assumes 0 is a signed int.
-	values->entry->coords->x = entrypoint[1].asInt();
-	values->entry->coords->y = entrypoint[2].asInt();
-	values->entry->coords->z = entrypoint[3].asInt();
+	values->entry->coords->x = entrypoint[1].asUInt();
+	values->entry->coords->y = entrypoint[2].asUInt();
+	values->entry->coords->z = entrypoint[3].asUInt();
 	
 	return true;
 }

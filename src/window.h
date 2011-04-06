@@ -7,6 +7,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <stdint.h>
 #include <Gosu/Gosu.hpp>
 #include <json/json.h>
 
@@ -19,7 +20,7 @@ class World;
 class GameWindow : public Gosu::Window
 {
 public:
-	GameWindow();
+	GameWindow(uint x, uint y, bool fullscreen);
 	virtual ~GameWindow();
 
 	void buttonDown(Gosu::Button btn);

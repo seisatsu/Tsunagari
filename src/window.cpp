@@ -7,7 +7,7 @@
 #include "resourcer.h"
 #include "window.h"
 
-GameWindow::GameWindow() : Gosu::Window(640, 480, false)
+GameWindow::GameWindow(uint x, uint y, bool fullscreen) : Gosu::Window(x, y, fullscreen)
 {
 	Resourcer rc(this);
 	world = new World(this, &rc);
