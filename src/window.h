@@ -8,6 +8,7 @@
 #define WINDOW_H
 
 #include <stdint.h>
+#include <string>
 #include <Gosu/Gosu.hpp>
 #include <json/json.h>
 
@@ -20,7 +21,7 @@ class World;
 class GameWindow : public Gosu::Window
 {
 public:
-	GameWindow(uint x, uint y, bool fullscreen);
+	GameWindow(uint x, uint y, bool fullscreen, std::string descriptor);
 	virtual ~GameWindow();
 
 	void buttonDown(Gosu::Button btn);

@@ -14,9 +14,6 @@ World::World(GameWindow* window, Resourcer* rc)
 	// Looks just a bit cleaner to the other classes.
 	_window = window;
 	_rc = rc;
-	// Temporary
-	player = new Entity(rc, "testworld/player.sheet");
-	area = new Area(window, rc, player, "testworld/babysfirst.area");
 	values = new WorldValues;
 	values->entry = new WorldEntry;
 	values->entry->coords = new coord_t;
@@ -84,9 +81,9 @@ bool World::init(std::string descriptor)
 	// Initialization
 	if (!processDescriptor(descriptor)) // Try to load in descriptor.
 		return false;
-		
+	
 	area = new Area(_window, _rc, player, values->entry->area);
-	player = new Entity(_rc, values->playersprite);
+	player = new Entity(_rc, "testworld/player.sheet");//values->playersprite);
 	
 	return true;
 }
