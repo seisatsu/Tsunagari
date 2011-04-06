@@ -41,7 +41,7 @@ struct ClientValues {
  *
  * @return True if successful
  */
-static bool parseClientConfig(const std::string filename, ClientValues* conf)
+static bool parseClientConfig(const char* filename, ClientValues* conf)
 {
 	Json::Reader reader;
 	Json::Value root, windowsize;
