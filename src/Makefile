@@ -1,4 +1,4 @@
-CXXFLAGS = -g -Wall -Wextra -Werror -pedantic -ansi
+CXXFLAGS = -g -Wall -Wextra -pedantic -ansi
 LDFLAGS = -g -lgosu -ljson
 
 all: tsu

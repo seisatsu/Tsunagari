@@ -19,12 +19,14 @@ World::World(GameWindow* window, Resourcer* rc)
 	area = new Area(window, rc, player, "testworld/babysfirst.area");
 	values = new WorldValues;
 	values->entry = new WorldEntry;
+	values->entry->coords = new coord_t;
 }
 
 World::~World()
 {
 	delete player;
 	delete area;
+	delete values->entry->coords;
 	delete values->entry;
 	delete values;
 }
@@ -73,6 +75,7 @@ bool World::processDescriptor(std::string descriptor)
 	values->entry->coords->y = entrypoint[2].asUInt();
 	values->entry->coords->z = entrypoint[3].asUInt();
 	
+	file.close();
 	return true;
 }
 

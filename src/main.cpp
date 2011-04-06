@@ -23,8 +23,9 @@ bool parseClientConfig() {
 	bool parsingSuccessful;
 	
 	__cconf = new ClientValues;
+	__cconf->windowsize = new coord_t;
 	
-	std::ifstream file("./client.conf");
+	std::ifstream file("./client.conf"); // This probably won't be changed ever except maybe with a command line option.
 	
 	// Here we load in the client config file. It's a little messy.
 	parsingSuccessful = reader.parse(file, root); // Actual parsing.
@@ -36,7 +37,7 @@ bool parseClientConfig() {
 	if (__cconf->world.compare("_NONE_") == 0)
 		return false;
 	
-	__cconf->fullscreen = root.get("name", false).asBool(); // fullscreen
+	__cconf->fullscreen = root.get("fullscreen", false).asBool(); // fullscreen
 	
 	windowsize = root["windowsize"]; // windowsize
 	if (windowsize.size() != 2)
@@ -44,6 +45,7 @@ bool parseClientConfig() {
 	__cconf->windowsize->x = windowsize[uint(0)].asUInt();
 	__cconf->windowsize->y = windowsize[1].asUInt();
 	
+	file.close();
 	return true;
 }
 
@@ -55,8 +57,8 @@ int main()
 	GameWindow window(__cconf->windowsize->x, __cconf->windowsize->y, __cconf->fullscreen);
 	window.show();
 	
+	delete __cconf->windowsize;
 	delete __cconf;
-	
 	return 0;
 }
 
