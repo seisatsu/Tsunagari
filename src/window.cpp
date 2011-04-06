@@ -6,18 +6,20 @@
 
 #include "resourcer.h"
 #include "window.h"
-#include <stdio.h>
 
-GameWindow::GameWindow(uint x, uint y, bool fullscreen, std::string descriptor) : Gosu::Window(x, y, fullscreen)
+GameWindow::GameWindow(uint x, uint y, bool fullscreen) : Gosu::Window(x, y, fullscreen)
 {
 	Resourcer rc(this);
 	world = new World(this, &rc);
-	world->init(descriptor);
 }
 
 GameWindow::~GameWindow()
 {
 	delete world;
+}
+
+bool GameWindow::initEntryWorld(std::string descriptor) {
+	return world->init(descriptor);
 }
 
 void GameWindow::buttonDown(Gosu::Button btn)

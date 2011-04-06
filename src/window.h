@@ -21,9 +21,10 @@ class World;
 class GameWindow : public Gosu::Window
 {
 public:
-	GameWindow(uint x, uint y, bool fullscreen, std::string descriptor);
+	GameWindow(uint x, uint y, bool fullscreen);
 	virtual ~GameWindow();
 
+	bool initEntryWorld(std::string descriptor);
 	void buttonDown(Gosu::Button btn);
 	void draw();
 	bool needsRedraw();
