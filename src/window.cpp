@@ -11,6 +11,7 @@ GameWindow::GameWindow(uint x, uint y, bool fullscreen) : Gosu::Window(x, y, ful
 {
 	Resourcer rc(this);
 	world = new World(this, &rc);
+	world->init(descriptor);
 }
 
 GameWindow::~GameWindow()
