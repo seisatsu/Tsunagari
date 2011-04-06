@@ -18,17 +18,17 @@
 class Resourcer;
 
 /**
- * Sprite represents a comprehensive model for displaying 2D video game images.
+ * Sprite is an image model for displaying 2D video game entities.
  *
  * Each Sprite represents one 'thing' that will be rendered to the screen.
  * Sprite can handle animated images that cycle through their frames over time.
  * It also has the capacity to switch between a couple different images on
  * demand.
  *
- * For example, you might have a Sprite for a player character which had
- * animated models for each possible movement direction (up, down, left, right)
- * along with static standing-still images for each direction.
- * This would all be handled by one Sprite.
+ * For example, you might have a Sprite for a player character with animated
+ * models for walking in each possible movement direction (up, down, left,
+ * right) along with static standing-still images for each direction. This
+ * would all be handled by one Sprite.
  */
 class Sprite
 {

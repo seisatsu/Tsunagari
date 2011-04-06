@@ -8,6 +8,7 @@
 #define AREA_H
 
 #include <string>
+
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
@@ -23,17 +24,17 @@ class Resourcer;
 class Area
 {
 public:
-	Area(GameWindow* window, Resourcer* rc, Entity* player, std::string filename);
+	Area(GameWindow* window, Resourcer* rc, Entity* player,
+	        const std::string filename);
 	~Area();
 
-	void button_down(Gosu::Button btn);
+	void button_down(const Gosu::Button btn);
 	void draw();
 	bool needs_redraw();
 	coord_t translate_coords();
 
 private:
 //	void build(Resourcer* rc, yaml_t* yaml);
-//	GameWindow* window;
 	Entity* player;
 //	TileGrid* grid;
 };

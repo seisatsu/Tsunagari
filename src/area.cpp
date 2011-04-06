@@ -8,7 +8,7 @@
 
 #include "area.h"
 
-Area::Area(GameWindow* , Resourcer* , Entity* player, std::string )
+Area::Area(GameWindow* , Resourcer* , Entity* player, const std::string )
 {
 	this->player = player;
 }
@@ -17,7 +17,7 @@ Area::~Area()
 {
 }
 
-void Area::button_down(Gosu::Button btn)
+void Area::button_down(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
 		player->move(1, 0);
