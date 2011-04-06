@@ -91,9 +91,9 @@ int main()
 		return 1;
 
 	GameWindow window(conf.windowsize.x, conf.windowsize.y,
-	        conf.fullscreen);
-	window.show();
+		conf.fullscreen);
 	window.initEntryWorld(conf.world);
+	window.show();
 
 	return 0;
 }
