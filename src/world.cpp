@@ -4,6 +4,9 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <fstream>
+#include <istream>
+
 #include "world.h"
 
 World::World(GameWindow* window, Resourcer* rc)
@@ -11,6 +14,7 @@ World::World(GameWindow* window, Resourcer* rc)
 	// Looks just a bit cleaner to the other classes.
 	_window = window;
 	_rc = rc;
+	// Temporary
 	player = new Entity(rc, "testworld/player.sheet");
 	area = new Area(window, rc, player, "testworld/babysfirst.area");
 }
@@ -21,33 +25,29 @@ World::~World()
 	delete area;
 }
 
-bool World::init(std::string descriptor)
-{	
-	/* Paul: Get this working. I can't do it without breaking everything.
-	   The way you have things set up, everything is finished starting
-	   the moment the first constructor is called. There's no room to call
-	   any init functions.
-	*/
+bool World::processDescriptor(std::string descriptor)
+{
+	std::ifstream file(descriptor.c_str());
 	
-	// Parse JSON descriptor. This example can be used for other classes.
-	player = new Entity(_rc, "../testing/outpost_world/player.sheet");
-	parsingSuccessful = reader.parse(descriptor, root);
+	// Here we load in the world descriptor file. It's a little messy.
+	parsingSuccessful = reader.parse(file, root); // Actual parsing.
 	if (!parsingSuccessful)
 		return false;
 	
-	values->name = root.get("name", "_NONE_").asString();
+	// Begin loading in configuration values.
+	values->name = root.get("name", "_NONE_").asString(); // name
 	if (values->name.compare("_NONE_") == 0)
 		return false;
 	
-	values->author = root.get("author", "_NONE_").asString();
+	values->author = root.get("author", "_NONE_").asString(); // author
 	if (values->author.compare("_NONE_") == 0)
 		return false;
 	
-	values->playersprite = root.get("playersprite", "_NONE_").asString();
+	values->playersprite = root.get("playersprite", "_NONE_").asString(); // playersprite
 	if (values->playersprite.compare("_NONE_") == 0)
 		return false;
 	
-	typeTemp = root.get("type", "_NONE_").asString();
+	typeTemp = root.get("type", "_NONE_").asString(); // type
 	if (typeTemp.compare("lower") == 0)
 		values->type = LOCAL;
 	else if (typeTemp.compare("network") == 0)
@@ -55,22 +55,31 @@ bool World::init(std::string descriptor)
 	else
 		return false;
 	
-	tilesize = root["tilesize"];
+	tilesize = root["tilesize"]; // tilesize
 	if (tilesize.size() != 2)
 		return false;
-	values->tilesize->x = entrypoint[uint(0)].asInt();
-	values->tilesize->y = entrypoint[1].asInt();
+	values->tilesize->x = tilesize[uint(0)].asInt(); // I don't understand why I have to do this.
+	values->tilesize->y = tilesize[1].asInt();
 	
-	entrypoint = root["entrypoint"];
+	entrypoint = root["entrypoint"]; // entrypoint
 	if (entrypoint.size() != 4)
 		return false;
-	values->entry->area = entrypoint[uint(0)].asString(); // I don't understand why I have to do this.
+	values->entry->area = entrypoint[uint(0)].asString(); // Same thing here. The compiler assumes 0 is a signed int.
 	values->entry->coords->x = entrypoint[1].asInt();
 	values->entry->coords->y = entrypoint[2].asInt();
 	values->entry->coords->z = entrypoint[3].asInt();
 	
+	return true;
+}
+
+bool World::init(std::string descriptor)
+{	
+	// Initialization
+	if (!processDescriptor(descriptor)) // Try to load in descriptor.
+		return false;
+		
 	area = new Area(_window, _rc, player, values->entry->area);
-	player = new Entity(_rc, "testworld/player.sprite");
+	player = new Entity(_rc, values->playersprite);
 	
 	return true;
 }

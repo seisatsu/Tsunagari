@@ -58,6 +58,7 @@ public:
 */
 
 private:
+	bool processDescriptor(std::string descriptor);
 	Area* area;
 	Entity* player;
 	Resourcer* _rc;
@@ -69,7 +70,7 @@ private:
 	bool parsingSuccessful;
 	std::string typeTemp;
 
-	WorldValues* values;
+	WorldValues* values; // Descriptor data
 /*
 	Window* window;
 	Resourcer* rc;

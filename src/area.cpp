@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** area.cpp - Area           **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include <stdio.h>
 
 #include "area.h"
