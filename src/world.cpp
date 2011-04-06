@@ -11,8 +11,8 @@ World::World(GameWindow* window, Resourcer* rc)
 	// Looks just a bit cleaner to the other classes.
 	_window = window;
 	_rc = rc;
-	player = new Entity(rc, "../testing/outpost_world/player.sheet");
-	area = new Area(window, rc, player, "../testing/babysfirst.area");
+	player = new Entity(rc, "testworld/player.sheet");
+	area = new Area(window, rc, player, "testworld/babysfirst.area");
 }
 
 World::~World()
@@ -43,6 +43,10 @@ bool World::init(std::string descriptor)
 	if (values->author.compare("_NONE_") == 0)
 		return false;
 	
+	values->playersprite = root.get("playersprite", "_NONE_").asString();
+	if (values->playersprite.compare("_NONE_") == 0)
+		return false;
+	
 	typeTemp = root.get("type", "_NONE_").asString();
 	if (typeTemp.compare("lower") == 0)
 		values->type = LOCAL;
@@ -50,6 +54,12 @@ bool World::init(std::string descriptor)
 		values->type = NETWORK;
 	else
 		return false;
+	
+	tilesize = root["tilesize"];
+	if (tilesize.size() != 2)
+		return false;
+	values->tilesize->x = entrypoint[uint(0)].asInt();
+	values->tilesize->y = entrypoint[1].asInt();
 	
 	entrypoint = root["entrypoint"];
 	if (entrypoint.size() != 4)
@@ -60,6 +70,7 @@ bool World::init(std::string descriptor)
 	values->entry->coords->z = entrypoint[3].asInt();
 	
 	area = new Area(_window, _rc, player, values->entry->area);
+	player = new Entity(_rc, "testworld/player.sprite");
 	
 	return true;
 }

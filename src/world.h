@@ -35,6 +35,8 @@ struct WorldEntry {
 struct WorldValues {
 	std::string name;
 	std::string author;
+	std::string playersprite;
+	coord_t* tilesize;
 	WorldType type;
 	WorldEntry* entry;
 };
@@ -62,6 +64,7 @@ private:
 	GameWindow* _window;
 	Json::Value root;
 	Json::Value entrypoint;
+	Json::Value tilesize;
 	Json::Reader reader;
 	bool parsingSuccessful;
 	std::string typeTemp;

@@ -1,0 +1,9 @@
+{
+	"name": "Baby's First World",
+	"author": "Michael Reiley",
+	"type": "local",
+	"tilesize": [64, 64],
+	"playersprite": "testworld/player.sprite",
+	"entrypoint": ["testworld/babysfirst.area", 1, 1, 0]
+}
+
