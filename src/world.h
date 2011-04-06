@@ -7,9 +7,12 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <stdint.h>
+#include <string>
 #include <Gosu/Gosu.hpp>
 
 #include "area.h"
+#include "common.h"
 #include "entity.h"
 #include "resourcer.h"
 #include "window.h"
@@ -19,12 +22,30 @@ class Entity;
 class GameWindow;
 class Resourcer;
 
+enum WorldType {
+	LOCAL,
+	NETWORK
+};
+
+struct WorldEntry {
+	std::string area;
+	coord_t* coords;
+};
+
+struct WorldValues {
+	std::string name;
+	std::string author;
+	WorldType type;
+	WorldEntry* entry;
+};
+
 class World
 {
 public:
 	World(GameWindow* window, Resourcer* rc);
 	~World();
 
+	bool init(std::string descriptor);
 	void button_down(Gosu::Button btn);
 	void draw();
 	bool needs_redraw();
@@ -37,7 +58,15 @@ public:
 private:
 	Area* area;
 	Entity* player;
+	Resourcer* _rc;
+	GameWindow* _window;
+	Json::Value root;
+	Json::Value entrypoint;
+	Json::Reader reader;
+	bool parsingSuccessful;
+	std::string typeTemp;
 
+	WorldValues* values;
 /*
 	Window* window;
 	Resourcer* rc;

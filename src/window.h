@@ -8,6 +8,7 @@
 #define WINDOW_H
 
 #include <Gosu/Gosu.hpp>
+#include <json/json.h>
 
 //#include "resourcer.h"
 #include "world.h"

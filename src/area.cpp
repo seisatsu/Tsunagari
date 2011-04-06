@@ -2,7 +2,7 @@
 
 #include "area.h"
 
-Area::Area(GameWindow* , Resourcer* , Entity* player, const char* )
+Area::Area(GameWindow* , Resourcer* , Entity* player, std::string )
 {
 	this->player = player;
 }

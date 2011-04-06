@@ -7,6 +7,7 @@
 #ifndef AREA_H
 #define AREA_H
 
+#include <string>
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
@@ -22,7 +23,7 @@ class Resourcer;
 class Area
 {
 public:
-	Area(GameWindow* window, Resourcer* rc, Entity* player, const char* filename);
+	Area(GameWindow* window, Resourcer* rc, Entity* player, std::string filename);
 	~Area();
 
 	void button_down(Gosu::Button btn);
