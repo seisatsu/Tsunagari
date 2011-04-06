@@ -6,36 +6,62 @@
 
 #include <fstream>
 #include <istream>
+#include <stdio.h>
+#include <string>
 
-#include "client.h"
+#include <json/json.h>
+
+#include "common.h"
 #include "window.h"
 
-bool parseClientConfig(ClientValues* conf)
+
+/**
+ * This probably won't be changed ever except maybe with a command line option.
+ */
+#define CLIENT_CONF_FILE "./client.conf"
+
+/**
+ * Values needed prior to creating the GameWindow.
+ */
+struct ClientValues {
+	std::string world;
+	coord_t windowsize;
+	bool fullscreen;
+};
+
+
+/**
+ * Load the values we need to start initializing the game from a JSON file.
+ *
+ * We need to know what size window to create and which World to load. This
+ * information will be stored in a JSON file which we parse here.
+ *
+ * @param filename Name of the JSON-encoded file to load from.
+ * @param conf Values are stored here.
+ *
+ * @return True if successful
+ */
+static bool parseClientConfig(const std::string filename, ClientValues* conf)
 {
-	Json::Value root;
-	Json::Value windowsize;
 	Json::Reader reader;
-	bool parsingSuccessful;
+	Json::Value root, windowsize;
 
-	// This probably won't be changed ever except maybe with a command line
-	// option.
-	std::ifstream file("./client.conf");
+	std::ifstream file(filename);
 
-	// Here we load in the client config file. It's a little messy.
-	parsingSuccessful = reader.parse(file, root); // Actual parsing.
-	if (!parsingSuccessful) {
+	if (!reader.parse(file, root)) {
 		printf("Client config failed to parse as JSON\n");
 		return false;
 	}
 
-	// Begin loading in configuration values.
+	/* GET:
+	 *  - name of World to load
+	 *  - width, height, fullscreen-ness of Window
+	 */
 	conf->world = root.get("world", "_NONE_").asString();
-	if (conf->world.compare("_NONE_") == 0) {
-		printf("Client config didn't contain world value\n");
+	if (conf->world == "_NONE_") {
+		printf("Client config didn't contain world name\n");
 		return false;
 	}
-
-	conf->fullscreen = root.get("fullscreen", false).asBool();
 
 	windowsize = root["windowsize"];
 	if (windowsize.size() != 2) {
@@ -46,20 +72,23 @@ bool parseClientConfig(ClientValues* conf)
 	conf->windowsize.x = windowsize[uint(0)].asUInt();
 	conf->windowsize.y = windowsize[1].asUInt();
 
+	conf->fullscreen = root.get("fullscreen", false).asBool();
+
 	return true;
 }
 
 /**
- * Engine entrypoint.
+ * Load client config and instantiate window.
  *
- * The entire engine is encompassed in the GameWindow class.
+ * The client config tells us our window parameters along with which World
+ * we're going to load. The GameWindow class then loads and plays the game.
  */
 int main()
 {
 	ClientValues conf;
 
-	if (!parseClientConfig(&conf))
-		return 1; // Failed to load client config
+	if (!parseClientConfig(CLIENT_CONF_FILE, &conf))
+		return 1;
 
 	GameWindow window(conf.windowsize.x, conf.windowsize.y,
 	        conf.fullscreen);
