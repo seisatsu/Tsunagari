@@ -11,9 +11,8 @@
 
 struct ClientValues {
 	std::string world;
-	coord_t* windowsize;
+	coord_t windowsize;
 	bool fullscreen;
 };
 
-ClientValues* __cconf;
 

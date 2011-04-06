@@ -10,55 +10,61 @@
 #include "client.h"
 #include "window.h"
 
+bool parseClientConfig(ClientValues* conf)
+{
+	Json::Value root;
+	Json::Value windowsize;
+	Json::Reader reader;
+	bool parsingSuccessful;
+
+	// This probably won't be changed ever except maybe with a command line
+	// option.
+	std::ifstream file("./client.conf");
+
+	// Here we load in the client config file. It's a little messy.
+	parsingSuccessful = reader.parse(file, root); // Actual parsing.
+	if (!parsingSuccessful) {
+		printf("Client config failed to parse as JSON\n");
+		return false;
+	}
+
+	// Begin loading in configuration values.
+	conf->world = root.get("world", "_NONE_").asString();
+	if (conf->world.compare("_NONE_") == 0) {
+		printf("Client config didn't contain world value\n");
+		return false;
+	}
+
+	conf->fullscreen = root.get("fullscreen", false).asBool();
+
+	windowsize = root["windowsize"];
+	if (windowsize.size() != 2) {
+		printf("Client config windowsize didn't contain 2 values\n");
+		return false;
+	}
+
+	conf->windowsize.x = windowsize[uint(0)].asUInt();
+	conf->windowsize.y = windowsize[1].asUInt();
+
+	return true;
+}
+
 /**
  * Engine entrypoint.
  *
  * The entire engine is encompassed in the GameWindow class.
  */
-
-bool parseClientConfig() {
-	Json::Value root;
-	Json::Value windowsize;
-	Json::Reader reader;
-	bool parsingSuccessful;
-	
-	__cconf = new ClientValues;
-	__cconf->windowsize = new coord_t;
-	
-	std::ifstream file("./client.conf"); // This probably won't be changed ever except maybe with a command line option.
-	
-	// Here we load in the client config file. It's a little messy.
-	parsingSuccessful = reader.parse(file, root); // Actual parsing.
-	if (!parsingSuccessful)
-		return false;
-	
-	// Begin loading in configuration values.
-	__cconf->world = root.get("world", "_NONE_").asString(); // world
-	if (__cconf->world.compare("_NONE_") == 0)
-		return false;
-	
-	__cconf->fullscreen = root.get("fullscreen", false).asBool(); // fullscreen
-	
-	windowsize = root["windowsize"]; // windowsize
-	if (windowsize.size() != 2)
-		return false;
-	__cconf->windowsize->x = windowsize[uint(0)].asUInt();
-	__cconf->windowsize->y = windowsize[1].asUInt();
-	
-	file.close();
-	return true;
-}
-
 int main()
 {
-	if (!parseClientConfig())
+	ClientValues conf;
+
+	if (!parseClientConfig(&conf))
 		return 1; // Failed to load client config
-	
-	GameWindow window(__cconf->windowsize->x, __cconf->windowsize->y, __cconf->fullscreen);
+
+	GameWindow window(conf.windowsize.x, conf.windowsize.y,
+	        conf.fullscreen);
 	window.show();
-	
-	delete __cconf->windowsize;
-	delete __cconf;
+
 	return 0;
 }
 
