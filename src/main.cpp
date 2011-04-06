@@ -62,7 +62,7 @@ int main()
 		return 1; // Failed to load client config
 
 	GameWindow window(conf.windowsize.x, conf.windowsize.y,
-	        conf.fullscreen);
+	        conf.fullscreen, conf.world);
 	window.show();
 
 	return 0;

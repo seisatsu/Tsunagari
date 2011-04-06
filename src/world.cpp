@@ -83,7 +83,7 @@ bool World::init(std::string descriptor)
 		return false;
 	
 	area = new Area(_window, _rc, player, values->entry->area);
-	player = new Entity(_rc, values->playersprite);
+	player = new Entity(_rc, "testworld/player.sheet");//values->playersprite);
 	
 	return true;
 }
