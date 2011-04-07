@@ -54,7 +54,7 @@ int main()
 	if (!parseClientConfig())
 		return 1; // Failed to load client config
 	
-	GameWindow window(__cconf->windowsize->x, __cconf->windowsize->y, __cconf->fullscreen);
+	GameWindow window(__cconf->windowsize->x, __cconf->windowsize->y, __cconf->fullscreen, __cconf->world);
 	window.show();
 	
 	delete __cconf->windowsize;
