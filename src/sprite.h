@@ -27,7 +27,7 @@ struct SpritePhases {
 
 struct SpriteValues {
 	std::string sheet;
-	SpritePhases* phases;
+	SpritePhases phases;
 };
 
 /**

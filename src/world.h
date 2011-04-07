@@ -38,7 +38,7 @@ struct WorldValues {
 	std::string playersprite;
 	coord_t tilesize;
 	WorldType type;
-	WorldEntry* entry;
+	WorldEntry entry;
 };
 
 class World
