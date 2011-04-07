@@ -96,7 +96,10 @@ int main()
 	if (master_return_value != 0) {
 		switch (master_return_value) {
 			case 2:
-				std::cerr << "Error: " << conf.world << "\n";
+				std::cerr << "Error: Entry point: World descriptor\n";
+				break;
+			case 3:
+				std::cerr << "Error: Entry point: Sprite descriptor\n";
 				break;
 		}
 		return master_return_value;
