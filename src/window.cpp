@@ -6,9 +6,9 @@
 
 #include "resourcer.h"
 #include "window.h"
-#include <stdio.h>
 
-GameWindow::GameWindow(uint x, uint y, bool fullscreen, std::string descriptor) : Gosu::Window(x, y, fullscreen)
+GameWindow::GameWindow(uint x, uint y, bool fullscreen, std::string descriptor)
+		: Gosu::Window(x, y, fullscreen)
 {
 	Resourcer rc(this);
 	world = new World(this, &rc);
