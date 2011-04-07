@@ -63,7 +63,7 @@ private:
 	coord_t c;
 
 	std::string descriptor;
-	SpriteValues* values; // Descriptor data
+	SpriteValues values; // Descriptor data
 };
 
 #endif

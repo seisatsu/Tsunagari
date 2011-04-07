@@ -10,16 +10,14 @@ Sprite::Sprite(Resourcer* rc, const std::string descriptor)
 {
 	this->rc = rc;
 	this->descriptor = descriptor;
-	values = new SpriteValues;
-	values->phases = new SpritePhases;
+	values.phases = new SpritePhases;
 	c.x = c.y = 0;
 }
 
 Sprite::~Sprite()
 {
 	delete img;
-	delete values->phases;
-	delete values;
+	delete values.phases;
 }
 
 bool Sprite::processDescriptor()
@@ -35,8 +33,8 @@ bool Sprite::processDescriptor()
 		return false;
 	
 	// Begin loading in configuration values.
-	values->sheet = root.get("sheet", "_NONE_").asString(); // sheet
-	if (values->sheet.compare("_NONE_") == 0) {
+	values.sheet = root.get("sheet", "_NONE_").asString(); // sheet
+	if (values.sheet.compare("_NONE_") == 0) {
 		std::cerr << "Error: " << descriptor << ": \"sheet\" required.\n";
 		return false;
 	}
@@ -46,7 +44,7 @@ bool Sprite::processDescriptor()
 		std::cerr << "Error: " << descriptor << ": \"phases\" [>0] required.\n";
 		return false;
 	}
-	values->phases->phase = phases.get("player", 0).asUInt();
+	values.phases->phase = phases.get("player", 0).asUInt();
 	
 	file.close();
 	return true;
@@ -57,7 +55,7 @@ int Sprite::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return 3;
 
-	img = rc->getImage(values->sheet);
+	img = rc->getImage(values.sheet);
 	
 	return 0;
 }

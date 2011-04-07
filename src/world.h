@@ -66,7 +66,7 @@ private:
 
 	std::string descriptor;
 	std::string typeTemp;
-	WorldValues* values; // Descriptor data
+	WorldValues values; // Descriptor data
 };
 
 #endif
