@@ -7,15 +7,28 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <fstream>
+#include <iostream>
+#include <stdint.h>
 #include <string>
 
 #include <Gosu/Gosu.hpp>
+#include <json/json.h>
 
 #include "common.h"
 #include "resourcer.h"
 
 
 class Resourcer;
+
+struct SpritePhases {
+	uint phase; // Will be replaced with a vector later.
+};
+
+struct SpriteValues {
+	std::string sheet;
+	SpritePhases* phases;
+};
 
 /**
  * Sprite is an image model for displaying 2D video game entities.
@@ -33,16 +46,23 @@ class Resourcer;
 class Sprite
 {
 public:
-	Sprite(Resourcer* rc, std::string img_fn);
+	Sprite(Resourcer* rc, const std::string descriptor);
 	~Sprite();
+	
+	int init();
 
 	void draw();
 
 	void move(int dx, int dy);
 
 private:
+	bool processDescriptor();
+	std::string descriptor;
 	Gosu::Image* img;
 	coord_t c;
+	Resourcer* rc;
+	
+	SpriteValues* values; // Descriptor data
 };
 
 #endif

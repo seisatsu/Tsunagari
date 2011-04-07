@@ -5,15 +5,15 @@
 ******************************/
 
 #include <fstream>
-#include <istream>
+#include <iostream>
 
 #include "world.h"
 
-World::World(GameWindow* window, Resourcer* rc)
+World::World(GameWindow* window, Resourcer* rc, const std::string descriptor)
 {
-	// Looks just a bit cleaner to the other classes.
-	_window = window;
-	_rc = rc;
+	this->window = window;
+	this->rc = rc;
+	this->descriptor = descriptor;
 	values = new WorldValues;
 	values->entry = new WorldEntry;
 }
@@ -26,45 +26,61 @@ World::~World()
 	delete values;
 }
 
-bool World::processDescriptor(const std::string descriptor)
+bool World::processDescriptor()
 {	
 	std::ifstream file(descriptor.c_str());
 	
+	Json::Value root;
+	Json::Value entrypoint;
+	Json::Value tilesize;
+	Json::Reader reader;
+	
 	// Here we load in the world descriptor file. It's a little messy.
-	parsingSuccessful = reader.parse(file, root); // Actual parsing.
-	if (!parsingSuccessful)
+	if (!reader.parse(file, root)) // Actual parsing.
 		return false;
 	
 	// Begin loading in configuration values.
 	values->name = root.get("name", "_NONE_").asString(); // name
-	if (values->name.compare("_NONE_") == 0)
+	if (values->name.compare("_NONE_") == 0) {
+		std::cerr << "Error: " << descriptor << ": \"name\" required.\n";
 		return false;
+	}
 	
 	values->author = root.get("author", "_NONE_").asString(); // author
-	if (values->author.compare("_NONE_") == 0)
+	if (values->author.compare("_NONE_") == 0) {
+		std::cerr << "Error: " << descriptor << ": \"author\" required.\n";
 		return false;
+	}
 	
 	values->playersprite = root.get("playersprite", "_NONE_").asString(); // playersprite
-	if (values->playersprite.compare("_NONE_") == 0)
+	if (values->playersprite.compare("_NONE_") == 0) {
+		std::cerr << "Error: " << descriptor << ": \"playersprite\" required.\n";
 		return false;
+	}
 	
 	typeTemp = root.get("type", "_NONE_").asString(); // type
 	if (typeTemp.compare("local") == 0)
 		values->type = LOCAL;
 	else if (typeTemp.compare("network") == 0)
 		values->type = NETWORK;
-	else
+	else {
+		std::cerr << "Error: " << descriptor << ": \"type\" (local|network) required.\n";
 		return false;
+	}
 	
 	tilesize = root["tilesize"]; // tilesize
-	if (tilesize.size() != 2)
+	if (tilesize.size() != 2) {
+		std::cerr << "Error: " << descriptor << ": \"tilesize\" [2] required.\n";
 		return false;
+	}
 	values->tilesize.x = tilesize[uint(0)].asUInt(); // I don't understand why I have to do this.
 	values->tilesize.y = tilesize[1].asUInt();
 	
 	entrypoint = root["entrypoint"]; // entrypoint
-	if (entrypoint.size() != 4)
+	if (entrypoint.size() != 4) {
+		std::cerr << "Error: " << descriptor << ": \"entrypoint\" [4] required.\n";
 		return false;
+	}
 	values->entry->area = entrypoint[uint(0)].asString(); // Same thing here. The compiler assumes 0 is a signed int.
 	values->entry->coords.x = entrypoint[1].asUInt();
 	values->entry->coords.y = entrypoint[2].asUInt();
@@ -74,16 +90,22 @@ bool World::processDescriptor(const std::string descriptor)
 	return true;
 }
 
-bool World::init(const std::string descriptor)
-{	
+int World::init()
+{
 	// Initialization
-	if (!processDescriptor(descriptor)) // Try to load in descriptor.
-		return false;
+	int entity_return_value;
 	
-	player = new Entity(_rc, "testworld/player.sheet");
-	area = new Area(_window, _rc, player, values->entry->area);
+	if (!processDescriptor()) // Try to load in descriptor.
+		return 2;
 	
-	return true;
+	player = new Entity(rc, "_NONE_", values->playersprite); // The player entity doesn't have a descriptor yet.
+	entity_return_value = player->init();
+	if (entity_return_value != 0)
+		return entity_return_value;
+	
+	area = new Area(window, rc, player, values->entry->area);
+	
+	return 0;
 }
 
 void World::button_down(Gosu::Button btn)

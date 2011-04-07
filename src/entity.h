@@ -21,8 +21,10 @@ class Sprite;
 class Entity
 {
 public:
-	Entity(Resourcer* rc, std::string img_fn);
+	Entity(Resourcer* rc, const std::string descriptor, const std::string sprite_descriptor);
 	~Entity();
+	
+	int init();
 
 	void draw();
 	bool needs_redraw();
@@ -39,6 +41,9 @@ public:
 
 protected:
 	Sprite* sprite;
+	Resourcer* rc;
+	std::string descriptor;
+	std::string sprite_descriptor;
 	bool redraw;
 
 /*

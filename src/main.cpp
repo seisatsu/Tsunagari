@@ -5,8 +5,7 @@
 ******************************/
 
 #include <fstream>
-#include <istream>
-#include <stdio.h>
+#include <iostream>
 #include <string>
 
 #include <json/json.h>
@@ -29,7 +28,6 @@ struct ClientValues {
 	bool fullscreen;
 };
 
-
 /**
  * Load the values we need to start initializing the game from a JSON file.
  *
@@ -48,24 +46,22 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 
 	std::ifstream file(filename);
 
-	if (!reader.parse(file, root)) {
-		printf("Client config failed to parse as JSON\n");
+	if (!reader.parse(file, root))
 		return false;
-	}
-
+	
 	/* GET:
 	 *  - name of World to load
 	 *  - width, height, fullscreen-ness of Window
 	 */
 	conf->world = root.get("world", "_NONE_").asString();
 	if (conf->world == "_NONE_") {
-		printf("Client config didn't contain world name\n");
+		std::cerr << "Error: " << CLIENT_CONF_FILE << ": \"world\" required.\n";
 		return false;
 	}
 
 	windowsize = root["windowsize"];
 	if (windowsize.size() != 2) {
-		printf("Client config windowsize didn't contain 2 values\n");
+		std::cerr << "Error: " << CLIENT_CONF_FILE << ": \"windowsize\" [2] required.\n";
 		return false;
 	}
 
@@ -86,13 +82,26 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 int main()
 {
 	ClientValues conf;
+	int master_return_value;
 
-	if (!parseClientConfig(CLIENT_CONF_FILE, &conf))
+	if (!parseClientConfig(CLIENT_CONF_FILE, &conf)) {
+		std::cerr << "Error: " << CLIENT_CONF_FILE << "\n";
 		return 1;
+	}
 
 	GameWindow window(conf.windowsize.x, conf.windowsize.y,
 		conf.fullscreen);
-	window.initEntryWorld(conf.world);
+	
+	master_return_value = window.initEntryWorld(conf.world);
+	if (master_return_value != 0) {
+		switch (master_return_value) {
+			case 2:
+				std::cerr << "Error: " << conf.world << "\n";
+				break;
+		}
+		return master_return_value;
+	}
+	
 	window.show();
 
 	return 0;

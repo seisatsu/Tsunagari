@@ -25,7 +25,7 @@ public:
 	GameWindow(uint x, uint y, bool fullscreen);
 	virtual ~GameWindow();
 
-	bool initEntryWorld(const std::string descriptor);
+	int initEntryWorld(const std::string descriptor);
 	void buttonDown(Gosu::Button btn);
 	void draw();
 	bool needsRedraw();

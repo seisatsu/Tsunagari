@@ -44,10 +44,10 @@ struct WorldValues {
 class World
 {
 public:
-	World(GameWindow* window, Resourcer* rc);
+	World(GameWindow* window, Resourcer* rc, const std::string descriptor);
 	~World();
 
-	bool init(const std::string descriptor);
+	int init();
 	void button_down(Gosu::Button btn);
 	void draw();
 	bool needs_redraw();
@@ -58,16 +58,12 @@ public:
 */
 
 private:
-	bool processDescriptor(const std::string descriptor);
+	bool processDescriptor();
 	Area* area;
 	Entity* player;
-	Resourcer* _rc;
-	GameWindow* _window;
-	Json::Value root;
-	Json::Value entrypoint;
-	Json::Value tilesize;
-	Json::Reader reader;
-	bool parsingSuccessful;
+	Resourcer* rc;
+	GameWindow* window;
+	std::string descriptor;
 	std::string typeTemp;
 
 	WorldValues* values; // Descriptor data

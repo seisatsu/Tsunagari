@@ -7,11 +7,9 @@
 #include "resourcer.h"
 #include "window.h"
 
-GameWindow::GameWindow(uint x, uint y, bool fullscreen)
-		: Gosu::Window(x, y, fullscreen)
+GameWindow::GameWindow(uint x, uint y, bool fullscreen) : Gosu::Window(x, y, fullscreen)
 {
 	rc = new Resourcer(this);
-	world = new World(this, rc);
 }
 
 GameWindow::~GameWindow()
@@ -19,8 +17,9 @@ GameWindow::~GameWindow()
 	delete world;
 }
 
-bool GameWindow::initEntryWorld(const std::string descriptor) {
-	return world->init(descriptor);
+int GameWindow::initEntryWorld(const std::string descriptor) {
+	world = new World(this, rc, descriptor);
+	return world->init();
 }
 
 void GameWindow::buttonDown(Gosu::Button btn)
