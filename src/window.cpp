@@ -4,20 +4,22 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include "resourcer.h"
 #include "window.h"
 
-GameWindow::GameWindow(uint x, uint y, bool fullscreen) : Gosu::Window(x, y, fullscreen)
+GameWindow::GameWindow(uint x, uint y, bool fullscreen)
+	: Gosu::Window(x, y, fullscreen)
 {
 	rc = new Resourcer(this);
 }
 
 GameWindow::~GameWindow()
 {
-	delete world;
+	if (world)
+		delete world;
 }
 
-int GameWindow::initEntryWorld(const std::string descriptor) {
+int GameWindow::initEntryWorld(const std::string descriptor)
+{
 	world = new World(this, rc, descriptor);
 	return world->init();
 }
@@ -35,7 +37,7 @@ void GameWindow::draw()
 	world->draw();
 }
 
-bool GameWindow::needsRedraw()
+bool GameWindow::needsRedraw() const
 {
 	return world->needsRedraw();
 }

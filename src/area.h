@@ -30,7 +30,7 @@ public:
 
 	void buttonDown(const Gosu::Button btn);
 	void draw();
-	bool needsRedraw();
+	bool needsRedraw() const;
 	coord_t translateCoords();
 
 private:

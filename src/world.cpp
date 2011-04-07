@@ -10,26 +10,26 @@
 #include "world.h"
 
 World::World(GameWindow* window, Resourcer* rc, const std::string descriptor)
+	: window(window), rc(rc), descriptor(descriptor)
 {
-	this->window = window;
-	this->rc = rc;
-	this->descriptor = descriptor;
 }
 
 World::~World()
 {
-	delete player;
-	delete area;
+	if (player)
+		delete player;
+	if (area)
+		delete area;
 }
 
 bool World::processDescriptor()
 {	
-	std::ifstream file(descriptor.c_str());
-
+	Json::Reader reader;
 	Json::Value root;
 	Json::Value entrypoint;
 	Json::Value tilesize;
-	Json::Reader reader;
+
+	std::ifstream file(descriptor.c_str());
 
 	// Here we load in the world descriptor file. It's a little messy.
 	if (!reader.parse(file, root)) // Actual parsing.
@@ -82,7 +82,6 @@ bool World::processDescriptor()
 	values.entry.coords.y = entrypoint[2].asUInt();
 	values.entry.coords.z = entrypoint[3].asUInt();
 
-	file.close();
 	return true;
 }
 
@@ -114,7 +113,7 @@ void World::draw()
 	area->draw();
 }
 
-bool World::needsRedraw()
+bool World::needsRedraw() const
 {
 	return area->needsRedraw();
 }

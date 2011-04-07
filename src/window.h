@@ -28,7 +28,7 @@ public:
 	int initEntryWorld(const std::string descriptor);
 	void buttonDown(const Gosu::Button btn);
 	void draw();
-	bool needsRedraw();
+	bool needsRedraw() const;
 	void update();
 
 private:

@@ -28,7 +28,7 @@ public:
 	int init();
 
 	void draw();
-	bool needsRedraw();
+	bool needsRedraw() const;
 
 	void move(int dx, int dy);
 
@@ -43,9 +43,10 @@ public:
 protected:
 	Sprite* sprite;
 	Resourcer* rc;
-	std::string descriptor;
-	std::string spriteDescriptor;
 	bool redraw;
+
+	const std::string descriptor;
+	const std::string spriteDescriptor;
 
 /*
 	World* world;

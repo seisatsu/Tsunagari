@@ -12,24 +12,24 @@
 #include "sprite.h"
 
 Sprite::Sprite(Resourcer* rc, const std::string descriptor)
+	: rc(rc), descriptor(descriptor)
 {
-	this->rc = rc;
-	this->descriptor = descriptor;
 	c.x = c.y = 0;
 }
 
 Sprite::~Sprite()
 {
-	delete img;
+	if (img)
+		delete img;
 }
 
 bool Sprite::processDescriptor()
 {
-	std::ifstream file(descriptor.c_str());
-
+	Json::Reader reader;
 	Json::Value root;
 	Json::Value phases;
-	Json::Reader reader;
+
+	std::ifstream file(descriptor.c_str());
 
 	// Here we load in the sprite descriptor file. It's a little messy.
 	if (!reader.parse(file, root)) // Actual parsing.
@@ -49,7 +49,6 @@ bool Sprite::processDescriptor()
 	}
 	values.phases.phase = phases.get("player", 0).asUInt();
 
-	file.close();
 	return true;
 }
 
@@ -63,7 +62,7 @@ int Sprite::init()
 	return 0;
 }
 
-void Sprite::draw()
+void Sprite::draw() const
 {
 	img->draw(c.x, c.y, 0);
 }

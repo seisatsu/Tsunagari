@@ -48,7 +48,7 @@ public:
 
 	int init();
 
-	void draw();
+	void draw() const;
 
 	void move(int dx, int dy);
 
@@ -56,10 +56,10 @@ private:
 	bool processDescriptor();
 
 	Resourcer* rc;
-	Gosu::Image* img;
+	const Gosu::Image* img;
 	coord_t c;
 
-	std::string descriptor;
+	const std::string descriptor;
 	SpriteValues values; // Descriptor data
 };
 

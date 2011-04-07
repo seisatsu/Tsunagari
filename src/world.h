@@ -51,7 +51,7 @@ public:
 	int init();
 	void buttonDown(const Gosu::Button btn);
 	void draw();
-	bool needsRedraw();
+	bool needsRedraw() const;
 
 /*
 	void loadArea(Area* area);
@@ -65,7 +65,7 @@ private:
 	Area* area;
 	Entity* player;
 
-	std::string descriptor;
+	const std::string descriptor;
 	WorldValues values; // Descriptor data
 };
 

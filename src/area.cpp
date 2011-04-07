@@ -9,8 +9,8 @@
 #include "area.h"
 
 Area::Area(GameWindow* , Resourcer* , Entity* player, const std::string )
+	: player(player)
 {
-	this->player = player;
 }
 
 Area::~Area()
@@ -34,7 +34,7 @@ void Area::draw()
 	player->draw();
 }
 
-bool Area::needsRedraw()
+bool Area::needsRedraw() const
 {
 	return player->needsRedraw();
 }
