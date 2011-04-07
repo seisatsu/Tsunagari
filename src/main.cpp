@@ -48,7 +48,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 
 	if (!reader.parse(file, root))
 		return false;
-	
+
 	/* GET:
 	 *  - name of World to load
 	 *  - width, height, fullscreen-ness of Window
@@ -82,7 +82,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 int main()
 {
 	ClientValues conf;
-	int master_return_value;
+	int masterReturnValue;
 
 	if (!parseClientConfig(CLIENT_CONF_FILE, &conf)) {
 		std::cerr << "Error: " << CLIENT_CONF_FILE << "\n";
@@ -91,10 +91,10 @@ int main()
 
 	GameWindow window(conf.windowsize.x, conf.windowsize.y,
 		conf.fullscreen);
-	
-	master_return_value = window.initEntryWorld(conf.world);
-	if (master_return_value != 0) {
-		switch (master_return_value) {
+
+	masterReturnValue = window.initEntryWorld(conf.world);
+	if (masterReturnValue != 0) {
+		switch (masterReturnValue) {
 			case 2:
 				std::cerr << "Error: Entry point: World descriptor\n";
 				break;
@@ -102,7 +102,7 @@ int main()
 				std::cerr << "Error: Entry point: Sprite descriptor\n";
 				break;
 		}
-		return master_return_value;
+		return masterReturnValue;
 	}
 	
 	window.show();

@@ -17,7 +17,7 @@ Area::~Area()
 {
 }
 
-void Area::button_down(const Gosu::Button btn)
+void Area::buttonDown(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
 		player->move(1, 0);
@@ -34,8 +34,8 @@ void Area::draw()
 	player->draw();
 }
 
-bool Area::needs_redraw()
+bool Area::needsRedraw()
 {
-	return player->needs_redraw();
+	return player->needsRedraw();
 }
 

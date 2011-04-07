@@ -26,13 +26,13 @@ public:
 	virtual ~GameWindow();
 
 	int initEntryWorld(const std::string descriptor);
-	void buttonDown(Gosu::Button btn);
+	void buttonDown(const Gosu::Button btn);
 	void draw();
 	bool needsRedraw();
 	void update();
 
 private:
-//	string get_datadir();
+//	string getDataDir();
 	Resourcer* rc;
 	World* world;
 };

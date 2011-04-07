@@ -20,9 +20,9 @@ public:
 	TileGrid(Resourcer* rc, YAML* yaml);
 	void draw();
 	
-	coord_t get_size();
-	int get_tile_size();
-	Tile* get_tile(coord_t coords);
+	coord_t getSize();
+	int getTileSize();
+	Tile* getTile(coord_t coords);
 
 private:
 	vector<vector<vector<Tile*>*>*> grid;

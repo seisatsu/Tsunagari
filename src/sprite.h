@@ -48,7 +48,7 @@ class Sprite
 public:
 	Sprite(Resourcer* rc, const std::string descriptor);
 	~Sprite();
-	
+
 	int init();
 
 	void draw();
@@ -57,11 +57,12 @@ public:
 
 private:
 	bool processDescriptor();
-	std::string descriptor;
+
+	Resourcer* rc;
 	Gosu::Image* img;
 	coord_t c;
-	Resourcer* rc;
-	
+
+	std::string descriptor;
 	SpriteValues* values; // Descriptor data
 };
 

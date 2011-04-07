@@ -93,24 +93,24 @@ bool World::processDescriptor()
 int World::init()
 {
 	// Initialization
-	int entity_return_value;
+	int entityReturnValue;
 	
 	if (!processDescriptor()) // Try to load in descriptor.
 		return 2;
 	
 	player = new Entity(rc, "_NONE_", values->playersprite); // The player entity doesn't have a descriptor yet.
-	entity_return_value = player->init();
-	if (entity_return_value != 0)
-		return entity_return_value;
+	entityReturnValue = player->init();
+	if (entityReturnValue != 0)
+		return entityReturnValue;
 	
 	area = new Area(window, rc, player, values->entry->area);
 	
 	return 0;
 }
 
-void World::button_down(Gosu::Button btn)
+void World::buttonDown(const Gosu::Button btn)
 {
-	area->button_down(btn);
+	area->buttonDown(btn);
 }
 
 void World::draw()
@@ -118,8 +118,8 @@ void World::draw()
 	area->draw();
 }
 
-bool World::needs_redraw()
+bool World::needsRedraw()
 {
-	return area->needs_redraw();
+	return area->needsRedraw();
 }
 

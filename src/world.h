@@ -48,31 +48,25 @@ public:
 	~World();
 
 	int init();
-	void button_down(Gosu::Button btn);
+	void buttonDown(const Gosu::Button btn);
 	void draw();
-	bool needs_redraw();
+	bool needsRedraw();
 
 /*
-	void button_down(int id);
-	void load_area(Area* area);
+	void loadArea(Area* area);
 */
 
 private:
 	bool processDescriptor();
+
+	GameWindow* window;
+	Resourcer* rc;
 	Area* area;
 	Entity* player;
-	Resourcer* rc;
-	GameWindow* window;
+
 	std::string descriptor;
 	std::string typeTemp;
-
 	WorldValues* values; // Descriptor data
-/*
-	Window* window;
-	Resourcer* rc;
-	bool redraw;
-*/
-
 };
 
 #endif

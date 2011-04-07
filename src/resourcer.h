@@ -21,18 +21,18 @@ public:
 	Resourcer(GameWindow* window/*, string filename*/);
 	~Resourcer();
 
-//	Gosu::Font get_font(string name, float size);
-	Gosu::Image* get_image(const std::string name);
-//	vector<Tile*> get_tiles(string name, int tile_size);
-//	list<string> get_area_list();
-//	YAML* get_area(string name);
-//	Event* get_event(string name);
-//	Gosu::Music get_music(string name);
-//	Gosu::Sound get_sound(string name);
+//	Gosu::Font getFont(string name, float size);
+	Gosu::Image* getImage(const std::string name);
+//	vector<Tile*> getTiles(string name, int tileSize);
+//	list<string> getAreaList();
+//	YAML* getArea(string name);
+//	Event* getEvent(string name);
+//	Gosu::Music getMusic(string name);
+//	Gosu::Sound getSound(string name);
 	
 private:
-//	vector<byte>* get_file(string name);
-//	Magick::ImageList* create_imagelist(string name);
+//	vector<byte>* getFile(string name);
+//	Magick::ImageList* createImageList(string name);
 
 	GameWindow* window;
 //	list<libarchive_entry> files;

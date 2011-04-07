@@ -57,7 +57,7 @@ int Sprite::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return 3;
 
-	img = rc->get_image(values->sheet);
+	img = rc->getImage(values->sheet);
 	
 	return 0;
 }

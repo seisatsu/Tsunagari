@@ -22,12 +22,12 @@ int GameWindow::initEntryWorld(const std::string descriptor) {
 	return world->init();
 }
 
-void GameWindow::buttonDown(Gosu::Button btn)
+void GameWindow::buttonDown(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbEscape)
 		close();
 	else
-		world->button_down(btn);
+		world->buttonDown(btn);
 }
 
 void GameWindow::draw()
@@ -37,7 +37,7 @@ void GameWindow::draw()
 
 bool GameWindow::needsRedraw()
 {
-	return world->needs_redraw();
+	return world->needsRedraw();
 }
 
 void GameWindow::update()

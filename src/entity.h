@@ -21,21 +21,22 @@ class Sprite;
 class Entity
 {
 public:
-	Entity(Resourcer* rc, const std::string descriptor, const std::string sprite_descriptor);
+	Entity(Resourcer* rc, const std::string descriptor,
+		const std::string spriteDescriptor);
 	~Entity();
-	
+
 	int init();
 
 	void draw();
-	bool needs_redraw();
+	bool needsRedraw();
 
 	void move(int dx, int dy);
 
 /*
 	Entity(World* world, Resource* rc);
-	void set_area(Area* area);
-	void go_to(Area* area, coord_t coords);
-	coord_t get_coords();
+	void setArea(Area* area);
+	void goTo(Area* area, coord_t coords);
+	coord_t getCoords();
 	void transport(coord_t coords);
 */
 
@@ -43,7 +44,7 @@ protected:
 	Sprite* sprite;
 	Resourcer* rc;
 	std::string descriptor;
-	std::string sprite_descriptor;
+	std::string spriteDescriptor;
 	bool redraw;
 
 /*

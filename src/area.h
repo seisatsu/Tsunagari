@@ -28,10 +28,10 @@ public:
 	        const std::string filename);
 	~Area();
 
-	void button_down(const Gosu::Button btn);
+	void buttonDown(const Gosu::Button btn);
 	void draw();
-	bool needs_redraw();
-	coord_t translate_coords();
+	bool needsRedraw();
+	coord_t translateCoords();
 
 private:
 //	void build(Resourcer* rc, yaml_t* yaml);

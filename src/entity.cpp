@@ -8,11 +8,11 @@
 
 #include "entity.h"
 
-Entity::Entity(Resourcer* rc, const std::string descriptor, const std::string sprite_descriptor) : redraw(false)
+Entity::Entity(Resourcer* rc, const std::string descriptor, const std::string spriteDescriptor) : redraw(false)
 {
 	this->rc = rc;
 	this->descriptor = descriptor;
-	this->sprite_descriptor = sprite_descriptor;
+	this->spriteDescriptor = spriteDescriptor;
 }
 
 Entity::~Entity()
@@ -22,7 +22,7 @@ Entity::~Entity()
 
 int Entity::init()
 {
-	sprite = new Sprite(rc, sprite_descriptor);
+	sprite = new Sprite(rc, spriteDescriptor);
 	return sprite->init();
 }
 
@@ -32,7 +32,7 @@ void Entity::draw()
 	sprite->draw();
 }
 
-bool Entity::needs_redraw()
+bool Entity::needsRedraw()
 {
 	return redraw;
 }
