@@ -12,10 +12,11 @@
 #include <Gosu/Gosu.hpp>
 #include <json/json.h>
 
-//#include "resourcer.h"
+#include "resourcer.h"
 #include "world.h"
 
 class Entity;
+class Resourcer;
 class World;
 
 class GameWindow : public Gosu::Window
@@ -32,6 +33,7 @@ public:
 
 private:
 //	string get_datadir();
+	Resourcer* rc;
 	World* world;
 };
 

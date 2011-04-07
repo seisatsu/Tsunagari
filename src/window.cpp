@@ -10,8 +10,8 @@
 GameWindow::GameWindow(uint x, uint y, bool fullscreen)
 		: Gosu::Window(x, y, fullscreen)
 {
-	Resourcer rc(this);
-	world = new World(this, &rc);
+	rc = new Resourcer(this);
+	world = new World(this, rc);
 }
 
 GameWindow::~GameWindow()
