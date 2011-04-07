@@ -66,7 +66,6 @@ private:
 	Entity* player;
 
 	std::string descriptor;
-	std::string typeTemp;
 	WorldValues values; // Descriptor data
 };
 

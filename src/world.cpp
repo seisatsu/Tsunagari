@@ -54,7 +54,7 @@ bool World::processDescriptor()
 		return false;
 	}
 
-	typeTemp = root.get("type", "_NONE_").asString(); // type
+	std::string typeTemp = root.get("type", "_NONE_").asString(); // type
 	if (typeTemp.compare("local") == 0)
 		values.type = LOCAL;
 	else if (typeTemp.compare("network") == 0)
