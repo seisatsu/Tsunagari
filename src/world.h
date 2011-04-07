@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include <string>
+
 #include <Gosu/Gosu.hpp>
 
 #include "area.h"

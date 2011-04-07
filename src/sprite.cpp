@@ -4,6 +4,11 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <fstream>
+#include <iostream>
+
+#include <json/json.h>
+
 #include "sprite.h"
 
 Sprite::Sprite(Resourcer* rc, const std::string descriptor)

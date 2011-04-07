@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <fstream>
 #include <iostream>
 
 #include "world.h"

@@ -7,13 +7,10 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <fstream>
-#include <iostream>
 #include <stdint.h>
 #include <string>
 
 #include <Gosu/Gosu.hpp>
-#include <json/json.h>
 
 #include "common.h"
 #include "resourcer.h"
