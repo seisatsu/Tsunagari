@@ -17,7 +17,7 @@ Resourcer::~Resourcer()
 {
 }
 
-Gosu::Image* Resourcer::get_image(std::string name)
+Gosu::Image* Resourcer::get_image(const std::string name)
 {
 	return new Gosu::Image(window->graphics(), Gosu::widen(name), false);
 }

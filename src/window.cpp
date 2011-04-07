@@ -18,7 +18,7 @@ GameWindow::~GameWindow()
 	delete world;
 }
 
-bool GameWindow::initEntryWorld(std::string descriptor) {
+bool GameWindow::initEntryWorld(const std::string descriptor) {
 	return world->init(descriptor);
 }
 

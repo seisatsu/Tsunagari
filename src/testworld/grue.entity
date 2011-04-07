@@ -10,8 +10,8 @@
 		},
 		"bone.entity":
 		{
-		"chance": 80,
-		"count": [1, 8]
+			"chance": 80,
+			"count": [1, 8]
 		}
 	},
 	"events":

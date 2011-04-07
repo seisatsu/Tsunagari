@@ -29,14 +29,14 @@ enum WorldType {
 
 struct WorldEntry {
 	std::string area;
-	coord_t* coords;
+	coord_t coords;
 };
 
 struct WorldValues {
 	std::string name;
 	std::string author;
 	std::string playersprite;
-	coord_t* tilesize;
+	coord_t tilesize;
 	WorldType type;
 	WorldEntry* entry;
 };
@@ -47,7 +47,7 @@ public:
 	World(GameWindow* window, Resourcer* rc);
 	~World();
 
-	bool init(std::string descriptor);
+	bool init(const std::string descriptor);
 	void button_down(Gosu::Button btn);
 	void draw();
 	bool needs_redraw();
@@ -58,7 +58,7 @@ public:
 */
 
 private:
-	bool processDescriptor(std::string descriptor);
+	bool processDescriptor(const std::string descriptor);
 	Area* area;
 	Entity* player;
 	Resourcer* _rc;
