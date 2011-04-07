@@ -15,7 +15,6 @@ World::World(GameWindow* window, Resourcer* rc)
 	_window = window;
 	_rc = rc;
 	values = new WorldValues;
-	values->tilesize = new coord_t;
 	values->entry = new WorldEntry;
 }
 
@@ -23,8 +22,6 @@ World::~World()
 {
 	delete player;
 	delete area;
-	delete values->tilesize;
-	delete values->entry->coords;
 	delete values->entry;
 	delete values;
 }
