@@ -80,8 +80,8 @@ bool World::init(const std::string descriptor)
 	if (!processDescriptor(descriptor)) // Try to load in descriptor.
 		return false;
 	
-	area = new Area(_window, _rc, player, values->entry->area);
 	player = new Entity(_rc, "testworld/player.sheet");//values->playersprite);
+	area = new Area(_window, _rc, player, values->entry->area);
 	
 	return true;
 }
