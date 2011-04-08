@@ -43,18 +43,17 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 {
 	Json::Reader reader;
 	Json::Value root, windowsize;
-
 	std::ifstream file(filename);
 
 	if (!reader.parse(file, root))
 		return false;
 
-	/* GET:
+	/* Extract from JSON object:
 	 *  - name of World to load
 	 *  - width, height, fullscreen-ness of Window
 	 */
-	conf->world = root.get("world", "_NONE_").asString();
-	if (conf->world == "_NONE_") {
+	conf->world = root["world"].asString();
+	if (conf->world.empty()) {
 		std::cerr << "Error: " << CLIENT_CONF_FILE << ": \"world\" required.\n";
 		return false;
 	}
@@ -65,7 +64,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 		return false;
 	}
 
-	conf->windowsize.x = windowsize[uint(0)].asUInt();
+	conf->windowsize.x = windowsize[0u].asUInt();
 	conf->windowsize.y = windowsize[1].asUInt();
 
 	conf->fullscreen = root.get("fullscreen", false).asBool();
@@ -92,7 +91,7 @@ int main()
 	GameWindow window(conf.windowsize.x, conf.windowsize.y,
 		conf.fullscreen);
 
-	masterReturnValue = window.initEntryWorld(conf.world);
+	masterReturnValue = window.init(conf.world);
 	if (masterReturnValue != 0) {
 		switch (masterReturnValue) {
 			case 2:
@@ -104,7 +103,7 @@ int main()
 		}
 		return masterReturnValue;
 	}
-	
+
 	window.show();
 
 	return 0;

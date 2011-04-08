@@ -4,12 +4,13 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <json/json.h>
+
 #include "window.h"
 
 GameWindow::GameWindow(uint x, uint y, bool fullscreen)
-	: Gosu::Window(x, y, fullscreen)
+	: Gosu::Window(x, y, fullscreen), rc(new Resourcer(this))
 {
-	rc = new Resourcer(this);
 }
 
 GameWindow::~GameWindow()
@@ -18,7 +19,7 @@ GameWindow::~GameWindow()
 		delete world;
 }
 
-int GameWindow::initEntryWorld(const std::string descriptor)
+int GameWindow::init(const std::string descriptor)
 {
 	world = new World(this, rc, descriptor);
 	return world->init();

@@ -9,8 +9,8 @@
 
 #include <stdint.h>
 #include <string>
+
 #include <Gosu/Gosu.hpp>
-#include <json/json.h>
 
 #include "resourcer.h"
 #include "world.h"
@@ -25,7 +25,7 @@ public:
 	GameWindow(uint x, uint y, bool fullscreen);
 	virtual ~GameWindow();
 
-	int initEntryWorld(const std::string descriptor);
+	int init(const std::string descriptor);
 	void buttonDown(const Gosu::Button btn);
 	void draw();
 	bool needsRedraw() const;

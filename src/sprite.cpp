@@ -23,6 +23,9 @@ Sprite::~Sprite()
 		delete img;
 }
 
+/**
+ * Try to load in descriptor.
+ */
 bool Sprite::processDescriptor()
 {
 	Json::Reader reader;
@@ -32,18 +35,18 @@ bool Sprite::processDescriptor()
 	std::ifstream file(descriptor.c_str());
 
 	// Here we load in the sprite descriptor file. It's a little messy.
-	if (!reader.parse(file, root)) // Actual parsing.
+	if (!reader.parse(file, root))
 		return false;
 
 	// Begin loading in configuration values.
-	values.sheet = root.get("sheet", "_NONE_").asString(); // sheet
-	if (values.sheet.compare("_NONE_") == 0) {
+	values.sheet = root["sheet"].asString();
+	if (values.sheet.empty()) {
 		std::cerr << "Error: " << descriptor << ": \"sheet\" required.\n";
 		return false;
 	}
 
-	phases = root["phases"]; // phases
-	if (phases.size() < 1) {
+	phases = root["phases"];
+	if (!phases.size()) {
 		std::cerr << "Error: " << descriptor << ": \"phases\" [>0] required.\n";
 		return false;
 	}
@@ -54,7 +57,7 @@ bool Sprite::processDescriptor()
 
 int Sprite::init()
 {
-	if (!processDescriptor()) // Try to load in descriptor.
+	if (!processDescriptor())
 		return 3;
 
 	img = rc->getImage(values.sheet);

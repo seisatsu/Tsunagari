@@ -7,6 +7,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <json/json.h>
+
 #include "world.h"
 
 World::World(GameWindow* window, Resourcer* rc, const std::string descriptor)
@@ -23,7 +25,7 @@ World::~World()
 }
 
 bool World::processDescriptor()
-{	
+{
 	Json::Reader reader;
 	Json::Value root;
 	Json::Value entrypoint;
@@ -31,53 +33,60 @@ bool World::processDescriptor()
 
 	std::ifstream file(descriptor.c_str());
 
-	// Here we load in the world descriptor file. It's a little messy.
-	if (!reader.parse(file, root)) // Actual parsing.
+	// Here, we load in the world descriptor file. It's a little messy.
+	if (!reader.parse(file, root))
 		return false;
 
-	// Begin loading in configuration values.
-	values.name = root.get("name", "_NONE_").asString(); // name
-	if (values.name.compare("_NONE_") == 0) {
+	/* Extract from JSON object:
+	 *  - proper name and author of World
+	 *  - Sprite id to be used for the player
+	 *  - whether the world supports/requires multiplayer
+	 *  - width/height (in pixels) of tiles in this World
+	 *  - Area id and X, Y, Z coords where players start
+	 */
+	values.name = root["name"].asString();
+	if (values.name.empty()) {
 		std::cerr << "Error: " << descriptor << ": \"name\" required.\n";
 		return false;
 	}
 
-	values.author = root.get("author", "_NONE_").asString(); // author
-	if (values.author.compare("_NONE_") == 0) {
+	values.author = root["author"].asString();
+	if (values.author.empty()) {
 		std::cerr << "Error: " << descriptor << ": \"author\" required.\n";
 		return false;
 	}
 
-	values.playersprite = root.get("playersprite", "_NONE_").asString(); // playersprite
-	if (values.playersprite.compare("_NONE_") == 0) {
+	values.playersprite = root["playersprite"].asString();
+	if (values.playersprite.empty()) {
 		std::cerr << "Error: " << descriptor << ": \"playersprite\" required.\n";
 		return false;
 	}
 
-	std::string typeTemp = root.get("type", "_NONE_").asString(); // type
-	if (typeTemp.compare("local") == 0)
+	std::string typeStr = root["type"].asString();
+	if (typeStr == "local")
 		values.type = LOCAL;
-	else if (typeTemp.compare("network") == 0)
+	else if (typeStr == "network")
 		values.type = NETWORK;
 	else {
 		std::cerr << "Error: " << descriptor << ": \"type\" (local|network) required.\n";
 		return false;
 	}
 
-	tilesize = root["tilesize"]; // tilesize
+	tilesize = root["tilesize"];
 	if (tilesize.size() != 2) {
 		std::cerr << "Error: " << descriptor << ": \"tilesize\" [2] required.\n";
 		return false;
 	}
-	values.tilesize.x = tilesize[uint(0)].asUInt(); // I don't understand why I have to do this.
+	values.tilesize.x = tilesize[0u].asUInt();
 	values.tilesize.y = tilesize[1].asUInt();
 
-	entrypoint = root["entrypoint"]; // entrypoint
+	entrypoint = root["entrypoint"];
 	if (entrypoint.size() != 4) {
 		std::cerr << "Error: " << descriptor << ": \"entrypoint\" [4] required.\n";
 		return false;
 	}
-	values.entry.area = entrypoint[uint(0)].asString(); // Same thing here. The compiler assumes 0 is a signed int.
+
+	values.entry.area = entrypoint[0u].asString();
 	values.entry.coords.x = entrypoint[1].asUInt();
 	values.entry.coords.y = entrypoint[2].asUInt();
 	values.entry.coords.z = entrypoint[3].asUInt();
