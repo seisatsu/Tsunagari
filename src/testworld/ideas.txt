@@ -4,3 +4,9 @@ Dynamically linked libraries which extend core functionality of the engine throu
 Wanderlust Plugin:
 Dynamic lazy map generator. As the player explores, the plugin dynamically generates new area descriptors for large chunks of the map, which are seamlessly stitched together into one giant area. The landscape is dotted with random towns, monsters, NPCs, shops, dungeons, and other special tidbits, allowing an infinite exploration experience.
 We would release the plugin as open source, and then sell our official game data to players. It might require less work than Eraclipse for a first game.
+
+Domain Control:
+This is how we handle permissions in the multiplayer engine. The base "domain" is "user", which has base privileges. User has subdomains with additional privileges, such as the "admin" subdomain. This can, for example, define which subdomains can use certain commands. As another example, a guild can have its own subdomain of user, and only users in this subdomain can enter their guildhall area. Domains are defined in JSON domain descriptors, and can be applied to various aspects of the game.
+
+An example is in "user.domain".
+

@@ -16,11 +16,11 @@
 
 #define MSG() MessageHandler::console()
 
-
 /**
- * This probably won't be changed ever except maybe with a command line option.
+ * These probably won't be changed ever except maybe with a command line option.
  */
 #define CLIENT_CONF_FILE "./client.conf"
+#define MESSAGE_MODE DEVELOPER
 
 /**
  * Values needed prior to creating the GameWindow.
@@ -85,7 +85,7 @@ int main()
 {
 	ClientValues conf;
 	int masterReturnValue;
-	MSG()->setMode(DEVELOPER);
+	MSG()->setMode(MESSAGE_MODE);
 
 	if (!parseClientConfig(CLIENT_CONF_FILE, &conf)) {
 		MSG()->send(ERR, CLIENT_CONF_FILE, "File missing.");
