@@ -1,6 +1,6 @@
 /******************************
 ** Tsunagari Tile Engine     **
-** window.h - Window         **
+** window.h                  **
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 

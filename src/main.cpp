@@ -11,7 +11,10 @@
 #include <json/json.h>
 
 #include "common.h"
+#include "messagehandler.h"
 #include "window.h"
+
+#define MSG() MessageHandler::console()
 
 
 /**
@@ -54,13 +57,13 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	 */
 	conf->world = root["world"].asString();
 	if (conf->world.empty()) {
-		std::cerr << "Error: " << CLIENT_CONF_FILE << ": \"world\" required.\n";
+		MSG()->send(ERR, CLIENT_CONF_FILE, "\"world\" required.");
 		return false;
 	}
 
 	windowsize = root["windowsize"];
 	if (windowsize.size() != 2) {
-		std::cerr << "Error: " << CLIENT_CONF_FILE << ": \"windowsize\" [2] required.\n";
+		MSG()->send(ERR, CLIENT_CONF_FILE, "\"windowsize\" [2] required.");
 		return false;
 	}
 
@@ -82,9 +85,10 @@ int main()
 {
 	ClientValues conf;
 	int masterReturnValue;
+	MSG()->setMode(DEVELOPER);
 
 	if (!parseClientConfig(CLIENT_CONF_FILE, &conf)) {
-		std::cerr << "Error: " << CLIENT_CONF_FILE << "\n";
+		MSG()->send(ERR, CLIENT_CONF_FILE, "File missing.");
 		return 1;
 	}
 
@@ -95,10 +99,10 @@ int main()
 	if (masterReturnValue != 0) {
 		switch (masterReturnValue) {
 			case 2:
-				std::cerr << "Error: Entry point: World descriptor\n";
+				MSG()->send(ERR, "Entry Point", "World descriptor");
 				break;
 			case 3:
-				std::cerr << "Error: Entry point: Sprite descriptor\n";
+				MSG()->send(ERR, "Entry Point", "Sprite descriptor");
 				break;
 		}
 		return masterReturnValue;

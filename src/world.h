@@ -1,6 +1,6 @@
 /******************************
 ** Tsunagari Tile Engine     **
-** world.h - World           **
+** world.h                   **
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 

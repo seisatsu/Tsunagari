@@ -1,6 +1,6 @@
 /******************************
 ** Tsunagari Tile Engine     **
-** tilegrid.h - TileGrid     **
+** tilegrid.h                **
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
