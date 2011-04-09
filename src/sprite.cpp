@@ -9,7 +9,10 @@
 
 #include <json/json.h>
 
+#include "messagehandler.h"
 #include "sprite.h"
+
+#define MSG() MessageHandler::console()
 
 Sprite::Sprite(Resourcer* rc, const std::string descriptor)
 	: rc(rc), descriptor(descriptor)
@@ -41,13 +44,13 @@ bool Sprite::processDescriptor()
 	// Begin loading in configuration values.
 	values.sheet = root["sheet"].asString();
 	if (values.sheet.empty()) {
-		std::cerr << "Error: " << descriptor << ": \"sheet\" required.\n";
+		MSG()->send(ERR, descriptor, "\"sheet\" required.\n");
 		return false;
 	}
 
 	phases = root["phases"];
 	if (!phases.size()) {
-		std::cerr << "Error: " << descriptor << ": \"phases\" [>0] required.\n";
+		MSG()->send(ERR, descriptor, "\"phases\" [>0] required.\n");
 		return false;
 	}
 	values.phases.phase = phases.get("player", 0).asUInt();

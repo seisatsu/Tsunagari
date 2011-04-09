@@ -9,7 +9,10 @@
 
 #include <json/json.h>
 
+#include "messagehandler.h"
 #include "world.h"
+
+#define MSG() MessageHandler::console()
 
 World::World(GameWindow* window, Resourcer* rc, const std::string descriptor)
 	: window(window), rc(rc), descriptor(descriptor)
@@ -46,19 +49,19 @@ bool World::processDescriptor()
 	 */
 	values.name = root["name"].asString();
 	if (values.name.empty()) {
-		std::cerr << "Error: " << descriptor << ": \"name\" required.\n";
+		MSG()->send(ERR, descriptor, "\"name\" required.\n");
 		return false;
 	}
 
 	values.author = root["author"].asString();
 	if (values.author.empty()) {
-		std::cerr << "Error: " << descriptor << ": \"author\" required.\n";
+		MSG()->send(ERR, descriptor, "\"author\" required.\n");
 		return false;
 	}
 
 	values.playersprite = root["playersprite"].asString();
 	if (values.playersprite.empty()) {
-		std::cerr << "Error: " << descriptor << ": \"playersprite\" required.\n";
+		MSG()->send(ERR, descriptor, "\"playersprite\" required.\n");
 		return false;
 	}
 
@@ -68,13 +71,13 @@ bool World::processDescriptor()
 	else if (typeStr == "network")
 		values.type = NETWORK;
 	else {
-		std::cerr << "Error: " << descriptor << ": \"type\" (local|network) required.\n";
+		MSG()->send(ERR, descriptor, "\"type\" (local|network) required.\n");
 		return false;
 	}
 
 	tilesize = root["tilesize"];
 	if (tilesize.size() != 2) {
-		std::cerr << "Error: " << descriptor << ": \"tilesize\" [2] required.\n";
+		MSG()->send(ERR, descriptor, ": \"tilesize\" [2] required.\n");
 		return false;
 	}
 	values.tilesize.x = tilesize[0u].asUInt();
@@ -82,7 +85,7 @@ bool World::processDescriptor()
 
 	entrypoint = root["entrypoint"];
 	if (entrypoint.size() != 4) {
-		std::cerr << "Error: " << descriptor << ": \"entrypoint\" [4] required.\n";
+		MSG()->send(ERR, descriptor, "\"entrypoint\" [4] required.\n");
 		return false;
 	}
 
