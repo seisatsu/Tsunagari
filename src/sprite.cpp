@@ -4,12 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <fstream>
-#include <iostream>
-
-#include <json/json.h>
-
-#include "messagehandler.h"
 #include "sprite.h"
 
 #define MSG() MessageHandler::console()

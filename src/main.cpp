@@ -5,7 +5,7 @@
 ******************************/
 
 #include <fstream>
-#include <iostream>
+#include <istream>
 #include <string>
 
 #include <json/json.h>

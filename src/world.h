@@ -7,14 +7,18 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <fstream>
+#include <istream>
 #include <stdint.h>
 #include <string>
 
 #include <Gosu/Gosu.hpp>
+#include <json/json.h>
 
 #include "area.h"
 #include "common.h"
 #include "entity.h"
+#include "messagehandler.h"
 #include "resourcer.h"
 #include "window.h"
 
