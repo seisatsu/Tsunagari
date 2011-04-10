@@ -6,8 +6,6 @@
 
 #include "world.h"
 
-#define MSG() MessageHandler::console()
-
 World::World(GameWindow* window, Resourcer* rc, const std::string descriptor)
 	: window(window), rc(rc), descriptor(descriptor)
 {
@@ -31,8 +29,10 @@ bool World::processDescriptor()
 	std::ifstream file(descriptor.c_str());
 
 	// Here, we load in the world descriptor file. It's a little messy.
-	if (!reader.parse(file, root))
+	if (!reader.parse(file, root)) {
+		Log::err(descriptor, "File missing.");
 		return false;
+	}
 
 	/* Extract from JSON object:
 	 *  - proper name and author of World
@@ -43,19 +43,19 @@ bool World::processDescriptor()
 	 */
 	values.name = root["name"].asString();
 	if (values.name.empty()) {
-		MSG()->send(ERR, descriptor, "\"name\" required.\n");
+		Log::err(descriptor, "\"name\" required.\n");
 		return false;
 	}
 
 	values.author = root["author"].asString();
 	if (values.author.empty()) {
-		MSG()->send(ERR, descriptor, "\"author\" required.\n");
+		Log::err(descriptor, "\"author\" required.\n");
 		return false;
 	}
 
 	values.playersprite = root["playersprite"].asString();
 	if (values.playersprite.empty()) {
-		MSG()->send(ERR, descriptor, "\"playersprite\" required.\n");
+		Log::err(descriptor, "\"playersprite\" required.\n");
 		return false;
 	}
 
@@ -65,13 +65,13 @@ bool World::processDescriptor()
 	else if (typeStr == "network")
 		values.type = NETWORK;
 	else {
-		MSG()->send(ERR, descriptor, "\"type\" (local|network) required.\n");
+		Log::err(descriptor, "\"type\" (local|network) required.\n");
 		return false;
 	}
 
 	tilesize = root["tilesize"];
 	if (tilesize.size() != 2) {
-		MSG()->send(ERR, descriptor, ": \"tilesize\" [2] required.\n");
+		Log::err(descriptor, ": \"tilesize\" [2] required.\n");
 		return false;
 	}
 	values.tilesize.x = tilesize[0u].asUInt();
@@ -79,7 +79,7 @@ bool World::processDescriptor()
 
 	entrypoint = root["entrypoint"];
 	if (entrypoint.size() != 4) {
-		MSG()->send(ERR, descriptor, "\"entrypoint\" [4] required.\n");
+		Log::err(descriptor, "\"entrypoint\" [4] required.\n");
 		return false;
 	}
 
@@ -91,22 +91,18 @@ bool World::processDescriptor()
 	return true;
 }
 
-int World::init()
+bool World::init()
 {
-	// Initialization
-	int entityReturnValue;
-
 	if (!processDescriptor()) // Try to load in descriptor.
-		return 2;
+		return false;
 
 	player = new Entity(rc, "_NONE_", values.playersprite); // The player entity doesn't have a descriptor yet.
-	entityReturnValue = player->init();
-	if (entityReturnValue != 0)
-		return entityReturnValue;
+	if (!player->init())
+		return false;
 
 	area = new Area(window, rc, player, values.entry.area);
 
-	return 0;
+	return true;
 }
 
 void World::buttonDown(const Gosu::Button btn)

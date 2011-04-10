@@ -6,10 +6,8 @@
 
 #include "sprite.h"
 
-#define MSG() MessageHandler::console()
-
 Sprite::Sprite(Resourcer* rc, const std::string descriptor)
-	: rc(rc), descriptor(descriptor)
+	: rc(rc), img(NULL), descriptor(descriptor)
 {
 	c.x = c.y = 0;
 }
@@ -32,19 +30,21 @@ bool Sprite::processDescriptor()
 	std::ifstream file(descriptor.c_str());
 
 	// Here we load in the sprite descriptor file. It's a little messy.
-	if (!reader.parse(file, root))
+	if (!reader.parse(file, root)) {
+		Log::err(descriptor, "File missing.");
 		return false;
+	}
 
 	// Begin loading in configuration values.
 	values.sheet = root["sheet"].asString();
 	if (values.sheet.empty()) {
-		MSG()->send(ERR, descriptor, "\"sheet\" required.\n");
+		Log::err(descriptor, "\"sheet\" required.\n");
 		return false;
 	}
 
 	phases = root["phases"];
 	if (!phases.size()) {
-		MSG()->send(ERR, descriptor, "\"phases\" [>0] required.\n");
+		Log::err(descriptor, "\"phases\" [>0] required.\n");
 		return false;
 	}
 	values.phases.phase = phases.get("player", 0).asUInt();
@@ -52,14 +52,14 @@ bool Sprite::processDescriptor()
 	return true;
 }
 
-int Sprite::init()
+bool Sprite::init()
 {
 	if (!processDescriptor())
-		return 3;
+		return false;
 
 	img = rc->getImage(values.sheet);
 
-	return 0;
+	return true;
 }
 
 void Sprite::draw() const

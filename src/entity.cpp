@@ -24,7 +24,7 @@ Entity::~Entity()
 		delete sprite;
 }
 
-int Entity::init()
+bool Entity::init()
 {
 	sprite = new Sprite(rc, spriteDescriptor);
 	return sprite->init();

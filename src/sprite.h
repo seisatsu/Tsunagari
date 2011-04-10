@@ -16,7 +16,7 @@
 #include <json/json.h>
 
 #include "common.h"
-#include "messagehandler.h"
+#include "log.h"
 #include "resourcer.h"
 
 
@@ -50,7 +50,7 @@ public:
 	Sprite(Resourcer* rc, const std::string descriptor);
 	~Sprite();
 
-	int init();
+	bool init();
 
 	void draw() const;
 

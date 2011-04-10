@@ -25,7 +25,7 @@ public:
 		const std::string spriteDescriptor);
 	~Entity();
 
-	int init();
+	bool init();
 
 	void draw();
 	bool needsRedraw() const;

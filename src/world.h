@@ -18,7 +18,7 @@
 #include "area.h"
 #include "common.h"
 #include "entity.h"
-#include "messagehandler.h"
+#include "log.h"
 #include "resourcer.h"
 #include "window.h"
 
@@ -52,7 +52,7 @@ public:
 	World(GameWindow* window, Resourcer* rc, const std::string descriptor);
 	~World();
 
-	int init();
+	bool init();
 	void buttonDown(const Gosu::Button btn);
 	void draw();
 	bool needsRedraw() const;

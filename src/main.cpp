@@ -11,16 +11,14 @@
 #include <json/json.h>
 
 #include "common.h"
-#include "messagehandler.h"
+#include "log.h"
 #include "window.h"
-
-#define MSG() MessageHandler::console()
 
 /**
  * These probably won't be changed ever except maybe with a command line option.
  */
 #define CLIENT_CONF_FILE "./client.conf"
-#define MESSAGE_MODE DEVELOPER
+#define MESSAGE_MODE MM_DEVELOPER
 
 /**
  * Values needed prior to creating the GameWindow.
@@ -48,8 +46,10 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	Json::Value root, windowsize;
 	std::ifstream file(filename);
 
-	if (!reader.parse(file, root))
+	if (!reader.parse(file, root)) {
+		Log::err(CLIENT_CONF_FILE, "File missing.");
 		return false;
+	}
 
 	/* Extract from JSON object:
 	 *  - name of World to load
@@ -57,13 +57,13 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	 */
 	conf->world = root["world"].asString();
 	if (conf->world.empty()) {
-		MSG()->send(ERR, CLIENT_CONF_FILE, "\"world\" required.");
+		Log::err(CLIENT_CONF_FILE, "\"world\" required.");
 		return false;
 	}
 
 	windowsize = root["windowsize"];
 	if (windowsize.size() != 2) {
-		MSG()->send(ERR, CLIENT_CONF_FILE, "\"windowsize\" [2] required.");
+		Log::err(CLIENT_CONF_FILE, "\"windowsize\" [2] required.");
 		return false;
 	}
 
@@ -84,30 +84,15 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 int main()
 {
 	ClientValues conf;
-	int masterReturnValue;
-	MSG()->setMode(MESSAGE_MODE);
+	Log::setMode(MESSAGE_MODE);
 
-	if (!parseClientConfig(CLIENT_CONF_FILE, &conf)) {
-		MSG()->send(ERR, CLIENT_CONF_FILE, "File missing.");
+	if (!parseClientConfig(CLIENT_CONF_FILE, &conf))
 		return 1;
-	}
 
 	GameWindow window(conf.windowsize.x, conf.windowsize.y,
 		conf.fullscreen);
-
-	masterReturnValue = window.init(conf.world);
-	if (masterReturnValue != 0) {
-		switch (masterReturnValue) {
-			case 2:
-				MSG()->send(ERR, "Entry Point", "World descriptor");
-				break;
-			case 3:
-				MSG()->send(ERR, "Entry Point", "Sprite descriptor");
-				break;
-		}
-		return masterReturnValue;
-	}
-
+	if (!window.init(conf.world))
+		return 1;
 	window.show();
 
 	return 0;
