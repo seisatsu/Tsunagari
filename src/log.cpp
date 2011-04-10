@@ -24,8 +24,8 @@ void Log::setMode(message_mode_t mode)
 	l->mode = mode;
 }
 
-// Give output to the "write" function if it is allowed to be sent in the current
-// mode.
+// Give output to the "write" function if it is allowed to be sent in the
+// current mode.
 void Log::err(std::string domain, std::string message)
 {
 	std::cerr << "Err: " << domain << ": " << message << std::endl;

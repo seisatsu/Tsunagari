@@ -4,11 +4,11 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#ifndef LOG_H
+#define LOG_H
+
 #include <iostream>
 #include <string>
-
-#ifndef MESSAGEHANDLER_H
-#define MESSAGEHANDLER_H
 
 enum message_mode_t {
 	MM_SILENT, // Only error messages are sent to the console.
