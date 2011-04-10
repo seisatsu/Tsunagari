@@ -4,10 +4,16 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <fstream>
+#include <istream>
+
+#include <json/json.h>
+
+#include "log.h"
 #include "world.h"
 
-World::World(GameWindow* window, Resourcer* rc, const std::string descriptor)
-	: window(window), rc(rc), descriptor(descriptor)
+World::World(Resourcer* rc, const std::string descriptor)
+	: rc(rc), descriptor(descriptor)
 {
 }
 
@@ -17,6 +23,36 @@ World::~World()
 		delete player;
 	if (area)
 		delete area;
+}
+
+bool World::init()
+{
+	if (!processDescriptor()) // Try to load in descriptor.
+		return false;
+
+	// The player entity doesn't have a descriptor yet.
+	player = new Entity(rc, "_NONE_", values.playersprite);
+	if (!player->init())
+		return false;
+
+	area = new Area(rc, player, values.entry.area);
+
+	return true;
+}
+
+void World::buttonDown(const Gosu::Button btn)
+{
+	area->buttonDown(btn);
+}
+
+void World::draw()
+{
+	area->draw();
+}
+
+bool World::needsRedraw() const
+{
+	return area->needsRedraw();
 }
 
 bool World::processDescriptor()
@@ -89,34 +125,5 @@ bool World::processDescriptor()
 	values.entry.coords.z = entrypoint[3].asUInt();
 
 	return true;
-}
-
-bool World::init()
-{
-	if (!processDescriptor()) // Try to load in descriptor.
-		return false;
-
-	player = new Entity(rc, "_NONE_", values.playersprite); // The player entity doesn't have a descriptor yet.
-	if (!player->init())
-		return false;
-
-	area = new Area(window, rc, player, values.entry.area);
-
-	return true;
-}
-
-void World::buttonDown(const Gosu::Button btn)
-{
-	area->buttonDown(btn);
-}
-
-void World::draw()
-{
-	area->draw();
-}
-
-bool World::needsRedraw() const
-{
-	return area->needsRedraw();
 }
 

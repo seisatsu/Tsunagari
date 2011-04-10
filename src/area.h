@@ -15,7 +15,6 @@
 #include "entity.h"
 #include "resourcer.h"
 //#include "tilegrid.h"
-#include "window.h"
 
 class Entity;
 class GameWindow;
@@ -24,8 +23,7 @@ class Resourcer;
 class Area
 {
 public:
-	Area(GameWindow* window, Resourcer* rc, Entity* player,
-	        const std::string filename);
+	Area(Resourcer* rc, Entity* player, const std::string filename);
 	~Area();
 
 	void buttonDown(const Gosu::Button btn);

@@ -15,7 +15,6 @@
 #include "resourcer.h"
 #include "world.h"
 
-class Entity;
 class Resourcer;
 class World;
 

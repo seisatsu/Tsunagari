@@ -21,7 +21,7 @@ GameWindow::~GameWindow()
 
 bool GameWindow::init(const std::string descriptor)
 {
-	world = new World(this, rc, descriptor);
+	world = new World(rc, descriptor);
 	return world->init();
 }
 
