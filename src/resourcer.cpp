@@ -8,13 +8,13 @@
 #include <stdio.h>
 
 #include <Gosu/Utility.hpp>
-#include <libmpq/mpq.h>
+#include <zip.h>
 
 #include "log.h"
 #include "resourcer.h"
 
 Resourcer::Resourcer(GameWindow* window, const std::string& filename)
-	: window(window), filename(filename + ".mpq")
+	: window(window), filename(filename + ".zip")
 {
 }
 
@@ -38,53 +38,88 @@ Gosu::Image* Resourcer::getImage(const std::string& name)
 // XXX: Can we just return Gosu::Buffer type?
 void Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 {
-	mpq_archive *a;
-	uint32_t file_index;
-	off_t size;
+	zip* z;
+	struct zip_stat stat;
+	zip_file* zf;
+	int size;
 
-	if (libmpq__archive_open(&a, filename.c_str(), -1)) {
-		Log::err("read", "opening");
-		exit(1);
+	z = zip_open(filename.c_str(), 0x0, NULL);
+	if (!z) {
+		Log::err("Rc::read", "zip_open");
+		return;
 	}
 
-	if (libmpq__file_number(a, name.c_str(), &file_index)) {
-		Log::err("read", "file index");
-		exit(1);
+	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
+		zip_close(z);
+		Log::err("Rc::read", "zip_stat");
+		return;
 	}
-	libmpq__file_unpacked_size(a, file_index, &size);
 
+	size = stat.size;
 	buffer->resize(size);
-	libmpq__file_read(a, file_index, (uint8_t*)buffer->data(), size, NULL);
 
-	libmpq__archive_close(a);
+	zf = zip_fopen(z, name.c_str(), 0x0);
+	if (!zf) {
+		zip_close(z);
+		Log::err("Rc::read", "zip_fopen");
+		return;
+	}
+
+	if (zip_fread(zf, buffer->data(), size) != size) {
+		zip_fclose(zf);
+		zip_close(z);
+		Log::err("Rc::read", "zip_fread");
+		return;
+	}
+
+	zip_fclose(zf);
+	zip_close(z);
 }
 
 std::string Resourcer::getString(const std::string& name)
 {
-	mpq_archive *a;
-	uint32_t file_index;
-	off_t size;
-	char *buf;
+	zip* z;
+	struct zip_stat stat;
+	zip_file* zf;
+	int size;
+	char* buf;
 	std::string str;
 
-	if (libmpq__archive_open(&a, filename.c_str(), -1)) {
-		Log::err("read", "opening");
-		exit(1);
+	z = zip_open(filename.c_str(), 0x0, NULL);
+	if (!z) {
+		Log::err("Rc::getString", "zip_open");
+		return "";
 	}
 
-	if (libmpq__file_number(a, name.c_str(), &file_index)) {
-		Log::err("read", "file index");
-		exit(1);
+	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
+		zip_close(z);
+		Log::err("Rc::getString", "zip_stat");
+		return "";
 	}
-	libmpq__file_unpacked_size(a, file_index, &size);
 
+	size = stat.size;
 	buf = new char[size + 1];
 	buf[size] = '\0';
-	libmpq__file_read(a, file_index, (uint8_t*)buf, size, NULL);
+
+	zf = zip_fopen(z, name.c_str(), 0x0);
+	if (!zf) {
+		zip_close(z);
+		Log::err("Rc::getString", "zip_fopen");
+		return "";
+	}
+
+	if (zip_fread(zf, buf, size) != size) {
+		zip_fclose(zf);
+		zip_close(z);
+		Log::err("Rc::getString", "zip_fread");
+		return "";
+	}
+
 	str = buf;
 	delete[] buf;
 
-	libmpq__archive_close(a);
+	zip_fclose(zf);
+	zip_close(z);
 
 	return str;
 }
