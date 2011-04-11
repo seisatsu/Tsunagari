@@ -7,26 +7,25 @@
 #include "log.h"
 
 // Singleton Enforcement
-Log* Log::pInstance = NULL;
-
-// Singleton Enforcement
 Log* Log::instance()
 {
-	if (!pInstance)
-		pInstance = new Log;
+	static Log* inst = NULL;
 
-	return pInstance;
+	if (!inst)
+		inst = new Log;
+
+	return inst;
 }
 
 // Specify mode setting.
 void Log::setMode(message_mode_t mode)
 {
-	Log* mh = instance();
-	mh->mode = mode;
+	Log* l = instance();
+	l->mode = mode;
 }
 
-// Give output to the "write" function if it is allowed to be sent in the current
-// mode.
+// Give output to the "write" function if it is allowed to be sent in the
+// current mode.
 void Log::err(std::string domain, std::string message)
 {
 	std::cerr << "Err: " << domain << ": " << message << std::endl;

@@ -8,7 +8,7 @@
 
 #include "area.h"
 
-Area::Area(GameWindow* , Resourcer* , Entity* player, const std::string )
+Area::Area(Resourcer* , Entity* player, const std::string )
 	: player(player)
 {
 }

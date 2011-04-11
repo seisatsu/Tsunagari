@@ -7,23 +7,19 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <fstream>
-#include <istream>
 #include <stdint.h>
 #include <string>
 
 #include <Gosu/Gosu.hpp>
-#include <json/json.h>
 
 #include "common.h"
-#include "log.h"
 #include "resourcer.h"
 
 
 class Resourcer;
 
 struct SpritePhases {
-	uint phase; // Will be replaced with a vector later.
+	uint32_t phase; // Will be replaced with a vector later.
 };
 
 struct SpriteValues {
