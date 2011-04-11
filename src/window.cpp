@@ -9,7 +9,7 @@
 #include "window.h"
 
 GameWindow::GameWindow(uint x, uint y, bool fullscreen)
-	: Gosu::Window(x, y, fullscreen), rc(new Resourcer(this))
+	: Gosu::Window(x, y, fullscreen)
 {
 }
 
@@ -21,7 +21,8 @@ GameWindow::~GameWindow()
 
 bool GameWindow::init(const std::string descriptor)
 {
-	world = new World(rc, descriptor);
+	rc = new Resourcer(this, descriptor);
+	world = new World(rc, descriptor + ".world");
 	return world->init();
 }
 

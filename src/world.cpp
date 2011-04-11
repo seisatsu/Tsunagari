@@ -62,10 +62,10 @@ bool World::processDescriptor()
 	Json::Value entrypoint;
 	Json::Value tilesize;
 
-	std::ifstream file(descriptor.c_str());
+	std::string data = rc->getString(descriptor);
 
 	// Here, we load in the world descriptor file. It's a little messy.
-	if (!reader.parse(file, root)) {
+	if (!reader.parse(data, root)) {
 		Log::err(descriptor, "File missing.");
 		return false;
 	}

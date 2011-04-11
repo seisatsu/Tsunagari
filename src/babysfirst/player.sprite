@@ -1,5 +1,5 @@
 {
-	"sheet": "testworld/player.sheet",
+	"sheet": "player.sheet",
 	"phases":
 	{
 		"player": 0
