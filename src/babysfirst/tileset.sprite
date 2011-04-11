@@ -1,5 +1,5 @@
 {
-	"sheet": "testworld/tileset.sheet",
+	"sheet": "tileset.sheet",
 	"phases":
 	{
 		"wall": 0,

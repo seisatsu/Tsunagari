@@ -2,7 +2,7 @@
 	"name": "Baby's First Area",
 	"author": "Michael Reiley",
 	"music": "wind.ogg",
-	"tileset": "testworld/tileset.sprite",
+	"tileset": "tileset.sprite",
 	"map":
 	[
 		[
