@@ -13,7 +13,7 @@
 #include "world.h"
 
 World::World(Resourcer* rc, const std::string descriptor)
-	: rc(rc), descriptor(descriptor)
+	: rc(rc), area(NULL), player(NULL), descriptor(descriptor)
 {
 }
 
