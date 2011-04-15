@@ -23,6 +23,7 @@ public:
 	Resourcer(GameWindow* window, const std::string& filename);
 	~Resourcer();
 
+	std::string tpkgName();
 	Gosu::Image* getImage(const std::string& name);
 	std::string getString(const std::string& name);
 //	Gosu::Font getFont(string name, float size);

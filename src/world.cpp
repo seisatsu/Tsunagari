@@ -63,6 +63,10 @@ bool World::processDescriptor()
 	Json::Value tilesize;
 
 	std::string data = rc->getString(descriptor);
+	if (data.empty()) {
+		Log::err(rc->tpkgName(), "Could not load tpkg.");
+		return false;
+	}
 
 	// Here, we load in the world descriptor file. It's a little messy.
 	if (!reader.parse(data, root)) {

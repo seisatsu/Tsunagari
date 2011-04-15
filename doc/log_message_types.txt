@@ -1,0 +1,36 @@
+- Err/Error Mode:
+
+Logs fatal errors in a way which is easy for the end user to understand.
+
+Examples:
+Error: babysfirst.tpkg/player.sprite: File missing.
+Error: ./client.conf: "world" required.
+
+
+- Dev/Devel Mode:
+
+Logs in-depth chains of events taking place within the engine.
+
+Example chain of events:
+Devel: Resourcer: Cached "babysfirst.tpkg/babysfirst.area".
+Devel: babysfirst.tpkg/babysfirst.area: Area loaded.
+Devel: babysfirst.tpkg/babysfirst.area: Running on_enter event "babysfirst_area_entry()".
+Devel: babysfirst.tpkg/babysfirst.area: Player at 0x12.
+Devel: Resourcer: Cached "babysfirst.tpkg/grue.entity".
+Devel: babysfirst.tpkg/grue.entity: Entity loaded.
+Devel: babysfirst.tpkg/babysfirst.area: New entity "Grue" ID 0 at 12x27.
+Devel: babysfirst.tpkg/babysfirst.area: New entity "Grue" ID 1 at 32x17.
+Devel: babysfirst.tpkg/babysfirst.area: New entity "Grue" ID 2 at 24x9.
+Devel: babysfirst.tpkg/babysfirst.area: New entity "Grue" ID 2 at 24x9.
+Devel: babysfirst.tpkg/grue.entity: ID 0 moving 12x27 to 12x28.
+Devel: babysfirst.tpkg/babysfirst.area: Entity "Grue" ID 0 attempted move 12x27 to 12x28 onto NOWALK tile.
+
+
+- Dbg/Debug Mode:
+
+Gives additional information regarding the internal structural area in which an error occurs.
+
+Examples:
+Debug: Resourcer: Read: zip_open failed.
+Debug: Resourcer: Read: zip_stat failed.
+

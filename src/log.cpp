@@ -28,20 +28,20 @@ void Log::setMode(message_mode_t mode)
 // current mode.
 void Log::err(std::string domain, std::string message)
 {
-	std::cerr << "Err: " << domain << ": " << message << std::endl;
+	std::cerr << "Error: " << domain << ": " << message << std::endl;
 }
 
 void Log::dev(std::string domain, std::string message)
 {
 	Log* l = instance();
 	if (l->mode == MM_DEBUG || l->mode == MM_DEVELOPER)
-		std::cerr << "Dev: " << domain << ": " << message << std::endl;
+		std::cerr << "Devel: " << domain << ": " << message << std::endl;
 }
 
 void Log::dbg(std::string domain, std::string message)
 {
 	Log* l = instance();
 	if (l->mode == MM_DEBUG)
-		std::cerr << "Dbg: " << domain << ": " << message << std::endl;
+		std::cerr << "Debug: " << domain << ": " << message << std::endl;
 }
 

@@ -18,7 +18,7 @@
  * These probably won't be changed ever except maybe with a command line option.
  */
 #define CLIENT_CONF_FILE "./client.conf"
-#define MESSAGE_MODE MM_DEVELOPER
+#define MESSAGE_MODE MM_DEBUG
 
 /**
  * Values needed prior to creating the GameWindow.
