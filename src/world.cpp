@@ -12,8 +12,8 @@
 #include "log.h"
 #include "world.h"
 
-World::World(Resourcer* rc, const std::string descriptor)
-	: rc(rc), area(NULL), player(NULL), descriptor(descriptor)
+World::World(Resourcer* rc)
+	: rc(rc), area(NULL), player(NULL)
 {
 }
 
@@ -55,16 +55,16 @@ bool World::needsRedraw() const
 
 bool World::processDescriptor()
 {
+	static const std::string descriptor = "world.conf";
+
 	Json::Reader reader;
 	Json::Value root;
 	Json::Value entrypoint;
 	Json::Value tilesize;
 
 	std::string data = rc->getString(descriptor);
-	if (data.empty()) {
-		Log::err(descriptor, "File missing.");
+	if (data.empty())
 		return false;
-	}
 
 	if (!reader.parse(data, root)) {
 		Log::err(descriptor, "JSON parsing error.");

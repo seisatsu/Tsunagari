@@ -42,7 +42,7 @@ struct WorldValues {
 class World
 {
 public:
-	World(Resourcer* rc, const std::string descriptor);
+	World(Resourcer* rc);
 	~World();
 
 	bool init();
@@ -61,7 +61,6 @@ private:
 	Area* area;
 	Entity* player;
 
-	const std::string descriptor;
 	WorldValues values; // Descriptor data
 };
 

@@ -60,8 +60,7 @@ std::string Resourcer::getString(const std::string& name)
 	std::string str;
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		zip_close(z);
-		Log::dbg("Resourcer::getString", "zip_stat failed.");
+		Log::err(path(name), "file missing");
 		return "";
 	}
 
@@ -71,15 +70,14 @@ std::string Resourcer::getString(const std::string& name)
 
 	zf = zip_fopen(z, name.c_str(), 0x0);
 	if (!zf) {
-		zip_close(z);
-		Log::dbg("Resourcer::getString", "zip_fopen failed.");
+		Log::err(path(name),
+		         std::string("opening : ") + zip_strerror(z));
 		return "";
 	}
 
 	if (zip_fread(zf, buf, size) != size) {
+		Log::err(path(name), "reading didn't complete");
 		zip_fclose(zf);
-		zip_close(z);
-		Log::dbg("Resourcer::getString", "zip_fread failed.");
 		return "";
 	}
 
@@ -87,7 +85,6 @@ std::string Resourcer::getString(const std::string& name)
 	delete[] buf;
 
 	zip_fclose(zf);
-
 	return str;
 }
 
@@ -99,7 +96,7 @@ bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 	int size;
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		Log::err(path(name), "not found");
+		Log::err(path(name), "file missing");
 		return false;
 	}
 

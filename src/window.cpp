@@ -18,8 +18,8 @@ GameWindow::~GameWindow()
 
 bool GameWindow::init(const std::string descriptor)
 {
-	rc = new Resourcer(this, descriptor + ".world");
-	world = new World(rc, descriptor + ".world");
+	rc = new Resourcer(this, descriptor);
+	world = new World(rc);
 	return rc->init() && world->init();
 }
 
