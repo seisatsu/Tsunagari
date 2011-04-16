@@ -18,7 +18,7 @@ GameWindow::~GameWindow()
 
 bool GameWindow::init(const std::string descriptor)
 {
-	rc = new Resourcer(this, descriptor + ".tpkg");
+	rc = new Resourcer(this, descriptor + ".world");
 	world = new World(rc, descriptor + ".world");
 	return rc->init() && world->init();
 }
