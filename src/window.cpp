@@ -4,8 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <json/json.h>
-
 #include "window.h"
 
 GameWindow::GameWindow(uint x, uint y, bool fullscreen)

@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <errno.h>
 #include <stdlib.h>
 
 #include "log.h"
@@ -16,17 +17,20 @@ Resourcer::Resourcer(GameWindow* window, const std::string& filename)
 
 Resourcer::~Resourcer()
 {
-	if (z) {
-		zip_close(z);
+	if (z && zip_close(z)) {
+		Log::err("Resourcer::~Resourcer",
+		         "closing " + filename + ": " + zip_strerror(z));
 	}
 }
 
 bool Resourcer::init()
 {
-	z = zip_open(filename.c_str(), 0x0, NULL);
+	int err;
+	z = zip_open(filename.c_str(), 0x0, &err);
 	if (!z) {
-		Log::err("Resourcer::init",
-		         "Failed to open ZIP file: " + filename);
+		char buf[512];
+		zip_error_to_str(buf, sizeof(buf), err, errno);
+		Log::err("Resourcer::init", filename + ": " + buf);
 		return false;
 	}
 
@@ -96,7 +100,7 @@ bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 	int size;
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		Log::err("Resourcer::read", "ZIP entry not found: " + name);
+		Log::err("Resourcer::read", name + " not found");
 		return false;
 	}
 
@@ -106,15 +110,13 @@ bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 	zf = zip_fopen(z, name.c_str(), 0x0);
 	if (!zf) {
 		Log::err("Resourcer::read",
-		         "opening ZIP entry " + name + " failed: "
-			   + zip_strerror(z));
+		         "opening " + name + " failed: " + zip_strerror(z));
 		return false;
 	}
 
 	if (zip_fread(zf, buffer->data(), size) != size) {
 		Log::err("Resourcer::read",
-		         "reading ZIP entry " + name
-			   + " failed: didn't complete");
+		         "reading " + name + " failed: didn't complete");
 		zip_fclose(zf);
 		return false;
 	}

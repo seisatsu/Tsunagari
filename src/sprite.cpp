@@ -61,10 +61,8 @@ bool Sprite::init()
 {
 	if (!processDescriptor())
 		return false;
-
 	img = rc->getImage(values.sheet);
-
-	return true;
+	return img != NULL;
 }
 
 void Sprite::draw() const
