@@ -1,5 +1,5 @@
 CXXFLAGS = -g -Wall -Wextra -pedantic -ansi
-LDFLAGS = -g -lgosu -ljson -lzip
+LDFLAGS = -g -lgosu -ljson -lzip -lfreeimage
 
 all: tsu
 

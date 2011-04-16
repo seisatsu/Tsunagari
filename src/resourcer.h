@@ -34,10 +34,11 @@ public:
 
 private:
 	bool read(const std::string& name, Gosu::Buffer* buffer);
+	std::string path(const std::string& entry_name);
 
 	GameWindow* window;
-	std::string filename;
 	zip* z;
+	std::string zip_filename;
 };
 
 #endif

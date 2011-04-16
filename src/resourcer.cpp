@@ -10,27 +10,26 @@
 #include "log.h"
 #include "resourcer.h"
 
-Resourcer::Resourcer(GameWindow* window, const std::string& filename)
-	: window(window), filename(filename), z(NULL)
+Resourcer::Resourcer(GameWindow* window, const std::string& zip_filename)
+	: window(window), z(NULL), zip_filename(zip_filename)
 {
 }
 
 Resourcer::~Resourcer()
 {
-	if (z && zip_close(z)) {
-		Log::err("Resourcer::~Resourcer",
-		         "closing " + filename + ": " + zip_strerror(z));
-	}
+	if (z && zip_close(z))
+		Log::err(zip_filename,
+		         std::string("closing : ") + zip_strerror(z));
 }
 
 bool Resourcer::init()
 {
 	int err;
-	z = zip_open(filename.c_str(), 0x0, &err);
+	z = zip_open(zip_filename.c_str(), 0x0, &err);
 	if (!z) {
 		char buf[512];
 		zip_error_to_str(buf, sizeof(buf), err, errno);
-		Log::err("Resourcer::init", filename + ": " + buf);
+		Log::err(zip_filename, buf);
 		return false;
 	}
 
@@ -39,7 +38,7 @@ bool Resourcer::init()
 
 const std::string Resourcer::getFilename()
 {
-	return filename;
+	return zip_filename;
 }
 
 Gosu::Image* Resourcer::getImage(const std::string& name)
@@ -100,28 +99,31 @@ bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 	int size;
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		Log::err("Resourcer::read", name + " not found");
+		Log::err(path(name), "not found");
 		return false;
 	}
 
 	size = stat.size;
 	buffer->resize(size);
 
-	zf = zip_fopen(z, name.c_str(), 0x0);
-	if (!zf) {
-		Log::err("Resourcer::read",
-		         "opening " + name + " failed: " + zip_strerror(z));
+	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
+		Log::err(path(name),
+		         std::string("opening : ") + zip_strerror(z));
 		return false;
 	}
 
 	if (zip_fread(zf, buffer->data(), size) != size) {
-		Log::err("Resourcer::read",
-		         "reading " + name + " failed: didn't complete");
+		Log::err(path(name), "reading didn't complete");
 		zip_fclose(zf);
 		return false;
 	}
 
 	zip_fclose(zf);
 	return true;
+}
+
+std::string Resourcer::path(const std::string& entry_name)
+{
+	return zip_filename + "/" + entry_name;
 }
 
