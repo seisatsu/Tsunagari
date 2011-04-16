@@ -15,13 +15,12 @@ GameWindow::GameWindow(uint x, uint y, bool fullscreen)
 
 GameWindow::~GameWindow()
 {
-	if (world)
-		delete world;
+	delete world;
 }
 
 bool GameWindow::init(const std::string descriptor)
 {
-	rc = new Resourcer(this, descriptor);
+	rc = new Resourcer(this, descriptor + ".zip");
 	world = new World(rc, descriptor + ".world");
 	return world->init();
 }

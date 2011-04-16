@@ -11,7 +11,8 @@
 Entity::Entity(Resourcer* rc,
                const std::string descriptor,
                const std::string spriteDescriptor)
-	: rc(rc),
+	: sprite(NULL),
+	  rc(rc),
 	  redraw(true),
 	  descriptor(descriptor),
 	  spriteDescriptor(spriteDescriptor)
@@ -20,8 +21,7 @@ Entity::Entity(Resourcer* rc,
 
 Entity::~Entity()
 {
-	if (sprite)
-		delete sprite;
+	delete sprite;
 }
 
 bool Entity::init()

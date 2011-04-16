@@ -11,8 +11,6 @@
 
 #include <Gosu/Gosu.hpp>
 
-//#include "event.h"
-//#include "tile.h"
 #include "window.h"
 
 class GameWindow;

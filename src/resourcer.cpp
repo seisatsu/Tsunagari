@@ -14,7 +14,7 @@
 #include "resourcer.h"
 
 Resourcer::Resourcer(GameWindow* window, const std::string& filename)
-	: window(window), filename(filename + ".tpkg")
+	: window(window), filename(filename)
 {
 }
 
@@ -50,13 +50,13 @@ void Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 
 	z = zip_open(filename.c_str(), 0x0, NULL);
 	if (!z) {
-		Log::dbg("Resourcer: read", "zip_open failed.");
+		Log::dbg("Resourcer::read", "zip_open failed.");
 		return;
 	}
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
 		zip_close(z);
-		Log::dbg("Resourcer: read", "zip_stat failed.");
+		Log::dbg("Resourcer::read", "zip_stat failed.");
 		return;
 	}
 
@@ -66,14 +66,14 @@ void Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 	zf = zip_fopen(z, name.c_str(), 0x0);
 	if (!zf) {
 		zip_close(z);
-		Log::dbg("Resourcer: read", "zip_fopen failed.");
+		Log::dbg("Resourcer::read", "zip_fopen failed.");
 		return;
 	}
 
 	if (zip_fread(zf, buffer->data(), size) != size) {
 		zip_fclose(zf);
 		zip_close(z);
-		Log::dbg("Resourcer: read", "zip_fread failed.");
+		Log::dbg("Resourcer::read", "zip_fread failed.");
 		return;
 	}
 
@@ -92,13 +92,13 @@ std::string Resourcer::getString(const std::string& name)
 
 	z = zip_open(filename.c_str(), 0x0, NULL);
 	if (!z) {
-		Log::dbg("Resourcer: getString", "zip_open failed.");
+		Log::dbg("Resourcer::getString", "zip_open failed.");
 		return "";
 	}
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
 		zip_close(z);
-		Log::dbg("Resourcer: getString", "zip_stat failed.");
+		Log::dbg("Resourcer::getString", "zip_stat failed.");
 		return "";
 	}
 
@@ -109,14 +109,14 @@ std::string Resourcer::getString(const std::string& name)
 	zf = zip_fopen(z, name.c_str(), 0x0);
 	if (!zf) {
 		zip_close(z);
-		Log::dbg("Resourcer: getString", "zip_fopen failed.");
+		Log::dbg("Resourcer::getString", "zip_fopen failed.");
 		return "";
 	}
 
 	if (zip_fread(zf, buf, size) != size) {
 		zip_fclose(zf);
 		zip_close(z);
-		Log::dbg("Resourcer: getString", "zip_fread failed.");
+		Log::dbg("Resourcer::getString", "zip_fread failed.");
 		return "";
 	}
 

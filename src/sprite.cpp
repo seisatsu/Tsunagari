@@ -20,8 +20,7 @@ Sprite::Sprite(Resourcer* rc, const std::string descriptor)
 
 Sprite::~Sprite()
 {
-	if (img)
-		delete img;
+	delete img;
 }
 
 /**

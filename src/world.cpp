@@ -19,10 +19,8 @@ World::World(Resourcer* rc, const std::string descriptor)
 
 World::~World()
 {
-	if (player)
-		delete player;
-	if (area)
-		delete area;
+	delete player;
+	delete area;
 }
 
 bool World::init()
