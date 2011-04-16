@@ -10,6 +10,7 @@
 #include <string>
 
 #include <Gosu/Gosu.hpp>
+#include <zip.h>
 
 #include "window.h"
 
@@ -21,35 +22,22 @@ public:
 	Resourcer(GameWindow* window, const std::string& filename);
 	~Resourcer();
 
-	std::string tpkgName();
+	bool init();
+
+	/**
+	 * Returns the name of the file that this Resourcer is tied to.
+	 */
+	const std::string getFilename();
+
 	Gosu::Image* getImage(const std::string& name);
 	std::string getString(const std::string& name);
-//	Gosu::Font getFont(string name, float size);
-//	vector<Tile*> getTiles(string name, int tileSize);
-//	list<string> getAreaList();
-//	YAML* getArea(string name);
-//	Event* getEvent(string name);
-//	Gosu::Music getMusic(string name);
-//	Gosu::Sound getSound(string name);
 
 private:
-	void read(const std::string& name, Gosu::Buffer* buffer);
-
-//	vector<byte>* getFile(string name);
-//	Magick::ImageList* createImageList(string name);
+	bool read(const std::string& name, Gosu::Buffer* buffer);
 
 	GameWindow* window;
 	std::string filename;
-//	list<libarchive_entry> files;
-
-/*
-	map<string,Gosu::Font> fonts;
-	map<string,Gosu::Image> images;
-	map<string,Tile> tiles;
-	map<string,Event> events;
-	map<string,Gosu::Music> music;
-	map<string,Gosu::Sound> snds;
-*/
+	zip* z;
 };
 
 #endif

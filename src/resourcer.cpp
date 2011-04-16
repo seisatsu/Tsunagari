@@ -5,24 +5,35 @@
 ******************************/
 
 #include <stdlib.h>
-#include <stdio.h>
-
-#include <Gosu/Utility.hpp>
-#include <zip.h>
 
 #include "log.h"
 #include "resourcer.h"
 
 Resourcer::Resourcer(GameWindow* window, const std::string& filename)
-	: window(window), filename(filename)
+	: window(window), filename(filename), z(NULL)
 {
 }
 
 Resourcer::~Resourcer()
 {
+	if (z) {
+		zip_close(z);
+	}
 }
 
-std::string Resourcer::tpkgName()
+bool Resourcer::init()
+{
+	z = zip_open(filename.c_str(), 0x0, NULL);
+	if (!z) {
+		Log::err("Resourcer::init",
+		         "Failed to open ZIP file: " + filename);
+		return false;
+	}
+
+	return true;
+}
+
+const std::string Resourcer::getFilename()
 {
 	return filename;
 }
@@ -30,71 +41,20 @@ std::string Resourcer::tpkgName()
 Gosu::Image* Resourcer::getImage(const std::string& name)
 {
 	Gosu::Buffer buffer;
-	read(name, &buffer);
-
+	if (!read(name, &buffer)) {
+		return NULL;
+	}
 	Gosu::Bitmap bitmap = Gosu::loadImageFile(buffer.frontReader());
-//	Gosu::Image image(window->graphics(), bitmap, false);
-
 	return new Gosu::Image(window->graphics(), bitmap, false);
-//	return new Gosu::Image(window->graphics(), Gosu::utf8ToWstring(name),
-//			false);
-}
-
-// XXX: Can we just return Gosu::Buffer type?
-void Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
-{
-	zip* z;
-	struct zip_stat stat;
-	zip_file* zf;
-	int size;
-
-	z = zip_open(filename.c_str(), 0x0, NULL);
-	if (!z) {
-		Log::dbg("Resourcer::read", "zip_open failed.");
-		return;
-	}
-
-	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		zip_close(z);
-		Log::dbg("Resourcer::read", "zip_stat failed.");
-		return;
-	}
-
-	size = stat.size;
-	buffer->resize(size);
-
-	zf = zip_fopen(z, name.c_str(), 0x0);
-	if (!zf) {
-		zip_close(z);
-		Log::dbg("Resourcer::read", "zip_fopen failed.");
-		return;
-	}
-
-	if (zip_fread(zf, buffer->data(), size) != size) {
-		zip_fclose(zf);
-		zip_close(z);
-		Log::dbg("Resourcer::read", "zip_fread failed.");
-		return;
-	}
-
-	zip_fclose(zf);
-	zip_close(z);
 }
 
 std::string Resourcer::getString(const std::string& name)
 {
-	zip* z;
 	struct zip_stat stat;
 	zip_file* zf;
 	int size;
 	char* buf;
 	std::string str;
-
-	z = zip_open(filename.c_str(), 0x0, NULL);
-	if (!z) {
-		Log::dbg("Resourcer::getString", "zip_open failed.");
-		return "";
-	}
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
 		zip_close(z);
@@ -124,8 +84,42 @@ std::string Resourcer::getString(const std::string& name)
 	delete[] buf;
 
 	zip_fclose(zf);
-	zip_close(z);
 
 	return str;
+}
+
+// XXX: Can we just return Gosu::Buffer type?
+bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
+{
+	struct zip_stat stat;
+	zip_file* zf;
+	int size;
+
+	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
+		Log::err("Resourcer::read", "ZIP entry not found: " + name);
+		return false;
+	}
+
+	size = stat.size;
+	buffer->resize(size);
+
+	zf = zip_fopen(z, name.c_str(), 0x0);
+	if (!zf) {
+		Log::err("Resourcer::read",
+		         "opening ZIP entry " + name + " failed: "
+			   + zip_strerror(z));
+		return false;
+	}
+
+	if (zip_fread(zf, buffer->data(), size) != size) {
+		Log::err("Resourcer::read",
+		         "reading ZIP entry " + name
+			   + " failed: didn't complete");
+		zip_fclose(zf);
+		return false;
+	}
+
+	zip_fclose(zf);
+	return true;
 }
 

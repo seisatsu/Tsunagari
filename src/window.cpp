@@ -20,9 +20,9 @@ GameWindow::~GameWindow()
 
 bool GameWindow::init(const std::string descriptor)
 {
-	rc = new Resourcer(this, descriptor + ".zip");
+	rc = new Resourcer(this, descriptor + ".tpkg");
 	world = new World(rc, descriptor + ".world");
-	return world->init();
+	return rc->init() && world->init();
 }
 
 void GameWindow::buttonDown(const Gosu::Button btn)

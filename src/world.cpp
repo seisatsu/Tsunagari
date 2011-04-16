@@ -62,13 +62,12 @@ bool World::processDescriptor()
 
 	std::string data = rc->getString(descriptor);
 	if (data.empty()) {
-		Log::err(rc->tpkgName(), "Could not load tpkg.");
+		Log::err(descriptor, "File missing.");
 		return false;
 	}
 
-	// Here, we load in the world descriptor file. It's a little messy.
 	if (!reader.parse(data, root)) {
-		Log::err(descriptor, "File missing.");
+		Log::err(descriptor, "JSON parsing error.");
 		return false;
 	}
 
