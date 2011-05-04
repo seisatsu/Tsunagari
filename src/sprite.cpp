@@ -28,17 +28,12 @@ Sprite::~Sprite()
  */
 bool Sprite::processDescriptor()
 {
-	Json::Reader reader;
 	Json::Value root;
 	Json::Value phases;
 
-	std::string data = rc->getString(descriptor);
-
-	// Here we load in the sprite descriptor file. It's a little messy.
-	if (!reader.parse(data, root)) {
-		Log::err(descriptor, "File missing.");
+	root = rc->getDescriptor(descriptor);
+	if (root.empty())
 		return false;
-	}
 
 	// Begin loading in configuration values.
 	values.sheet = root["sheet"].asString();

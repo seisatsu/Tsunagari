@@ -88,6 +88,20 @@ std::string Resourcer::getString(const std::string& name)
 	return str;
 }
 
+Json::Value Resourcer::getDescriptor(const std::string& name)
+{
+	Json::Reader reader;
+	Json::Value root;
+	
+	std::string data = this->getString(name);
+	
+	if (!reader.parse(data, root)) {
+		Log::err(name, "Descriptor parsing error.");
+	}
+	
+	return root;
+}
+
 // XXX: Can we just return Gosu::Buffer type?
 bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 {

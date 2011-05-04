@@ -57,19 +57,13 @@ bool World::processDescriptor()
 {
 	static const std::string descriptor = "world.conf";
 
-	Json::Reader reader;
 	Json::Value root;
 	Json::Value entrypoint;
 	Json::Value tilesize;
 
-	std::string data = rc->getString(descriptor);
-	if (data.empty())
+	root = rc->getDescriptor(descriptor);
+	if (root.empty())
 		return false;
-
-	if (!reader.parse(data, root)) {
-		Log::err(descriptor, "JSON parsing error.");
-		return false;
-	}
 
 	/* Extract from JSON object:
 	 *  - proper name and author of World

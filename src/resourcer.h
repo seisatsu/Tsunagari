@@ -10,6 +10,7 @@
 #include <string>
 
 #include <Gosu/Gosu.hpp>
+#include <json/json.h>
 #include <zip.h>
 
 #include "window.h"
@@ -31,6 +32,7 @@ public:
 
 	Gosu::Image* getImage(const std::string& name);
 	std::string getString(const std::string& name);
+	Json::Value getDescriptor(const std::string& name);
 
 private:
 	bool read(const std::string& name, Gosu::Buffer* buffer);
