@@ -18,18 +18,30 @@
 class Resourcer;
 class Sprite;
 
+//! Entity Class
+/*!
+	This class handles dynamic game objects, such as monsters, NPCs, and items.
+*/
 class Entity
 {
 public:
+	//! Entity Constructor
 	Entity(Resourcer* rc, const std::string descriptor,
 		const std::string spriteDescriptor);
+	
+	//! Entity Destructor
 	~Entity();
-
+	
+	//! Entity Initializer
 	bool init();
-
+	
+	//! Gosu Callback
 	void draw();
+	
+	//! Gosu Callback
 	bool needsRedraw() const;
-
+	
+	//! Move the entity by dx, dy.
 	void move(int dx, int dy);
 
 /*

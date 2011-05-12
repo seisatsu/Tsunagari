@@ -18,10 +18,18 @@
 
 class Resourcer;
 
+//! SpritePhases JSON Storage Struct
+/*!
+	Stores the Sprite's phase state information.
+*/
 struct SpritePhases {
 	uint32_t phase; // Will be replaced with a vector later.
 };
 
+//! SpriteValues JSON Storage Struct
+/*!
+	Main JSON storage struct for Sprite.
+*/
 struct SpriteValues {
 	std::string sheet;
 	SpritePhases phases;
@@ -43,13 +51,19 @@ struct SpriteValues {
 class Sprite
 {
 public:
+	//! Sprite Constructor
 	Sprite(Resourcer* rc, const std::string descriptor);
+	
+	//! Sprite Destructor
 	~Sprite();
-
+	
+	//! Sprite Initializer
 	bool init();
-
+	
+	//! Gosu Callback
 	void draw() const;
-
+	
+	//! Gosu Callback
 	void move(int dx, int dy);
 
 private:
