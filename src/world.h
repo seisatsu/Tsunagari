@@ -29,7 +29,7 @@ enum WorldType {
 	NETWORK
 };
 
-//! WorldType JSON Storage Struct
+//! WorldEntry JSON Storage Struct
 /*!
 	Stores the World's entry point data. Includes the start Area, and starting coordinates.
 */
