@@ -3,7 +3,7 @@ LDFLAGS = -g -lgosu -ljson -lzip
 
 all: tsu
 
-tsu: area.o common.o entity.o log.o main.o resourcer.o sprite.o tile.o window.o world.o
+tsu: area.o common.o entity.o log.o main.o resourcer.o sprite.o tile.o tilematrix.o window.o world.o
 	$(CXX) -o tsu *.o $(LDFLAGS)
 
 clean:

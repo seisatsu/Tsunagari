@@ -17,14 +17,17 @@ class Tile;
 class TileMatrix
 {
 public:
-	TileMatrix(Resourcer* rc;
+	TileMatrix(Resourcer* rc);
+	bool init();
 	void draw();
 	
 	coord_t getDimensions();
-	Tile* getTile(coord_t coords);
+	Tile* getTile(coord_t c);
 
 private:
-	std::vector<std::vector<std::vector<Tile*>*>*> grid;
+	Resourcer* rc;
+	std::vector<std::vector<std::vector<Tile*> > > matrix;
+	coord_t dim;
 };
 
 #endif
