@@ -43,6 +43,7 @@ public:
 
 private:
 	static Log* instance(); // Access to our singleton instance.
+	static std::string& rtrim(std::string& str);
 
 	Log() {}; // Hide our constructor.
 

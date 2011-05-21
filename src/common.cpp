@@ -15,3 +15,8 @@ coord_t coord(uint32_t x, uint32_t y, uint32_t z)
 	return c;
 }
 
+bool parseBool(const std::string& s)
+{
+	return s == "true";
+}
+

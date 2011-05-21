@@ -8,6 +8,7 @@
 #define COMMON_H
 
 #include <stdint.h>
+#include <string>
 
 struct coord_t {
 	uint32_t x;
@@ -17,6 +18,8 @@ struct coord_t {
 
 //! coord_t constructor
 coord_t coord(uint32_t x, uint32_t y, uint32_t z);
+
+bool parseBool(const std::string& s);
 
 #endif
 

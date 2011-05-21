@@ -1,5 +1,5 @@
-CXXFLAGS = -g -Wall -Wextra -pedantic -ansi
-LDFLAGS = -g -lgosu -ljson -lzip
+CXXFLAGS = -g -Wall -Wextra -pedantic -ansi `xml2-config --cflags`
+LDFLAGS = -g -lgosu -ljson -lzip `xml2-config --libs`
 
 all: tsu
 

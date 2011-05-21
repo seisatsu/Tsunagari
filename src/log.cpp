@@ -32,14 +32,14 @@ void Log::setMode(message_mode_t mode)
  */
 void Log::err(std::string domain, std::string message)
 {
-	std::cerr << "Error [" << domain << "] - " << message << std::endl;
+	std::cerr << "Error [" << domain << "] - " << rtrim(message) << std::endl;
 }
 
 void Log::dev(std::string domain, std::string message)
 {
 	Log* l = instance();
 	if (l->mode == MM_DEBUG || l->mode == MM_DEVELOPER)
-		std::cerr << "Devel [" << domain << "] - " << message
+		std::cerr << "Devel [" << domain << "] - " << rtrim(message)
 		          << std::endl;
 }
 
@@ -47,7 +47,14 @@ void Log::dbg(std::string domain, std::string message)
 {
 	Log* l = instance();
 	if (l->mode == MM_DEBUG)
-		std::cerr << "Debug [" << domain << "] - " << message
+		std::cerr << "Debug [" << domain << "] - " << rtrim(message)
 		          << std::endl;
+}
+
+std::string& Log::rtrim(std::string& str)
+{
+	if (str[str.length()-1] == '\n')
+		str[str.length()-1] = '\0';
+	return str;
 }
 
