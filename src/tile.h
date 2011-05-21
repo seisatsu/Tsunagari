@@ -10,7 +10,6 @@
 #include <list>
 
 #include "entity.h"
-#include "resourcer.h"
 #include "sprite.h"
 
 class Entity;

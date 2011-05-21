@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include "resourcer.h"
 #include "window.h"
 
 GameWindow::GameWindow(uint x, uint y, bool fullscreen)

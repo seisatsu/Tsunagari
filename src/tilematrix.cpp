@@ -12,6 +12,16 @@ TileMatrix::TileMatrix(Resourcer* rc) : rc(rc)
 
 bool TileMatrix::init()
 {
+	Sprite* s = new Sprite(rc, "grass.sprite");
+	if (!s->init())
+		return false;
+	Tile* t = new Tile(s, true, {0, 0, 0});
+
+
+	matrix.resize(1);
+	matrix[0].resize(1);
+	matrix[0][0].resize(1);
+	matrix[0][0][0] = t;
 	return true;
 }
 

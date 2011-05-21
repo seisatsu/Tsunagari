@@ -10,7 +10,6 @@
 #include <string>
 
 //#include "area.h"
-#include "resourcer.h"
 #include "sprite.h"
 //#include "tilegrid.h"
 //#include "world.h"

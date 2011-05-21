@@ -14,8 +14,6 @@
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
-#include "resourcer.h"
-
 
 class Resourcer;
 

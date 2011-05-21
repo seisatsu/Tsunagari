@@ -14,7 +14,6 @@
 #include "area.h"
 #include "common.h"
 #include "entity.h"
-#include "resourcer.h"
 
 class Area;
 class Entity;

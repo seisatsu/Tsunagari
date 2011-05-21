@@ -13,14 +13,11 @@
 
 #include "common.h"
 #include "entity.h"
-#include "resourcer.h"
-//#include "tilegrid.h"
-#include "tile.h"
+#include "tilematrix.h"
 
 class Entity;
 class GameWindow;
 class Resourcer;
-class Tile;
 
 //! Area Class
 /*!
@@ -31,29 +28,28 @@ class Area
 public:
 	//! Area Constructor
 	Area(Resourcer* rc, Entity* player, const std::string filename);
-	
+
 	//! Area Destructor
 	~Area();
-	
+
 	bool init();
-	
+
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
-	
+
 	//! Gosu Callback
 	void draw();
-	
+
 	//! Gosu Callback
 	bool needsRedraw() const;
-	
+
 	coord_t translateCoords(); //XXX What does this do?
 
 private:
 //	void build(Resourcer* rc, yaml_t* yaml);
 	Resourcer* rc;
 	Entity* player;
-	Tile* t;
-//	TileGrid* grid;
+	TileMatrix tiles;
 };
 
 #endif

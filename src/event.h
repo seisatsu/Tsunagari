@@ -4,8 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include "resourcer.h"
-
 class Event
 {
 };

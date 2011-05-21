@@ -8,7 +8,6 @@
 #define TILEMATRIX_H
 
 #include "common.h"
-#include "resourcer.h"
 #include "tile.h"
 
 class Resourcer;

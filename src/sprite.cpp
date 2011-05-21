@@ -11,6 +11,7 @@
 #include <json/json.h>
 
 #include "log.h"
+#include "resourcer.h"
 #include "sprite.h"
 
 Sprite::Sprite(Resourcer* rc, const std::string descriptor)

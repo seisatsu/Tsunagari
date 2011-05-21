@@ -10,6 +10,7 @@
 #include <json/json.h>
 
 #include "log.h"
+#include "resourcer.h"
 #include "world.h"
 
 World::World(Resourcer* rc)

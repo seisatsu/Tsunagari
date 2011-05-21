@@ -12,7 +12,6 @@
 
 #include <Gosu/Gosu.hpp>
 
-#include "resourcer.h"
 #include "world.h"
 
 class Resourcer;
