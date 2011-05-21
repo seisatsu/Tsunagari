@@ -1,5 +1,6 @@
 {
 	"sheet": "tileset.sheet",
+	"tilesize": [64, 64],
 	"phases":
 	{
 		"wall": 0,

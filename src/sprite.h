@@ -7,6 +7,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <map>
 #include <stdint.h>
 #include <string>
 
@@ -18,21 +19,14 @@
 
 class Resourcer;
 
-//! SpritePhases JSON Storage Struct
-/*!
-	Stores the Sprite's phase state information.
-*/
-struct SpritePhases {
-	uint32_t phase; // Will be replaced with a vector later.
-};
-
 //! SpriteValues JSON Storage Struct
 /*!
 	Main JSON storage struct for Sprite.
 */
 struct SpriteValues {
 	std::string sheet;
-	SpritePhases phases;
+	coord_t tilesize;
+	std::map<std::string, uint32_t> phases;
 };
 
 /**

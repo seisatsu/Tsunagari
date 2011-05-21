@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <istream>
+#include <stdio.h>
 
 #include <json/json.h>
 
@@ -28,10 +29,7 @@ Sprite::~Sprite()
  */
 bool Sprite::processDescriptor()
 {
-	Json::Value root;
-	Json::Value phases;
-
-	root = rc->getDescriptor(descriptor);
+	const Json::Value root = rc->getDescriptor(descriptor);
 	if (root.empty())
 		return false;
 
@@ -41,13 +39,30 @@ bool Sprite::processDescriptor()
 		Log::err(descriptor, "\"sheet\" required.\n");
 		return false;
 	}
+	
+	if (root["tilesize"].size() != 2) {
+		Log::err(descriptor, "\"tilesize\" [2] required.\n");
+		return false;
+	}
+	
+	values.tilesize.x = root["tilesize"][uint(0)].asUInt();
+	values.tilesize.y = root["tilesize"][1].asUInt();
 
-	phases = root["phases"];
+	const Json::Value phases = root["phases"];
 	if (!phases.size()) {
 		Log::err(descriptor, "\"phases\" [>0] required.\n");
 		return false;
 	}
-	values.phases.phase = phases.get("player", 0).asUInt();
+	
+	for (Json::ValueConstIterator i = phases.begin(); i != phases.end(); i++) {
+		const std::string key = i.key().asString();
+		const uint32_t value = (*i).asUInt();
+		values.phases[key] = value;
+	}
+
+	for (std::map<std::string, uint32_t>::const_iterator
+			i = values.phases.begin(); i != values.phases.end(); i++)
+		printf("phase [%s] = index %d\n", i->first.c_str(), i->second);
 
 	return true;
 }

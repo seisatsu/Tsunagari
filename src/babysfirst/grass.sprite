@@ -1,5 +1,6 @@
 {
 	"sheet": "grass.sheet",
+	"tilesize": [64, 64],
 	"phases":
 	{
 		"grass": 0
