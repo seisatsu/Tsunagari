@@ -1,7 +1,7 @@
 <!ELEMENT tsunagari (client)>
 <!ATTLIST tsunagari version (1) #REQUIRED>
 
-<!ELEMENT client (window, world)>
+<!ELEMENT client ((window, world) | (world, window))>
 <!ATTLIST client version (1) #REQUIRED>
 
 <!ELEMENT world (#PCDATA)>

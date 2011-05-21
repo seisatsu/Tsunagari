@@ -1,0 +1,21 @@
+<!ELEMENT tsunagari (world)>
+<!ATTLIST tsunagari version (1) #REQUIRED>
+
+<!ELEMENT world (name, author, type, player, entrypoint)>
+<!ATTLIST world version (1) #REQUIRED>
+
+<!ELEMENT name (#PCDATA)>
+
+<!ELEMENT author (#PCDATA)>
+
+<!ELEMENT type (#PCDATA)>
+
+<!ELEMENT player EMPTY>
+<!ATTLIST player sprite CDATA #REQUIRED>
+
+<!ELEMENT entrypoint EMPTY>
+<!ATTLIST entrypoint area CDATA #REQUIRED
+                     x    CDATA #REQUIRED
+                     y    CDATA #REQUIRED
+                     z    CDATA #REQUIRED>
+

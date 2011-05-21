@@ -1,0 +1,28 @@
+<!DOCTYPE tsunagari SYSTEM "dtd/sprite.dtd">
+
+<tsunagari version="1">
+	<sprite version="1">
+		<sheet file="tileset.sheet" tilesizex="64" tilesizey="64" />
+		<phases>
+			<phase name="wall" pos="0" />
+			<phase name="red" pos="1" />
+			<phase name="yellow" pos="2" />
+			<phase name="blue" pos="3" />
+			<phase name="purple" pos="4" />
+			<phase name="green" pos="5" />
+			<phase name="orange" pos="6" />
+			<phase name="lightblue" pos="7" />
+			<phase name="dirt" pos="8" />
+			<phase name="water" pos="9" />
+			<phase name="marble" pos="10" />
+			<phase name="checker" pos="11" />
+			<phase name="teleblue" pos="12" />
+			<phase name="telered" pos="13" />
+			<phase name="testanimation" speed="4">
+				<member pos="14" />
+				<member pos="15" />
+			</phase>
+		</phases>
+	</sprite>
+</tsunagari>
+

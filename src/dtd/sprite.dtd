@@ -1,0 +1,21 @@
+<!ELEMENT tsunagari (sprite)>
+<!ATTLIST tsunagari version (1) #REQUIRED>
+
+<!ELEMENT sprite ((sheet, phases) | (phases, sheet))>
+<!ATTLIST sprite version (1) #REQUIRED>
+
+<!ELEMENT sheet EMPTY>
+<!ATTLIST sheet file      CDATA #REQUIRED
+                tilesizex CDATA #REQUIRED
+                tilesizey CDATA #REQUIRED>
+
+<!ELEMENT phases (phase+)>
+
+<!ELEMENT phase (member*)>
+<!ATTLIST phase name  CDATA #REQUIRED
+                pos   CDATA #IMPLIED
+                speed CDATA #IMPLIED>
+
+<!ELEMENT member EMPTY>
+<!ATTLIST member pos CDATA #REQUIRED>
+
