@@ -41,7 +41,7 @@ public:
 	bool needsRedraw() const;
 	
 	//! Move the entity by dx, dy.
-	void move(int dx, int dy);
+	void moveByTile(coord_t delta);
 
 /*
 	Entity(World* world, Resource* rc);

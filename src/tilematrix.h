@@ -25,8 +25,8 @@ public:
 
 private:
 	typedef std::vector<Tile*> row_t;
-	typedef std::vector<row_t> col_t;
-	typedef std::vector<col_t> tilematrix_t;
+	typedef std::vector<row_t> grid_t;
+	typedef std::vector<grid_t> tilematrix_t;
 
 	tilematrix_t matrix;
 	Resourcer* rc;

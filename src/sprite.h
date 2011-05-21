@@ -56,7 +56,10 @@ public:
 	void draw() const;
 	
 	//! Gosu Callback
-	void move(int dx, int dy);
+	void moveByPixel(coord_t deltac);
+	void moveByTile(coord_t deltac);
+	void setCoordsByPixel(coord_t c);
+	void setCoordsByTile(coord_t c);
 
 private:
 	bool processDescriptor();

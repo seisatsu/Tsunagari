@@ -81,9 +81,30 @@ void Sprite::draw() const
 	img->draw(c.x, c.y, 0);
 }
 
-void Sprite::move(int dx, int dy)
+void Sprite::moveByPixel(coord_t dc)
 {
-	c.x += dx;
-	c.y += dy;
+	c.x += dc.x;
+	c.y += dc.y;
+	c.z += dc.z;
+}
+
+void Sprite::moveByTile(coord_t dc)
+{
+	c.x += dc.x * img->width();
+	c.y += dc.y * img->height();
+	c.z += dc.z; // XXX: Z-buffers
+}
+
+void Sprite::setCoordsByPixel(coord_t coords)
+{
+	c = coords;
+}
+
+void Sprite::setCoordsByTile(coord_t coords)
+{
+	c = coords;
+	c.x *= img->width();
+	c.y *= img->height();
+	// XXX: set c.z when we have Z-buffers
 }
 

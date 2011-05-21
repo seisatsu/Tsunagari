@@ -41,9 +41,9 @@ bool Entity::needsRedraw() const
 	return redraw;
 }
 
-void Entity::move(int dx, int dy)
+void Entity::moveByTile(coord_t delta)
 {
-	sprite->move(dx*TILE_SIZE, dy*TILE_SIZE);
+	sprite->moveByTile(delta);
 	redraw = true;
 }
 

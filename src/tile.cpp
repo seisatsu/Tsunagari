@@ -11,6 +11,7 @@ Tile::Tile(Sprite* s, bool walkable, coord_t coords)
 	this->s = s;
 	this->walkable = walkable;
 	this->coords = coords;
+	s->setCoordsByTile(coords);
 }
 
 bool Tile::canWalk()

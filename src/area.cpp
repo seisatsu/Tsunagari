@@ -25,13 +25,13 @@ bool Area::init()
 void Area::buttonDown(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
-		player->move(1, 0);
+		player->moveByTile(coord(1, 0, 0));
 	else if (btn == Gosu::kbLeft)
-		player->move(-1, 0);
+		player->moveByTile(coord(-1, 0, 0));
 	else if (btn == Gosu::kbUp)
-		player->move(0, -1);
+		player->moveByTile(coord(0, -1, 0));
 	else if (btn == Gosu::kbDown)
-		player->move(0, 1);
+		player->moveByTile(coord(0, 1, 0));
 }
 
 void Area::draw()

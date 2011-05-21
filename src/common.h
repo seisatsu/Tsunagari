@@ -15,5 +15,8 @@ struct coord_t {
 	uint32_t z;
 };
 
+//! coord_t constructor
+coord_t coord(uint32_t x, uint32_t y, uint32_t z);
+
 #endif
 
