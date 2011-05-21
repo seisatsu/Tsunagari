@@ -15,10 +15,12 @@
 #include "entity.h"
 #include "resourcer.h"
 //#include "tilegrid.h"
+#include "tile.h"
 
 class Entity;
 class GameWindow;
 class Resourcer;
+class Tile;
 
 //! Area Class
 /*!
@@ -33,6 +35,8 @@ public:
 	//! Area Destructor
 	~Area();
 	
+	bool init();
+	
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
 	
@@ -46,7 +50,9 @@ public:
 
 private:
 //	void build(Resourcer* rc, yaml_t* yaml);
+	Resourcer* rc;
 	Entity* player;
+	Tile* t;
 //	TileGrid* grid;
 };
 

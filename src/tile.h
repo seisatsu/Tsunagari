@@ -4,21 +4,32 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#ifndef TILE_H
+#define TILE_H
+
+#include <list>
+
 #include "entity.h"
-#include "event.h"
 #include "resourcer.h"
+#include "sprite.h"
+
+class Entity;
+class Sprite;
 
 class Tile
 {
 public:
-	Tile(Resourcer* rc, Gosu::Image img, int size, bool walkable, coord_t coords, map<string,string>* events);
+	Tile(Sprite* s, bool walkable, coord_t coords);
 	bool canWalk();
 	void draw();
-	void activate(Entity* entity);
-	void enter(Entity* entity);
-	void leave(Entity* entity);
 	
 private:
-	Event* loadEvent(string name);
+	Sprite* s;
+	bool walkable;
+	coord_t coords;
+
+	std::list<Entity*> entities;
 };
+
+#endif
 

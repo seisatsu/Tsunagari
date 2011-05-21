@@ -8,13 +8,22 @@
 
 #include "area.h"
 
-Area::Area(Resourcer*, Entity* player, const std::string )
-	: player(player)
+Area::Area(Resourcer* rc, Entity* player, const std::string )
+	: rc(rc), player(player)
 {
 }
 
 Area::~Area()
 {
+}
+
+bool Area::init()
+{
+	Sprite* s = new Sprite(rc, "grass.sprite");
+	if (!s->init())
+		return false;
+	t = new Tile(s, true, {0, 0, 0});
+	return true;
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -31,6 +40,7 @@ void Area::buttonDown(const Gosu::Button btn)
 
 void Area::draw()
 {
+	t->draw();
 	player->draw();
 }
 

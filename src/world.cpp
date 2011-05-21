@@ -34,8 +34,7 @@ bool World::init()
 		return false;
 
 	area = new Area(rc, player, values.entry.area);
-
-	return true;
+	return area->init();
 }
 
 void World::buttonDown(const Gosu::Button btn)
