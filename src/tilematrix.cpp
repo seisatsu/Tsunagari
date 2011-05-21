@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <boost/foreach.hpp>
+
 #include "tilematrix.h"
 
 TileMatrix::TileMatrix(Resourcer* rc) : rc(rc)
@@ -27,6 +29,10 @@ bool TileMatrix::init()
 
 void TileMatrix::draw()
 {
+	BOOST_FOREACH(col_t c, matrix)
+		BOOST_FOREACH(row_t r, c)
+			BOOST_FOREACH(Tile* t, r)
+				t->draw();
 }
 
 coord_t TileMatrix::getDimensions()

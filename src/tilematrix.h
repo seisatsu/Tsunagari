@@ -24,8 +24,12 @@ public:
 	Tile* getTile(coord_t c);
 
 private:
+	typedef std::vector<Tile*> row_t;
+	typedef std::vector<row_t> col_t;
+	typedef std::vector<col_t> tilematrix_t;
+
+	tilematrix_t matrix;
 	Resourcer* rc;
-	std::vector<std::vector<std::vector<Tile*> > > matrix;
 	coord_t dim;
 };
 
