@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** tile.cpp - Tile           **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include "tile.h"
 
 Tile::Tile(Sprite* s, bool walkable, coord_t coords)
