@@ -1,6 +1,6 @@
 /******************************
 ** Tsunagari Tile Engine     **
-** tile.cpp - Tile           **
+** tile.cpp                  **
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 

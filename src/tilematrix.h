@@ -1,11 +1,11 @@
 /******************************
 ** Tsunagari Tile Engine     **
-** tilegrid.h                **
+** tilematrix.h              **
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#ifndef TILEGRID_H
-#define TILEGRID_H
+#ifndef TILEMATRIX_H
+#define TILEMATRIX_H
 
 #include "common.h"
 #include "resourcer.h"
@@ -14,18 +14,17 @@
 class Resourcer;
 class Tile;
 
-class TileGrid
+class TileMatrix
 {
 public:
-	TileGrid(Resourcer* rc, YAML* yaml);
+	TileMatrix(Resourcer* rc;
 	void draw();
 	
-	coord_t getSize();
-	int getTileSize();
+	coord_t getDimensions();
 	Tile* getTile(coord_t coords);
 
 private:
-	vector<vector<vector<Tile*>*>*> grid;
+	std::vector<std::vector<std::vector<Tile*>*>*> grid;
 };
 
 #endif
