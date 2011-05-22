@@ -9,6 +9,8 @@
 
 #include <json/json.h>
 
+#include "area.h"
+#include "entity.h"
 #include "log.h"
 #include "resourcer.h"
 #include "world.h"
@@ -65,7 +67,7 @@ bool World::processDescriptor()
 	if (root.empty())
 		return false;
 
-	/* Extract from JSON object:
+	/* Extract from XML object:
 	 *  - proper name and author of World
 	 *  - Sprite id to be used for the player
 	 *  - whether the world supports/requires multiplayer
@@ -99,14 +101,6 @@ bool World::processDescriptor()
 		Log::err(descriptor, "\"type\" (local|network) required.\n");
 		return false;
 	}
-
-	tilesize = root["tilesize"];
-	if (tilesize.size() != 2) {
-		Log::err(descriptor, ": \"tilesize\" [2] required.\n");
-		return false;
-	}
-	values.tilesize.x = tilesize[0u].asUInt();
-	values.tilesize.y = tilesize[1].asUInt();
 
 	entrypoint = root["entrypoint"];
 	if (entrypoint.size() != 4) {

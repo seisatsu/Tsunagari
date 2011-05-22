@@ -1,9 +1,10 @@
-{
-	"sheet": "grass.sheet",
-	"tilesize": [64, 64],
-	"phases":
-	{
-		"grass": 0
-	}
-}
+<!DOCTYPE tsunagari SYSTEM "dtd/sprite.dtd">
 
+<tsunagari version="1">
+	<sprite version="1">
+		<sheet file="grass.sheet" tilesizex="64" tilesizey="64" />
+		<phases>
+			<phase name="grass" pos="0" />
+		</phases>
+	</sprite>
+</tsunagari>

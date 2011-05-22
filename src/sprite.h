@@ -17,16 +17,6 @@
 
 class Resourcer;
 
-//! SpriteValues JSON Storage Struct
-/*!
-	Main JSON storage struct for Sprite.
-*/
-struct SpriteValues {
-	std::string sheet;
-	coord_t tilesize;
-	std::map<std::string, uint32_t> phases;
-};
-
 /**
  * Sprite is an image model for displaying 2D video game entities.
  *
@@ -69,7 +59,16 @@ private:
 	coord_t c;
 
 	const std::string descriptor;
-	SpriteValues values; // Descriptor data
+
+	//! SpriteValues XML Storage Struct
+	/*!
+	  Main XML storage struct for Sprite.
+	*/
+	struct SpriteValues {
+		std::string sheet;
+		coord_t tilesize; // z-coord not used
+		std::map<std::string, uint32_t> phases;
+	} xml;
 };
 
 #endif

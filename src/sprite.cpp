@@ -4,11 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <fstream>
-#include <istream>
-#include <stdio.h>
-
-#include <json/json.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 #include "log.h"
 #include "resourcer.h"
@@ -25,45 +22,91 @@ Sprite::~Sprite()
 	delete img;
 }
 
+void spriteXmlErrorCb(void*, const char* msg, ...)
+{
+	char buf[512];
+	va_list ap;
+	va_start(ap, msg);
+	sprintf(buf, msg, va_arg(ap, char*));
+	Log::err("A sprite", buf); // FIXME: pass Sprite descriptor in ctx
+	va_end(ap);
+}
+
 /**
  * Try to load in descriptor.
  */
 bool Sprite::processDescriptor()
 {
-	const Json::Value root = rc->getDescriptor(descriptor);
-	if (root.empty())
+	const std::string docStr = rc->getString(descriptor);
+	if (docStr.empty())
 		return false;
 
-	// Begin loading in configuration values.
-	values.sheet = root["sheet"].asString();
-	if (values.sheet.empty()) {
-		Log::err(descriptor, "\"sheet\" required.\n");
+	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
+			NULL, NULL, XML_PARSE_NOBLANKS);
+	if (!doc) {
+		Log::err(descriptor, "Could not parse file");
 		return false;
-	}
-	
-	if (root["tilesize"].size() != 2) {
-		Log::err(descriptor, "\"tilesize\" [2] required.\n");
-		return false;
-	}
-	
-	values.tilesize.x = root["tilesize"][uint(0)].asUInt();
-	values.tilesize.y = root["tilesize"][1].asUInt();
-
-	const Json::Value phases = root["phases"];
-	if (!phases.size()) {
-		Log::err(descriptor, "\"phases\" [>0] required.\n");
-		return false;
-	}
-	
-	for (Json::ValueConstIterator i = phases.begin(); i != phases.end(); i++) {
-		const std::string key = i.key().asString();
-		const uint32_t value = (*i).asUInt();
-		values.phases[key] = value;
 	}
 
-	for (std::map<std::string, uint32_t>::const_iterator
-			i = values.phases.begin(); i != values.phases.end(); i++)
-		printf("phase [%s] = index %d\n", i->first.c_str(), i->second);
+	xmlValidCtxt ctxt;
+	ctxt.error = spriteXmlErrorCb;
+	if (!xmlValidateDocument(&ctxt, doc)) {
+		Log::err(descriptor, "XML document does not follow DTD");
+		return false;
+	}
+
+	xmlNode* root = xmlDocGetRootElement(doc);
+	xmlNode* node = root->xmlChildrenNode; // <sprite>
+	node = node->xmlChildrenNode; // decend into children of <sprite>
+	while (node != NULL) {
+		if (!xmlStrncmp(node->name, BAD_CAST("sheet"), 6)) {
+			xmlChar* str;
+
+			str = xmlGetProp(node, BAD_CAST("file"));
+			xml.sheet = (char*)str;
+
+			str = xmlGetProp(node, BAD_CAST("tilesizex"));
+			xml.tilesize.x = atol((char*)str); // atol
+
+			str = xmlGetProp(node, BAD_CAST("tilesizey"));
+			xml.tilesize.y = atol((char*)str); // atol
+		}
+		if (!xmlStrncmp(node->name, BAD_CAST("phases"), 7)) {
+			xmlNode* p = node->xmlChildrenNode;
+			while (p != NULL) {
+				/* Each phase requires a 'name'. Additionally,
+				 * one of either 'pos' or 'speed' is needed.
+				 * If speed is used, we have sub-elements. We
+				 * can't have both pos and speed.
+				 */
+				const std::string key = (char*)xmlGetProp(p, BAD_CAST("name"));
+
+				xmlChar* pos = xmlGetProp(p, BAD_CAST("pos"));
+				xmlChar* speed = xmlGetProp(p, BAD_CAST("speed"));
+
+				if (pos && speed) {
+					Log::err(descriptor, "pos and speed attributes in element phase are mutually exclusive");
+					return false;
+				}
+				if (!pos && !speed) {
+					Log::err(descriptor, "Must have one of pos or speed attributes in element phase");
+					return false;
+				}
+
+				if (pos) {
+					const uint32_t value = atol((char*)pos); // atol
+					xml.phases[key] = value;
+				}
+				else { // speed
+					// TODO: Load animated sprites
+					// Load <member> subelements
+				}
+				p = p->next;
+			}
+		}
+
+		node = node->next;
+	}
 
 	return true;
 }
@@ -72,7 +115,7 @@ bool Sprite::init()
 {
 	if (!processDescriptor())
 		return false;
-	img = rc->getImage(values.sheet);
+	img = rc->getImage(xml.sheet);
 	return img != NULL;
 }
 

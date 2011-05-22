@@ -11,44 +11,11 @@
 
 #include <Gosu/Gosu.hpp>
 
-#include "area.h"
 #include "common.h"
-#include "entity.h"
 
 class Area;
 class Entity;
 class Resourcer;
-
-//! WorldType JSON Storage Enum
-/*!
-	Stores the World type. Options are "local" (singleplayer) world, or "network" (multiplayer) world.
-*/
-enum WorldType {
-	LOCAL,
-	NETWORK
-};
-
-//! WorldEntry JSON Storage Struct
-/*!
-	Stores the World's entry point data. Includes the start Area, and starting coordinates.
-*/
-struct WorldEntry {
-	std::string area;
-	coord_t coords;
-};
-
-//! WorldValues JSON Storage Struct
-/*!
-	Main JSON storage struct for World.
-*/
-struct WorldValues {
-	std::string name;
-	std::string author;
-	std::string playersprite;
-	coord_t tilesize;
-	WorldType type;
-	WorldEntry entry;
-};
 
 //! World Class
 /*!
@@ -86,7 +53,37 @@ private:
 	Area* area;
 	Entity* player;
 
-	WorldValues values; // Descriptor data
+	//! WorldType XML Storage Enum
+	/*!
+	  Stores the World type. Options are "local" (singleplayer) world, or
+	  "network" (multiplayer) world.
+	*/
+	enum WorldType {
+		LOCAL,
+		NETWORK
+	};
+
+	//! WorldValues XML Storage Struct
+	/*!
+		Main XML storage struct for World.
+	*/
+	struct WorldValues {
+		std::string name;
+		std::string author;
+		std::string playersprite;
+		WorldType type;
+
+		//! WorldEntry XML Storage Struct
+		/*!
+		  Stores the World's entry point data. Includes the start
+		  Area, and starting coordinates.
+		*/
+		struct WorldEntry {
+			std::string area;
+			coord_t coords;
+		} entry;
+	} values;
+
 };
 
 #endif

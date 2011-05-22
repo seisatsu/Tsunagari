@@ -1,9 +1,11 @@
-{
-	"sheet": "player.sheet",
-	"tilesize": [64, 64],
-	"phases":
-	{
-		"player": 0
-	}
-}
+<!DOCTYPE tsunagari SYSTEM "dtd/sprite.dtd">
+
+<tsunagari version="1">
+	<sprite version="1">
+		<sheet file="player.sheet" tilesizex="64" tilesizey="64" />
+		<phases>
+			<phase name="player" pos="0" />
+		</phases>
+	</sprite>
+</tsunagari>
 

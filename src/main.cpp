@@ -60,10 +60,10 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	xmlNode* root = NULL;
 
 	/*
-     * This initializes the library and checks for potential ABI mismatches
-     * between the version it was compiled for and the actual shared
-     * library used.
-     */
+	 * This initializes the library and checks for potential ABI mismatches
+	 * between the version it was compiled for and the actual shared
+	 * library used.
+	 */
 	LIBXML_TEST_VERSION
 
 	doc = xmlReadFile(filename, NULL, XML_PARSE_NOBLANKS);
@@ -80,11 +80,8 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 		return false;
 	}
 
-	// Validate <tsunagari> element -- make sure it looks like our file
 	root = xmlDocGetRootElement(doc);
-	
-	// Decend into <client> element
-	xmlNode* node = root->xmlChildrenNode;
+	xmlNode* node = root->xmlChildrenNode; // <client>
 	
 	/* Extract from XML object:
 	 *  - name of World to load
@@ -93,16 +90,17 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	node = node->xmlChildrenNode;
 	while (node != NULL) {
 		if (!xmlStrncmp(node->name, BAD_CAST("world"), 6)) {
-			conf->world = (char*)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+			conf->world = (char*)xmlNodeListGetString(doc,
+					node->xmlChildrenNode, 1);
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("window"), 7)) {
 			xmlChar* str;
 
 			str = xmlGetProp(node, BAD_CAST("x"));
-			conf->windowsize.x = atol((char*)str);
+			conf->windowsize.x = atol((char*)str); // atol
 
 			str = xmlGetProp(node, BAD_CAST("y"));
-			conf->windowsize.y = atol((char*)str);
+			conf->windowsize.y = atol((char*)str); // atol
 				
 			str = xmlGetProp(node, BAD_CAST("fullscreen"));
 			conf->fullscreen = parseBool((char*)str);

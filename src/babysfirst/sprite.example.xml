@@ -18,6 +18,7 @@
 			<phase name="checker" pos="11" />
 			<phase name="teleblue" pos="12" />
 			<phase name="telered" pos="13" />
+			<!-- Can have pos OR speed, but one required -->
 			<phase name="testanimation" speed="4">
 				<member pos="14" />
 				<member pos="15" />
