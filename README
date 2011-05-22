@@ -6,9 +6,20 @@ Features:
 Tsunagari will be a comprehensive game design suite for singleplayer 2D games. The engine will support several styles, such as roguelikes, RPGs, and RTS games. Multiplayer support is more difficult, and is not expected to be present in the first release. Tsunagari is intended as an open source replacement for game design suites such as RPGMaker, and will allow Lua scripting for the event system, and for additional custom functionality. As a suite, Tsunagari aims to allow as much game variation as possible without direct modifications to the engine source code. Game design will require manual file editing during the Alpha and Beta phases, but a game editor suite will be shipped with the first major release.
 
 Requirements:
-libgosu		- http://www.libgosu.org/
-sdl		- http://www.libsdl.org/
-sdl_mixer	- http://www.libsdl.org/projects/SDL_mixer/
-jsoncpp		- http://jsoncpp.sourceforge.net/
-libzip		- http://www.nih.at/libzip/
+NAME		LICENSE	  LINK
+libgosu		(MIT)	- http://www.libgosu.org/
+libiconv	(LGPL)	- http://www.gnu.org/software/libiconv/
+libpopt		(MIT)	- http://rpm5.org/files/popt/
+libxml2		(MIT)	- http://xmlsoft.org/
+libzip		(BSD)	- http://www.nih.at/libzip/
+sdl		(LGPL)	- http://www.libsdl.org/
+sdl_mixer	(LGPL)	- http://www.libsdl.org/projects/SDL_mixer/
+sdl_ttf		(LGPL)	- http://www.libsdl.org/projects/SDL_ttf/
+zlib		(ZLIB)	- http://zlib.net/
 
+Requirements (Windows Ports):
+NAME		  LINK
+libiconv win32	- http://www.zlatkovic.com/libxml.en.html
+libpopt win32	- http://gnuwin32.sourceforge.net/packages/popt.htm
+libxml2 win32	- http://www.zlatkovic.com/libxml.en.html
+zlib win32	- http://www.zlatkovic.com/libxml.en.html
