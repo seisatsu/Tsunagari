@@ -22,6 +22,16 @@ Resourcer::~Resourcer()
 		         std::string("closing : ") + zip_strerror(z));
 }
 
+void descriptorXmlErrorCb(void*, const char* msg, ...)
+{
+	char buf[512];
+	va_list ap;
+	va_start(ap, msg);
+	sprintf(buf, msg, va_arg(ap, char*));
+	Log::err("Descriptor", buf); // FIXME: pass Sprite descriptor in ctx
+	va_end(ap);
+}
+
 bool Resourcer::init()
 {
 	int err;
@@ -88,18 +98,27 @@ std::string Resourcer::getString(const std::string& name)
 	return str;
 }
 
-Json::Value Resourcer::getDescriptor(const std::string& name)
+xmlNode* Resourcer::getDescriptor(const std::string& name)
 {
-	Json::Reader reader;
-	Json::Value root;
-	
-	std::string data = this->getString(name);
-	
-	if (!reader.parse(data, root)) {
-		Log::err(name, "Descriptor parsing error.");
+	const std::string docStr = getString(name);
+	if (docStr.empty())
+		return NULL;
+
+	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
+			NULL, NULL, XML_PARSE_NOBLANKS);
+	if (!doc) {
+		Log::err(name, "Could not parse file");
+		return NULL;
 	}
 	
-	return root;
+	xmlValidCtxt ctxt;
+	ctxt.error = descriptorXmlErrorCb;
+	if (!xmlValidateDocument(&ctxt, doc)) {
+		Log::err(name, "XML document does not follow DTD");
+		return NULL;
+	}
+	
+	return xmlDocGetRootElement(doc);
 }
 
 // XXX: Can we just return Gosu::Buffer type?

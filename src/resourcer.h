@@ -10,7 +10,8 @@
 #include <string>
 
 #include <Gosu/Gosu.hpp>
-#include <json/json.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 #include <zip.h>
 
 #include "window.h"
@@ -43,7 +44,7 @@ public:
 	std::string getString(const std::string& name);
 	
 	//! Returns a JSON resource from disk or cache.
-	Json::Value getDescriptor(const std::string& name);
+	xmlNode* getDescriptor(const std::string& name);
 
 private:
 	bool read(const std::string& name, Gosu::Buffer* buffer);

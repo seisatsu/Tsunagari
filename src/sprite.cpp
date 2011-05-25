@@ -22,40 +22,14 @@ Sprite::~Sprite()
 	delete img;
 }
 
-void spriteXmlErrorCb(void*, const char* msg, ...)
-{
-	char buf[512];
-	va_list ap;
-	va_start(ap, msg);
-	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err("A sprite", buf); // FIXME: pass Sprite descriptor in ctx
-	va_end(ap);
-}
-
 /**
  * Try to load in descriptor.
  */
 bool Sprite::processDescriptor()
 {
-	const std::string docStr = rc->getString(descriptor);
-	if (docStr.empty())
+	xmlNode* root = rc->getDescriptor(descriptor);
+	if (!root)
 		return false;
-
-	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
-			NULL, NULL, XML_PARSE_NOBLANKS);
-	if (!doc) {
-		Log::err(descriptor, "Could not parse file");
-		return false;
-	}
-
-	xmlValidCtxt ctxt;
-	ctxt.error = spriteXmlErrorCb;
-	if (!xmlValidateDocument(&ctxt, doc)) {
-		Log::err(descriptor, "XML document does not follow DTD");
-		return false;
-	}
-
-	xmlNode* root = xmlDocGetRootElement(doc);
 	xmlNode* node = root->xmlChildrenNode; // <sprite>
 	node = node->xmlChildrenNode; // decend into children of <sprite>
 	while (node != NULL) {

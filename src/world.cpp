@@ -24,16 +24,6 @@ World::~World()
 	delete area;
 }
 
-void worldXmlErrorCb(void*, const char* msg, ...)
-{
-	char buf[512];
-	va_list ap;
-	va_start(ap, msg);
-	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err("world.conf", buf); // FIXME: pass World descriptor in ctx
-	va_end(ap);
-}
-
 bool World::init()
 {
 	if (!processDescriptor()) // Try to load in descriptor.
@@ -69,25 +59,10 @@ bool World::processDescriptor()
 {
 	static const std::string descriptor = "world.conf";
 	
-	const std::string docStr = rc->getString(descriptor);
-	if (docStr.empty())
+	xmlNode* root = rc->getDescriptor(descriptor);
+	if (!root)
 		return false;
 	
-	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
-			NULL, NULL, XML_PARSE_NOBLANKS);
-	if (!doc) {
-		Log::err(descriptor, "Could not parse file");
-		return false;
-	}
-	
-	xmlValidCtxt ctxt;
-	ctxt.error = worldXmlErrorCb;
-	if (!xmlValidateDocument(&ctxt, doc)) {
-		Log::err(descriptor, "XML document does not follow DTD");
-		return false;
-	}
-	
-	xmlNode* root = xmlDocGetRootElement(doc);
 	xmlNode* node = root->xmlChildrenNode; // <world>
 	node = node->xmlChildrenNode; // decend into children of <world>
 	while (node != NULL) {
