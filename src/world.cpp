@@ -15,8 +15,8 @@
 #include "resourcer.h"
 #include "world.h"
 
-World::World(Resourcer* rc)
-	: rc(rc), area(NULL), player(NULL)
+World::World(Resourcer* rc, GameWindow* wnd)
+	: rc(rc), wnd(wnd), area(NULL), player(NULL)
 {
 }
 
@@ -37,6 +37,8 @@ bool World::init()
 		return false;
 
 	area = new Area(rc, player, values.entry.area);
+	
+	wnd->setCaption(Gosu::widen(values.name));
 	return area->init();
 }
 

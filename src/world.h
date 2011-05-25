@@ -12,10 +12,12 @@
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
+#include "window.h"
 
 class Area;
 class Entity;
 class Resourcer;
+class GameWindow;
 
 //! World Class
 /*!
@@ -25,7 +27,7 @@ class World
 {
 public:
 	//! World Constructor
-	World(Resourcer* rc);
+	World(Resourcer* rc, GameWindow* w);
 	
 	//! World Destructor
 	~World();
@@ -50,6 +52,7 @@ private:
 	bool processDescriptor();
 
 	Resourcer* rc;
+	GameWindow* wnd;
 	Area* area;
 	Entity* player;
 

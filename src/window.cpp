@@ -20,7 +20,7 @@ GameWindow::~GameWindow()
 bool GameWindow::init(const std::string descriptor)
 {
 	rc = new Resourcer(this, descriptor);
-	world = new World(rc);
+	world = new World(rc, this);
 	return rc->init() && world->init();
 }
 
