@@ -85,7 +85,7 @@ private:
 			std::string area;
 			coord_t coords;
 		} entry;
-	} values;
+	} xml;
 
 };
 
