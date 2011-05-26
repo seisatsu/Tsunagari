@@ -33,7 +33,7 @@ struct ClientValues {
 	bool fullscreen;
 };
 
-void xmlErrorCb(void*, const char* msg, ...)
+static void xmlErrorCb(void*, const char* msg, ...)
 {
 	char buf[512];
 	va_list ap;
