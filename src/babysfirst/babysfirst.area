@@ -1,49 +1,89 @@
-{
-	"name": "Baby's First Area",
-	"author": "Michael Reiley",
-	"music": "wind.ogg",
-	"tileset": "tileset.sprite",
-	"map":
-	[
-		[
-			{"img": "dirt", "walk": false},
-			{"img": "dirt", "walk": false},
-			{"img": "dirt", "walk": false},
-			{"img": "dirt", "walk": false},
-			{"img": "dirt", "walk": false}
-		],
-		[
-			{"img": "dirt", "walk": false},
-			{"img": "yellow", "walk": true},
-			{"img": "green", "walk": true, "events": [{"onEnter": "slow"}, {"onLeave": "unslow"}]},
-			{"img": "yellow", "walk": true},
-			{"img": "dirt", "walk": false}
-		],
-		[
-			{"img": "dirt", "walk": false},
-			{"img": "yellow", "walk": true},
-			{"img": "yellow", "walk": true},
-			{"img": "yellow", "walk": true},
-			{"img": "dirt", "walk": false}
-		],
-		[
-			{"img": "dirt", "walk": false},
-			{"img": "yellow", "walk": true},
-			{"img": "yellow", "walk": true},
-			{"img": "teleblue", "walk": true, "events": [{"onEnter": "random_warp"}]},
-			{"img": "dirt", "walk": false}
-		],
-		[
-			{"img": "dirt", "walk": false},
-			{"img": "orange", "walk": true, "door": ["grassfield.area", 1, 1, 0]},
-			{"img": "dirt", "walk": false},
-			{"img": "dirt", "walk": false},
-			{"img": "dirt", "walk": false}
-		]
-	],
-	"events":
-	[
-		{"onEnter": "babysfirst"}
-	]
-}
+<!DOCTYPE tsunagari SYSTEM "dtd/area.dtd">
+
+<tsunagari version="1">
+	<area version="1">
+		<name>Baby's First Area</name>
+		<author>Michael D. Reiley</author>
+		<tileset>tileset.sprite</tileset>
+		<music loop="true" type="main">wind.ogg</music>
+		<!-- <music type="intro">intro.ogg</music> -->
+		<event trigger="onLoad">babysfirst</event>
+		<map>
+			<grid layer="0">
+				<row>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+				</row>
+				<row>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="yellow" />
+					<tile image="green">
+						<event trigger="onEnter">slow</event>
+						<event trigger="onLeave">unslow</event>
+					</tile>
+					<tile image="yellow" />
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+				</row>
+				<row>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="yellow" />
+					<tile image="yellow" />
+					<tile image="yellow" />
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+				</row>
+				<row>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="yellow" />
+					<tile image="yellow" />
+					<tile image="teleblue">
+						<event trigger="onEnter">random_warp</event>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+				</row>
+				<row>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="orange">
+						<event trigger="door">grassfield.area(1,1,0)</event>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+					<tile image="dirt">
+						<flag>nowalk</flag>
+					</tile>
+				</row>
+			</grid>
+		</map>
+	</area>
+</tsunagari>
 
