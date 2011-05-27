@@ -1,0 +1,31 @@
+<!ELEMENT tsunagari (area)>
+<!ATTLIST tsunagari version (1) #REQUIRED>
+
+<!ELEMENT area (name, author, tileset, music*, event*, map)>
+<!ATTLIST area version (1) #REQUIRED>
+
+<!ELEMENT name (#PCDATA)>
+
+<!ELEMENT author (#PCDATA)>
+
+<!ELEMENT tileset (#PCDATA)>
+
+<!ELEMENT music (#PCDATA)>
+<!ATTLIST music loop CDATA #IMPLIED
+                type CDATA #REQUIRED>
+
+<!ELEMENT event (#PCDATA)>
+<!ATTLIST event trigger CDATA #REQUIRED>
+
+<!ELEMENT map (grid+)>
+
+<!ELEMENT grid (row+)>
+<!ATTLIST grid layer CDATA #REQUIRED>
+
+<!ELEMENT row (tile+)>
+
+<!ELEMENT tile (flag*, event*)>
+<!ATTLIST tile image CDATA #REQUIRED>
+
+<!ELEMENT flag (#PCDATA)>
+

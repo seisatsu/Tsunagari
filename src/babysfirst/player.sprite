@@ -2,7 +2,7 @@
 
 <tsunagari version="1">
 	<sprite version="1">
-		<sheet file="player.sheet" tilesizex="64" tilesizey="64" />
+		<sheet tilesizex="64" tilesizey="64">player.sheet</sheet>
 		<phases>
 			<phase name="player" pos="0" />
 		</phases>

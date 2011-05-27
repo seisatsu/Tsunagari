@@ -36,7 +36,7 @@ bool Sprite::processDescriptor()
 		if (!xmlStrncmp(node->name, BAD_CAST("sheet"), 6)) {
 			xmlChar* str;
 
-			str = xmlGetProp(node, BAD_CAST("file"));
+			str = xmlNodeGetContent(node);
 			xml.sheet = (char*)str;
 
 			str = xmlGetProp(node, BAD_CAST("tilesizex"));

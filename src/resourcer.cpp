@@ -28,7 +28,7 @@ void descriptorXmlErrorCb(void*, const char* msg, ...)
 	va_list ap;
 	va_start(ap, msg);
 	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err("Descriptor", buf); // FIXME: pass Sprite descriptor in ctx
+	Log::err("Descriptor", buf); // FIXME: pass descriptor in ctx
 	va_end(ap);
 }
 

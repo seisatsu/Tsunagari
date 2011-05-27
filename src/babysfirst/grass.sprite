@@ -2,7 +2,7 @@
 
 <tsunagari version="1">
 	<sprite version="1">
-		<sheet file="grass.sheet" tilesizex="64" tilesizey="64" />
+		<sheet tilesizex="64" tilesizey="64">grass.sheet</sheet>
 		<phases>
 			<phase name="grass" pos="0" />
 		</phases>
