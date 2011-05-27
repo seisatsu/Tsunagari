@@ -36,15 +36,15 @@ public:
 
 	//! Returns the name of the file that this Resourcer is tied to. XXX (What? There's only one.)
 	const std::string getFilename();
-	
+
 	//! Returns an image resource from disk or cache.
 	Gosu::Image* getImage(const std::string& name);
-	
+
 	//! Returns a string resource from disk or cache.
 	std::string getString(const std::string& name);
-	
-	//! Returns a JSON resource from disk or cache.
-	xmlNode* getDescriptor(const std::string& name);
+
+	//! Returns an XML resource from disk or cache.
+	xmlNode* getXMLDoc(const std::string& name);
 
 private:
 	bool read(const std::string& name, Gosu::Buffer* buffer);

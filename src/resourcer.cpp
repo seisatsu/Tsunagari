@@ -10,6 +10,16 @@
 #include "log.h"
 #include "resourcer.h"
 
+static void xmlErrorCb(void*, const char* msg, ...)
+{
+	char buf[512];
+	va_list ap;
+	va_start(ap, msg);
+	sprintf(buf, msg, va_arg(ap, char*));
+	Log::err("<XML file>", buf); // FIXME: pass Sprite descriptor in ctx
+	va_end(ap);
+}
+
 Resourcer::Resourcer(GameWindow* window, const std::string& zip_filename)
 	: window(window), z(NULL), zip_filename(zip_filename)
 {
@@ -98,7 +108,7 @@ std::string Resourcer::getString(const std::string& name)
 	return str;
 }
 
-xmlNode* Resourcer::getDescriptor(const std::string& name)
+xmlNode* Resourcer::getXMLDoc(const std::string& name)
 {
 	const std::string docStr = getString(name);
 	if (docStr.empty())
@@ -112,7 +122,7 @@ xmlNode* Resourcer::getDescriptor(const std::string& name)
 	}
 	
 	xmlValidCtxt ctxt;
-	ctxt.error = descriptorXmlErrorCb;
+	ctxt.error = xmlErrorCb;
 	if (!xmlValidateDocument(&ctxt, doc)) {
 		Log::err(name, "XML document does not follow DTD");
 		return NULL;

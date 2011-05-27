@@ -27,7 +27,7 @@ Sprite::~Sprite()
  */
 bool Sprite::processDescriptor()
 {
-	xmlNode* root = rc->getDescriptor(descriptor);
+	xmlNode* root = rc->getXMLDoc(descriptor);
 	if (!root)
 		return false;
 	xmlNode* node = root->xmlChildrenNode; // <sprite>
