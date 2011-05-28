@@ -16,7 +16,7 @@ static void xmlErrorCb(void*, const char* msg, ...)
 	va_list ap;
 	va_start(ap, msg);
 	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err("<XML file>", buf); // FIXME: pass Sprite descriptor in ctx
+	Log::err(rcCurrentXmlFile, buf);
 	va_end(ap);
 }
 
@@ -30,16 +30,6 @@ Resourcer::~Resourcer()
 	if (z && zip_close(z))
 		Log::err(zip_filename,
 		         std::string("closing : ") + zip_strerror(z));
-}
-
-void descriptorXmlErrorCb(void*, const char* msg, ...)
-{
-	char buf[512];
-	va_list ap;
-	va_start(ap, msg);
-	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err("Descriptor", buf); // FIXME: pass descriptor in ctx
-	va_end(ap);
 }
 
 bool Resourcer::init()
@@ -110,6 +100,8 @@ std::string Resourcer::getString(const std::string& name)
 
 xmlNode* Resourcer::getXMLDoc(const std::string& name)
 {
+	rcCurrentXmlFile = name;
+	
 	const std::string docStr = getString(name);
 	if (docStr.empty())
 		return NULL;

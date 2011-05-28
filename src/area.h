@@ -46,10 +46,12 @@ public:
 	coord_t translateCoords(); //XXX What does this do?
 
 private:
-//	void build(Resourcer* rc, yaml_t* yaml);
+	bool processDescriptor();
+	
 	Resourcer* rc;
 	Entity* player;
-	TileMatrix tiles;
+	TileMatrix* tiles;
+	const std::string descriptor;
 };
 
 #endif

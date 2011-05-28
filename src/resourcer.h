@@ -49,11 +49,13 @@ public:
 private:
 	bool read(const std::string& name, Gosu::Buffer* buffer);
 	std::string path(const std::string& entry_name);
-
+	
 	GameWindow* window;
 	zip* z;
 	std::string zip_filename;
 };
+
+std::string rcCurrentXmlFile;
 
 #endif
 

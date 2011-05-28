@@ -8,8 +8,8 @@
 
 #include "area.h"
 
-Area::Area(Resourcer* rc, Entity* player, const std::string )
-	: rc(rc), player(player), tiles(rc)
+Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
+	: rc(rc), player(player), descriptor(descriptor)
 {
 }
 
@@ -19,7 +19,12 @@ Area::~Area()
 
 bool Area::init()
 {
-	return tiles.init();
+	if (!processDescriptor()) // Try to load in descriptor.
+		return false;
+	
+	tiles = new TileMatrix(rc);
+	
+	return tiles->init();
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -36,7 +41,7 @@ void Area::buttonDown(const Gosu::Button btn)
 
 void Area::draw()
 {
-	tiles.draw();
+	tiles->draw();
 	player->draw();
 }
 
@@ -45,3 +50,7 @@ bool Area::needsRedraw() const
 	return player->needsRedraw();
 }
 
+bool Area::processDescriptor()
+{
+	return true;
+}
