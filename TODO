@@ -2,5 +2,6 @@
 * Remove arbitrary test values inside the code.
 * Command line interface using popt.
 X Switch away from JSON completely.
-* Find a way to pass the error "domain" to XML's error message function.
+X Find a way to pass the error "domain" to XML's error message function.
 * Investigate whether switching from DTDs to Schemas would be worth it.
+* Finish Area parsing code, integrate.

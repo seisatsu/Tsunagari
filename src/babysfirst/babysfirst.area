@@ -70,6 +70,7 @@
 						<flag>nowalk</flag>
 					</tile>
 					<tile image="orange">
+						<flag>npc_nowalk</flag>
 						<event trigger="door">grassfield.area(1,1,0)</event>
 					</tile>
 					<tile image="dirt">

@@ -32,7 +32,8 @@ void Log::setMode(message_mode_t mode)
  */
 void Log::err(std::string domain, std::string message)
 {
-	std::cerr << "Error [" << domain << "] - " << rtrim(message) << std::endl;
+	std::cerr << "Error [" << domain << "] - " << rtrim(message)
+	          << std::endl;
 }
 
 void Log::dev(std::string domain, std::string message)

@@ -33,8 +33,8 @@ public:
 
 	//! Send a message to the console.
 	/*!
-		@param domain the name of the message's origin (traditionally, the
-			name of the function we're in)
+		@param domain the name of the message's origin (traditionally,
+			the name of the function we're in)
 		@param message the message to be sent
 	*/
 	static void err(std::string domain, std::string message);
