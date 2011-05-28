@@ -16,7 +16,7 @@ static void xmlErrorCb(void*, const char* msg, ...)
 	va_list ap;
 	va_start(ap, msg);
 	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err(rcCurrentXmlFile, buf);
+	Log::err(rcCurrentXmlFile_, buf);
 	va_end(ap);
 }
 
@@ -100,7 +100,7 @@ std::string Resourcer::getString(const std::string& name)
 
 xmlNode* Resourcer::getXMLDoc(const std::string& name)
 {
-	rcCurrentXmlFile = name;
+	rcCurrentXmlFile_ = name;
 	
 	const std::string docStr = getString(name);
 	if (docStr.empty())

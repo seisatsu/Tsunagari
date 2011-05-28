@@ -55,7 +55,7 @@ private:
 	std::string zip_filename;
 };
 
-static std::string rcCurrentXmlFile;
+static std::string rcCurrentXmlFile_;
 
 #endif
 
