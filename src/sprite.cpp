@@ -27,15 +27,16 @@ Sprite::~Sprite()
  */
 bool Sprite::processDescriptor()
 {
+	xmlChar* str;
+	
 	xmlNode* root = rc->getXMLDoc(descriptor);
 	if (!root)
 		return false;
 	xmlNode* node = root->xmlChildrenNode; // <sprite>
+	
 	node = node->xmlChildrenNode; // decend into children of <sprite>
 	while (node != NULL) {
 		if (!xmlStrncmp(node->name, BAD_CAST("sheet"), 6)) {
-			xmlChar* str;
-
 			str = xmlNodeGetContent(node);
 			xml.sheet = (char*)str;
 

@@ -58,6 +58,7 @@ bool World::needsRedraw() const
 bool World::processDescriptor()
 {
 	static const std::string descriptor = "world.conf";
+	xmlChar* str;
 	
 	xmlNode* root = rc->getXMLDoc(descriptor);
 	if (!root)
@@ -66,7 +67,6 @@ bool World::processDescriptor()
 	xmlNode* node = root->xmlChildrenNode; // <world>
 	node = node->xmlChildrenNode; // decend into children of <world>
 	while (node != NULL) {
-		xmlChar* str;
 		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
 			str = xmlNodeGetContent(node);
 			xml.name = (char*)str;

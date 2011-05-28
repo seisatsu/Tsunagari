@@ -8,6 +8,7 @@
 #define AREA_H
 
 #include <string>
+#include <vector>
 
 #include <Gosu/Gosu.hpp>
 
@@ -52,6 +53,76 @@ private:
 	Entity* player;
 	TileMatrix* tiles;
 	const std::string descriptor;
+	
+	//! AreaEventTriggerType XML Storage Enum
+	/*!
+	  Stores the trigger type for an event.
+	*/
+	enum AreaEventTriggerType {
+		LOAD,
+		ENTER,
+		LEAVE,
+		DOOR
+	};
+	
+	//! AreaEventTileFlag XML Storage Enum
+	/*!
+	  Stores the flag type for a tile flag.
+	*/
+	enum AreaMapTileFlag {
+		NOWALK
+	};
+	
+	//! AreaMusic XML Storage Struct
+	/*!
+	  Stores information for a <music> tag in Area.
+	*/
+	struct AreaMusic {
+		bool loop;
+		std::string file;
+	};
+	
+	//! AreaEvent XML Storage Struct
+	/*!
+	  Stores information for an <event> tag in Area.
+	*/
+	struct AreaEvent {
+		AreaEventTriggerType trigger;
+		std::string name;
+	};
+	
+	//! AreaMapTile XML Storage Struct
+	/*!
+	  Stores XML information for tiles in a map layer.
+	*/
+	struct AreaMapTile {
+		std::string image;
+		std::vector<AreaMapTileFlag> flags;
+		std::vector<AreaEvent> events;
+	};
+	
+	//! AreaMapGrid XML Storage Struct
+	/*!
+	  Stores XML information for grid layers in Area's tile map.
+	*/
+	struct AreaMapGrid {
+		int layer;
+		std::vector<std::vector<AreaMapTile> > rows;
+	};
+	
+	//! AreaValues XML Storage Struct
+	/*!
+		Main XML storage struct for Area.
+	*/
+	struct AreaValues {
+		std::string name;
+		std::string author;
+		std::string tileset;
+		AreaMusic intro;
+		AreaMusic main;
+		std::vector<AreaEvent> onLoadEvents;
+		std::vector<AreaMapGrid> map;
+	} xml;
 };
 
 #endif

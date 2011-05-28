@@ -52,5 +52,14 @@ bool Area::needsRedraw() const
 
 bool Area::processDescriptor()
 {
+/*	xmlChar* str;
+	
+	xmlNode* root = rc->getXMLDoc(descriptor);
+	if (!root)
+		return false;
+	
+	xmlNode* node = root->xmlChildrenNode; // <area>
+	node = node->xmlChildrenNode; // decend into children of <area>
+	while (node != NULL) {*/
 	return true;
 }

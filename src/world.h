@@ -65,6 +65,16 @@ private:
 		LOCAL,
 		NETWORK
 	};
+	
+	//! WorldEntry XML Storage Struct
+	/*!
+	  Stores the World's entry point data. Includes the start
+	  Area, and starting coordinates.
+	*/
+	struct WorldEntry {
+		std::string area;
+		coord_t coords;
+	};
 
 	//! WorldValues XML Storage Struct
 	/*!
@@ -75,18 +85,8 @@ private:
 		std::string author;
 		std::string playersprite;
 		WorldType type;
-
-		//! WorldEntry XML Storage Struct
-		/*!
-		  Stores the World's entry point data. Includes the start
-		  Area, and starting coordinates.
-		*/
-		struct WorldEntry {
-			std::string area;
-			coord_t coords;
-		} entry;
+		WorldEntry entry;
 	} xml;
-
 };
 
 #endif
