@@ -6,6 +6,9 @@ ITEMS
 * Investigate whether switching from DTDs to Schemas would be worth it.
 * Finish Area parsing code, integrate.
 
+* Give World::player an Entity descriptor file.
+  What does an Entity descriptor file contain? What is an Entity?
+
 * Avoid window damage when another window moves on top.
   We have an optimization that makes our window only redraw itself if something
   in the game world changed. This causes redraw requests when another window is
