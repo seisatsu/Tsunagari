@@ -10,13 +10,15 @@
 #include "log.h"
 #include "resourcer.h"
 
-static void xmlErrorCb(void*, const char* msg, ...)
+static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
+	const std::string* filename = (const std::string*)pstrFilename;
 	char buf[512];
 	va_list ap;
+
 	va_start(ap, msg);
 	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err(rcCurrentXmlFile_, buf);
+	Log::err(*filename, buf);
 	va_end(ap);
 }
 
@@ -100,8 +102,6 @@ std::string Resourcer::getString(const std::string& name)
 
 xmlNode* Resourcer::getXMLDoc(const std::string& name)
 {
-	rcCurrentXmlFile_ = name;
-	
 	const std::string docStr = getString(name);
 	if (docStr.empty())
 		return NULL;
@@ -112,14 +112,15 @@ xmlNode* Resourcer::getXMLDoc(const std::string& name)
 		Log::err(name, "Could not parse file");
 		return NULL;
 	}
-	
+
 	xmlValidCtxt ctxt;
+	ctxt.userData = (void*)&name;
 	ctxt.error = xmlErrorCb;
 	if (!xmlValidateDocument(&ctxt, doc)) {
 		Log::err(name, "XML document does not follow DTD");
 		return NULL;
 	}
-	
+
 	return xmlDocGetRootElement(doc);
 }
 
