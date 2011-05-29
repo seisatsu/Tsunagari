@@ -1,7 +1,31 @@
-* Avoid window damage when another window moves on top.
+ITEMS
+
+
 * Remove arbitrary test values inside the code.
 * Command line interface using popt.
-X Switch away from JSON completely.
-X Find a way to pass the error "domain" to XML's error message function.
 * Investigate whether switching from DTDs to Schemas would be worth it.
 * Finish Area parsing code, integrate.
+
+* Avoid window damage when another window moves on top.
+  We have an optimization that makes our window only redraw itself if something
+  in the game world changed. This causes redraw requests when another window is
+  passing over us to be ignored.
+
+  Gosu might be forked to be explicit about the difference between timer-based
+  redraw requests and ones spawned by window damage.
+
+
+
+FINISHED ITEMS
+
+
+X Find a way to pass the error "domain" to XML's error message function.
+  libxml2 provides a userData variable in the validator context.
+  (Fixed on May 28, 2011 in commit cf6bcbe3)
+
+X Switch from JSON to XML completely.
+  Although JSON is an expressive less-verbose-than-XML format, after
+  investigating a few JSON parsers, we have decided that none of them are up to
+  our expectations.
+  (Fixed on May 25, 2011 in commit 5e1c08b7)
+
