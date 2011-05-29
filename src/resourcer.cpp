@@ -108,7 +108,7 @@ xmlNode* Resourcer::getXMLDoc(const std::string& name)
 		return NULL;
 
 	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
-			NULL, NULL, XML_PARSE_NOBLANKS);
+			NULL, NULL, XML_PARSE_NOBLANKS | XML_PARSE_NONET);
 	if (!doc) {
 		Log::err(name, "Could not parse file");
 		return NULL;
