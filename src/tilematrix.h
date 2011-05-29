@@ -7,8 +7,9 @@
 #ifndef TILEMATRIX_H
 #define TILEMATRIX_H
 
+#include <vector>
+
 #include "common.h"
-#include "tile.h"
 
 class Resourcer;
 class Tile;
@@ -19,7 +20,7 @@ public:
 	TileMatrix(Resourcer* rc);
 	bool init();
 	void draw();
-	
+
 	coord_t getDimensions();
 	Tile* getTile(coord_t c);
 

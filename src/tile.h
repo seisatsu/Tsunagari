@@ -9,8 +9,7 @@
 
 #include <list>
 
-#include "entity.h"
-#include "sprite.h"
+#include "common.h"
 
 class Entity;
 class Sprite;

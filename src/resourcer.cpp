@@ -9,6 +9,7 @@
 
 #include "log.h"
 #include "resourcer.h"
+#include "window.h"
 
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {

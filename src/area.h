@@ -13,11 +13,10 @@
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
-#include "entity.h"
-#include "tilematrix.h"
 
 class Entity;
 class GameWindow;
+class TileMatrix;
 class Resourcer;
 
 //! Area Class

@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include "sprite.h"
 #include "tile.h"
 
 Tile::Tile(Sprite* s, bool walkable, coord_t coords)

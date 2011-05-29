@@ -5,6 +5,7 @@
 ******************************/
 
 #include "resourcer.h"
+#include "world.h"
 #include "window.h"
 
 GameWindow::GameWindow(uint x, uint y, bool fullscreen)

@@ -14,8 +14,6 @@
 #include <libxml/tree.h>
 #include <zip.h>
 
-#include "window.h"
-
 class GameWindow;
 
 //! Resourcer Class
@@ -34,7 +32,8 @@ public:
 	//! Resourcer Initializer
 	bool init();
 
-	//! Returns the name of the file that this Resourcer is tied to. XXX (What? There's only one.)
+	//! Returns the name of the file that this Resourcer is tied to.
+	// XXX (What? There's only one.)
 	const std::string getFilename();
 
 	//! Returns an image resource from disk or cache.

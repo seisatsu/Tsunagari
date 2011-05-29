@@ -11,6 +11,7 @@
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
+#include "window.h"
 #include "world.h"
 
 World::World(Resourcer* rc, GameWindow* wnd)

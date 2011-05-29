@@ -12,7 +12,6 @@
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
-#include "window.h"
 
 class Area;
 class Entity;

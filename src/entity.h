@@ -9,17 +9,15 @@
 
 #include <string>
 
-//#include "area.h"
-#include "sprite.h"
-//#include "tilegrid.h"
-//#include "world.h"
+#include "common.h"
 
 class Resourcer;
 class Sprite;
 
 //! Entity Class
 /*!
-	This class handles dynamic game objects, such as monsters, NPCs, and items.
+	This class handles dynamic game objects, such as monsters, NPCs, and
+	items.
 */
 class Entity
 {
@@ -43,14 +41,6 @@ public:
 	//! Move the entity by dx, dy.
 	void moveByTile(coord_t delta);
 
-/*
-	Entity(World* world, Resource* rc);
-	void setArea(Area* area);
-	void goTo(Area* area, coord_t coords);
-	coord_t getCoords();
-	void transport(coord_t coords);
-*/
-
 protected:
 	Sprite* sprite;
 	Resourcer* rc;
@@ -58,11 +48,6 @@ protected:
 
 	const std::string descriptor;
 	const std::string spriteDescriptor;
-
-/*
-	World* world;
-	TileGrid* grid;
-*/
 };
 
 #endif

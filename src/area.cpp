@@ -4,9 +4,9 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <stdio.h>
-
 #include "area.h"
+#include "entity.h"
+#include "tilematrix.h"
 
 Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
 	: rc(rc), player(player), descriptor(descriptor)

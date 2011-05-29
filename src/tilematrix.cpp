@@ -6,6 +6,8 @@
 
 #include <boost/foreach.hpp>
 
+#include "sprite.h"
+#include "tile.h"
 #include "tilematrix.h"
 
 TileMatrix::TileMatrix(Resourcer* rc) : rc(rc)

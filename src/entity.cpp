@@ -7,6 +7,7 @@
 #define TILE_SIZE 64
 
 #include "entity.h"
+#include "sprite.h"
 
 Entity::Entity(Resourcer* rc,
                const std::string descriptor,
