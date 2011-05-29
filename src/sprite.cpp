@@ -29,7 +29,7 @@ bool Sprite::processDescriptor()
 {
 	xmlChar* str;
 	
-	xmlNode* root = rc->getXMLDoc(descriptor);
+	const xmlNode* root = rc->getXMLDoc(descriptor);
 	if (!root)
 		return false;
 	xmlNode* node = root->xmlChildrenNode; // <sprite>
@@ -49,40 +49,40 @@ bool Sprite::processDescriptor()
 		if (!xmlStrncmp(node->name, BAD_CAST("phases"), 7)) {
 			xmlNode* p = node->xmlChildrenNode;
 			while (p != NULL) {
-				/* Each phase requires a 'name'. Additionally,
-				 * one of either 'pos' or 'speed' is needed.
-				 * If speed is used, we have sub-elements. We
-				 * can't have both pos and speed.
-				 */
-				const std::string key = (char*)xmlGetProp(p, BAD_CAST("name"));
+				if (!xmlStrncmp(p->name, BAD_CAST("phase"), 6)) { // ignore comments
+					/* Each phase requires a 'name'. Additionally,
+					 * one of either 'pos' or 'speed' is needed.
+					 * If speed is used, we have sub-elements. We
+					 * can't have both pos and speed.
+					 */
+					const std::string key = (char*)xmlGetProp(p, BAD_CAST("name"));
 
-				xmlChar* pos = xmlGetProp(p, BAD_CAST("pos"));
-				xmlChar* speed = xmlGetProp(p, BAD_CAST("speed"));
+					xmlChar* pos = xmlGetProp(p, BAD_CAST("pos"));
+					xmlChar* speed = xmlGetProp(p, BAD_CAST("speed"));
 
-				if (pos && speed) {
-					Log::err(descriptor, "pos and speed attributes in element phase are mutually exclusive");
-					return false;
-				}
-				if (!pos && !speed) {
-					Log::err(descriptor, "Must have one of pos or speed attributes in element phase");
-					return false;
-				}
+					if (pos && speed) {
+						Log::err(descriptor, "pos and speed attributes in element phase are mutually exclusive");
+						return false;
+					}
+					if (!pos && !speed) {
+						Log::err(descriptor, "Must have one of pos or speed attributes in element phase");
+						return false;
+					}
 
-				if (pos) {
-					const uint32_t value = atol((char*)pos); // atol
-					xml.phases[key] = value;
-				}
-				else { // speed
-					// TODO: Load animated sprites
-					// Load <member> subelements
+					if (pos) {
+						const uint32_t value = atol((char*)pos); // atol
+						xml.phases[key] = value;
+					}
+					else { // speed
+						// TODO: Load animated sprites
+						// Load <member> subelements
+					}
 				}
 				p = p->next;
 			}
 		}
-
 		node = node->next;
 	}
-
 	return true;
 }
 

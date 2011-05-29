@@ -61,7 +61,7 @@ bool World::processDescriptor()
 	static const std::string descriptor = "world.conf";
 	xmlChar* str;
 	
-	xmlNode* root = rc->getXMLDoc(descriptor);
+	const xmlNode* root = rc->getXMLDoc(descriptor);
 	if (!root)
 		return false;
 	

@@ -11,21 +11,31 @@
 <!ELEMENT tileset (#PCDATA)>
 
 <!ELEMENT music (#PCDATA)>
-<!ATTLIST music loop CDATA #IMPLIED
-                type CDATA #REQUIRED>
+<!ATTLIST music loop (true|false) "false"
+                type (intro|main) #REQUIRED>
 
 <!ELEMENT event (#PCDATA)>
-<!ATTLIST event trigger CDATA #REQUIRED>
+<!ATTLIST event trigger (onLoad|onEnter|onLeave) #REQUIRED>
 
 <!ELEMENT map (grid+)>
 
 <!ELEMENT grid (row+)>
 <!ATTLIST grid layer CDATA #REQUIRED>
 
-<!ELEMENT row (tile+)>
+<!ELEMENT row (tile,door)+> <!-- tiles and doors in any order -->
 
 <!ELEMENT tile (flag*, event*)>
 <!ATTLIST tile image CDATA #REQUIRED>
+
+<!--
+  <door image="orange" area="grassfield.area" coords="1,1,0">
+    <flag>npc_nowalk</flag>
+  </door>
+-->
+<!ELEMENT door (flag*, event*)>
+<!ATTLIST door image CDATA #REQUIRED>
+<!ATTLIST door area CDATA #REQUIRED>
+<!ATTLIST door coords CDATA #REQUIRED>
 
 <!ELEMENT flag (#PCDATA)>
 

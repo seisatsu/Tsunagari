@@ -5,9 +5,9 @@
 		<name>Baby's First Area</name>
 		<author>Michael D. Reiley</author>
 		<tileset>tileset.sprite</tileset>
-		<music loop="true" type="main">wind.ogg</music>
-		<!-- <music type="intro">intro.ogg</music> -->
-		<event trigger="onLoad">babysfirst</event>
+		<music loop="true" type="main">wind.music</music>
+		<!-- <music type="intro">intro.music</music> -->
+		<event trigger="onLoad">babysfirst.event</event>
 		<map>
 			<grid layer="0">
 				<row>
@@ -69,10 +69,9 @@
 					<tile image="dirt">
 						<flag>nowalk</flag>
 					</tile>
-					<tile image="orange">
+					<door image="orange" area="grassfield.area" coords="1,1,0">
 						<flag>npc_nowalk</flag>
-						<event trigger="door">grassfield.area(1,1,0)</event>
-					</tile>
+					</door>
 					<tile image="dirt">
 						<flag>nowalk</flag>
 					</tile>
