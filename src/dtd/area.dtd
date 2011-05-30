@@ -22,7 +22,7 @@
 <!ELEMENT grid (row+)>
 <!ATTLIST grid layer CDATA #REQUIRED>
 
-<!ELEMENT row (tile,door)+> <!-- tiles and doors in any order -->
+<!ELEMENT row (tile?,door?)+> <!-- tiles and doors in any order -->
 
 <!ELEMENT tile (flag*, event*)>
 <!ATTLIST tile image CDATA #REQUIRED>
