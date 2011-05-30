@@ -45,10 +45,13 @@ public:
 	//! Returns an XML resource from disk or cache.
 	xmlNode* getXMLDoc(const std::string& name);
 
+	//! Returns a music stream from disk or cache.
+	Gosu::Sample* getSample(const std::string& name);
+
 private:
 	bool read(const std::string& name, Gosu::Buffer* buffer);
 	std::string path(const std::string& entry_name);
-	
+
 	GameWindow* window;
 	zip* z;
 	std::string zip_filename;

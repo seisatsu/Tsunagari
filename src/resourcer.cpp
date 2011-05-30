@@ -57,9 +57,8 @@ const std::string Resourcer::getFilename()
 Gosu::Image* Resourcer::getImage(const std::string& name)
 {
 	Gosu::Buffer buffer;
-	if (!read(name, &buffer)) {
+	if (!read(name, &buffer))
 		return NULL;
-	}
 	Gosu::Bitmap bitmap = Gosu::loadImageFile(buffer.frontReader());
 	return new Gosu::Image(window->graphics(), bitmap, false);
 }
@@ -123,6 +122,14 @@ xmlNode* Resourcer::getXMLDoc(const std::string& name)
 	}
 
 	return xmlDocGetRootElement(doc);
+}
+
+Gosu::Sample* Resourcer::getSample(const std::string& name)
+{
+	Gosu::Buffer* buffer = new Gosu::Buffer;
+	if (!read(name, buffer))
+		return NULL;
+	return new Gosu::Sample(buffer->frontReader());
 }
 
 // XXX: Can we just return Gosu::Buffer type?

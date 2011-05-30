@@ -79,7 +79,7 @@ bool Area::processDescriptor()
 
 	xmlNode* node = root->xmlChildrenNode; // <area>
 	node = node->xmlChildrenNode; // decend into children of <area>
-	while (node != NULL) {
+	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
 			const xmlChar* str = xmlNodeGetContent(node);
 			xml.name = (const char*)str;
@@ -93,7 +93,15 @@ bool Area::processDescriptor()
 			xml.tileset.reset(new Sprite(rc, (const char*)tilesetName));
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("music"), 6)) {
-			// TODO
+			// FIXME this is a stupid implementation
+			// It just plays whatever it sees.
+			static bool playing = false;
+			if (playing)
+				continue;
+			const xmlChar* name = xmlNodeGetContent(node);
+			Gosu::Sample* music = rc->getSample((const char*)name);
+			music->play(true); // looping
+			playing = true;
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("event"), 6)) {
 			// TODO Area-wide event
@@ -102,7 +110,6 @@ bool Area::processDescriptor()
 			// TODO create TileMatrix somehow
 			// perhaps pass xmlNode to TileMatrix::init() method??
 		}
-		node = node->next;
 	}
 	return true;
 }
