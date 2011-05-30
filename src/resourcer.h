@@ -25,16 +25,12 @@ class Resourcer
 public:
 	//! Resourcer Constructor
 	Resourcer(GameWindow* window, const std::string& filename);
-	
+
 	//! Resourcer Destructor
 	~Resourcer();
-	
+
 	//! Resourcer Initializer
 	bool init();
-
-	//! Returns the name of the file that this Resourcer is tied to.
-	// XXX (What? There's only one.)
-	const std::string getFilename();
 
 	//! Returns an image resource from disk or cache.
 	Gosu::Image* getImage(const std::string& name);
@@ -50,11 +46,11 @@ private:
 	Gosu::Buffer* read(const std::string& name);
 
 	//! Helper function 
-	std::string path(const std::string& entry_name);
-	
+	std::string path(const std::string& entry_name) const;
+
 	GameWindow* window;
 	zip* z;
-	std::string zip_filename;
+	const std::string zip_filename;
 };
 
 #endif

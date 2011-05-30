@@ -40,12 +40,12 @@ void TileMatrix::draw()
 				t->draw();
 }
 
-coord_t TileMatrix::getDimensions()
+coord_t TileMatrix::getDimensions() const
 {
 	return dim;
 }
 
-Tile* TileMatrix::getTile(coord_t c)
+Tile* TileMatrix::getTile(coord_t c) const
 {
 	return matrix[c.z][c.y][c.x];
 }

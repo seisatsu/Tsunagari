@@ -21,8 +21,8 @@ public:
 	bool init();
 	void draw();
 
-	coord_t getDimensions();
-	Tile* getTile(coord_t c);
+	coord_t getDimensions() const;
+	Tile* getTile(coord_t c) const;
 
 private:
 	typedef std::vector<Tile*> row_t;
