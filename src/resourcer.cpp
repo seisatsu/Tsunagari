@@ -102,29 +102,32 @@ std::string Resourcer::getString(const std::string& name)
 	return str;
 }
 
-xmlNode* Resourcer::getXMLDoc(const std::string& name)
+xmlDoc* Resourcer::getXMLDoc(const std::string& name)
 {
 	const std::string docStr = getString(name);
 	if (docStr.empty())
 		return NULL;
 
-	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
-			NULL, NULL, XML_PARSE_NOBLANKS | XML_PARSE_NONET);
-	if (!doc) {
-		Log::err(path(name), "Could not parse file");
-		return NULL;
-	}
-
+	xmlParserCtxt* ctxt = xmlNewParserCtxt();
 	const std::string pathname = path(name);
-	xmlValidCtxt ctxt;
-	ctxt.userData = (void*)&pathname;
-	ctxt.error = xmlErrorCb;
-	if (!xmlValidateDocument(&ctxt, doc)) {
-		Log::err(path(name), "XML document does not follow DTD");
+	ctxt->vctxt.userData = (void*)&pathname;
+	ctxt->vctxt.error = xmlErrorCb;
+	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(), docStr.size(),
+			NULL, NULL,
+			XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_DTDVALID);
+	if (!doc) {
+		xmlFreeParserCtxt(ctxt);
+		Log::err(pathname, "Could not parse file");
+		return NULL;
+	}
+	else if (!ctxt->valid) {
+		xmlFreeParserCtxt(ctxt);
+		Log::err(pathname, "XML document does not follow DTD");
 		return NULL;
 	}
 
-	return xmlDocGetRootElement(doc);
+	xmlFreeParserCtxt(ctxt);
+	return doc;
 }
 
 Gosu::Buffer* Resourcer::read(const std::string& name)

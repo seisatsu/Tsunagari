@@ -29,13 +29,18 @@ bool Sprite::processDescriptor()
 {
 	xmlChar* str;
 	
-	const xmlNode* root = rc->getXMLDoc(descriptor);
-	if (!root)
+	xmlDoc* doc = rc->getXMLDoc(descriptor);
+	if (!doc)
 		return false;
+	const xmlNode* root = xmlDocGetRootElement(doc);
+	if (!root) {
+		xmlFreeDoc(doc);
+		return false;
+	}
 	xmlNode* node = root->xmlChildrenNode; // <sprite>
 	
 	node = node->xmlChildrenNode; // decend into children of <sprite>
-	while (node != NULL) {
+	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("sheet"), 6)) {
 			str = xmlNodeGetContent(node);
 			xml.sheet = (char*)str;
@@ -61,10 +66,12 @@ bool Sprite::processDescriptor()
 					xmlChar* speed = xmlGetProp(p, BAD_CAST("speed"));
 
 					if (pos && speed) {
+						xmlFreeDoc(doc);
 						Log::err(descriptor, "pos and speed attributes in element phase are mutually exclusive");
 						return false;
 					}
 					if (!pos && !speed) {
+						xmlFreeDoc(doc);
 						Log::err(descriptor, "Must have one of pos or speed attributes in element phase");
 						return false;
 					}
@@ -81,8 +88,8 @@ bool Sprite::processDescriptor()
 				p = p->next;
 			}
 		}
-		node = node->next;
 	}
+	xmlFreeDoc(doc);
 	return true;
 }
 

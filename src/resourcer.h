@@ -43,7 +43,7 @@ public:
 	std::string getString(const std::string& name);
 
 	//! Returns an XML resource from disk or cache.
-	xmlNode* getXMLDoc(const std::string& name);
+	xmlDoc* getXMLDoc(const std::string& name);
 
 private:
 	//! Read a resource from disk into memory. Returns NULL on error.

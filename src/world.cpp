@@ -61,13 +61,18 @@ bool World::processDescriptor()
 	static const std::string descriptor = "world.conf";
 	xmlChar* str;
 	
-	const xmlNode* root = rc->getXMLDoc(descriptor);
-	if (!root)
+	xmlDoc* doc = rc->getXMLDoc(descriptor);
+	if (!doc)
 		return false;
-	
+	const xmlNode* root = xmlDocGetRootElement(doc);
+	if (!root) {
+		xmlFreeDoc(doc);
+		return false;
+	}
+
 	xmlNode* node = root->xmlChildrenNode; // <world>
 	node = node->xmlChildrenNode; // decend into children of <world>
-	while (node != NULL) {
+	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
 			str = xmlNodeGetContent(node);
 			xml.name = (char*)str;
@@ -84,8 +89,9 @@ bool World::processDescriptor()
 			
 			if (xmlStrncmp(str, BAD_CAST("network"), 8))
 				xml.type = NETWORK;
-			
+
 			else {
+				xmlFreeDoc(doc);
 				Log::err(descriptor, "Invalid <type> value");
 				return false;
 			}
@@ -107,8 +113,8 @@ bool World::processDescriptor()
 			str = xmlGetProp(node, BAD_CAST("z"));
 			xml.entry.coords.z = atol((char*)str);
 		}
-		node = node->next;
 	}
+	xmlFreeDoc(doc);
 	return true;
 }
 
