@@ -136,8 +136,8 @@ xmlDoc* Resourcer::getXMLDoc(const std::string& name)
  */
 Gosu::Sample* Resourcer::getSample(const std::string& name)
 {
-	Gosu::Buffer* buffer = new Gosu::Buffer;
-	if (!read(name, buffer))
+	Gosu::Buffer* buffer = read(name);
+	if (!buffer)
 		return NULL;
 	return new Gosu::Sample(buffer->frontReader());
 }
