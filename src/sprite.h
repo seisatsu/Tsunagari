@@ -12,6 +12,7 @@
 #include <string>
 
 #include <Gosu/Gosu.hpp>
+#include <libxml/parser.h>
 
 #include "common.h"
 
@@ -53,6 +54,8 @@ public:
 
 private:
 	bool processDescriptor();
+	bool processPhases(xmlNode* phases);
+	bool processPhase(xmlNode* phase);
 
 	Resourcer* rc;
 	const Gosu::Image* img;
