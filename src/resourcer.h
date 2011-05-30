@@ -46,7 +46,10 @@ public:
 	xmlNode* getXMLDoc(const std::string& name);
 
 private:
-	bool read(const std::string& name, Gosu::Buffer* buffer);
+	//! Read a resource from disk into memory. Returns NULL on error.
+	Gosu::Buffer* read(const std::string& name);
+
+	//! Helper function 
 	std::string path(const std::string& entry_name);
 	
 	GameWindow* window;

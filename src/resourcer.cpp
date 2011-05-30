@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
@@ -56,11 +58,10 @@ const std::string Resourcer::getFilename()
 
 Gosu::Image* Resourcer::getImage(const std::string& name)
 {
-	Gosu::Buffer buffer;
-	if (!read(name, &buffer)) {
+	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
+	if (!buffer)
 		return NULL;
-	}
-	Gosu::Bitmap bitmap = Gosu::loadImageFile(buffer.frontReader());
+	Gosu::Bitmap bitmap = Gosu::loadImageFile(buffer->frontReader());
 	return new Gosu::Image(window->graphics(), bitmap, false);
 }
 
@@ -125,8 +126,7 @@ xmlNode* Resourcer::getXMLDoc(const std::string& name)
 	return xmlDocGetRootElement(doc);
 }
 
-// XXX: Can we just return Gosu::Buffer type?
-bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
+Gosu::Buffer* Resourcer::read(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;
@@ -134,26 +134,28 @@ bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
 		Log::err(path(name), "file missing");
-		return false;
+		return NULL;
 	}
 
 	size = stat.size;
-	buffer->resize(size);
 
 	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
 		Log::err(path(name),
 		         std::string("opening : ") + zip_strerror(z));
-		return false;
+		return NULL;
 	}
 
+	Gosu::Buffer* buffer = new Gosu::Buffer;
+	buffer->resize(size);
 	if (zip_fread(zf, buffer->data(), size) != size) {
+		delete buffer;
 		Log::err(path(name), "reading didn't complete");
 		zip_fclose(zf);
-		return false;
+		return NULL;
 	}
 
 	zip_fclose(zf);
-	return true;
+	return buffer;
 }
 
 std::string Resourcer::path(const std::string& entry_name)
