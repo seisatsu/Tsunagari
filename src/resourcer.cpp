@@ -20,7 +20,7 @@ static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 	va_list ap;
 
 	va_start(ap, msg);
-	sprintf(buf, msg, va_arg(ap, char*));
+	snprintf(buf, sizeof(buf)-1, msg, va_arg(ap, char*));
 	Log::err(*filename, buf);
 	va_end(ap);
 }
