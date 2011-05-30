@@ -30,7 +30,7 @@ bool World::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 
-	// The player entity doesn't have a descriptor yet.
+	// FIXME The player entity doesn't have a descriptor yet.
 	player = new Entity(rc, "_NONE_", xml.playersprite);
 	if (!player->init())
 		return false;
