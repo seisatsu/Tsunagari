@@ -111,15 +111,16 @@ xmlNode* Resourcer::getXMLDoc(const std::string& name)
 	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
 			NULL, NULL, XML_PARSE_NOBLANKS | XML_PARSE_NONET);
 	if (!doc) {
-		Log::err(name, "Could not parse file");
+		Log::err(path(name), "Could not parse file");
 		return NULL;
 	}
 
+	const std::string pathname = path(name);
 	xmlValidCtxt ctxt;
-	ctxt.userData = (void*)&name;
+	ctxt.userData = (void*)&pathname;
 	ctxt.error = xmlErrorCb;
 	if (!xmlValidateDocument(&ctxt, doc)) {
-		Log::err(name, "XML document does not follow DTD");
+		Log::err(path(name), "XML document does not follow DTD");
 		return NULL;
 	}
 
