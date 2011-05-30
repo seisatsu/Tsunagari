@@ -73,9 +73,14 @@ bool Area::needsRedraw() const
 
 bool Area::processDescriptor()
 {
-	const xmlNode* root = rc->getXMLDoc(descriptor);
-	if (!root)
+	xmlDoc* doc = rc->getXMLDoc(descriptor);
+	if (!doc)
 		return false;
+	const xmlNode* root = xmlDocGetRootElement(doc);
+	if (!root) {
+		xmlFreeDoc(doc);
+		return false;
+	}
 
 	xmlNode* node = root->xmlChildrenNode; // <area>
 	node = node->xmlChildrenNode; // decend into children of <area>
@@ -111,6 +116,7 @@ bool Area::processDescriptor()
 			// perhaps pass xmlNode to TileMatrix::init() method??
 		}
 	}
+	xmlFreeDoc(doc);
 	return true;
 }
 

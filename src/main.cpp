@@ -59,13 +59,6 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	xmlDoc* doc = NULL;
 	xmlNode* root = NULL;
 
-	/*
-	 * This initializes the library and checks for potential ABI mismatches
-	 * between the version it was compiled for and the actual shared
-	 * library used.
-	 */
-	LIBXML_TEST_VERSION
-
 	doc = xmlReadFile(filename, NULL, XML_PARSE_NOBLANKS);
 
 	if (!doc) {
@@ -122,6 +115,13 @@ int main()
 	ClientValues conf;
 	Log::setMode(MESSAGE_MODE);
 
+	/*
+	 * This initializes the library and checks for potential ABI mismatches
+	 * between the version it was compiled for and the actual shared
+	 * library used.
+	 */
+	LIBXML_TEST_VERSION
+
 	if (!parseClientConfig(CLIENT_CONF_FILE, &conf))
 		return 1;
 
@@ -130,6 +130,9 @@ int main()
 	if (!window.init(conf.world))
 		return 1;
 	window.show();
+
+	// Clean the XML library.
+	xmlCleanupParser();
 
 	return 0;
 }

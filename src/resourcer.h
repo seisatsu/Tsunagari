@@ -43,13 +43,16 @@ public:
 	std::string getString(const std::string& name);
 
 	//! Returns an XML resource from disk or cache.
-	xmlNode* getXMLDoc(const std::string& name);
+	xmlDoc* getXMLDoc(const std::string& name);
 
 	//! Returns a music stream from disk or cache.
 	Gosu::Sample* getSample(const std::string& name);
 
 private:
-	bool read(const std::string& name, Gosu::Buffer* buffer);
+	//! Read a resource from disk into memory. Returns NULL on error.
+	Gosu::Buffer* read(const std::string& name);
+
+	//! Helper function 
 	std::string path(const std::string& entry_name);
 
 	GameWindow* window;

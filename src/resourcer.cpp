@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
@@ -56,10 +58,10 @@ const std::string Resourcer::getFilename()
 
 Gosu::Image* Resourcer::getImage(const std::string& name)
 {
-	Gosu::Buffer buffer;
-	if (!read(name, &buffer))
+	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
+	if (!buffer)
 		return NULL;
-	Gosu::Bitmap bitmap = Gosu::loadImageFile(buffer.frontReader());
+	Gosu::Bitmap bitmap = Gosu::loadImageFile(buffer->frontReader());
 	return new Gosu::Image(window->graphics(), bitmap, false);
 }
 
@@ -100,28 +102,32 @@ std::string Resourcer::getString(const std::string& name)
 	return str;
 }
 
-xmlNode* Resourcer::getXMLDoc(const std::string& name)
+xmlDoc* Resourcer::getXMLDoc(const std::string& name)
 {
 	const std::string docStr = getString(name);
 	if (docStr.empty())
 		return NULL;
 
-	xmlDoc* doc = xmlReadMemory(docStr.c_str(), docStr.size(),
-			NULL, NULL, XML_PARSE_NOBLANKS | XML_PARSE_NONET);
+	xmlParserCtxt* ctxt = xmlNewParserCtxt();
+	const std::string pathname = path(name);
+	ctxt->vctxt.userData = (void*)&pathname;
+	ctxt->vctxt.error = xmlErrorCb;
+	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(), docStr.size(),
+			NULL, NULL,
+			XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_DTDVALID);
 	if (!doc) {
-		Log::err(name, "Could not parse file");
+		xmlFreeParserCtxt(ctxt);
+		Log::err(pathname, "Could not parse file");
+		return NULL;
+	}
+	else if (!ctxt->valid) {
+		xmlFreeParserCtxt(ctxt);
+		Log::err(pathname, "XML document does not follow DTD");
 		return NULL;
 	}
 
-	xmlValidCtxt ctxt;
-	ctxt.userData = (void*)&name;
-	ctxt.error = xmlErrorCb;
-	if (!xmlValidateDocument(&ctxt, doc)) {
-		Log::err(name, "XML document does not follow DTD");
-		return NULL;
-	}
-
-	return xmlDocGetRootElement(doc);
+	xmlFreeParserCtxt(ctxt);
+	return doc;
 }
 
 /* FIXME
@@ -136,8 +142,7 @@ Gosu::Sample* Resourcer::getSample(const std::string& name)
 	return new Gosu::Sample(buffer->frontReader());
 }
 
-// XXX: Can we just return Gosu::Buffer type?
-bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
+Gosu::Buffer* Resourcer::read(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;
@@ -145,26 +150,28 @@ bool Resourcer::read(const std::string& name, Gosu::Buffer* buffer)
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
 		Log::err(path(name), "file missing");
-		return false;
+		return NULL;
 	}
 
 	size = stat.size;
-	buffer->resize(size);
 
 	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
 		Log::err(path(name),
 		         std::string("opening : ") + zip_strerror(z));
-		return false;
+		return NULL;
 	}
 
+	Gosu::Buffer* buffer = new Gosu::Buffer;
+	buffer->resize(size);
 	if (zip_fread(zf, buffer->data(), size) != size) {
+		delete buffer;
 		Log::err(path(name), "reading didn't complete");
 		zip_fclose(zf);
-		return false;
+		return NULL;
 	}
 
 	zip_fclose(zf);
-	return true;
+	return buffer;
 }
 
 std::string Resourcer::path(const std::string& entry_name)
