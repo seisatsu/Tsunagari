@@ -4,13 +4,15 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <boost/foreach.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "area.h"
 #include "entity.h"
 #include "resourcer.h"
-#include "tilematrix.h"
+#include "sprite.h"
+#include "tile.h"
 
 Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
 	: rc(rc), player(player), descriptor(descriptor)
@@ -26,9 +28,21 @@ bool Area::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 	
-	tiles = new TileMatrix(rc);
+	Sprite* s = new Sprite(rc, "grass.sprite");
+	Sprite* s2 = new Sprite(rc, "grass.sprite");
+	if (!s->init() || !s2->init())
+		return false;
+	Tile* t = new Tile(s, true, coord(0, 0, 0));
+	Tile* t2 = new Tile(s2, true, coord(1, 0, 0));
+
+
+	matrix.resize(1);
+	matrix[0].resize(1);
+	matrix[0][0].resize(2);
+	matrix[0][0][0] = t;
+	matrix[0][0][1] = t2;
 	
-	return tiles->init();
+	return true;
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -45,7 +59,10 @@ void Area::buttonDown(const Gosu::Button btn)
 
 void Area::draw()
 {
-	tiles->draw();
+	BOOST_FOREACH(grid_t g, matrix)
+		BOOST_FOREACH(row_t r, g)
+			BOOST_FOREACH(Tile* t, r)
+				t->draw();
 	player->draw();
 }
 
@@ -92,5 +109,15 @@ bool Area::processDescriptor()
 		node = node->next;
 	}
 	return true;
+}
+
+coord_t Area::getDimensions()
+{
+	return dim;
+}
+
+Tile* Area::getTile(coord_t c)
+{
+	return matrix[c.z][c.y][c.x];
 }
 

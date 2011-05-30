@@ -16,8 +16,8 @@
 
 class Entity;
 class GameWindow;
-class TileMatrix;
 class Resourcer;
+class Tile;
 
 //! Area Class
 /*!
@@ -43,16 +43,23 @@ public:
 	//! Gosu Callback
 	bool needsRedraw() const;
 
-	coord_t translateCoords(); //XXX What does this do?
+	coord_t getDimensions();
+	Tile* getTile(coord_t c);
 
 private:
 	bool processDescriptor();
-	
+
 	Resourcer* rc;
 	Entity* player;
-	TileMatrix* tiles;
 	const std::string descriptor;
-	
+
+	typedef std::vector<Tile*> row_t;
+	typedef std::vector<row_t> grid_t;
+	typedef std::vector<grid_t> tilematrix_t;
+
+	tilematrix_t matrix;
+	coord_t dim;
+
 	//! AreaEventTriggerType XML Storage Enum
 	/*!
 	  Stores the trigger type for an event.
@@ -63,7 +70,7 @@ private:
 		LEAVE,
 		DOOR
 	};
-	
+
 	//! AreaEventTileFlag XML Storage Enum
 	/*!
 	  Stores the flag type for a tile flag.
@@ -71,7 +78,7 @@ private:
 	enum AreaMapTileFlag {
 		NOWALK
 	};
-	
+
 	//! AreaMusic XML Storage Struct
 	/*!
 	  Stores information for a <music> tag in Area.
@@ -80,7 +87,7 @@ private:
 		bool loop;
 		std::string file;
 	};
-	
+
 	//! AreaEvent XML Storage Struct
 	/*!
 	  Stores information for an <event> tag in Area.
