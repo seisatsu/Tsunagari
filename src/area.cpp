@@ -89,12 +89,8 @@ bool Area::processDescriptor()
 			xml.author = (const char*)str;
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("tileset"), 8)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.tileset = (const char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("tileset"), 8)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.tileset = (const char*)str;
+			const xmlChar* tilesetName = xmlNodeGetContent(node);
+			xml.tileset.reset(new Sprite(rc, (const char*)tilesetName));
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("music"), 6)) {
 			// TODO

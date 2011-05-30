@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/scoped_ptr.hpp>
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
@@ -17,6 +18,7 @@
 class Entity;
 class GameWindow;
 class Resourcer;
+class Sprite;
 class Tile;
 
 //! Area Class
@@ -123,7 +125,7 @@ private:
 	struct AreaValues {
 		std::string name;
 		std::string author;
-		std::string tileset;
+		boost::scoped_ptr<Sprite> tileset;
 		AreaMusic intro;
 		AreaMusic main;
 		std::vector<AreaEvent> onLoadEvents;
