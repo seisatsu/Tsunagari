@@ -96,7 +96,7 @@ private:
 		AreaEventTriggerType trigger;
 		std::string name;
 	};
-	
+
 	//! AreaMapTile XML Storage Struct
 	/*!
 	  Stores XML information for tiles in a map layer.
@@ -106,7 +106,7 @@ private:
 		std::vector<AreaMapTileFlag> flags;
 		std::vector<AreaEvent> events;
 	};
-	
+
 	//! AreaMapGrid XML Storage Struct
 	/*!
 	  Stores XML information for grid layers in Area's tile map.
@@ -115,7 +115,7 @@ private:
 		int layer;
 		std::vector<std::vector<AreaMapTile> > rows;
 	};
-	
+
 	//! AreaValues XML Storage Struct
 	/*!
 		Main XML storage struct for Area.
