@@ -51,11 +51,6 @@ bool Resourcer::init()
 	return true;
 }
 
-const std::string Resourcer::getFilename()
-{
-	return zip_filename;
-}
-
 Gosu::Image* Resourcer::getImage(const std::string& name)
 {
 	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
@@ -174,7 +169,7 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 	return buffer;
 }
 
-std::string Resourcer::path(const std::string& entry_name)
+std::string Resourcer::path(const std::string& entry_name) const
 {
 	return zip_filename + "/" + entry_name;
 }

@@ -44,7 +44,6 @@ public:
 	void update();
 
 private:
-//	string getDataDir();
 	Resourcer* rc;
 	World* world;
 };

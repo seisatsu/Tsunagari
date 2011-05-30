@@ -28,7 +28,7 @@ Sprite::~Sprite()
 bool Sprite::processDescriptor()
 {
 	xmlChar* str;
-	
+
 	xmlDoc* doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
@@ -38,7 +38,7 @@ bool Sprite::processDescriptor()
 		return false;
 	}
 	xmlNode* node = root->xmlChildrenNode; // <sprite>
-	
+
 	node = node->xmlChildrenNode; // decend into children of <sprite>
 	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("sheet"), 6)) {
@@ -51,45 +51,57 @@ bool Sprite::processDescriptor()
 			str = xmlGetProp(node, BAD_CAST("tilesizey"));
 			xml.tilesize.y = atol((char*)str); // atol
 		}
-		if (!xmlStrncmp(node->name, BAD_CAST("phases"), 7)) {
-			xmlNode* p = node->xmlChildrenNode;
-			while (p != NULL) {
-				if (!xmlStrncmp(p->name, BAD_CAST("phase"), 6)) { // ignore comments
-					/* Each phase requires a 'name'. Additionally,
-					 * one of either 'pos' or 'speed' is needed.
-					 * If speed is used, we have sub-elements. We
-					 * can't have both pos and speed.
-					 */
-					const std::string key = (char*)xmlGetProp(p, BAD_CAST("name"));
-
-					xmlChar* pos = xmlGetProp(p, BAD_CAST("pos"));
-					xmlChar* speed = xmlGetProp(p, BAD_CAST("speed"));
-
-					if (pos && speed) {
-						xmlFreeDoc(doc);
-						Log::err(descriptor, "pos and speed attributes in element phase are mutually exclusive");
-						return false;
-					}
-					if (!pos && !speed) {
-						xmlFreeDoc(doc);
-						Log::err(descriptor, "Must have one of pos or speed attributes in element phase");
-						return false;
-					}
-
-					if (pos) {
-						const uint32_t value = atol((char*)pos); // atol
-						xml.phases[key] = value;
-					}
-					else { // speed
-						// TODO: Load animated sprites
-						// Load <member> subelements
-					}
-				}
-				p = p->next;
-			}
+		if (!xmlStrncmp(node->name, BAD_CAST("phases"), 7) &&
+				!processPhases(node)) {
+			xmlFreeDoc(doc);
+			return false;
 		}
 	}
 	xmlFreeDoc(doc);
+	return true;
+}
+
+bool Sprite::processPhases(xmlNode* phases)
+{
+	for (xmlNode* phase = phases->xmlChildrenNode; phase != NULL;
+			phase = phase->next)
+		if (!xmlStrncmp(phase->name, BAD_CAST("phase"), 6))
+			if (!processPhase(phase))
+				return false;
+	return true;
+}
+
+bool Sprite::processPhase(xmlNode* phase)
+{
+	/* Each phase requires a 'name'. Additionally,
+	 * one of either 'pos' or 'speed' is needed.
+	 * If speed is used, we have sub-elements. We
+	 * can't have both pos and speed.
+	 */
+	const std::string key = (char*)xmlGetProp(phase, BAD_CAST("name"));
+
+	xmlChar* pos = xmlGetProp(phase, BAD_CAST("pos"));
+	xmlChar* speed = xmlGetProp(phase, BAD_CAST("speed"));
+
+	if (pos && speed) {
+		Log::err(descriptor, "pos and speed attributes in "
+				"element phase are mutually exclusive");
+		return false;
+	}
+	if (!pos && !speed) {
+		Log::err(descriptor, "must have pos or speed attribute "
+			       "in element phase");
+		return false;
+	}
+
+	if (pos) {
+		const uint32_t value = atol((char*)pos); // atol
+		xml.phases[key] = value;
+	}
+	else { // speed
+		// TODO: Load animated sprites
+		// Load <member> subelements
+	}
 	return true;
 }
 
