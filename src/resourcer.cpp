@@ -124,6 +124,10 @@ xmlNode* Resourcer::getXMLDoc(const std::string& name)
 	return xmlDocGetRootElement(doc);
 }
 
+/* FIXME
+ * We use Gosu::Sample for music because Gosu::Song's SDL implementation
+ * doesn't support loading from a memory buffer at the moment.
+ */
 Gosu::Sample* Resourcer::getSample(const std::string& name)
 {
 	Gosu::Buffer* buffer = new Gosu::Buffer;
