@@ -9,6 +9,10 @@ ITEMS
 
 * Give World::player an Entity descriptor file.
   What does an Entity descriptor file contain? What is an Entity?
+  ->	Entity is the most complicated descriptor. It will take a while to
+  	design. It's the only descriptor with multiple types which are each
+  	different. It's possible that each type of entity will require a
+  	different DTD.
 
 * Avoid window damage when another window moves on top.
   We have an optimization that makes our window only redraw itself if something

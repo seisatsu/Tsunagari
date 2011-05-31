@@ -19,7 +19,7 @@
 			<phase name="teleblue" pos="12" />
 			<phase name="telered" pos="13" />
 			<!-- Can have pos OR speed, but one required -->
-			<phase name="testanimation" speed="4">
+			<phase name="testanimation" speed="2">
 				<member pos="14" />
 				<member pos="15" />
 			</phase>

@@ -69,7 +69,8 @@ private:
 	  Stores the flag type for a tile flag.
 	*/
 	enum AreaMapTileFlag {
-		NOWALK
+		NOWALK,
+		NPC_NOWALK
 	};
 	
 	//! AreaMusic XML Storage Struct
