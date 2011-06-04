@@ -22,13 +22,10 @@ ITEMS
   Gosu might be forked to be explicit about the difference between timer-based
   redraw requests and ones spawned by window damage.
 
-* Make door tiles without <event> tags.
-  In an Area descriptor file, <event trigger="door"> only makes sense if it is a
-  child of <tile>. It does not make sense as a child of <map> as its source tile
-  is not specified. We should introduce a new child tag to <map> called <door>.
-  It is the same as a tile except it has destination area and coord attributes.
-
-
+* Rewrite Area parser for TMX format.
+  Though it's a bit more complex, using the TMX map format (XML based) will
+  allow ourselves and our users to edit areas with the excellent Tiled generic
+  map editor.
 
 FINISHED ITEMS
 
