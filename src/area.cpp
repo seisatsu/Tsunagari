@@ -68,32 +68,7 @@ bool Area::processDescriptor()
 	xmlNode* node = root->xmlChildrenNode; // <area>
 	node = node->xmlChildrenNode; // decend into children of <area>
 	for (; node != NULL; node = node->next) {
-		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.name = (const char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("author"), 7)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.author = (const char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("tileset"), 8)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.tileset = (const char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("tileset"), 8)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.tileset = (const char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("music"), 6)) {
-			// TODO
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("event"), 6)) {
-			// TODO Area-wide event
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("map"), 4)) {
-			// TODO create TileMatrix somehow
-			// perhaps pass xmlNode to TileMatrix::init() method??
-		}
+		true;
 	}
 	xmlFreeDoc(doc);
 	return true;

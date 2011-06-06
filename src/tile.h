@@ -21,6 +21,18 @@ public:
 	bool canWalk();
 	void draw();
 	
+	enum FlagTypes {
+		nowalk,
+		npc_nowalk
+	};
+	
+	enum EventTriggerTypes {
+		onLoad,
+		onEnter,
+		onLeave,
+		door
+	};
+	
 private:
 	Sprite* s;
 	bool walkable;

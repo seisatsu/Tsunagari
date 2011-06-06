@@ -13,9 +13,11 @@
 #include <Gosu/Gosu.hpp>
 
 #include "common.h"
+#include "tile.h"
 
 class Entity;
 class GameWindow;
+class Tile;
 class TileMatrix;
 class Resourcer;
 
@@ -53,61 +55,57 @@ private:
 	TileMatrix* tiles;
 	const std::string descriptor;
 	
-	//! AreaEventTriggerType XML Storage Enum
-	/*!
-	  Stores the trigger type for an event.
-	*/
-	enum AreaEventTriggerType {
-		LOAD,
-		ENTER,
-		LEAVE,
-		DOOR
-	};
-	
-	//! AreaEventTileFlag XML Storage Enum
-	/*!
-	  Stores the flag type for a tile flag.
-	*/
-	enum AreaMapTileFlag {
-		NOWALK,
-		NPC_NOWALK
-	};
-	
-	//! AreaMusic XML Storage Struct
-	/*!
-	  Stores information for a <music> tag in Area.
-	*/
-	struct AreaMusic {
-		bool loop;
-		std::string file;
-	};
-	
 	//! AreaEvent XML Storage Struct
 	/*!
-	  Stores information for an <event> tag in Area.
+		Stores info for an event attached to a tile.
 	*/
 	struct AreaEvent {
-		AreaEventTriggerType trigger;
-		std::string name;
+		Tile::EventTriggerTypes trigger;
+		std::vector<std::string> argv; // Function name and arguments.
 	};
 	
 	//! AreaMapTile XML Storage Struct
 	/*!
-	  Stores XML information for tiles in a map layer.
+		Stores a tile, including its animation properties, and things
+		attached to it. This is later given to the Tile class
+		constructor through TileMatrix.
 	*/
 	struct AreaMapTile {
-		std::string image;
-		std::vector<AreaMapTileFlag> flags;
+		uint gid; // Tileset graphic position
+		bool animated; // Is the tile animated?
+		uint a_size; // Size of animation in tiles
+		double a_speed; // Speed of animation in hertz
 		std::vector<AreaEvent> events;
+		std::vector<Tile::FlagTypes> flags;
 	};
 	
-	//! AreaMapGrid XML Storage Struct
+	//! AreaTileset XML Storage Struct
 	/*!
-	  Stores XML information for grid layers in Area's tile map.
+		Stores info for a tileset, and global settings for tiles.
 	*/
-	struct AreaMapGrid {
-		int layer;
-		std::vector<std::vector<AreaMapTile> > rows;
+	struct AreaTileset {
+		std::string filename;
+		coord_t dim; // Dimensions of tileset image
+		coord_t tiledim; // Dimensions per tile
+		std::vector<AreaMapTile> globals; // Tiles with global settings
+	};
+	
+	//! AreaMusic XML Storage Struct
+	/*!
+		Stores info for the intro or main music files.
+	*/
+	struct AreaMusic {
+		bool loop;
+		std::string filename;
+	};
+	
+	//! AreaMapLayer XML Storage Struct
+	/*!
+		Stores layer level and layer's tile grid.
+	*/
+	struct AreaMapLayer {
+		int level;
+		std::vector<std::vector<AreaMapTile> > grid;
 	};
 	
 	//! AreaValues XML Storage Struct
@@ -115,13 +113,15 @@ private:
 		Main XML storage struct for Area.
 	*/
 	struct AreaValues {
+		coord_t dim; // Dimensions of area
 		std::string name;
 		std::string author;
-		std::string tileset;
+		std::vector<AreaTileset> tilesets;
 		AreaMusic intro;
 		AreaMusic main;
-		std::vector<AreaEvent> onLoadEvents;
-		std::vector<AreaMapGrid> map;
+		std::vector<std::string> scripts;
+		std::vector<std::vector<std::string> > onLoadEvents;
+		std::vector<AreaMapLayer> map; // Given to TileMatrix.
 	} xml;
 };
 

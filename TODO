@@ -27,6 +27,15 @@ ITEMS
   allow ourselves and our users to edit areas with the excellent Tiled generic
   map editor.
 
+* Area drawing shouldn't use Sprite.
+  Now that the TMX map format handles tilesets, this is especially true.
+  Tilesets were a bit different from Sprites in the first place, and we simply
+  handled them under the Sprite class for convenience, even though this method
+  was a bit hackish. Now that they're defined in full inside the Area
+  descriptor, Area should probably handle them. This means that tiles are no
+  longer Sprites. Area will also handle the tile animations. This should be
+  cleaner in the long run.
+
 FINISHED ITEMS
 
 
