@@ -1,3 +1,13 @@
+________                                _________________    ________ 
+\_____  \   _____   ____   _________   /   _____/\______ \  /  _____/ 
+ /   |   \ /     \_/ __ \ / ___\__  \  \_____  \  |    |  \/   \  ___ 
+/    |    \  Y Y  \  ___// /_/  > __ \_/        \ |    `   \    \_\  \
+\_______  /__|_|  /\___  >___  (____  /_______  //_______  /\______  /
+        \/      \/     \/_____/     \/        \/         \/        \/ 
+<http://omegasdg.com/>
+
+-----
+
 Tsunagari Tile Engine
 
 Tsunagari is a tile engine inspired by the cult classic game Yume Nikki. It is intended as an open source replacement for the popular proprietary RPGMaker game development suite that the original and most fangames were/are written on. The main focus is compatibility with all features of the original game, and beyond that it strives to add networking and additional features. Tsunagari is written in C++, using the Gosu framework.
