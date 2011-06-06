@@ -113,6 +113,13 @@ bool World::processDescriptor()
 			str = xmlGetProp(node, BAD_CAST("z"));
 			xml.entry.coords.z = atol((char*)str);
 		}
+		if (!xmlStrncmp(node->name, BAD_CAST("eventscripts"), 13)) {
+			node = node->xmlChildrenNode; // decend
+		}
+		if (!xmlStrncmp(node->name, BAD_CAST("script"), 7)) {
+			str = xmlNodeGetContent(node);
+			xml.scripts.push_back((char*)str);
+		}
 	}
 	xmlFreeDoc(doc);
 	return true;
