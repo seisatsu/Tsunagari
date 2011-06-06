@@ -6,7 +6,8 @@
   <property name="music_loop" value="1"/>
   <property name="music_main" value="wind.music"/>
   <property name="name" value="Baby's First Area"/>
-  <property name="onLoad" value="babysfirst.event"/>
+  <property name="onLoad" value="babysfirst_init()"/>
+  <property name="scripts" value="areainits.event,test.event"/>
  </properties>
  <tileset firstgid="1" name="tiles.sheet" tilewidth="64" tileheight="64">
   <image source="tiles.sheet" width="256" height="256"/>
