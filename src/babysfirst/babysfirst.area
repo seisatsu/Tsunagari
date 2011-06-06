@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "dtd/area.dtd">
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.0" orientation="orthogonal" width="5" height="5" tilewidth="64" tileheight="64">
  <properties>
   <property name="areaspec" value="1"/>
@@ -57,41 +57,25 @@
    <tile gid="9"/>
   </data>
  </layer>
- <objectgroup name="Events0" width="5" height="5">
+ <objectgroup name="Prop0" width="5" height="5">
   <properties>
    <property name="layer" value="0"/>
   </properties>
-  <object name="event1" type="event" x="192" y="192" width="64" height="64">
-   <properties>
-    <property name="onEnter" value="random_warp()"/>
-   </properties>
-  </object>
-  <object name="door0" type="door" x="64" y="256" width="64" height="64">
-   <properties>
-    <property name="area" value="grassfield.area"/>
-    <property name="coords" value="1,1,0"/>
-   </properties>
-  </object>
-  <object name="event0" type="event" x="128" y="64" width="64" height="64">
-   <properties>
-    <property name="onEnter" value="slow()"/>
-    <property name="onLeave" value="undo()"/>
-   </properties>
-  </object>
-  <object name="event0" type="event" x="128" y="64" width="64" height="64">
+  <object name="tile0" type="Tile" gid="6" x="128" y="128">
    <properties>
     <property name="onEnter" value="speed(0.5)"/>
     <property name="onLeave" value="undo()"/>
    </properties>
   </object>
- </objectgroup>
- <objectgroup name="Flags0" width="5" height="5">
-  <properties>
-   <property name="layer" value="0"/>
-  </properties>
-  <object name="flag0" type="flags" x="64" y="256" width="64" height="64">
+  <object name="tile1" type="Tile" gid="13" x="192" y="256">
    <properties>
-    <property name="npc_nowalk" value="1"/>
+    <property name="onEnter" value="random_warp()"/>
+   </properties>
+  </object>
+  <object name="tile2" type="Tile" gid="7" x="64" y="320">
+   <properties>
+    <property name="door" value="grassfield.area,1,1,0"/>
+    <property name="flags" value="npc_nowalk"/>
    </properties>
   </object>
  </objectgroup>
