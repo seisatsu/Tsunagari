@@ -36,6 +36,12 @@ ITEMS
   longer Sprites. Area will also handle the tile animations. This should be
   cleaner in the long run.
 
+* Change XML parsers to use node stacks.
+  Stacks are probably cleaner and more sane, and fit well with the structure of
+  an XML document. They will especially improve the parsing of complex formats,
+  such as the TMX map format, with multiple "camel hump" changes in element
+  depth.
+
 FINISHED ITEMS
 
 
