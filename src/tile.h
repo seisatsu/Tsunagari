@@ -23,7 +23,11 @@ public:
 	
 	enum FlagTypes {
 		nowalk,
-		npc_nowalk
+		player_nowalk,
+		npc_nowalk,
+		player_event,
+		npc_event,
+		temp_event
 	};
 	
 	enum EventTriggerTypes {
