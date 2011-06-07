@@ -60,7 +60,7 @@ private:
 		Stores info for an event attached to a tile.
 	*/
 	struct AreaEvent {
-		Tile::EventTriggerTypes trigger;
+		Tile::TileEventTriggerTypes trigger;
 		std::vector<std::string> argv; // Function name and arguments.
 	};
 	
@@ -76,7 +76,7 @@ private:
 		uint a_size; // Size of animation in tiles
 		double a_speed; // Speed of animation in hertz
 		std::vector<AreaEvent> events;
-		std::vector<Tile::FlagTypes> flags;
+		std::vector<Tile::TileFlagTypes> flags;
 	};
 	
 	//! AreaTileset XML Storage Struct

@@ -21,7 +21,7 @@ public:
 	bool canWalk();
 	void draw();
 	
-	enum FlagTypes {
+	enum TileFlagTypes {
 		nowalk,
 		player_nowalk,
 		npc_nowalk,
@@ -30,8 +30,8 @@ public:
 		temp_event
 	};
 	
-	enum EventTriggerTypes {
-		onLoad,
+	enum TileEventTriggerTypes {
+		onUse,
 		onEnter,
 		onLeave,
 		door
