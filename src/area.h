@@ -7,10 +7,13 @@
 #ifndef AREA_H
 #define AREA_H
 
+#include <stack>
 #include <string>
 #include <vector>
 
 #include <Gosu/Gosu.hpp>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 #include "common.h"
 #include "tile.h"
@@ -49,6 +52,9 @@ public:
 
 private:
 	bool processDescriptor();
+	
+	//! Parser node stack
+	std::stack<xmlNode*> xmlStack;
 	
 	Resourcer* rc;
 	Entity* player;

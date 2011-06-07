@@ -4,9 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-
 #include "area.h"
 #include "entity.h"
 #include "resourcer.h"
@@ -59,17 +56,17 @@ bool Area::processDescriptor()
 	xmlDoc* doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
-	const xmlNode* root = xmlDocGetRootElement(doc);
-	if (!root) {
+	
+	//! Push root element onto the stack.
+	xmlStack.push(xmlDocGetRootElement(doc));
+	
+	if (!xmlStack.top()) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-
-	xmlNode* node = root->xmlChildrenNode; // <area>
-	node = node->xmlChildrenNode; // decend into children of <area>
-	for (; node != NULL; node = node->next) {
-		true;
-	}
+	
+	xmlStack.push(xmlStack.top()->xmlChildrenNode); // <area>
+	
 	xmlFreeDoc(doc);
 	return true;
 }
