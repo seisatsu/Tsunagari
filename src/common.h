@@ -11,6 +11,13 @@
 #include <string>
 #include <vector>
 
+//! Ternary Data Type
+enum tern {
+	T_True = true,
+	T_False = false,
+	T_None
+};
+
 struct coord_t {
 	uint32_t x;
 	uint32_t y;

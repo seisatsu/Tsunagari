@@ -16,7 +16,8 @@
 #include <libxml/tree.h>
 #include <zip.h>
 
-#define CACHE_TTL "300" // Cache drop time in seconds. Defaults to 5 minutes.
+// Time to live for empty cache members. Defaults to 5 minutes.
+#define CACHE_EMPTY_TTL "300"
 
 class GameWindow;
 

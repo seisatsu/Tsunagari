@@ -31,7 +31,10 @@ struct ClientValues {
 	std::string world;
 	coord_t windowsize;
 	bool fullscreen;
-};
+	tern cache_enabled;
+	tern cache_ttl;
+	message_mode_t loglevel;
+} CLIENT_CONFIG;
 
 static void xmlErrorCb(void*, const char* msg, ...)
 {
@@ -75,6 +78,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 
 	root = xmlDocGetRootElement(doc);
 	xmlNode* node = root->xmlChildrenNode; // <client>
+	xmlChar* str;
 	
 	/* Extract from XML object:
 	 *  - name of World to load
@@ -87,8 +91,6 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 					node->xmlChildrenNode, 1);
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("window"), 7)) {
-			xmlChar* str;
-
 			str = xmlGetProp(node, BAD_CAST("x"));
 			conf->windowsize.x = atol((char*)str); // atol
 
@@ -97,6 +99,29 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 				
 			str = xmlGetProp(node, BAD_CAST("fullscreen"));
 			conf->fullscreen = parseBool((char*)str);
+		}
+		else if (!xmlStrncmp(node->name, BAD_CAST("cache"), 6)) {
+			str = xmlGetProp(node, BAD_CAST("enabled"));
+			if (str == NULL)
+				conf->cache_enabled = T_None;
+			else
+				conf->cache_enabled = (tern)parseBool((char*)str);
+			str = xmlGetProp(node, BAD_CAST("ttl"));
+			if (str == NULL)
+				conf->cache_ttl = T_None;
+			else
+				conf->cache_ttl = (tern)parseBool((char*)str);
+		}
+		else if (!xmlStrncmp(node->name, BAD_CAST("logging"), 8)) {
+			str = xmlGetProp(node, BAD_CAST("level"));
+			if (!strcmp((char*)str, "error"))
+				conf->loglevel = MM_SILENT;
+			else if (!strcmp((char*)str, "devel"))
+				conf->loglevel = MM_DEVELOPER;
+			else if (!strcmp((char*)str, "debug"))
+				conf->loglevel = MM_DEBUG;
+			else
+				Log::err(filename, "Invalid logging level defined");
 		}
 		node = node->next;
 	}
@@ -112,7 +137,6 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
  */
 int main()
 {
-	ClientValues conf;
 	Log::setMode(MESSAGE_MODE);
 
 	/*
@@ -122,12 +146,12 @@ int main()
 	 */
 	LIBXML_TEST_VERSION
 
-	if (!parseClientConfig(CLIENT_CONF_FILE, &conf))
+	if (!parseClientConfig(CLIENT_CONF_FILE, &CLIENT_CONFIG))
 		return 1;
 
-	GameWindow window(conf.windowsize.x, conf.windowsize.y,
-		conf.fullscreen);
-	if (!window.init(conf.world))
+	GameWindow window(CLIENT_CONFIG.windowsize.x, CLIENT_CONFIG.windowsize.y,
+		CLIENT_CONFIG.fullscreen);
+	if (!window.init(CLIENT_CONFIG.world))
 		return 1;
 	window.show();
 
