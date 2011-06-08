@@ -32,5 +32,7 @@ bool parseBool(const std::string& s);
 //! Split a string by a delimiter.
 std::vector<std::string> splitStr(std::string str, std::string delimiter);
 
+std::string itostr(int32_t in);
+
 #endif
 

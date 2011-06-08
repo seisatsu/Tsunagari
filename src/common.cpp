@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <sstream>
+
 #include "common.h"
 
 coord_t coord(uint32_t x, uint32_t y, uint32_t z)
@@ -39,5 +41,12 @@ std::vector<std::string> splitStr(std::string str, std::string delimiter)
 		}
 	}
 	return strlist;
+}
+
+std::string itostr(int32_t in)
+{
+	std::stringstream out;
+	out << in;
+	return out.str();
 }
 
