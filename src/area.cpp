@@ -191,8 +191,8 @@ bool Area::processTileset(xmlNode* node)
 Area::TileType Area::defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
                                int id)
 {
-	int x = tiledim.x * (id % source.width());
-	int y = tiledim.y * (id / source.height());
+	int x = (tiledim.x * id) % source.width();
+	int y = (tiledim.y * id) / source.height() * tiledim.y; // ???
 	
 	TileType tt;
 	Gosu::Image* img = rc->bitmapSection(source, x, y,
