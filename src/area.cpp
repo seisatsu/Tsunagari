@@ -369,7 +369,6 @@ bool Area::processLayerData(xmlNode* node)
 			unsigned gid = atol((const char*)gidStr);
 			Tile* t = new Tile;
 			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
-			Gosu::saveImageFile(t->type->graphics[0]->getData().toBitmap(), L"test.png");
 			row.push_back(t);
 			if (i % dim.x == 0) {
 				grid.push_back(row);
