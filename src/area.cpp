@@ -4,18 +4,15 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-<<<<<<< HEAD
-#include <boost/foreach.hpp>
+#include <stack>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-=======
->>>>>>> origin/master
 #include "area.h"
 #include "entity.h"
 #include "resourcer.h"
 #include "sprite.h"
-#include "tile.h"
 
 Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
 	: rc(rc), player(player), descriptor(descriptor)
@@ -31,19 +28,19 @@ bool Area::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 	
-	Sprite* s = new Sprite(rc, "grass.sprite");
-	Sprite* s2 = new Sprite(rc, "grass.sprite");
-	if (!s->init() || !s2->init())
-		return false;
-	Tile* t = new Tile(s, true, coord(0, 0, 0));
-	Tile* t2 = new Tile(s2, true, coord(1, 0, 0));
+	Gosu::Image* grassImg = rc->getImage("grass.sheet");
+	TileType* grassTile = new TileType;
+	grassTile->graphics.push_back(grassImg);
+	grassTile->animated = false;
+	Tile* t = new Tile;
+	Tile* t2 = new Tile;
+	t->type = t2->type = grassTile;
 
-
-	matrix.resize(1);
-	matrix[0].resize(1);
-	matrix[0][0].resize(2);
-	matrix[0][0][0] = t;
-	matrix[0][0][1] = t2;
+	map.resize(1);
+	map[0].resize(1);
+	map[0][0].resize(2);
+	map[0][0][0] = t;
+	map[0][0][1] = t2;
 	
 	return true;
 }
@@ -62,10 +59,20 @@ void Area::buttonDown(const Gosu::Button btn)
 
 void Area::draw()
 {
-	BOOST_FOREACH(grid_t g, matrix)
-		BOOST_FOREACH(row_t r, g)
-			BOOST_FOREACH(Tile* t, r)
-				t->draw();
+	for (unsigned int layer = 0; layer != map.size(); layer++)
+	{
+		grid_t grid = map[layer];
+		for (unsigned int y = 0; y != grid.size(); y++)
+		{
+			row_t row = grid[layer];
+			for (unsigned int x = 0; x != row.size(); x++)
+			{
+				Tile* tile = row[x];
+				Gosu::Image* img = tile->type->graphics[0];
+				img->draw(x*img->width(), y*img->height(), 0);
+			}
+		}
+	}
 	player->draw();
 }
 
@@ -76,10 +83,13 @@ bool Area::needsRedraw() const
 
 bool Area::processDescriptor()
 {
+	//! Parser node stack
+	std::stack<xmlNode*> xmlStack;
+	
 	xmlDoc* doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
-	
+
 	//! Push root element onto the stack.
 	xmlStack.push(xmlDocGetRootElement(doc));
 	
@@ -99,8 +109,8 @@ coord_t Area::getDimensions()
 	return dim;
 }
 
-Tile* Area::getTile(coord_t c)
+Area::Tile* Area::getTile(coord_t c)
 {
-	return matrix[c.z][c.y][c.x];
+	return map[c.z][c.y][c.x];
 }
 
