@@ -6,6 +6,7 @@
 
 #include <stack>
 
+#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -83,24 +84,27 @@ bool Area::needsRedraw() const
 
 bool Area::processDescriptor()
 {
-	//! Parser node stack
-	std::stack<xmlNode*> xmlStack;
-	
 	xmlDoc* doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
 
-	//! Push root element onto the stack.
-	xmlStack.push(xmlDocGetRootElement(doc));
-	
-	if (!xmlStack.top()) {
-		xmlFreeDoc(doc);
-		return false;
+	// use RAII to ensure doc is freed
+	boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
+
+	// Iterate and process children of <map>
+	xmlNode* root = xmlDocGetRootElement(doc); // <map> element
+	xmlNode* child = root->xmlChildrenNode;
+	for (; child != NULL; child = child->next) {
+		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
+		}
+		if (!xmlStrncmp(child->name, BAD_CAST("tileset"), 8)) {
+		}
+		if (!xmlStrncmp(child->name, BAD_CAST("layer"), 6)) {
+		}
+		if (!xmlStrncmp(child->name, BAD_CAST("objectgroup"), 12)) {
+		}
 	}
-	
-	xmlStack.push(xmlStack.top()->xmlChildrenNode); // <area>
-	
-	xmlFreeDoc(doc);
+
 	return true;
 }
 

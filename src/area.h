@@ -135,7 +135,6 @@ private:
 	 */
 	tilematrix_t map;
 	coord_t dim;
-
 	
 	std::string name;
 	std::string author;
