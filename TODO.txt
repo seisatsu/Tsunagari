@@ -1,7 +1,6 @@
 ITEMS
 
 
-* Remove arbitrary test values inside the code.
 * Command line interface using popt.
 * Investigate whether switching from DTDs to Schemas would be worth it.
 * Sprite doesn't support animations.
@@ -26,6 +25,8 @@ ITEMS
   Though it's a bit more complex, using the TMX map format (XML based) will
   allow ourselves and our users to edit areas with the excellent Tiled generic
   map editor.
+  
+  UPDATE June 9, 2011: Attribute data, layers and tilesets load.
 
 * Area drawing shouldn't use Sprite.
   Now that the TMX map format handles tilesets, this is especially true.
@@ -35,15 +36,20 @@ ITEMS
   descriptor, Area should probably handle them. This means that tiles are no
   longer Sprites. Area will also handle the tile animations. This should be
   cleaner in the long run.
+  
+  UPDATE June 9, 2011: Sprites are no longer used, but we still need to
+  implement animations.
 
-* Change XML parsers to use node stacks.
-  Stacks are probably cleaner and more sane, and fit well with the structure of
-  an XML document. They will especially improve the parsing of complex formats,
-  such as the TMX map format, with multiple "camel hump" changes in element
-  depth.
+* Implement "nowalk" flags to prevent player from moving off map.
+
+* Map should center around player.
 
 FINISHED ITEMS
 
+X Remove arbitrary test values inside the code.
+  With layer and tileset parsing on TMX maps done, we can now load data from
+  there, making arbitrary test values obsolete.
+  (Fixed on June 9, 2011 in commit 2da906a3)
 
 X Find a way to pass the error "domain" to XML's error message function.
   libxml2 provides a userData variable in the validator context.
