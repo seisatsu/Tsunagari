@@ -67,6 +67,7 @@ void Area::draw()
 			row_t row = grid[layer];
 			for (unsigned int x = 0; x != row.size(); x++)
 			{
+				// TODO support animations
 				Tile* tile = row[x];
 				Gosu::Image* img = tile->type->graphics[0];
 				img->draw(x*img->width(), y*img->height(), 0);
@@ -117,6 +118,19 @@ bool Area::processDescriptor()
 
 bool Area::processMapProperties(xmlNode* node)
 {
+
+/*
+ <properties>
+  <property name="areaspec" value="1"/>
+  <property name="author" value="Michael D. Reiley"/>
+  <property name="name" value="Baby's First Area"/>
+  <property name="music_loop" value="true"/>
+  <property name="music_main" value="wind.music"/>
+  <property name="onLoad" value="babysfirst_init()"/>
+  <property name="scripts" value="areainits.event,test.event"/>
+ </properties>
+ */
+
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
@@ -132,7 +146,7 @@ bool Area::processMapProperties(xmlNode* node)
 		else if (!xmlStrncmp(name, BAD_CAST("onLoad"), 7))
 			onLoadEvents = (const char*)value;
 		else if (!xmlStrncmp(name, BAD_CAST("scripts"), 8))
-			scripts = (const char*)value;
+			scripts = (const char*)value; // TODO split(), load
 	}
 	return true;
 }
