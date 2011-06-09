@@ -126,6 +126,8 @@ private:
 	bool processTileset(xmlNode* node);
 	bool processTileType(xmlNode* node, Tileset& ts);
 	bool processLayer(xmlNode* node);
+	bool processLayerProperties(xmlNode* node);
+	bool processLayerData(xmlNode* node);
 	bool processObjectGroup(xmlNode* node);
 
 

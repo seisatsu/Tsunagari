@@ -94,6 +94,12 @@ bool Area::processDescriptor()
 
 	// Iterate and process children of <map>
 	xmlNode* root = xmlDocGetRootElement(doc); // <map> element
+
+	xmlChar* width = xmlGetProp(root, BAD_CAST("width"));
+	xmlChar* height = xmlGetProp(root, BAD_CAST("height"));
+	dim.x = atol((const char*)width);
+	dim.y = atol((const char*)height);
+
 	xmlNode* child = root->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
@@ -272,10 +278,111 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 
 bool Area::processLayer(xmlNode* node)
 {
+
+/*
+ <layer name="Tiles0" width="5" height="5">
+  <properties>
+   ...
+  </properties>
+  <data>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+...
+   <tile gid="3"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+  </data>
+ </layer>
+*/
+
+	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
+	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
+	unsigned x = atol((const char*)width);
+	unsigned y = atol((const char*)height);
+
+	if (dim.x != x || dim.y != y) {
+		// XXX we need to know the Area we're loading...
+		Log::err("unknown area", "layer x,y size != map x,y size");
+		return false;
+	}
+
+	xmlNode* child = node->xmlChildrenNode;
+	for (; child != NULL; child = child->next) {
+		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
+			if (!processLayerProperties(child))
+				return false;
+		}
+		else if (!xmlStrncmp(child->name, BAD_CAST("data"), 5)) {
+			if (!processLayerData(child))
+				return false;
+		}
+	}
 	return true;
 }
 
-bool Area::processObjectGroup(xmlNode* node)
+bool Area::processLayerProperties(xmlNode* node)
+{
+
+/*
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+*/
+
+	xmlNode* child = node->xmlChildrenNode;
+	for (; child != NULL; child = child->next) {
+		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
+		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
+		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
+			unsigned depth = atol((const char*)value);
+			if (depth != dim.z) {
+				Log::err("unknown area", "invalid layer depth");
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Area::processLayerData(xmlNode* node)
+{
+
+/*
+  <data>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+...
+   <tile gid="3"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+  </data>
+*/
+
+	row_t row;
+	grid_t grid;
+
+	xmlNode* child = node->xmlChildrenNode;
+	for (int i = 1; child != NULL; i++, child = child->next) {
+		xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
+		unsigned gid = atol((const char*)gidStr);
+		Tile* t = new Tile;
+		t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
+		row.push_back(t);
+		if (i % dim.x == 0) {
+			grid.push_back(row);
+			row.clear();
+		}
+	}
+
+	map.push_back(grid);
+	dim.z++;
+	return true;
+}
+
+bool Area::processObjectGroup(xmlNode*)
 {
 	return true;
 }
