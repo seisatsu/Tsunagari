@@ -100,15 +100,6 @@ public:
 	Tile* getTile(coord_t c);
 
 private:
-	bool processDescriptor();
-	bool processMapProperties(xmlNode* node);
-	TileType defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
-	                         int id);
-	bool processTileset(xmlNode* node);
-	bool processTileType(xmlNode* node);
-	bool processLayer(xmlNode* node);
-	bool processObjectGroup(xmlNode* node);
-
 	//! Tileset
 	/*!
 		Stores info for a tileset, and global settings for tiles.
@@ -127,6 +118,15 @@ private:
 		bool loop;
 		std::string filename;
 	};
+
+	bool processDescriptor();
+	bool processMapProperties(xmlNode* node);
+	TileType defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
+	                         int id);
+	bool processTileset(xmlNode* node);
+	bool processTileType(xmlNode* node, Tileset& ts);
+	bool processLayer(xmlNode* node);
+	bool processObjectGroup(xmlNode* node);
 
 
 	Resourcer* rc;

@@ -11,6 +11,7 @@
 #include "area.h"
 #include "common.h"
 #include "entity.h"
+#include "log.h"
 #include "resourcer.h"
 #include "sprite.h"
 
@@ -173,12 +174,16 @@ bool Area::processTileset(xmlNode* node)
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
 			xmlChar* idstr = xmlGetProp(child, BAD_CAST("id"));
 			unsigned id = atol((const char*)idstr);
+
+			// Undeclared TileTypes have default properties.
 			while (ts.defaults.size() != id) {
 				TileType tt = defaultTileType(ts.source,
 					ts.tiledim, ts.defaults.size());
 				ts.defaults.push_back(tt);
 			}
-			if (!processTileType(child))
+
+			// Handle explicit TileType
+			if (!processTileType(child, ts))
 				return false;
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("image"), 6)) {
@@ -204,7 +209,7 @@ Area::TileType Area::defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
 	return tt;
 }
 
-bool Area::processTileType(xmlNode* node)
+bool Area::processTileType(xmlNode* node, Tileset& ts)
 {
 /*
   <tile id="8">
@@ -222,7 +227,46 @@ bool Area::processTileType(xmlNode* node)
    </properties>
   </tile>
 */
-	
+
+	// Initialize a default TileType, we'll build on that.
+	TileType tt = defaultTileType(ts.source,
+		ts.tiledim, ts.defaults.size());
+
+	xmlChar* idstr = xmlGetProp(node, BAD_CAST("tilewidth"));
+	unsigned id = atol((const char*)idstr);
+	if (id != ts.defaults.size()) {
+		// XXX we need to know the Area we're loading...
+		Log::err("unknown area", std::string("expected TileType id ") +
+		         itostr(ts.defaults.size()) + ", but got " + itostr(id));
+		return false;
+	}
+
+	xmlNode* child = node->xmlChildrenNode; // <properties>
+	child = node->xmlChildrenNode; // <property>
+	for (; child != NULL; child = child->next) {
+		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
+		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
+		if (!xmlStrncmp(child->name, BAD_CAST("flags"), 6)) {
+			// TODO flags
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
+			// TODO events
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("onLeave"), 8)) {
+			// TODO events
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("animated"), 9)) {
+			tt.animated = parseBool((const char*)value);
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("size"), 5)) {
+			// TODO animation
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("speed"), 6)) {
+			tt.ani_speed = atol((const char*)value);
+		}
+	}
+
+	ts.defaults.push_back(tt);
 	return true;
 }
 
