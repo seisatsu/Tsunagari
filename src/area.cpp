@@ -129,7 +129,7 @@ bool Area::processMapProperties(xmlNode* node)
   <property name="onLoad" value="babysfirst_init()"/>
   <property name="scripts" value="areainits.event,test.event"/>
  </properties>
- */
+*/
 
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -166,7 +166,7 @@ bool Area::processObjectGroup(xmlNode* node)
 	return true;
 }
 
-coord_t Area::getDimensions()
+coord_t Area::getDimensions() const
 {
 	return dim;
 }

@@ -19,26 +19,22 @@ coord_t coord(uint32_t x, uint32_t y, uint32_t z)
 
 bool parseBool(const std::string& s)
 {
-	return s == "true";
+	return s == "true" || s == "1";
 }
 
-std::vector<std::string> splitStr(std::string str, std::string delimiter)
+std::vector<std::string> splitStr(std::string str, const std::string& delimiter)
 {
 	std::vector<std::string> strlist;
 	size_t pos;
-	bool run = true;
 	
-	while (run) {
-		pos = str.find(delimiter);
-		
-		if (pos==std::string::npos)
-			run = false;
-		
-		if (pos!=std::string::npos || pos+1 != str.size()) {
-			if (pos!=0) // Don't save empty strings
+	pos = str.find(delimiter);
+	while (pos != std::string::npos) {
+		if (pos != std::string::npos || pos+1 != str.size()) {
+			if (str.size() != 0) // Don't save empty strings
 				strlist.push_back(str.substr(0, pos)); // Save
 			str = str.substr(pos+delimiter.size()); // Cut delimiter
 		}
+		pos = str.find(delimiter);
 	}
 	return strlist;
 }

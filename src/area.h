@@ -96,7 +96,7 @@ public:
 	//! Gosu Callback
 	bool needsRedraw() const;
 
-	coord_t getDimensions();
+	coord_t getDimensions() const;
 	Tile* getTile(coord_t c);
 
 private:

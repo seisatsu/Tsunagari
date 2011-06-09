@@ -72,10 +72,10 @@ private:
 		zero, nothing is using the resource, and it is dropped after a
 		few minutes. The cache drop timer is in a thread.
 	*/
-	std::map<std::string, std::pair<int32_t, void*> > cache;
+	std::map<std::string, std::pair<int, void*> > cache;
 	
 	//! Modify the cache tally. Logs a Developer warning on tally underrun.
-	void cacheTally(const std::string key, const int32_t mod);
+	void cacheTally(const std::string& key, const int mod);
 };
 
 #endif

@@ -175,7 +175,7 @@ std::string Resourcer::path(const std::string& entry_name) const
 	return zip_filename + "/" + entry_name;
 }
 
-void Resourcer::cacheTally(const std::string key, const int32_t mod)
+void Resourcer::cacheTally(const std::string& key, const int mod)
 {
 	cache[key].first += mod;
 	if (cache[key].first < 0)

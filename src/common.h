@@ -30,7 +30,7 @@ coord_t coord(uint32_t x, uint32_t y, uint32_t z);
 bool parseBool(const std::string& s);
 
 //! Split a string by a delimiter.
-std::vector<std::string> splitStr(std::string str, std::string delimiter);
+std::vector<std::string> splitStr(std::string str, const std::string& delimiter);
 
 std::string itostr(int32_t in);
 
