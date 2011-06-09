@@ -51,7 +51,7 @@ void Area::draw()
 		grid_t grid = map[layer];
 		for (unsigned int y = 0; y != grid.size(); y++)
 		{
-			row_t row = grid[layer];
+			row_t row = grid[y];
 			for (unsigned int x = 0; x != row.size(); x++)
 			{
 				// TODO support animations
