@@ -28,21 +28,6 @@ bool Area::init()
 {
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
-	
-	Gosu::Image* grassImg = rc->getImage("grass.sheet");
-	TileType* grassTile = new TileType;
-	grassTile->graphics.push_back(grassImg);
-	grassTile->animated = false;
-	Tile* t = new Tile;
-	Tile* t2 = new Tile;
-	t->type = t2->type = grassTile;
-
-	map.resize(1);
-	map[0].resize(1);
-	map[0][0].resize(2);
-	map[0][0][0] = t;
-	map[0][0][1] = t2;
-	
 	return true;
 }
 
