@@ -1,89 +1,82 @@
-<!DOCTYPE tsunagari SYSTEM "dtd/area.dtd">
-
-<tsunagari version="1">
-	<area version="1">
-		<name>Baby's First Area</name>
-		<author>Michael D. Reiley</author>
-		<tileset>tileset.sprite</tileset>
-		<music loop="true" type="main">wind.music</music>
-		<!-- <music type="intro">intro.music</music> -->
-		<event trigger="onLoad">babysfirst.event</event>
-		<map>
-			<grid layer="0">
-				<row>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-				</row>
-				<row>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="yellow" />
-					<tile image="green">
-						<event trigger="onEnter">slow</event>
-						<event trigger="onLeave">unslow</event>
-					</tile>
-					<tile image="yellow" />
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-				</row>
-				<row>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="yellow" />
-					<tile image="yellow" />
-					<tile image="yellow" />
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-				</row>
-				<row>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="yellow" />
-					<tile image="yellow" />
-					<tile image="teleblue">
-						<event trigger="onEnter">random_warp</event>
-					</tile>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-				</row>
-				<row>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<door image="orange" area="grassfield.area" coords="1,1,0">
-						<flag>npc_nowalk</flag>
-					</door>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-					<tile image="dirt">
-						<flag>nowalk</flag>
-					</tile>
-				</row>
-			</grid>
-		</map>
-	</area>
-</tsunagari>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "dtd/area.dtd">
+<map version="1.0" orientation="orthogonal" width="5" height="5" tilewidth="64" tileheight="64">
+ <properties>
+  <property name="areaspec" value="1"/>
+  <property name="author" value="Michael D. Reiley"/>
+  <property name="music_loop" value="1"/>
+  <property name="music_main" value="wind.music"/>
+  <property name="name" value="Baby's First Area"/>
+  <property name="onLoad" value="babysfirst_init()"/>
+  <property name="scripts" value="areainits.event,test.event"/>
+ </properties>
+ <tileset firstgid="1" name="tiles.sheet" tilewidth="64" tileheight="64">
+  <image source="tiles.sheet" width="256" height="256"/>
+  <tile id="8">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="animated" value="1"/>
+    <property name="size" value="2"/>
+    <property name="speed" value="2"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Tiles0" width="5" height="5">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+  <data>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="3"/>
+   <tile gid="6"/>
+   <tile gid="3"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="3"/>
+   <tile gid="15"/>
+   <tile gid="3"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="3"/>
+   <tile gid="3"/>
+   <tile gid="13"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="7"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+  </data>
+ </layer>
+ <objectgroup name="Prop0" width="5" height="5">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+  <object name="tile0" type="Tile" gid="6" x="128" y="128">
+   <properties>
+    <property name="onEnter" value="speed(0.5)"/>
+    <property name="onLeave" value="undo()"/>
+   </properties>
+  </object>
+  <object name="tile1" type="Tile" gid="13" x="192" y="256">
+   <properties>
+    <property name="onEnter" value="random_warp()"/>
+   </properties>
+  </object>
+  <object name="tile2" type="Tile" gid="7" x="64" y="320">
+   <properties>
+    <property name="door" value="grassfield.area,1,1,0"/>
+    <property name="flags" value="npc_nowalk"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

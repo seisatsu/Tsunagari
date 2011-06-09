@@ -21,6 +21,22 @@ public:
 	bool canWalk();
 	void draw();
 	
+	enum TileFlagTypes {
+		nowalk,
+		player_nowalk,
+		npc_nowalk,
+		player_event,
+		npc_event,
+		temp_event
+	};
+	
+	enum TileEventTriggerTypes {
+		onUse,
+		onEnter,
+		onLeave,
+		door
+	};
+	
 private:
 	Sprite* s;
 	bool walkable;

@@ -8,6 +8,7 @@
 #define WORLD_H
 
 #include <string>
+#include <vector>
 
 #include <Gosu/Gosu.hpp>
 
@@ -85,6 +86,7 @@ private:
 		std::string playersprite;
 		WorldType type;
 		WorldEntry entry;
+		std::vector<std::string> scripts;
 	} xml;
 };
 

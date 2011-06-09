@@ -9,6 +9,7 @@
 
 #include <boost/scoped_ptr.hpp>
 
+#include "common.h"
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
@@ -172,5 +173,12 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 std::string Resourcer::path(const std::string& entry_name) const
 {
 	return zip_filename + "/" + entry_name;
+}
+
+void Resourcer::cacheTally(const std::string key, const int32_t mod)
+{
+	cache[key].first += mod;
+	if (cache[key].first < 0)
+		Log::dev(key, "cache underrun of "+itostr(cache[key].first));
 }
 

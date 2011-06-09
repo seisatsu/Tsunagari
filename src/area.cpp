@@ -4,10 +4,13 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+<<<<<<< HEAD
 #include <boost/foreach.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+=======
+>>>>>>> origin/master
 #include "area.h"
 #include "entity.h"
 #include "resourcer.h"
@@ -76,46 +79,17 @@ bool Area::processDescriptor()
 	xmlDoc* doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
-	const xmlNode* root = xmlDocGetRootElement(doc);
-	if (!root) {
+	
+	//! Push root element onto the stack.
+	xmlStack.push(xmlDocGetRootElement(doc));
+	
+	if (!xmlStack.top()) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-
-	xmlNode* node = root->xmlChildrenNode; // <area>
-	node = node->xmlChildrenNode; // decend into children of <area>
-	for (; node != NULL; node = node->next) {
-		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.name = (const char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("author"), 7)) {
-			const xmlChar* str = xmlNodeGetContent(node);
-			xml.author = (const char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("tileset"), 8)) {
-			const xmlChar* tilesetName = xmlNodeGetContent(node);
-			xml.tileset.reset(new Sprite(rc, (const char*)tilesetName));
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("music"), 6)) {
-			// FIXME this is a stupid implementation
-			// It just plays whatever it sees.
-			static bool playing = false;
-			if (playing)
-				continue;
-			const xmlChar* name = xmlNodeGetContent(node);
-			Gosu::Sample* music = rc->getSample((const char*)name);
-			music->play(true); // looping
-			playing = true;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("event"), 6)) {
-			// TODO Area-wide event
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("map"), 4)) {
-			// TODO create TileMatrix somehow
-			// perhaps pass xmlNode to TileMatrix::init() method??
-		}
-	}
+	
+	xmlStack.push(xmlStack.top()->xmlChildrenNode); // <area>
+	
 	xmlFreeDoc(doc);
 	return true;
 }

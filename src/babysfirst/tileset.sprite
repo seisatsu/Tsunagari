@@ -1,29 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE tsunagari SYSTEM "dtd/sprite.dtd">
 
 <tsunagari version="1">
 	<sprite version="1">
 		<sheet tilesizex="64" tilesizey="64">tiles.sheet</sheet>
-		<phases>
-			<phase name="wall" pos="0" />
-			<phase name="red" pos="1" />
-			<phase name="yellow" pos="2" />
-			<phase name="blue" pos="3" />
-			<phase name="purple" pos="4" />
-			<phase name="green" pos="5" />
-			<phase name="orange" pos="6" />
-			<phase name="lightblue" pos="7" />
-			<phase name="dirt" pos="8" />
-			<phase name="water" pos="9" />
-			<phase name="marble" pos="10" />
-			<phase name="checker" pos="11" />
-			<phase name="teleblue" pos="12" />
-			<phase name="telered" pos="13" />
+		<states>
+			<state name="wall" pos="0" />
+			<state name="red" pos="1" />
+			<state name="yellow" pos="2" />
+			<state name="blue" pos="3" />
+			<state name="purple" pos="4" />
+			<state name="green" pos="5" />
+			<state name="orange" pos="6" />
+			<state name="lightblue" pos="7" />
+			<state name="dirt" pos="8" />
+			<state name="water" pos="9" />
+			<state name="marble" pos="10" />
+			<state name="checker" pos="11" />
+			<state name="teleblue" pos="12" />
+			<state name="telered" pos="13" />
 			<!-- Can have pos OR speed, but one required -->
-			<phase name="testanimation" speed="4">
+			<state name="testanimation" speed="2">
 				<member pos="14" />
 				<member pos="15" />
-			</phase>
-		</phases>
+			</state>
+		</states>
 	</sprite>
 </tsunagari>
 

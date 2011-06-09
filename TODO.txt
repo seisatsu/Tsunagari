@@ -1,0 +1,57 @@
+ITEMS
+
+
+* Remove arbitrary test values inside the code.
+* Command line interface using popt.
+* Investigate whether switching from DTDs to Schemas would be worth it.
+* Sprite doesn't support animations.
+* Finish Area parsing code, integrate.
+
+* Give World::player an Entity descriptor file.
+  What does an Entity descriptor file contain? What is an Entity?
+  ->	Entity is the most complicated descriptor. It will take a while to
+  	design. It's the only descriptor with multiple types which are each
+  	different. It's possible that each type of entity will require a
+  	different DTD.
+
+* Avoid window damage when another window moves on top.
+  We have an optimization that makes our window only redraw itself if something
+  in the game world changed. This causes redraw requests when another window is
+  passing over us to be ignored.
+
+  Gosu might be forked to be explicit about the difference between timer-based
+  redraw requests and ones spawned by window damage.
+
+* Rewrite Area parser for TMX format.
+  Though it's a bit more complex, using the TMX map format (XML based) will
+  allow ourselves and our users to edit areas with the excellent Tiled generic
+  map editor.
+
+* Area drawing shouldn't use Sprite.
+  Now that the TMX map format handles tilesets, this is especially true.
+  Tilesets were a bit different from Sprites in the first place, and we simply
+  handled them under the Sprite class for convenience, even though this method
+  was a bit hackish. Now that they're defined in full inside the Area
+  descriptor, Area should probably handle them. This means that tiles are no
+  longer Sprites. Area will also handle the tile animations. This should be
+  cleaner in the long run.
+
+* Change XML parsers to use node stacks.
+  Stacks are probably cleaner and more sane, and fit well with the structure of
+  an XML document. They will especially improve the parsing of complex formats,
+  such as the TMX map format, with multiple "camel hump" changes in element
+  depth.
+
+FINISHED ITEMS
+
+
+X Find a way to pass the error "domain" to XML's error message function.
+  libxml2 provides a userData variable in the validator context.
+  (Fixed on May 28, 2011 in commit cf6bcbe3)
+
+X Switch from JSON to XML completely.
+  Although JSON is an expressive less-verbose-than-XML format, after
+  investigating a few JSON parsers, we have decided that none of them are up to
+  our expectations.
+  (Fixed on May 25, 2011 in commit 5e1c08b7)
+

@@ -1,0 +1,77 @@
+This file contains attributions for the Tsunagari Tile Engine, and third-party
+software and dependencies it uses directly. Secondary dependencies are
+attributed in the distrubutions of the below mentioned primary dependencies.
+
+-----
+
+=== Tsunagari Tile Engine ===
+
+Copyright (c) 2010-2011:
+	Omega Software Development Group <http://omegasdg.com/>
+	Michael D. Reiley
+	Paul Merrill
+
+License:
+	OmegaSDG Free Software License
+	<http://wiki.omegasdg.com/index.php?title=Licensing>
+
+-----
+
+=== LibGOSU ===
+
+Copyright (c) 2004-2011:
+	Julian Raschke
+	Jan Lücker
+	All contributors.
+
+License:
+	MIT License
+	<http://www.opensource.org/licenses/mit-license.php>
+
+-----
+
+=== LibPOPT ===
+
+Copyright (c) 1998:
+	Red Hat Software
+
+License:
+	MIT License
+	<http://www.opensource.org/licenses/mit-license.php>
+
+-----
+
+=== LibXML2 ===
+
+Copyright (c) 1998-2003:
+	Daniel Veillard
+
+License:
+	MIT License
+	<http://www.opensource.org/licenses/mit-license.php>
+
+-----
+
+=== LibZIP ===
+
+Copyright (c) 1999-2008:
+	Dieter Baron
+	Thomas Klausner
+
+License:
+	BSD License (3 Clause)
+	<http://www.opensource.org/licenses/bsd-license.php>
+
+-----
+
+=== TMX Map Format ===
+
+Copyright (c) 2008-2011:
+	Thorbjørn Lindeijer
+
+License:
+	 Creative Commons Attribution-ShareAlike 3.0 Unported License
+	 <http://creativecommons.org/licenses/by-sa/3.0/>
+
+-----
+
