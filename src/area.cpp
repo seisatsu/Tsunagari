@@ -18,6 +18,7 @@
 Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
 	: rc(rc), player(player), descriptor(descriptor)
 {
+	dim.z = 0;
 }
 
 Area::~Area()
@@ -182,6 +183,8 @@ bool Area::processTileset(xmlNode* node)
 			ts.source = rc->getBitmap((const char*)source);
 		}
 	}
+	
+	tilesets.push_back(ts);
 	return true;
 }
 
@@ -223,7 +226,7 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 	TileType tt = defaultTileType(ts.source,
 		ts.tiledim, ts.defaults.size());
 
-	xmlChar* idstr = xmlGetProp(node, BAD_CAST("tilewidth"));
+	xmlChar* idstr = xmlGetProp(node, BAD_CAST("id"));
 	unsigned id = atol((const char*)idstr);
 	if (id != ts.defaults.size()) {
 		// XXX we need to know the Area we're loading...
@@ -351,14 +354,16 @@ bool Area::processLayerData(xmlNode* node)
 
 	xmlNode* child = node->xmlChildrenNode;
 	for (int i = 1; child != NULL; i++, child = child->next) {
-		xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
-		unsigned gid = atol((const char*)gidStr);
-		Tile* t = new Tile;
-		t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
-		row.push_back(t);
-		if (i % dim.x == 0) {
-			grid.push_back(row);
-			row.clear();
+		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
+			xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
+			unsigned gid = atol((const char*)gidStr);
+			Tile* t = new Tile;
+			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
+			row.push_back(t);
+			if (i % dim.x == 0) {
+				grid.push_back(row);
+				row.clear();
+			}
 		}
 	}
 
