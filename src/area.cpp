@@ -183,7 +183,17 @@ bool Area::processTileset(xmlNode* node)
 			ts.source = rc->getBitmap((const char*)source);
 		}
 	}
-	
+
+	// Generate default tile types in range (m,n] where m is the last
+	// explicitly declared type and n is the number we require.
+	unsigned srcsz = ts.source.width() * ts.source.height();
+	unsigned tilesz = ts.tiledim.x * ts.tiledim.y;
+	while (ts.defaults.size() != srcsz / tilesz) {
+		TileType tt = defaultTileType(ts.source,
+			ts.tiledim, ts.defaults.size());
+		ts.defaults.push_back(tt);
+	}
+
 	tilesets.push_back(ts);
 	return true;
 }
@@ -359,6 +369,7 @@ bool Area::processLayerData(xmlNode* node)
 			unsigned gid = atol((const char*)gidStr);
 			Tile* t = new Tile;
 			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
+			Gosu::saveImageFile(t->type->graphics[0]->getData().toBitmap(), L"test.png");
 			row.push_back(t);
 			if (i % dim.x == 0) {
 				grid.push_back(row);
