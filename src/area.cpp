@@ -215,6 +215,7 @@ Area::TileType Area::defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
 
 bool Area::processTileType(xmlNode* node, Tileset& ts)
 {
+
 /*
   <tile id="8">
    <properties>
@@ -382,8 +383,131 @@ bool Area::processLayerData(xmlNode* node)
 	return true;
 }
 
-bool Area::processObjectGroup(xmlNode*)
+bool Area::processObjectGroup(xmlNode* node)
 {
+
+/*
+ <objectgroup name="Prop0" width="5" height="5">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+  <object name="tile2" type="Tile" gid="7" x="64" y="320">
+   <properties>
+    <property name="onEnter" value="speed(0.5)"/>
+    <property name="onLeave" value="undo()"/>
+    <property name="door" value="grassfield.area,1,1,0"/>
+    <property name="flags" value="npc_nowalk"/>
+   </properties>
+  </object>
+ </objectgroup>
+*/
+
+	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
+	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
+	unsigned x = atol((const char*)width);
+	unsigned y = atol((const char*)height);
+
+	unsigned zpos = -1;
+
+	if (dim.x != x || dim.y != y) {
+		// XXX we need to know the Area we're loading...
+		Log::err("unknown area", "objectgroup x,y size != map x,y size");
+		return false;
+	}
+
+	xmlNode* child = node->xmlChildrenNode;
+	for (; child != NULL; child = child->next) {
+		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
+			if (!processObjectGroupProperties(child, &zpos))
+				return false;
+		}
+		else if (!xmlStrncmp(child->name, BAD_CAST("object"), 7)) {
+			if (zpos == (unsigned)-1 || !processObject(child, zpos))
+				return false;
+		}
+	}
+
+	return true;
+}
+
+bool Area::processObjectGroupProperties(xmlNode* node, unsigned* zpos)
+{
+
+/*
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+*/
+
+	xmlNode* child = node->xmlChildrenNode;
+	for (; child != NULL; child = child->next) {
+		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
+		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
+		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
+			int layer = atol((const char*)value);
+			if (0 < layer || layer >= (int)dim.z) {
+				// XXX we need to know the Area we're loading...
+				Log::err("unknown area",
+					"objectgroup must correspond with layer"
+				);
+				return false;
+			}
+			*zpos = layer;
+		}
+	}
+	return true;
+}
+
+bool Area::processObject(xmlNode* node, unsigned zpos)
+{
+
+/*
+  <object name="tile2" type="Tile" gid="7" x="64" y="320">
+   <properties>
+    <property name="onEnter" value="speed(0.5)"/>
+    <property name="onLeave" value="undo()"/>
+    <property name="door" value="grassfield.area,1,1,0"/>
+    <property name="flags" value="npc_nowalk"/>
+   </properties>
+  </object>
+*/
+
+	xmlChar* type = xmlGetProp(node, BAD_CAST("type"));
+	if (xmlStrncmp(type, BAD_CAST("Tile"), 5)) {
+		Log::err("unknown area", "object type must be Tile");
+		return false;
+	}
+
+	xmlChar* xStr = xmlGetProp(node, BAD_CAST("x"));
+	xmlChar* yStr = xmlGetProp(node, BAD_CAST("y"));
+	// XXX we ignore the object gid... is that okay?
+
+	// wouldn't have to access tilesets if we had tiledim ourselves
+	unsigned x = atol((const char*)xStr) / tilesets[0].tiledim.x;
+	unsigned y = atol((const char*)yStr) / tilesets[0].tiledim.y;
+	y = y - 1; // bug in tiled? y is 1 too high
+
+	// We know which Tile is being talked about now... yay
+	Tile* t = map[zpos][y][x];
+
+	xmlNode* child = node->xmlChildrenNode; // <properties>
+	child = node->xmlChildrenNode; // <property>
+	for (; child != NULL; child = child->next) {
+		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
+		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
+		if (!xmlStrncmp(child->name, BAD_CAST("flags"), 6)) {
+			// TODO flags
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
+			// TODO events
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("onLeave"), 8)) {
+			// TODO events
+		}
+		else if (!xmlStrncmp(name, BAD_CAST("door"), 5)) {
+			// TODO doors
+		}
+	}
 	return true;
 }
 
