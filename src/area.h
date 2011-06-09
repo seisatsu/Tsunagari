@@ -101,7 +101,11 @@ public:
 
 private:
 	bool processDescriptor();
-	
+	bool processMapProperties(xmlNode* node);
+	bool processTileset(xmlNode* node);
+	bool processLayer(xmlNode* node);
+	bool processObjectGroup(xmlNode* node);
+
 	//! Tileset
 	/*!
 		Stores info for a tileset, and global settings for tiles.

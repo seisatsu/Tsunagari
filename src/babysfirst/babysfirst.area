@@ -4,9 +4,9 @@
  <properties>
   <property name="areaspec" value="1"/>
   <property name="author" value="Michael D. Reiley"/>
+  <property name="name" value="Baby's First Area"/>
   <property name="music_loop" value="1"/>
   <property name="music_main" value="wind.music"/>
-  <property name="name" value="Baby's First Area"/>
   <property name="onLoad" value="babysfirst_init()"/>
   <property name="scripts" value="areainits.event,test.event"/>
  </properties>

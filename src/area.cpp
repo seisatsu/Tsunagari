@@ -4,13 +4,12 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <stack>
-
 #include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "area.h"
+#include "common.h"
 #include "entity.h"
 #include "resourcer.h"
 #include "sprite.h"
@@ -96,15 +95,60 @@ bool Area::processDescriptor()
 	xmlNode* child = root->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
+			if (!processMapProperties(child))
+				return false;
 		}
-		if (!xmlStrncmp(child->name, BAD_CAST("tileset"), 8)) {
+		else if (!xmlStrncmp(child->name, BAD_CAST("tileset"), 8)) {
+			if (!processTileset(child))
+				return false;
 		}
-		if (!xmlStrncmp(child->name, BAD_CAST("layer"), 6)) {
+		else if (!xmlStrncmp(child->name, BAD_CAST("layer"), 6)) {
+			if (!processLayer(child))
+				return false;
 		}
-		if (!xmlStrncmp(child->name, BAD_CAST("objectgroup"), 12)) {
+		else if (!xmlStrncmp(child->name, BAD_CAST("objectgroup"), 12)) {
+			if (!processObjectGroup(child))
+				return false;
 		}
 	}
 
+	return true;
+}
+
+bool Area::processMapProperties(xmlNode* node)
+{
+	xmlNode* child = node->xmlChildrenNode;
+	for (; child != NULL; child = child->next) {
+		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
+		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
+		if (!xmlStrncmp(name, BAD_CAST("author"), 7))
+			author = (const char*)value;
+		else if (!xmlStrncmp(name, BAD_CAST("name"), 5))
+			this->name = (const char*)value;
+		else if (!xmlStrncmp(name, BAD_CAST("music_loop"), 11))
+			main.loop = parseBool((const char*)value);
+		else if (!xmlStrncmp(name, BAD_CAST("music_main"), 11))
+			main.filename = (const char*)value;
+		else if (!xmlStrncmp(name, BAD_CAST("onLoad"), 7))
+			onLoadEvents = (const char*)value;
+		else if (!xmlStrncmp(name, BAD_CAST("scripts"), 8))
+			scripts = (const char*)value;
+	}
+	return true;
+}
+
+bool Area::processTileset(xmlNode* node)
+{
+	return true;
+}
+
+bool Area::processLayer(xmlNode* node)
+{
+	return true;
+}
+
+bool Area::processObjectGroup(xmlNode* node)
+{
 	return true;
 }
 
