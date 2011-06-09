@@ -102,7 +102,10 @@ public:
 private:
 	bool processDescriptor();
 	bool processMapProperties(xmlNode* node);
+	TileType defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
+	                         int id);
 	bool processTileset(xmlNode* node);
+	bool processTileType(xmlNode* node);
 	bool processLayer(xmlNode* node);
 	bool processObjectGroup(xmlNode* node);
 
@@ -111,7 +114,7 @@ private:
 		Stores info for a tileset, and global settings for tiles.
 	*/
 	struct Tileset {
-		Gosu::Image source;
+		Gosu::Bitmap source;
 		coord_t tiledim; // Dimensions per tile
 		std::vector<TileType> defaults; // Global tile properties
 	};

@@ -61,6 +61,21 @@ Gosu::Image* Resourcer::getImage(const std::string& name)
 	return new Gosu::Image(window->graphics(), bitmap, false);
 }
 
+Gosu::Bitmap Resourcer::getBitmap(const std::string& name)
+{
+	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
+	if (!buffer)
+		return Gosu::Bitmap();
+	return Gosu::loadImageFile(buffer->frontReader());
+}
+
+Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
+        unsigned x, unsigned y, unsigned w, unsigned h, bool tileable)
+{
+	return new Gosu::Image(window->graphics(), src, x, y, w, h, tileable);
+}
+
+
 std::string Resourcer::getString(const std::string& name)
 {
 	struct zip_stat stat;

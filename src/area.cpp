@@ -153,6 +153,76 @@ bool Area::processMapProperties(xmlNode* node)
 
 bool Area::processTileset(xmlNode* node)
 {
+
+/*	
+ <tileset firstgid="1" name="tiles.sheet" tilewidth="64" tileheight="64">
+  <image source="tiles.sheet" width="256" height="256"/>
+  <tile id="14">
+   ...
+  </tile>
+ </tileset>
+*/
+	Tileset ts;
+	xmlChar* width = xmlGetProp(node, BAD_CAST("tilewidth"));
+	xmlChar* height = xmlGetProp(node, BAD_CAST("tileheight"));
+	ts.tiledim.x = atol((const char*)width);
+	ts.tiledim.y = atol((const char*)height);
+	
+	xmlNode* child = node->xmlChildrenNode;
+	for (; child != NULL; child = child->next) {
+		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
+			xmlChar* idstr = xmlGetProp(child, BAD_CAST("id"));
+			unsigned id = atol((const char*)idstr);
+			while (ts.defaults.size() != id) {
+				TileType tt = defaultTileType(ts.source,
+					ts.tiledim, ts.defaults.size());
+				ts.defaults.push_back(tt);
+			}
+			if (!processTileType(child))
+				return false;
+		}
+		else if (!xmlStrncmp(child->name, BAD_CAST("image"), 6)) {
+			xmlChar* source = xmlGetProp(child, BAD_CAST("source"));
+			ts.source = rc->getBitmap((const char*)source);
+		}
+	}
+	return true;
+}
+
+Area::TileType Area::defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
+                               int id)
+{
+	int x = tiledim.x * (id % source.width());
+	int y = tiledim.y * (id / source.height());
+	
+	TileType tt;
+	Gosu::Image* img = rc->bitmapSection(source, x, y,
+	                                     tiledim.x, tiledim.y, true);
+	tt.graphics.push_back(img);
+	tt.animated = false;
+	tt.ani_speed = 0.0;
+	return tt;
+}
+
+bool Area::processTileType(xmlNode* node)
+{
+/*
+  <tile id="8">
+   <properties>
+    <property name="flags" value="nowalk"/>
+    <property name="onEnter" value="skid();speed(2)"/>
+    <property name="onLeave" value="undo()"/>
+   </properties>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="animated" value="1"/>
+    <property name="size" value="2"/>
+    <property name="speed" value="2"/>
+   </properties>
+  </tile>
+*/
+	
 	return true;
 }
 
