@@ -15,11 +15,11 @@
 #include "resourcer.h"
 #include "sprite.h"
 
-/* NOTE: Tileset tiles start counting their positions from 1, while layer tiles
-         start counting from 0. I can't imagine why the author did this, but we
+/* NOTE: Tileset tiles start counting their positions from 0, while layer tiles
+         start counting from 1. I can't imagine why the author did this, but we
          have to take it into account. Also, your current code is incapable of
          rendering any piece of bigbaby. Try it and see.
-*/
+
 
 Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
 	: rc(rc), player(player), descriptor(descriptor)
