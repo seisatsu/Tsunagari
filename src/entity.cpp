@@ -58,3 +58,8 @@ void Entity::moveByTile(coord_t delta)
 	redraw = true;
 }
 
+void Entity::setCoordsByTile(coord_t pos)
+{
+	sprite->setCoordsByTile(pos);
+}
+

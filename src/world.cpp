@@ -36,6 +36,7 @@ bool World::init()
 		return false;
 
 	area = new Area(rc, player, xml.entry.area);
+	player->setCoordsByTile(xml.entry.coords);
 	
 	wnd->setCaption(Gosu::widen(xml.name));
 	return area->init();
