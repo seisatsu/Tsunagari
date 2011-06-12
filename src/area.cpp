@@ -17,9 +17,8 @@
 
 /* NOTE: Tileset tiles start counting their positions from 0, while layer tiles
          start counting from 1. I can't imagine why the author did this, but we
-         have to take it into account. Also, your current code is incapable of
-         rendering any piece of bigbaby. Try it and see.
-
+         have to take it into account. 
+*/
 
 Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
 	: rc(rc), player(player), descriptor(descriptor)
@@ -377,7 +376,7 @@ bool Area::processLayerData(xmlNode* node)
 			Tile* t = new Tile;
 			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
 			row.push_back(t);
-			if (i % dim.x == 0) {
+			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
 				row.clear();
 			}
