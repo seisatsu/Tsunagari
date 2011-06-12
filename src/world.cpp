@@ -35,12 +35,8 @@ bool World::init()
 	if (!player->init())
 		return false;
 
-	area = new Area(rc, player, xml.entry.area);
-	player->setArea(area);
-	player->setCoordsByTile(xml.entry.coords);
-	
 	wnd->setCaption(Gosu::widen(xml.name));
-	return area->init();
+	return loadArea(xml.entry.area, xml.entry.coords);
 }
 
 void World::buttonDown(const Gosu::Button btn)
@@ -124,6 +120,18 @@ bool World::processDescriptor()
 		}
 	}
 	xmlFreeDoc(doc);
+	return true;
+}
+
+bool World::loadArea(const std::string& areaName, coord_t playerPos)
+{
+	Area* newArea = new Area(rc, this, player, areaName);
+	delete area;
+	area = newArea;
+	if (!area->init())
+		return false;
+	player->setArea(area);
+	player->setCoordsByTile(playerPos);
 	return true;
 }
 

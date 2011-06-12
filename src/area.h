@@ -20,6 +20,7 @@ class Entity;
 class GameWindow;
 class Resourcer;
 class Sprite;
+class World;
 
 //! Area Class
 /*!
@@ -54,6 +55,16 @@ public:
 		TileEventTriggers trigger;
 		std::string argv; // Function name and arguments.
 	};
+
+	//! Door
+	/*!
+		Some tiles can teleport you to a new area or a new position
+		in your current area.
+	*/
+	struct Door {
+		std::string area;
+		coord_t coord;
+	};
 	
 	//! TileType
 	/*!
@@ -67,6 +78,7 @@ public:
 		double ani_speed; // Speed of animation in hertz
 		std::vector<TileEvent> events;
 		unsigned flags; // bitflags for each option in TileFlags enum
+		// TODO: Door* door
 	};
 
 	//! Tile
@@ -79,11 +91,12 @@ public:
 		TileType* type;
 		std::vector<TileEvent> events;
 		unsigned flags; // bitflags for each option in TileFlags enum
+		Door* door;
 	};
 
 
 	//! Area Constructor
-	Area(Resourcer* rc, Entity* player, const std::string& filename);
+	Area(Resourcer* rc, World* world, Entity* player, const std::string& filename);
 
 	//! Area Destructor
 	~Area();
@@ -135,11 +148,13 @@ private:
 	bool processObjectGroupProperties(xmlNode* node, int* zpos);
 	bool processObject(xmlNode* node, int zpos);
 	unsigned splitTileFlags(const std::string strOfFlags);
+	Door* parseDoor(const std::string dest);
 
 	Gosu::Transform translateCoords();
 
 
 	Resourcer* rc;
+	World* world;
 	Entity* player;
 	const std::string descriptor;
 

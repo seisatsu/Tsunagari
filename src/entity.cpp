@@ -75,6 +75,7 @@ void Entity::moveByTile(coord_t delta)
 void Entity::setCoordsByTile(coord_t pos)
 {
 	sprite->setCoordsByTile(pos);
+	redraw = true;
 }
 
 void Entity::setArea(Area* area)

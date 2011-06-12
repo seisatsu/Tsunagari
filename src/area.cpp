@@ -15,14 +15,15 @@
 #include "resourcer.h"
 #include "sprite.h"
 #include "window.h"
+#include "world.h"
 
 /* NOTE: Tileset tiles start counting their positions from 0, while layer tiles
          start counting from 1. I can't imagine why the author did this, but we
          have to take it into account. 
 */
 
-Area::Area(Resourcer* rc, Entity* player, const std::string& descriptor)
-	: rc(rc), player(player), descriptor(descriptor)
+Area::Area(Resourcer* rc, World* world, Entity* player, const std::string& descriptor)
+	: rc(rc), world(world), player(player), descriptor(descriptor)
 {
 	dim.z = 0;
 }
@@ -40,14 +41,45 @@ bool Area::init()
 
 void Area::buttonDown(const Gosu::Button btn)
 {
-	if (btn == Gosu::kbRight)
-		player->moveByTile(coord(1, 0, 0));
-	else if (btn == Gosu::kbLeft)
-		player->moveByTile(coord(-1, 0, 0));
-	else if (btn == Gosu::kbUp)
-		player->moveByTile(coord(0, -1, 0));
-	else if (btn == Gosu::kbDown)
-		player->moveByTile(coord(0, 1, 0));
+	bool attemptingMove = false;
+	coord_t posMove;
+
+	if (btn == Gosu::kbRight) {
+		posMove = coord(1, 0, 0);
+		attemptingMove = true;
+	}
+	else if (btn == Gosu::kbLeft) {
+		posMove = coord(-1, 0, 0);
+		attemptingMove = true;
+	}
+	else if (btn == Gosu::kbUp) {
+		posMove = coord(0, -1, 0);
+		attemptingMove = true;
+	}
+	else if (btn == Gosu::kbDown) {
+		posMove = coord(0, 1, 0);
+		attemptingMove = true;
+	}
+
+	if (attemptingMove) {
+		coord_t newCoord = player->getCoordsByTile();
+		newCoord.x += posMove.x;
+		newCoord.y += posMove.y;
+		newCoord.z += posMove.z;
+		Tile* dest = getTile(newCoord);
+		if ((dest->flags       & player_nowalk) != 0 ||
+		    (dest->type->flags & player_nowalk) != 0) {
+			// The tile we're trying to move onto is set as nowalk
+			// for the player. Stop here.
+			return;
+		}
+		if (dest->door) {
+			world->loadArea(dest->door->area, dest->door->coord);
+		}
+		else {
+			player->moveByTile(posMove);
+		}
+	}
 }
 
 void Area::draw()
@@ -421,6 +453,7 @@ bool Area::processLayerData(xmlNode* node)
 			Tile* t = new Tile;
 			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
 			t->flags = 0x0;
+			t->door = NULL;
 			row.push_back(t);
 			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
@@ -542,11 +575,11 @@ bool Area::processObject(xmlNode* node, int zpos)
 	Tile* t = map[zpos][y][x];
 
 	xmlNode* child = node->xmlChildrenNode; // <properties>
-	child = node->xmlChildrenNode; // <property>
+	child = child->xmlChildrenNode; // <property>
 	for (; child != NULL; child = child->next) {
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
-		if (!xmlStrncmp(child->name, BAD_CAST("flags"), 6)) {
+		if (!xmlStrncmp(name, BAD_CAST("flags"), 6)) {
 			t->flags = splitTileFlags((const char*)value);
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
@@ -556,7 +589,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 			// TODO events
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("door"), 5)) {
-			// TODO doors
+			t->door = parseDoor((const char*)value);
 		}
 	}
 	return true;
@@ -565,7 +598,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 unsigned Area::splitTileFlags(const std::string strOfFlags)
 {
 	std::vector<std::string> strs;
-	boost::split(strs, strOfFlags, boost::is_any_of(":"));
+	boost::split(strs, strOfFlags, boost::is_any_of(","));
 
 	unsigned flags = 0x0;
 	BOOST_FOREACH(std::string str, strs)
@@ -576,6 +609,21 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 		}
 	}
 	return flags;
+}
+
+Area::Door* Area::parseDoor(const std::string dest)
+{
+	std::vector<std::string> strs;
+	boost::split(strs, dest, boost::is_any_of(","));
+
+	// TODO: verify the validity of the input string... it's coming from
+	// user land
+	Door* door = new Door;
+	door->area = strs[0];
+	door->coord.x = atol(strs[1].c_str());
+	door->coord.y = atol(strs[2].c_str());
+	door->coord.z = atol(strs[3].c_str());
+	return door;
 }
 
 coord_t Area::getDimensions() const
