@@ -32,6 +32,7 @@ GameWindow::GameWindow(uint x, uint y, bool fullscreen)
 GameWindow::~GameWindow()
 {
 	delete world;
+	delete rc;
 }
 
 bool GameWindow::init(const std::string descriptor)
