@@ -132,6 +132,8 @@ private:
 	bool processObjectGroupProperties(xmlNode* node, int* zpos);
 	bool processObject(xmlNode* node, int zpos);
 
+	Gosu::Transform translateCoords();
+
 
 	Resourcer* rc;
 	Entity* player;

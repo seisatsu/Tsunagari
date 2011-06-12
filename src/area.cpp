@@ -53,9 +53,9 @@ void Area::buttonDown(const Gosu::Button btn)
 void Area::draw()
 {
 	GameWindow* window = GameWindow::getWindow();
-	coord_t c = player->getCoordsByPixel();
-	Gosu::Transform trans = Gosu::translate(-c.x, -c.y);
-	window->graphics().pushTransform(trans);
+	Gosu::Graphics* graphics = &window->graphics();
+	Gosu::Transform trans = translateCoords();
+	graphics->pushTransform(trans);
 
 	for (unsigned int layer = 0; layer != map.size(); layer++)
 	{
@@ -74,7 +74,43 @@ void Area::draw()
 	}
 	player->draw();
 
-	window->graphics().popTransform();
+	graphics->popTransform();
+}
+
+static double bound(double low, double x, double high)
+{
+	if (low > x)
+		x = low;
+	if (x > high)
+		x = high;
+	return x;
+}
+
+static double center(double w, double g, double p)
+{
+	return w>g ? (w-g)/2.0 : bound(w-g, w/2.0-p, 0);
+}
+
+Gosu::Transform Area::translateCoords()
+{
+	GameWindow* window = GameWindow::getWindow();
+	Gosu::Graphics* graphics = &window->graphics();
+
+	// FIXME: horrible
+	double tileSize = map[0][0][0]->type->graphics[0]->width();
+	double windowWidth = graphics->width() / tileSize;
+	double windowHeight = graphics->height() / tileSize;
+	double gridWidth = dim.x;
+	double gridHeight = dim.y;
+	double playerX = player->getCoordsByPixel().x / tileSize + 0.5;
+	double playerY = player->getCoordsByPixel().y / tileSize + 0.5;
+
+	coord_t c;
+	c.x = center(windowWidth, gridWidth, playerX) * tileSize;
+	c.y = center(windowHeight, gridHeight, playerY) * tileSize;
+
+	Gosu::Transform trans = Gosu::translate(c.x, c.y);
+	return trans;
 }
 
 bool Area::needsRedraw() const
