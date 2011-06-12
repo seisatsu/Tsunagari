@@ -45,8 +45,8 @@ Area::~Area()
 
 	// Each Area owns its own Tileset objects. Delete tileset graphics.
 	BOOST_FOREACH(Tileset tileset, tilesets) {
-		BOOST_FOREACH(TileType type, tileset->defaults) {
-			BOOST_FOREACH(Gosu::Image* img, type->graphics) {
+		BOOST_FOREACH(TileType type, tileset.defaults) {
+			BOOST_FOREACH(Gosu::Image* img, type.graphics) {
 				delete img;
 			}
 			// TODO: delete TileEvents when we start using them
