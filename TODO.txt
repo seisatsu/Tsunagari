@@ -42,6 +42,8 @@ ITEMS
 
 * Implement "nowalk" flags to prevent player from moving off map.
 
+* Diagonal movement in roguelike mode.
+
 FINISHED ITEMS
 
 X Map should center around player.
