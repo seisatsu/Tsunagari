@@ -7,8 +7,10 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <map>
 #include <stdint.h>
 #include <string>
+#include <utility>
 
 #include <Gosu/Gosu.hpp>
 
@@ -37,6 +39,9 @@ public:
 	void buttonDown(const Gosu::Button btn);
 
 	//! Gosu Callback
+	void buttonUp(const Gosu::Button btn);
+
+	//! Gosu Callback
 	void draw();
 
 	//! Gosu Callback
@@ -48,6 +53,8 @@ public:
 private:
 	Resourcer* rc;
 	World* world;
+	
+	std::map<Gosu::Button, std::pair<bool, unsigned long> > keystates;
 };
 
 #endif
