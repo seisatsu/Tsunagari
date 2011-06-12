@@ -33,7 +33,7 @@ Area::~Area()
 
 bool Area::init()
 {
-	if (!processDescriptor()) // Try to load in descriptor.
+	if (!processDescriptor())
 		return false;
 	return true;
 }
@@ -108,6 +108,14 @@ void Area::draw()
 	graphics->popTransform();
 }
 
+//! Returns the number closest to x within the range [low, high].
+/*!
+	\param low Lowest possible return.
+	\param x Value to be bounded.
+	\param high Highest possible return.
+	\return A number close to x.
+	\sa center() and translateCoords()
+*/
 static double bound(double low, double x, double high)
 {
 	if (low > x)
@@ -127,18 +135,18 @@ Gosu::Transform Area::translateCoords()
 	GameWindow* window = GameWindow::getWindow();
 	Gosu::Graphics* graphics = &window->graphics();
 
-	// FIXME: horrible
-	double tileSize = map[0][0][0]->type->graphics[0]->width();
-	double windowWidth = graphics->width() / tileSize;
-	double windowHeight = graphics->height() / tileSize;
+	double tileWidth = tilesets[0].tiledim.x;
+	double tileHeight = tilesets[0].tiledim.y;
+	double windowWidth = graphics->width() / tileWidth;
+	double windowHeight = graphics->height() / tileHeight;
 	double gridWidth = dim.x;
 	double gridHeight = dim.y;
-	double playerX = player->getCoordsByPixel().x / tileSize + 0.5;
-	double playerY = player->getCoordsByPixel().y / tileSize + 0.5;
+	double playerX = player->getCoordsByPixel().x / tileWidth + 0.5;
+	double playerY = player->getCoordsByPixel().y / tileHeight + 0.5;
 
 	coord_t c;
-	c.x = center(windowWidth, gridWidth, playerX) * tileSize;
-	c.y = center(windowHeight, gridHeight, playerY) * tileSize;
+	c.x = center(windowWidth, gridWidth, playerX) * tileWidth;
+	c.y = center(windowHeight, gridHeight, playerY) * tileHeight;
 
 	Gosu::Transform trans = Gosu::translate(c.x, c.y);
 	return trans;
