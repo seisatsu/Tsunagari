@@ -310,8 +310,8 @@ bool Area::processLayer(xmlNode* node)
 
 	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	unsigned x = atol((const char*)width);
-	unsigned y = atol((const char*)height);
+	int x = atol((const char*)width);
+	int y = atol((const char*)height);
 
 	if (dim.x != x || dim.y != y) {
 		// XXX we need to know the Area we're loading...
@@ -347,7 +347,7 @@ bool Area::processLayerProperties(xmlNode* node)
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
 		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
-			unsigned depth = atol((const char*)value);
+			int depth = atol((const char*)value);
 			if (depth != dim.z) {
 				Log::err("unknown area", "invalid layer depth");
 				return false;
@@ -417,10 +417,10 @@ bool Area::processObjectGroup(xmlNode* node)
 
 	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	unsigned x = atol((const char*)width);
-	unsigned y = atol((const char*)height);
+	int x = atol((const char*)width);
+	int y = atol((const char*)height);
 
-	unsigned zpos = -1;
+	int zpos = -1;
 
 	if (dim.x != x || dim.y != y) {
 		// XXX we need to know the Area we're loading...
@@ -435,7 +435,7 @@ bool Area::processObjectGroup(xmlNode* node)
 				return false;
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("object"), 7)) {
-			if (zpos == (unsigned)-1 || !processObject(child, zpos))
+			if (zpos == -1 || !processObject(child, zpos))
 				return false;
 		}
 	}
@@ -443,7 +443,7 @@ bool Area::processObjectGroup(xmlNode* node)
 	return true;
 }
 
-bool Area::processObjectGroupProperties(xmlNode* node, unsigned* zpos)
+bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
 {
 
 /*
@@ -471,7 +471,7 @@ bool Area::processObjectGroupProperties(xmlNode* node, unsigned* zpos)
 	return true;
 }
 
-bool Area::processObject(xmlNode* node, unsigned zpos)
+bool Area::processObject(xmlNode* node, int zpos)
 {
 
 /*
@@ -496,8 +496,8 @@ bool Area::processObject(xmlNode* node, unsigned zpos)
 	// XXX we ignore the object gid... is that okay?
 
 	// wouldn't have to access tilesets if we had tiledim ourselves
-	unsigned x = atol((const char*)xStr) / tilesets[0].tiledim.x;
-	unsigned y = atol((const char*)yStr) / tilesets[0].tiledim.y;
+	int x = atol((const char*)xStr) / tilesets[0].tiledim.x;
+	int y = atol((const char*)yStr) / tilesets[0].tiledim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay

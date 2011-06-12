@@ -129,8 +129,8 @@ private:
 	bool processLayerProperties(xmlNode* node);
 	bool processLayerData(xmlNode* node);
 	bool processObjectGroup(xmlNode* node);
-	bool processObjectGroupProperties(xmlNode* node, unsigned* zpos);
-	bool processObject(xmlNode* node, unsigned zpos);
+	bool processObjectGroupProperties(xmlNode* node, int* zpos);
+	bool processObject(xmlNode* node, int zpos);
 
 
 	Resourcer* rc;
