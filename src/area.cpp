@@ -21,10 +21,13 @@
          have to take it into account. 
 */
 
-Area::Area(Resourcer* rc, World* world, Entity* player, const std::string& descriptor)
+Area::Area(Resourcer* rc,
+           World* world,
+           Entity* player,
+           const std::string& descriptor)
 	: rc(rc), world(world), player(player), descriptor(descriptor)
 {
-	dim.z = 0;
+	dim.x = dim.y = dim.z = 0;
 }
 
 Area::~Area()
@@ -33,9 +36,7 @@ Area::~Area()
 
 bool Area::init()
 {
-	if (!processDescriptor())
-		return false;
-	return true;
+	return processDescriptor();
 }
 
 void Area::buttonDown(const Gosu::Button btn)
