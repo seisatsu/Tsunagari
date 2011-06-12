@@ -42,9 +42,11 @@ ITEMS
 
 * Implement "nowalk" flags to prevent player from moving off map.
 
-* Map should center around player.
-
 FINISHED ITEMS
+
+X Map should center around player.
+  Viewport now centers around player!
+  (Fixed on June 11, 2011 in commit ec2c2736)
 
 X Remove arbitrary test values inside the code.
   With layer and tileset parsing on TMX maps done, we can now load data from
