@@ -28,14 +28,19 @@ std::vector<std::string> splitStr(std::string str, const std::string& delimiter)
 	size_t pos;
 	
 	pos = str.find(delimiter);
+	
 	while (pos != std::string::npos) {
 		if (pos != std::string::npos || pos+1 != str.size()) {
-			if (str.size() != 0) // Don't save empty strings
+			if (str.size() != 0 && pos != 0) // Don't save empty strings
 				strlist.push_back(str.substr(0, pos)); // Save
 			str = str.substr(pos+delimiter.size()); // Cut delimiter
 		}
 		pos = str.find(delimiter);
 	}
+
+	if (pos == std::string::npos && str.size() != 0)
+		strlist.push_back(str);
+
 	return strlist;
 }
 
