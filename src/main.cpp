@@ -149,8 +149,9 @@ int main()
 	if (!parseClientConfig(CLIENT_CONF_FILE, &CLIENT_CONFIG))
 		return 1;
 
-	GameWindow window(CLIENT_CONFIG.windowsize.x, CLIENT_CONFIG.windowsize.y,
-		CLIENT_CONFIG.fullscreen);
+	GameWindow window(CLIENT_CONFIG.windowsize.x,
+	                  CLIENT_CONFIG.windowsize.y,
+	                  CLIENT_CONFIG.fullscreen);
 	if (!window.init(CLIENT_CONFIG.world))
 		return 1;
 	window.show();
