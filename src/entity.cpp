@@ -6,14 +6,17 @@
 
 #define TILE_SIZE 64
 
+#include "area.h"
 #include "entity.h"
 #include "sprite.h"
 
 Entity::Entity(Resourcer* rc,
+               Area* area,
                const std::string descriptor,
                const std::string spriteDescriptor)
-	: sprite(NULL),
-	  rc(rc),
+	: rc(rc),
+	  sprite(NULL),
+	  area(area),
 	  redraw(true),
 	  descriptor(descriptor),
 	  spriteDescriptor(spriteDescriptor)
@@ -54,6 +57,17 @@ coord_t Entity::getCoordsByTile()
 
 void Entity::moveByTile(coord_t delta)
 {
+	coord_t newCoord = sprite->getCoordsByTile();
+	newCoord.x += delta.x;
+	newCoord.y += delta.y;
+	newCoord.z += delta.z;
+	Area::Tile* dest = area->getTile(newCoord);
+	if ((dest->flags       & Area::nowalk) != 0 ||
+	    (dest->type->flags & Area::nowalk) != 0) {
+		// The tile we're trying to move onto is set as nowalk.
+		// Stop here.
+		return;
+	}
 	sprite->moveByTile(delta);
 	redraw = true;
 }
@@ -61,5 +75,10 @@ void Entity::moveByTile(coord_t delta)
 void Entity::setCoordsByTile(coord_t pos)
 {
 	sprite->setCoordsByTile(pos);
+}
+
+void Entity::setArea(Area* area)
+{
+	this->area = area;
 }
 

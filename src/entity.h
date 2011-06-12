@@ -11,6 +11,7 @@
 
 #include "common.h"
 
+class Area;
 class Resourcer;
 class Sprite;
 
@@ -23,7 +24,7 @@ class Entity
 {
 public:
 	//! Entity Constructor
-	Entity(Resourcer* rc, const std::string descriptor,
+	Entity(Resourcer* rc, Area* area, const std::string descriptor,
 		const std::string spriteDescriptor);
 	
 	//! Entity Destructor
@@ -47,9 +48,14 @@ public:
 	//! Set location to Tile at {x, y, z}.
 	void setCoordsByTile(coord_t pos);
 
+	//! Sets the Area object this entity will ask when looking for
+	// nearby Tiles. Doesn't change x,y,z position.
+	void setArea(Area* area);
+
 protected:
-	Sprite* sprite;
 	Resourcer* rc;
+	Sprite* sprite;
+	Area* area; // XXX init
 	bool redraw;
 
 	const std::string descriptor;

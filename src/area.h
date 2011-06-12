@@ -11,6 +11,8 @@
 #include <vector>
 
 #include <Gosu/Gosu.hpp>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 #include "common.h"
 
@@ -26,14 +28,15 @@ class Sprite;
 class Area
 {
 public:
-	
+
+	// when changing TileFlags, be sure to make updates to Area::splitTileFlags()
 	enum TileFlags {
-		nowalk,
-		player_nowalk,
-		npc_nowalk,
-		player_event,
-		npc_event,
-		temp_event
+		nowalk        = 0x0001,
+		player_nowalk = 0x0002,
+		npc_nowalk    = 0x0004,
+		player_event  = 0x0008,
+		npc_event     = 0x0010,
+		temp_event    = 0x0020
 	};
 	
 	enum TileEventTriggers {
@@ -63,7 +66,7 @@ public:
 		bool animated; // Is the tile animated?
 		double ani_speed; // Speed of animation in hertz
 		std::vector<TileEvent> events;
-		std::vector<TileFlags> flags;
+		unsigned flags; // bitflags for each option in TileFlags enum
 	};
 
 	//! Tile
@@ -75,12 +78,12 @@ public:
 	struct Tile {
 		TileType* type;
 		std::vector<TileEvent> events;
-		std::vector<TileFlags> flags;
+		unsigned flags; // bitflags for each option in TileFlags enum
 	};
 
 
 	//! Area Constructor
-	Area(Resourcer* rc, Entity* player, const std::string filename);
+	Area(Resourcer* rc, Entity* player, const std::string& filename);
 
 	//! Area Destructor
 	~Area();
@@ -131,6 +134,7 @@ private:
 	bool processObjectGroup(xmlNode* node);
 	bool processObjectGroupProperties(xmlNode* node, int* zpos);
 	bool processObject(xmlNode* node, int zpos);
+	unsigned splitTileFlags(const std::string strOfFlags);
 
 	Gosu::Transform translateCoords();
 

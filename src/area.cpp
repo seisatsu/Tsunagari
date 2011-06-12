@@ -4,9 +4,9 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 
 #include "area.h"
 #include "common.h"
@@ -21,7 +21,7 @@
          have to take it into account. 
 */
 
-Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
+Area::Area(Resourcer* rc, Entity* player, const std::string& descriptor)
 	: rc(rc), player(player), descriptor(descriptor)
 {
 	dim.z = 0;
@@ -259,6 +259,7 @@ Area::TileType Area::defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
 	tt.graphics.push_back(img);
 	tt.animated = false;
 	tt.ani_speed = 0.0;
+	tt.flags = 0x0;
 	return tt;
 }
 
@@ -296,12 +297,12 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 	}
 
 	xmlNode* child = node->xmlChildrenNode; // <properties>
-	child = node->xmlChildrenNode; // <property>
+	child = child->xmlChildrenNode; // <property>
 	for (; child != NULL; child = child->next) {
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
-		if (!xmlStrncmp(child->name, BAD_CAST("flags"), 6)) {
-			// TODO flags
+		if (!xmlStrncmp(name, BAD_CAST("flags"), 6)) {
+			tt.flags = splitTileFlags((const char*)value);
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
 			// TODO events
@@ -419,6 +420,7 @@ bool Area::processLayerData(xmlNode* node)
 			unsigned gid = atol((const char*)gidStr)-1;
 			Tile* t = new Tile;
 			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
+			t->flags = 0x0;
 			row.push_back(t);
 			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
@@ -545,7 +547,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
 		if (!xmlStrncmp(child->name, BAD_CAST("flags"), 6)) {
-			// TODO flags
+			t->flags = splitTileFlags((const char*)value);
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
 			// TODO events
@@ -558,6 +560,22 @@ bool Area::processObject(xmlNode* node, int zpos)
 		}
 	}
 	return true;
+}
+
+unsigned Area::splitTileFlags(const std::string strOfFlags)
+{
+	std::vector<std::string> strs;
+	boost::split(strs, strOfFlags, boost::is_any_of(":"));
+
+	unsigned flags = 0x0;
+	BOOST_FOREACH(std::string str, strs)
+	{
+		// TODO: reimplement comparisons as a hash table
+		if (str == "nowalk") {
+			flags |= nowalk;
+		}
+	}
+	return flags;
 }
 
 coord_t Area::getDimensions() const

@@ -14,7 +14,7 @@
 Sprite::Sprite(Resourcer* rc, const std::string descriptor)
 	: rc(rc), img(NULL), descriptor(descriptor)
 {
-	c.x = c.y = 0;
+	c.x = c.y = c.z = 0;
 }
 
 Sprite::~Sprite()
@@ -128,7 +128,7 @@ coord_t Sprite::getCoordsByTile()
 	coord_t coords;
 	coords.x = c.x / img->width();
 	coords.y = c.y / img->height();
-	// XXX: set coords.z when we have Z-buffers
+	coords.z = c.z; // XXX: revisit when we have Z-buffers
 	return coords;
 }
 
