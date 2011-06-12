@@ -40,9 +40,9 @@ ITEMS
   UPDATE June 9, 2011: Sprites are no longer used, but we still need to
   implement animations.
 
-* Implement "nowalk" flags to prevent player from moving off map.
-
 * Diagonal movement in roguelike mode.
+
+* Doors imply "npc_nowalk" flag.
 
 FINISHED ITEMS
 
@@ -64,4 +64,7 @@ X Switch from JSON to XML completely.
   investigating a few JSON parsers, we have decided that none of them are up to
   our expectations.
   (Fixed on May 25, 2011 in commit 5e1c08b7)
+
+X Implement "nowalk" flags to prevent player from moving off map.
+  (Fixed on June 12, 2011 in commit 3a6e3890)
 

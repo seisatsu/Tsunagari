@@ -925,7 +925,7 @@
    <tile gid="13"/>
    <tile gid="1"/>
    <tile gid="1"/>
-   <tile gid="1"/>
+   <tile gid="7"/>
    <tile gid="1"/>
    <tile gid="1"/>
    <tile gid="1"/>
@@ -973,6 +973,11 @@
   <object name="tile2" type="Tile" gid="13" x="1792" y="1856">
    <properties>
     <property name="onEnter" value="warp(1,1,0)"/>
+   </properties>
+  </object>
+  <object name="door1" type="Tile" gid="7" x="64" y="1920">
+   <properties>
+    <property name="door" value="babysfirst.area,1,1,0"/>
    </properties>
   </object>
  </objectgroup>
