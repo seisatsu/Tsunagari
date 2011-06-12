@@ -32,6 +32,26 @@ Area::Area(Resourcer* rc,
 
 Area::~Area()
 {
+	// Delete each Tile. If a Tile has an allocated Door struct, delete
+	// that as well.
+	BOOST_FOREACH(grid_t grid, map) {
+		BOOST_FOREACH(row_t row, grid) {
+			BOOST_FOREACH(Tile* tile, row) {
+				delete tile->door;
+				delete tile;
+			}
+		}
+	}
+
+	// Each Area owns its own Tileset objects. Delete tileset graphics.
+	BOOST_FOREACH(Tileset tileset, tilesets) {
+		BOOST_FOREACH(TileType type, tileset->defaults) {
+			BOOST_FOREACH(Gosu::Image* img, type->graphics) {
+				delete img;
+			}
+			// TODO: delete TileEvents when we start using them
+		}
+	}
 }
 
 bool Area::init()
