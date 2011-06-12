@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <string>
 
+#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -68,7 +69,9 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 		Log::err(filename, "Could not parse file");
 		return false;
 	}
-	
+
+	boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
+
 	xmlValidCtxt ctxt;
 	ctxt.error = xmlErrorCb;
 	if (!xmlValidateDocument(&ctxt, doc)) {
