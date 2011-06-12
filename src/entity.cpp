@@ -42,6 +42,16 @@ bool Entity::needsRedraw() const
 	return redraw;
 }
 
+coord_t Entity::getCoordsByPixel()
+{
+	return sprite->getCoordsByPixel();
+}
+
+coord_t Entity::getCoordsByTile()
+{
+	return sprite->getCoordsByTile();
+}
+
 void Entity::moveByTile(coord_t delta)
 {
 	sprite->moveByTile(delta);

@@ -8,7 +8,7 @@
 
 #include "common.h"
 
-coord_t coord(uint32_t x, uint32_t y, uint32_t z)
+coord_t coord(int32_t x, int32_t y, int32_t z)
 {
 	coord_t c;
 	c.x = x;

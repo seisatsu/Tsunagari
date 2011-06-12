@@ -8,9 +8,18 @@
 #include "world.h"
 #include "window.h"
 
+
+static GameWindow* globalWindow = NULL;
+
+GameWindow* GameWindow::getWindow()
+{
+	return globalWindow;
+}
+
 GameWindow::GameWindow(uint x, uint y, bool fullscreen)
 	: Gosu::Window(x, y, fullscreen)
 {
+	globalWindow = this;
 }
 
 GameWindow::~GameWindow()

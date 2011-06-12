@@ -22,24 +22,26 @@ class World;
 class GameWindow : public Gosu::Window
 {
 public:
+	static GameWindow* getWindow();
+
 	//! GameWindow Constructor
 	GameWindow(uint x, uint y, bool fullscreen);
-	
+
 	//! GameWindow Destructor
 	virtual ~GameWindow();
-	
+
 	//! GameWindow Initializer
 	bool init(const std::string descriptor);
-	
+
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
-	
+
 	//! Gosu Callback
 	void draw();
-	
+
 	//! Gosu Callback
 	bool needsRedraw() const;
-	
+
 	//! Gosu Callback
 	void update();
 

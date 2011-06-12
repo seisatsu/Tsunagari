@@ -14,6 +14,7 @@
 #include "log.h"
 #include "resourcer.h"
 #include "sprite.h"
+#include "window.h"
 
 /* NOTE: Tileset tiles start counting their positions from 0, while layer tiles
          start counting from 1. I can't imagine why the author did this, but we
@@ -51,6 +52,11 @@ void Area::buttonDown(const Gosu::Button btn)
 
 void Area::draw()
 {
+	GameWindow* window = GameWindow::getWindow();
+	coord_t c = player->getCoordsByPixel();
+	Gosu::Transform trans = Gosu::translate(-c.x, -c.y);
+	window->graphics().pushTransform(trans);
+
 	for (unsigned int layer = 0; layer != map.size(); layer++)
 	{
 		grid_t grid = map[layer];
@@ -67,6 +73,8 @@ void Area::draw()
 		}
 	}
 	player->draw();
+
+	window->graphics().popTransform();
 }
 
 bool Area::needsRedraw() const

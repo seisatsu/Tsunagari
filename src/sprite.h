@@ -46,6 +46,9 @@ public:
 	//! Gosu Callback
 	void draw() const;
 	
+	coord_t getCoordsByPixel();
+	coord_t getCoordsByTile();
+	
 	//! Gosu Callback
 	void moveByPixel(coord_t deltac);
 	void moveByTile(coord_t deltac);

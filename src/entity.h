@@ -38,6 +38,9 @@ public:
 	//! Gosu Callback
 	bool needsRedraw() const;
 	
+	coord_t getCoordsByPixel();
+	coord_t getCoordsByTile();
+	
 	//! Move the entity by dx, dy.
 	void moveByTile(coord_t delta);
 
