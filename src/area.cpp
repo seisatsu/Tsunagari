@@ -4,7 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -598,7 +597,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 unsigned Area::splitTileFlags(const std::string strOfFlags)
 {
 	std::vector<std::string> strs;
-	boost::split(strs, strOfFlags, boost::is_any_of(","));
+	strs = splitStr(strOfFlags, ",");
 
 	unsigned flags = 0x0;
 	BOOST_FOREACH(std::string str, strs)
@@ -614,7 +613,7 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 Area::Door* Area::parseDoor(const std::string dest)
 {
 	std::vector<std::string> strs;
-	boost::split(strs, dest, boost::is_any_of(","));
+	strs = splitStr(dest, ",");
 
 	// TODO: verify the validity of the input string... it's coming from
 	// user land

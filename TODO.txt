@@ -44,6 +44,8 @@ ITEMS
 
 * Doors imply "npc_nowalk" flag.
 
+* Doors get activated only after player is on them.
+
 FINISHED ITEMS
 
 X Map should center around player.
