@@ -14,12 +14,12 @@
 #include "log.h"
 #include "resourcer.h"
 #include "sprite.h"
+#include "window.h"
 
 /* NOTE: Tileset tiles start counting their positions from 0, while layer tiles
          start counting from 1. I can't imagine why the author did this, but we
-         have to take it into account. Also, your current code is incapable of
-         rendering any piece of bigbaby. Try it and see.
-
+         have to take it into account. 
+*/
 
 Area::Area(Resourcer* rc, Entity* player, const std::string descriptor)
 	: rc(rc), player(player), descriptor(descriptor)
@@ -52,6 +52,11 @@ void Area::buttonDown(const Gosu::Button btn)
 
 void Area::draw()
 {
+	GameWindow* window = GameWindow::getWindow();
+	Gosu::Graphics* graphics = &window->graphics();
+	Gosu::Transform trans = translateCoords();
+	graphics->pushTransform(trans);
+
 	for (unsigned int layer = 0; layer != map.size(); layer++)
 	{
 		grid_t grid = map[layer];
@@ -68,6 +73,44 @@ void Area::draw()
 		}
 	}
 	player->draw();
+
+	graphics->popTransform();
+}
+
+static double bound(double low, double x, double high)
+{
+	if (low > x)
+		x = low;
+	if (x > high)
+		x = high;
+	return x;
+}
+
+static double center(double w, double g, double p)
+{
+	return w>g ? (w-g)/2.0 : bound(w-g, w/2.0-p, 0);
+}
+
+Gosu::Transform Area::translateCoords()
+{
+	GameWindow* window = GameWindow::getWindow();
+	Gosu::Graphics* graphics = &window->graphics();
+
+	// FIXME: horrible
+	double tileSize = map[0][0][0]->type->graphics[0]->width();
+	double windowWidth = graphics->width() / tileSize;
+	double windowHeight = graphics->height() / tileSize;
+	double gridWidth = dim.x;
+	double gridHeight = dim.y;
+	double playerX = player->getCoordsByPixel().x / tileSize + 0.5;
+	double playerY = player->getCoordsByPixel().y / tileSize + 0.5;
+
+	coord_t c;
+	c.x = center(windowWidth, gridWidth, playerX) * tileSize;
+	c.y = center(windowHeight, gridHeight, playerY) * tileSize;
+
+	Gosu::Transform trans = Gosu::translate(c.x, c.y);
+	return trans;
 }
 
 bool Area::needsRedraw() const
@@ -303,8 +346,8 @@ bool Area::processLayer(xmlNode* node)
 
 	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	unsigned x = atol((const char*)width);
-	unsigned y = atol((const char*)height);
+	int x = atol((const char*)width);
+	int y = atol((const char*)height);
 
 	if (dim.x != x || dim.y != y) {
 		// XXX we need to know the Area we're loading...
@@ -340,7 +383,7 @@ bool Area::processLayerProperties(xmlNode* node)
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
 		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
-			unsigned depth = atol((const char*)value);
+			int depth = atol((const char*)value);
 			if (depth != dim.z) {
 				Log::err("unknown area", "invalid layer depth");
 				return false;
@@ -377,7 +420,7 @@ bool Area::processLayerData(xmlNode* node)
 			Tile* t = new Tile;
 			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
 			row.push_back(t);
-			if (i % dim.x == 0) {
+			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
 				row.clear();
 			}
@@ -410,10 +453,10 @@ bool Area::processObjectGroup(xmlNode* node)
 
 	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	unsigned x = atol((const char*)width);
-	unsigned y = atol((const char*)height);
+	int x = atol((const char*)width);
+	int y = atol((const char*)height);
 
-	unsigned zpos = -1;
+	int zpos = -1;
 
 	if (dim.x != x || dim.y != y) {
 		// XXX we need to know the Area we're loading...
@@ -428,7 +471,7 @@ bool Area::processObjectGroup(xmlNode* node)
 				return false;
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("object"), 7)) {
-			if (zpos == (unsigned)-1 || !processObject(child, zpos))
+			if (zpos == -1 || !processObject(child, zpos))
 				return false;
 		}
 	}
@@ -436,7 +479,7 @@ bool Area::processObjectGroup(xmlNode* node)
 	return true;
 }
 
-bool Area::processObjectGroupProperties(xmlNode* node, unsigned* zpos)
+bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
 {
 
 /*
@@ -464,7 +507,7 @@ bool Area::processObjectGroupProperties(xmlNode* node, unsigned* zpos)
 	return true;
 }
 
-bool Area::processObject(xmlNode* node, unsigned zpos)
+bool Area::processObject(xmlNode* node, int zpos)
 {
 
 /*
@@ -489,8 +532,8 @@ bool Area::processObject(xmlNode* node, unsigned zpos)
 	// XXX we ignore the object gid... is that okay?
 
 	// wouldn't have to access tilesets if we had tiledim ourselves
-	unsigned x = atol((const char*)xStr) / tilesets[0].tiledim.x;
-	unsigned y = atol((const char*)yStr) / tilesets[0].tiledim.y;
+	int x = atol((const char*)xStr) / tilesets[0].tiledim.x;
+	int y = atol((const char*)yStr) / tilesets[0].tiledim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay

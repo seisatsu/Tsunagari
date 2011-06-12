@@ -19,13 +19,13 @@ enum tern {
 };
 
 struct coord_t {
-	uint32_t x;
-	uint32_t y;
-	uint32_t z;
+	int32_t x;
+	int32_t y;
+	int32_t z;
 };
 
 //! coord_t constructor
-coord_t coord(uint32_t x, uint32_t y, uint32_t z);
+coord_t coord(int32_t x, int32_t y, int32_t z);
 
 bool parseBool(const std::string& s);
 

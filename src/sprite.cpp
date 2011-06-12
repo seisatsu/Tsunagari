@@ -118,6 +118,20 @@ void Sprite::draw() const
 	img->draw(c.x, c.y, 0);
 }
 
+coord_t Sprite::getCoordsByPixel()
+{
+	return c;
+}
+
+coord_t Sprite::getCoordsByTile()
+{
+	coord_t coords;
+	coords.x = c.x / img->width();
+	coords.y = c.y / img->height();
+	// XXX: set coords.z when we have Z-buffers
+	return coords;
+}
+
 void Sprite::moveByPixel(coord_t dc)
 {
 	c.x += dc.x;
