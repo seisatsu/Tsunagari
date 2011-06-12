@@ -18,8 +18,10 @@ Tsunagari will be a comprehensive game design suite for singleplayer 2D games. T
 Requirements:
 NAME		LICENSE	  LINK
 freeimage	(FIPL)	- http://freeimage.sourceforge.net/
+libboost
 libgosu		(MIT)	- http://www.libgosu.org/
 libiconv	(LGPL)	- http://www.gnu.org/software/libiconv/
+libpango
 libpopt		(MIT)	- http://rpm5.org/files/popt/
 libxml2		(MIT)	- http://xmlsoft.org/
 libzip		(BSD)	- http://www.nih.at/libzip/
