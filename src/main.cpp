@@ -123,8 +123,10 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 				conf->loglevel = MM_DEVELOPER;
 			else if (!strcmp((char*)str, "debug"))
 				conf->loglevel = MM_DEBUG;
-			else
+			else {
 				Log::err(filename, "Invalid logging level defined");
+				return false;
+			}
 		}
 		node = node->next;
 	}
@@ -140,7 +142,9 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
  */
 int main()
 {
+	// Temporarily set default message mode.
 	Log::setMode(MESSAGE_MODE);
+	CLIENT_CONFIG.loglevel = MESSAGE_MODE;
 
 	/*
 	 * This initializes the library and checks for potential ABI mismatches
@@ -151,6 +155,8 @@ int main()
 
 	if (!parseClientConfig(CLIENT_CONF_FILE, &CLIENT_CONFIG))
 		return 1;
+	
+	Log::setMode(CLIENT_CONFIG.loglevel); // New value, if applicable.
 
 	GameWindow window(CLIENT_CONFIG.windowsize.x,
 	                  CLIENT_CONFIG.windowsize.y,
