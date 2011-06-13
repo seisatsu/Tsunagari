@@ -4,8 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#define TILE_SIZE 64
-
 #include "area.h"
 #include "entity.h"
 #include "sprite.h"
