@@ -27,7 +27,7 @@ public:
 	static GameWindow* getWindow();
 
 	//! GameWindow Constructor
-	GameWindow(uint x, uint y, bool fullscreen);
+	GameWindow(unsigned int x, unsigned int y, bool fullscreen);
 
 	//! GameWindow Destructor
 	virtual ~GameWindow();

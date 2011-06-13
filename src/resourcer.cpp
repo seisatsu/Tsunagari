@@ -14,6 +14,10 @@
 #include "resourcer.h"
 #include "window.h"
 
+#ifdef _MSC_VER
+	#define snprintf _snprintf
+#endif
+
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
 	const std::string* filename = (const std::string*)pstrFilename;
