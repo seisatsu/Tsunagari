@@ -19,20 +19,20 @@ enum tern {
 };
 
 struct coord_t {
-	int32_t x;
-	int32_t y;
-	int32_t z;
+	long x;
+	long y;
+	long z;
 };
 
 //! coord_t constructor
-coord_t coord(int32_t x, int32_t y, int32_t z);
+coord_t coord(long x, long y, long z);
 
 bool parseBool(const std::string& s);
 
 //! Split a string by a delimiter.
 std::vector<std::string> splitStr(std::string str, const std::string& delimiter);
 
-std::string itostr(int32_t in);
+std::string itostr(long in);
 
 #endif
 

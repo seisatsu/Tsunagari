@@ -90,7 +90,7 @@ std::string Resourcer::getString(const std::string& name)
 		return "";
 	}
 
-	size = stat.size;
+	size = (int)stat.size;
 	buf = new char[size + 1];
 	buf[size] = '\0';
 
@@ -124,7 +124,7 @@ xmlDoc* Resourcer::getXMLDoc(const std::string& name)
 	const std::string pathname = path(name);
 	ctxt->vctxt.userData = (void*)&pathname;
 	ctxt->vctxt.error = xmlErrorCb;
-	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(), docStr.size(),
+	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(), (int)docStr.size(),
 			NULL, NULL,
 			XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_DTDVALID);
 	if (!doc) {
@@ -165,7 +165,7 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 		return NULL;
 	}
 
-	size = stat.size;
+	size = (int)stat.size;
 
 	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
 		Log::err(path(name),

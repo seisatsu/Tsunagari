@@ -1,4 +1,4 @@
-CXXFLAGS = -g -Wall -Wextra -pedantic -ansi `xml2-config --cflags`
+CXXFLAGS = -g -Wall -Wextra -Wconversion -pedantic -ansi `xml2-config --cflags`
 LDFLAGS = -g -lgosu -lzip `xml2-config --libs`
 
 all: tsu babysfirst.world

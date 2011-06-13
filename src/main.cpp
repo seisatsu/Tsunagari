@@ -153,8 +153,8 @@ int main()
 	
 	Log::setMode(CLIENT_CONFIG.loglevel); // New value, if applicable.
 
-	GameWindow window(CLIENT_CONFIG.windowsize.x,
-	                  CLIENT_CONFIG.windowsize.y,
+	GameWindow window((unsigned)CLIENT_CONFIG.windowsize.x,
+	                  (unsigned)CLIENT_CONFIG.windowsize.y,
 	                  CLIENT_CONFIG.fullscreen);
 	if (!window.init(CLIENT_CONFIG.world))
 		return 1;

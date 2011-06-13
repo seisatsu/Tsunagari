@@ -8,7 +8,7 @@
 
 #include "common.h"
 
-coord_t coord(int32_t x, int32_t y, int32_t z)
+coord_t coord(long x, long y, long z)
 {
 	coord_t c;
 	c.x = x;
@@ -44,7 +44,7 @@ std::vector<std::string> splitStr(std::string str, const std::string& delimiter)
 	return strlist;
 }
 
-std::string itostr(int32_t in)
+std::string itostr(long in)
 {
 	std::stringstream out;
 	out << in;

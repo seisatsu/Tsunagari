@@ -156,20 +156,20 @@ Gosu::Transform Area::translateCoords()
 	GameWindow* window = GameWindow::getWindow();
 	Gosu::Graphics* graphics = &window->graphics();
 
-	double tileWidth = tilesets[0].tiledim.x;
-	double tileHeight = tilesets[0].tiledim.y;
-	double windowWidth = graphics->width() / tileWidth;
-	double windowHeight = graphics->height() / tileHeight;
-	double gridWidth = dim.x;
-	double gridHeight = dim.y;
-	double playerX = player->getCoordsByPixel().x / tileWidth + 0.5;
-	double playerY = player->getCoordsByPixel().y / tileHeight + 0.5;
+	double tileWidth = (double)tilesets[0].tiledim.x;
+	double tileHeight = (double)tilesets[0].tiledim.y;
+	double windowWidth = (double)graphics->width() / tileWidth;
+	double windowHeight = (double)graphics->height() / tileHeight;
+	double gridWidth = (double)dim.x;
+	double gridHeight = (double)dim.y;
+	double playerX = (double)player->getCoordsByPixel().x / tileWidth + 0.5;
+	double playerY = (double)player->getCoordsByPixel().y / tileHeight + 0.5;
 
 	coord_t c;
-	c.x = center(windowWidth, gridWidth, playerX) * tileWidth;
-	c.y = center(windowHeight, gridHeight, playerY) * tileHeight;
+	c.x = (long)center(windowWidth, gridWidth, playerX) * (long)tileWidth;
+	c.y = (long)center(windowHeight, gridHeight, playerY) * (long)tileHeight;
 
-	Gosu::Transform trans = Gosu::translate(c.x, c.y);
+	Gosu::Transform trans = Gosu::translate((double)c.x, (double)c.y);
 	return trans;
 }
 
@@ -274,12 +274,12 @@ bool Area::processTileset(xmlNode* node)
 	for (; child != NULL; child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
 			xmlChar* idstr = xmlGetProp(child, BAD_CAST("id"));
-			unsigned id = atol((const char*)idstr);
+			unsigned id = (unsigned)atoi((const char*)idstr);
 
 			// Undeclared TileTypes have default properties.
 			while (ts.defaults.size() != id) {
 				TileType tt = defaultTileType(ts.source,
-					ts.tiledim, ts.defaults.size());
+					ts.tiledim, (int)ts.defaults.size());
 				ts.defaults.push_back(tt);
 			}
 
@@ -296,10 +296,10 @@ bool Area::processTileset(xmlNode* node)
 	// Generate default tile types in range (m,n] where m is the last
 	// explicitly declared type and n is the number we require.
 	unsigned srcsz = ts.source.width() * ts.source.height();
-	unsigned tilesz = ts.tiledim.x * ts.tiledim.y;
+	unsigned long tilesz = (unsigned long)(ts.tiledim.x * ts.tiledim.y);
 	while (ts.defaults.size() != srcsz / tilesz) {
 		TileType tt = defaultTileType(ts.source,
-			ts.tiledim, ts.defaults.size());
+			ts.tiledim, (int)ts.defaults.size());
 		ts.defaults.push_back(tt);
 	}
 
@@ -310,12 +310,12 @@ bool Area::processTileset(xmlNode* node)
 Area::TileType Area::defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
                                int id)
 {
-	int x = (tiledim.x * id) % source.width();
-	int y = (tiledim.y * id) / source.height() * tiledim.y; // ???
+	unsigned x = (unsigned)((tiledim.x * id) % source.width());
+	unsigned y = (unsigned)((tiledim.y * id) / source.height() * tiledim.y); // ???
 	
 	TileType tt;
 	Gosu::Image* img = rc->bitmapSection(source, x, y,
-	                                     tiledim.x, tiledim.y, true);
+	                                     (unsigned)tiledim.x, (unsigned)tiledim.y, true);
 	tt.graphics.push_back(img);
 	tt.animated = false;
 	tt.ani_speed = 0.0;
@@ -345,14 +345,14 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 
 	// Initialize a default TileType, we'll build on that.
 	TileType tt = defaultTileType(ts.source,
-		ts.tiledim, ts.defaults.size());
+		ts.tiledim, (int)ts.defaults.size());
 
 	xmlChar* idstr = xmlGetProp(node, BAD_CAST("id"));
-	unsigned id = atol((const char*)idstr);
+	unsigned id = (unsigned)atoi((const char*)idstr);
 	if (id != ts.defaults.size()) {
 		// XXX we need to know the Area we're loading...
 		Log::err("unknown area", std::string("expected TileType id ") +
-		         itostr(ts.defaults.size()) + ", but got " + itostr(id));
+		         itostr((long)ts.defaults.size()) + ", but got " + itostr(id));
 		return false;
 	}
 
@@ -377,7 +377,7 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 			// TODO animation
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("speed"), 6)) {
-			tt.ani_speed = atol((const char*)value);
+			tt.ani_speed = atof((const char*)value);
 		}
 	}
 
@@ -407,8 +407,8 @@ bool Area::processLayer(xmlNode* node)
 
 	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	int x = atol((const char*)width);
-	int y = atol((const char*)height);
+	int x = atoi((const char*)width);
+	int y = atoi((const char*)height);
 
 	if (dim.x != x || dim.y != y) {
 		// XXX we need to know the Area we're loading...
@@ -444,7 +444,7 @@ bool Area::processLayerProperties(xmlNode* node)
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
 		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
-			int depth = atol((const char*)value);
+			int depth = atoi((const char*)value);
 			if (depth != dim.z) {
 				Log::err("unknown area", "invalid layer depth");
 				return false;
@@ -477,7 +477,7 @@ bool Area::processLayerData(xmlNode* node)
 	for (int i = 1; child != NULL; i++, child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
 			xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
-			unsigned gid = atol((const char*)gidStr)-1;
+			unsigned gid = (unsigned)atoi((const char*)gidStr)-1;
 			Tile* t = new Tile;
 			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
 			t->flags = 0x0;
@@ -516,8 +516,8 @@ bool Area::processObjectGroup(xmlNode* node)
 
 	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	int x = atol((const char*)width);
-	int y = atol((const char*)height);
+	int x = atoi((const char*)width);
+	int y = atoi((const char*)height);
 
 	int zpos = -1;
 
@@ -556,7 +556,7 @@ bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
 		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
-			int layer = atol((const char*)value);
+			int layer = atoi((const char*)value);
 			if (0 < layer || layer >= (int)dim.z) {
 				// XXX we need to know the Area we're loading...
 				Log::err("unknown area",
@@ -595,8 +595,8 @@ bool Area::processObject(xmlNode* node, int zpos)
 	// XXX we ignore the object gid... is that okay?
 
 	// wouldn't have to access tilesets if we had tiledim ourselves
-	int x = atol((const char*)xStr) / tilesets[0].tiledim.x;
-	int y = atol((const char*)yStr) / tilesets[0].tiledim.y;
+	long x = atol((const char*)xStr) / tilesets[0].tiledim.x;
+	long y = atol((const char*)yStr) / tilesets[0].tiledim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay

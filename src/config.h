@@ -22,7 +22,8 @@
 	   mode. */
 	#define ROGUELIKE_PERSIST_DELAY_CONSECUTIVE 100
 	
-	/* Time to live in seconds for empty resource cache entries. */
+	/* Time to live in seconds for empty resource cache entries before they
+	   are deleted. */
 	#define CACHE_EMPTY_TTL "300"
 // ===
 

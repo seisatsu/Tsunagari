@@ -95,7 +95,7 @@ bool Sprite::processPhase(xmlNode* phase)
 	}
 
 	if (pos) {
-		const uint32_t value = atol((char*)pos); // atol
+		const unsigned value = (unsigned)atoi((char*)pos); // atol
 		xml.phases[key] = value;
 	}
 	else { // speed
@@ -115,7 +115,7 @@ bool Sprite::init()
 
 void Sprite::draw() const
 {
-	img->draw(c.x, c.y, 0);
+	img->draw((double)c.x, (double)c.y, (double)0);
 }
 
 coord_t Sprite::getCoordsByPixel()
