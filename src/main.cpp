@@ -12,18 +12,13 @@
 #include <libxml/tree.h>
 
 #include "common.h"
+#include "config.h"
 #include "log.h"
 #include "window.h"
 
 #ifndef LIBXML_TREE_ENABLED
 #	error Tree must be enabled in libxml2
 #endif
-
-/**
- * These probably won't be changed ever except maybe with a command line option.
- */
-#define CLIENT_CONF_FILE "./client.conf"
-#define MESSAGE_MODE MM_DEBUG
 
 /**
  * Values needed prior to creating the GameWindow.

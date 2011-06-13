@@ -4,17 +4,10 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include "config.h"
 #include "resourcer.h"
 #include "world.h"
 #include "window.h"
-
-// === Roguelike Input Mode Settings ===
-	// Milliseconds of button down before starting persistent input.
-	#define ROGUELIKE_PERSIST_DELAY_INIT 500
-	
-	// Milliseconds between persistent input sends.
-	#define ROGUELIKE_PERSIST_DELAY_CONSECUTIVE 100
-// ===
 
 static GameWindow* globalWindow = NULL;
 

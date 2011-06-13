@@ -16,9 +16,6 @@
 #include <libxml/tree.h>
 #include <zip.h>
 
-// Time to live for empty cache members. Defaults to 5 minutes.
-#define CACHE_EMPTY_TTL "300"
-
 class GameWindow;
 
 //! Resourcer Class

@@ -10,13 +10,10 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "common.h"
+#include "config.h"
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
-
-#ifdef _MSC_VER
-	#define snprintf _snprintf
-#endif
 
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
