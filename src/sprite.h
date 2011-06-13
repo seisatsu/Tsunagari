@@ -8,7 +8,6 @@
 #define SPRITE_H
 
 #include <map>
-#include <stdint.h>
 #include <string>
 
 #include <Gosu/Gosu.hpp>
@@ -73,7 +72,7 @@ private:
 	struct SpriteValues {
 		std::string sheet;
 		coord_t tilesize; // z-coord not used
-		std::map<std::string, uint32_t> phases;
+		std::map<std::string, unsigned long> phases;
 	} xml;
 };
 

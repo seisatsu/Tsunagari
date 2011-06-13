@@ -8,7 +8,6 @@
 #define WINDOW_H
 
 #include <map>
-#include <stdint.h>
 #include <string>
 #include <utility>
 

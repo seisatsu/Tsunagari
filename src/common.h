@@ -7,7 +7,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <stdint.h>
 #include <string>
 #include <vector>
 
