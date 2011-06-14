@@ -44,7 +44,11 @@ ITEMS
 
 * Doors imply "npc_nowalk" flag.
 
-* Doors get activated only after player is on them.
+* Doors should be activated only after player is on them.
+
+* Player movement is not correctly centered. The player should be absolutely 
+  centered (until they reach a wall), even if tiles on the side of the viewport 
+  have to be clipped.
 
 FINISHED ITEMS
 

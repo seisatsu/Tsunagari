@@ -6,5 +6,5 @@ then
 	exit 1
 fi
 
-zip ./$1.world $1/*
+cd $1 && zip ../$1.world ./*
 
