@@ -109,13 +109,13 @@ void Area::draw()
 	Gosu::Transform trans = translateCoords();
 	graphics->pushTransform(trans);
 
-	for (unsigned int layer = 0; layer != map.size(); layer++)
+	for (unsigned layer = 0; layer != map.size(); layer++)
 	{
 		grid_t grid = map[layer];
-		for (unsigned int y = 0; y != grid.size(); y++)
+		for (unsigned y = 0; y != grid.size(); y++)
 		{
 			row_t row = grid[y];
-			for (unsigned int x = 0; x != row.size(); x++)
+			for (unsigned x = 0; x != row.size(); x++)
 			{
 				// TODO support animations
 				Tile* tile = row[x];

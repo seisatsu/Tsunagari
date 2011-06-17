@@ -16,7 +16,7 @@ GameWindow* GameWindow::getWindow()
 	return globalWindow;
 }
 
-GameWindow::GameWindow(unsigned int x, unsigned int y, bool fullscreen)
+GameWindow::GameWindow(unsigned x, unsigned y, bool fullscreen)
 	: Gosu::Window(x, y, fullscreen)
 {
 	globalWindow = this;
