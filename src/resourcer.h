@@ -66,7 +66,7 @@ private:
 	GameWindow* window;
 	zip* z;
 	const std::string zip_filename;
-	
+
 	//! Resource Cache
 	/*!
 		The key is the cached file's name, and the value is a pair of a
@@ -77,7 +77,7 @@ private:
 		few minutes. The cache drop timer is in a thread.
 	*/
 	std::map<std::string, std::pair<int, void*> > cache;
-	
+
 	//! Modify the cache tally. Logs a Developer warning on tally underrun.
 	void cacheTally(const std::string& key, const int mod);
 };

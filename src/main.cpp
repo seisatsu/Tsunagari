@@ -30,7 +30,7 @@ struct ClientValues {
 	tern cache_enabled;
 	tern cache_ttl;
 	message_mode_t loglevel;
-} CLIENT_CONFIG;
+} *CLIENT_CONFIG;
 
 static void xmlErrorCb(void*, const char* msg, ...)
 {
@@ -77,7 +77,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	root = xmlDocGetRootElement(doc);
 	xmlNode* node = root->xmlChildrenNode; // <client>
 	xmlChar* str;
-	
+
 	/* Extract from XML object:
 	 *  - name of World to load
 	 *  - width, height, fullscreen-ness of Window
@@ -85,8 +85,8 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	node = node->xmlChildrenNode;
 	while (node != NULL) {
 		if (!xmlStrncmp(node->name, BAD_CAST("world"), 6)) {
-			conf->world = (char*)xmlNodeListGetString(doc,
-					node->xmlChildrenNode, 1);
+			xmlChar* str = xmlNodeGetContent(node);
+			conf->world = (char*)str;
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("window"), 7)) {
 			str = xmlGetProp(node, BAD_CAST("x"));
@@ -94,7 +94,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 
 			str = xmlGetProp(node, BAD_CAST("y"));
 			conf->windowsize.y = atol((char*)str); // atol
-				
+
 			str = xmlGetProp(node, BAD_CAST("fullscreen"));
 			conf->fullscreen = parseBool((char*)str);
 		}
@@ -137,7 +137,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
  */
 int main()
 {
-	memset((void*)&CLIENT_CONFIG, 0, sizeof(CLIENT_CONFIG));
+	CLIENT_CONFIG = new ClientValues;
 
 	/*
 	 * This initializes the library and checks for potential ABI mismatches
@@ -146,16 +146,16 @@ int main()
 	 */
 	LIBXML_TEST_VERSION
 
-	if (!parseClientConfig(CLIENT_CONF_FILE, &CLIENT_CONFIG))
+	if (!parseClientConfig(CLIENT_CONF_FILE, CLIENT_CONFIG))
 		return 1;
 
-	if (CLIENT_CONFIG.loglevel)
-		Log::setMode(CLIENT_CONFIG.loglevel);
+	if (CLIENT_CONFIG->loglevel)
+		Log::setMode(CLIENT_CONFIG->loglevel);
 
-	GameWindow window((unsigned)CLIENT_CONFIG.windowsize.x,
-	                  (unsigned)CLIENT_CONFIG.windowsize.y,
-	                  CLIENT_CONFIG.fullscreen);
-	if (!window.init(CLIENT_CONFIG.world))
+	GameWindow window((unsigned)CLIENT_CONFIG->windowsize.x,
+	                  (unsigned)CLIENT_CONFIG->windowsize.y,
+	                  CLIENT_CONFIG->fullscreen);
+	if (!window.init(CLIENT_CONFIG->world))
 		return 1;
 	window.show();
 
