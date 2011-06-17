@@ -46,11 +46,12 @@ ITEMS
 
 * Doors should be activated only after player is on them.
 
-* Player movement is not correctly centered. The player should be absolutely 
+FINISHED ITEMS
+
+X Player movement is not correctly centered. The player should be absolutely 
   centered (until they reach a wall), even if tiles on the side of the viewport 
   have to be clipped.
-
-FINISHED ITEMS
+  (Fixed on June 16, 2011 in commit 53ed5291)
 
 X Map should center around player.
   Viewport now centers around player!
