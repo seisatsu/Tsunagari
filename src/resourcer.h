@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 
+#include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <zip.h>
@@ -63,15 +64,14 @@ private:
 	//! Requests a string resource from cache.
 	std::string getString(const std::string& name);
 
+	//! Requests a string resource from cache.
+	std::string getStringFromZip(const std::string& name);
+
 	//! Read a resource from disk into memory. Returns NULL on error.
 	Gosu::Buffer* read(const std::string& name);
 
 	//! Helper function 
 	std::string path(const std::string& entry_name) const;
-
-	GameWindow* window;
-	zip* z;
-	const std::string zip_filename;
 
 	//! Resource Cache
 	/*!
@@ -86,6 +86,13 @@ private:
 
 	//! Modify the cache tally. Logs a Developer warning on tally underrun.
 	void cacheTally(const std::string& key, const int mod);
+
+	GameWindow* window;
+	zip* z;
+	const std::string zip_filename;
+
+	typedef boost::unordered_map<std::string, std::string> strMap;
+	strMap strings;
 };
 
 #endif

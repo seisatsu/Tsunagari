@@ -12,6 +12,7 @@
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "common.h"
 #include "config.h"
@@ -91,21 +92,22 @@ xmlDoc* Resourcer::getXMLDoc(const std::string& name)
 	const std::string pathname = path(name);
 	ctxt->vctxt.userData = (void*)&pathname;
 	ctxt->vctxt.error = xmlErrorCb;
-	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(), (int)docStr.size(),
-			NULL, NULL,
-			XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_DTDVALID);
+	boost::shared_ptr<void> ctxtDeleter(ctxt, xmlFreeParserCtxt);
+
+	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(),
+			(int)docStr.size(), NULL, NULL,
+			XML_PARSE_NOBLANKS |
+			XML_PARSE_NONET |
+			XML_PARSE_DTDVALID);
 	if (!doc) {
-		xmlFreeParserCtxt(ctxt);
 		Log::err(pathname, "Could not parse file");
 		return NULL;
 	}
 	else if (!ctxt->valid) {
-		xmlFreeParserCtxt(ctxt);
 		Log::err(pathname, "XML document does not follow DTD");
 		return NULL;
 	}
 
-	xmlFreeParserCtxt(ctxt);
 	return doc;
 }
 
@@ -122,6 +124,18 @@ Gosu::Sample* Resourcer::getSample(const std::string& name)
 }
 
 std::string Resourcer::getString(const std::string& name)
+{
+	strMap::iterator entry = strings.find(name);
+	if (entry != strings.end())
+		return entry->second;
+
+	std::string result = getStringFromZip(name);
+
+	strings[name] = result;
+	return result;
+}
+
+std::string Resourcer::getStringFromZip(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;
