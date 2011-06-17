@@ -50,9 +50,6 @@ public:
 	Gosu::Image* bitmapSection(const Gosu::Bitmap& src,
 	        unsigned x, unsigned y, unsigned w, unsigned h, bool tileable);
 
-	//! Requests a string resource from cache.
-	std::string getString(const std::string& name);
-
 	//! Requests an XML resource from cache.
 	xmlDoc* getXMLDoc(const std::string& name);
 	
@@ -63,6 +60,9 @@ public:
 	Gosu::Sample* getSample(const std::string& name);
 
 private:
+	//! Requests a string resource from cache.
+	std::string getString(const std::string& name);
+
 	//! Read a resource from disk into memory. Returns NULL on error.
 	Gosu::Buffer* read(const std::string& name);
 

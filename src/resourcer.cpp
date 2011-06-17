@@ -81,43 +81,6 @@ Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
 }
 
 
-std::string Resourcer::getString(const std::string& name)
-{
-	struct zip_stat stat;
-	zip_file* zf;
-	int size;
-	char* buf;
-	std::string str;
-
-	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		Log::err(path(name), "file missing");
-		return "";
-	}
-
-	size = (int)stat.size;
-	buf = new char[size + 1];
-	buf[size] = '\0';
-
-	zf = zip_fopen(z, name.c_str(), 0x0);
-	if (!zf) {
-		Log::err(path(name),
-		         std::string("opening : ") + zip_strerror(z));
-		return "";
-	}
-
-	if (zip_fread(zf, buf, size) != size) {
-		Log::err(path(name), "reading didn't complete");
-		zip_fclose(zf);
-		return "";
-	}
-
-	str = buf;
-	delete[] buf;
-
-	zip_fclose(zf);
-	return str;
-}
-
 xmlDoc* Resourcer::getXMLDoc(const std::string& name)
 {
 	const std::string docStr = getString(name);
@@ -156,6 +119,43 @@ Gosu::Sample* Resourcer::getSample(const std::string& name)
 	if (!buffer)
 		return NULL;
 	return new Gosu::Sample(buffer->frontReader());
+}
+
+std::string Resourcer::getString(const std::string& name)
+{
+	struct zip_stat stat;
+	zip_file* zf;
+	int size;
+	char* buf;
+	std::string str;
+
+	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
+		Log::err(path(name), "file missing");
+		return "";
+	}
+
+	size = (int)stat.size;
+	buf = new char[size + 1];
+	buf[size] = '\0';
+
+	zf = zip_fopen(z, name.c_str(), 0x0);
+	if (!zf) {
+		Log::err(path(name),
+		         std::string("opening : ") + zip_strerror(z));
+		return "";
+	}
+
+	if (zip_fread(zf, buf, size) != size) {
+		Log::err(path(name), "reading didn't complete");
+		zip_fclose(zf);
+		return "";
+	}
+
+	str = buf;
+	delete[] buf;
+
+	zip_fclose(zf);
+	return str;
 }
 
 Gosu::Buffer* Resourcer::read(const std::string& name)
