@@ -166,8 +166,8 @@ Gosu::Transform Area::translateCoords()
 	double playerY = (double)player->getCoordsByPixel().y / tileHeight + 0.5;
 
 	coord_t c;
-	c.x = (long)center(windowWidth, gridWidth, playerX) * (long)tileWidth;
-	c.y = (long)center(windowHeight, gridHeight, playerY) * (long)tileHeight;
+	c.x = (long)(center(windowWidth, gridWidth, playerX) * tileWidth);
+	c.y = (long)(center(windowHeight, gridHeight, playerY) * tileHeight);
 
 	Gosu::Transform trans = Gosu::translate((double)c.x, (double)c.y);
 	return trans;
