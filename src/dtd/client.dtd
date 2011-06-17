@@ -10,11 +10,11 @@
                  fullscreen CDATA #REQUIRED>
 
 <!ELEMENT cache EMPTY>
-<!ATTLIST cache enabled CDATA #IMPLIED
-                ttl     CDATA #IMPLIED>
+<!ATTLIST cache enabled CDATA #REQUIRED
+                ttl     CDATA #REQUIRED>
 
 <!ELEMENT logging EMPTY>
-<!ATTLIST logging level CDATA #REQUIRED>
+<!ATTLIST logging level (debug|devel|error) #REQUIRED>
 
 <!ELEMENT world (#PCDATA)>
 

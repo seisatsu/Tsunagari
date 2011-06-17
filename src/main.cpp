@@ -100,15 +100,9 @@ static ClientValues* parseConfig(const char* filename)
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("cache"), 6)) {
 			str = xmlGetProp(node, BAD_CAST("enabled"));
-			if (str == NULL)
-				conf->cache_enabled = T_None;
-			else
-				conf->cache_enabled = (tern)parseBool((char*)str);
+			conf->cache_enabled = (tern)parseBool((char*)str);
 			str = xmlGetProp(node, BAD_CAST("ttl"));
-			if (str == NULL)
-				conf->cache_ttl = T_None;
-			else
-				conf->cache_ttl = (tern)parseBool((char*)str);
+			conf->cache_ttl = (tern)parseBool((char*)str);
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("logging"), 8)) {
 			str = xmlGetProp(node, BAD_CAST("level"));
@@ -118,11 +112,6 @@ static ClientValues* parseConfig(const char* filename)
 				conf->loglevel = MM_DEVELOPER;
 			else if (!strcmp((char*)str, "debug"))
 				conf->loglevel = MM_DEBUG;
-			else {
-				Log::err(filename, "Invalid logging level defined");
-				delete conf;
-				return NULL;
-			}
 		}
 		node = node->next;
 	}
