@@ -43,17 +43,16 @@ static void xmlErrorCb(void*, const char* msg, ...)
 }
 
 /**
- * Load the values we need to start initializing the game from a JSON file.
+ * Load the values we need to start initializing the game from an XML file.
  *
  * We need to know what size window to create and which World to load. This
- * information will be stored in a JSON file which we parse here.
+ * information will be stored in a XML file which we parse here.
  *
- * @param filename Name of the JSON-encoded file to load from.
- * @param conf Values are stored here.
+ * @param filename Name of the XML-encoded file to load from.
  *
- * @return True if successful
+ * @return ClientValues object if successful
  */
-static bool parseClientConfig(const char* filename, ClientValues* conf)
+static ClientValues* parseConfig(const char* filename)
 {
 	xmlDoc* doc = NULL;
 	xmlNode* root = NULL;
@@ -62,7 +61,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 
 	if (!doc) {
 		Log::err(filename, "Could not parse file");
-		return false;
+		return NULL;
 	}
 
 	boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
@@ -71,7 +70,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	ctxt.error = xmlErrorCb;
 	if (!xmlValidateDocument(&ctxt, doc)) {
 		Log::err(filename, "XML document does not follow DTD");
-		return false;
+		return NULL;
 	}
 
 	root = xmlDocGetRootElement(doc);
@@ -82,6 +81,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 	 *  - name of World to load
 	 *  - width, height, fullscreen-ness of Window
 	 */
+	ClientValues* conf = new ClientValues;
 	node = node->xmlChildrenNode;
 	while (node != NULL) {
 		if (!xmlStrncmp(node->name, BAD_CAST("world"), 6)) {
@@ -120,13 +120,30 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
 				conf->loglevel = MM_DEBUG;
 			else {
 				Log::err(filename, "Invalid logging level defined");
-				return false;
+				delete conf;
+				return NULL;
 			}
 		}
 		node = node->next;
 	}
 
-	return true;
+	return conf;
+}
+
+static void initLibraries()
+{
+	/*
+	 * This initializes the library and checks for potential ABI mismatches
+	 * between the version it was compiled for and the actual shared
+	 * library used.
+	 */
+	LIBXML_TEST_VERSION
+}
+
+static void cleanupLibraries()
+{
+	// Clean the XML library.
+	xmlCleanupParser();
 }
 
 /**
@@ -137,16 +154,10 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
  */
 int main()
 {
-	ClientValues* conf = new ClientValues;
+	initLibraries();
 
-	/*
-	 * This initializes the library and checks for potential ABI mismatches
-	 * between the version it was compiled for and the actual shared
-	 * library used.
-	 */
-	LIBXML_TEST_VERSION
-
-	if (!parseClientConfig(CLIENT_CONF_FILE, conf))
+	boost::scoped_ptr<ClientValues> conf(parseConfig(CLIENT_CONF_FILE));
+	if (!conf.get())
 		return 1;
 
 	if (conf->loglevel)
@@ -155,12 +166,10 @@ int main()
 	GameWindow window((unsigned)conf->windowsize.x,
 	                  (unsigned)conf->windowsize.y,
 	                  conf->fullscreen);
-	if (!window.init(conf->world))
-		return 1;
-	window.show();
+	if (window.init(conf->world))
+		window.show();
 
-	// Clean the XML library.
-	xmlCleanupParser();
+	cleanupLibraries();
 
 	return 0;
 }
