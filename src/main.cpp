@@ -30,7 +30,7 @@ struct ClientValues {
 	tern cache_enabled;
 	tern cache_ttl;
 	message_mode_t loglevel;
-} *CLIENT_CONFIG;
+};
 
 static void xmlErrorCb(void*, const char* msg, ...)
 {
@@ -137,7 +137,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
  */
 int main()
 {
-	CLIENT_CONFIG = new ClientValues;
+	ClientValues* conf = new ClientValues;
 
 	/*
 	 * This initializes the library and checks for potential ABI mismatches
@@ -146,16 +146,16 @@ int main()
 	 */
 	LIBXML_TEST_VERSION
 
-	if (!parseClientConfig(CLIENT_CONF_FILE, CLIENT_CONFIG))
+	if (!parseClientConfig(CLIENT_CONF_FILE, conf))
 		return 1;
 
-	if (CLIENT_CONFIG->loglevel)
-		Log::setMode(CLIENT_CONFIG->loglevel);
+	if (conf->loglevel)
+		Log::setMode(conf->loglevel);
 
-	GameWindow window((unsigned)CLIENT_CONFIG->windowsize.x,
-	                  (unsigned)CLIENT_CONFIG->windowsize.y,
-	                  CLIENT_CONFIG->fullscreen);
-	if (!window.init(CLIENT_CONFIG->world))
+	GameWindow window((unsigned)conf->windowsize.x,
+	                  (unsigned)conf->windowsize.y,
+	                  conf->fullscreen);
+	if (!window.init(conf->world))
 		return 1;
 	window.show();
 
