@@ -27,12 +27,5 @@
 	#define CACHE_EMPTY_TTL "300"
 // ===
 
-// === Platform Conditionals ===
-	/* Placate silly complaints from Visual C++. */
-	#ifdef _MSC_VER
-		#define snprintf _snprintf
-	#endif
-// ===
-
 #endif
 
