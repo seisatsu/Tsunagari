@@ -15,7 +15,7 @@
 	This enum defines the logging modes.
 */
 enum message_mode_t {
-	MM_SILENT, // Only error messages are sent to the console.
+	MM_SILENT = 1, // Only error messages are sent to the console.
 	MM_DEVELOPER, // Error messages and development messages are sent to the
 	              // console.
 	MM_DEBUG // All messages are sent to the console.
@@ -45,7 +45,7 @@ private:
 	static Log* instance(); // Access to our singleton instance.
 	static std::string& rtrim(std::string& str);
 
-	Log() {}; // Hide our constructor.
+	Log(); // Hide our constructor.
 
 	static Log* pInstance; // Our class instance.
 	message_mode_t mode; // Message mode that has been set.

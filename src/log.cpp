@@ -12,9 +12,16 @@
 Log* Log::instance()
 {
 	static Log* inst = NULL;
-	if (!inst)
+	if (!inst) {
 		inst = new Log;
+	}
+
 	return inst;
+}
+
+Log::Log()
+{
+	mode = MESSAGE_MODE;
 }
 
 /**

@@ -137,9 +137,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
  */
 int main()
 {
-	// Temporarily set default message mode.
-	Log::setMode(MESSAGE_MODE);
-	CLIENT_CONFIG.loglevel = MESSAGE_MODE;
+	memset(CLIENT_CONFIG, 0, sizeof(CLIENT_CONFIG));
 
 	/*
 	 * This initializes the library and checks for potential ABI mismatches
@@ -150,8 +148,9 @@ int main()
 
 	if (!parseClientConfig(CLIENT_CONF_FILE, &CLIENT_CONFIG))
 		return 1;
-	
-	Log::setMode(CLIENT_CONFIG.loglevel); // New value, if applicable.
+
+	if (CLIENT_CONFIG.loglevel)
+		Log::setMode(CLIENT_CONFIG.loglevel);
 
 	GameWindow window((unsigned)CLIENT_CONFIG.windowsize.x,
 	                  (unsigned)CLIENT_CONFIG.windowsize.y,
