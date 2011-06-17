@@ -137,7 +137,7 @@ static bool parseClientConfig(const char* filename, ClientValues* conf)
  */
 int main()
 {
-	memset(CLIENT_CONFIG, 0, sizeof(CLIENT_CONFIG));
+	memset((void*)&CLIENT_CONFIG, 0, sizeof(CLIENT_CONFIG));
 
 	/*
 	 * This initializes the library and checks for potential ABI mismatches
