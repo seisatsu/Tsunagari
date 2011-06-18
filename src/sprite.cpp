@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Image.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 

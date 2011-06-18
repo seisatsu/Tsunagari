@@ -4,6 +4,9 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Timing.hpp>
+#include <Gosu/Utility.hpp>
+
 #include "config.h"
 #include "resourcer.h"
 #include "world.h"

@@ -10,9 +10,11 @@
 #include <string>
 #include <vector>
 
-#include <Gosu/Gosu.hpp>
-
 #include "common.h"
+
+namespace Gosu {
+	class Button;
+}
 
 class Area;
 class Entity;

@@ -10,10 +10,13 @@
 #include <map>
 #include <string>
 
-#include <Gosu/Gosu.hpp>
 #include <libxml/parser.h>
 
 #include "common.h"
+
+namespace Gosu {
+	class Image;
+}
 
 class Resourcer;
 

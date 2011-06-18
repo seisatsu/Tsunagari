@@ -11,7 +11,11 @@
 #include <string>
 #include <utility>
 
-#include <Gosu/Gosu.hpp>
+#include <Gosu/Window.hpp>
+
+namespace Gosu {
+	class Button;
+}
 
 class Resourcer;
 class World;

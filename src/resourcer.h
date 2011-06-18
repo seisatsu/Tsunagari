@@ -11,10 +11,16 @@
 #include <string>
 #include <utility>
 
-#include <Gosu/Gosu.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <zip.h>
+
+namespace Gosu {
+	class Bitmap;
+	class Buffer;
+	class Image;
+	class Sample;
+}
 
 class GameWindow;
 

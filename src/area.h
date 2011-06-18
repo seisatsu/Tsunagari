@@ -10,11 +10,17 @@
 #include <string>
 #include <vector>
 
-#include <Gosu/Gosu.hpp>
+#include <Gosu/Bitmap.hpp>
+#include <Gosu/Graphics.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "common.h"
+
+namespace Gosu {
+	class Button;
+	class Image;
+}
 
 class Entity;
 class GameWindow;

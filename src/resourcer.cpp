@@ -7,6 +7,10 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#include <Gosu/Audio.hpp>
+#include <Gosu/Bitmap.hpp>
+#include <Gosu/Image.hpp>
+#include <Gosu/IO.hpp>
 #include <boost/scoped_ptr.hpp>
 
 #include "common.h"
