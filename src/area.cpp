@@ -468,6 +468,9 @@ bool Area::processLayerData(xmlNode* node)
 	row_t row;
 	grid_t grid;
 
+	row.reserve(dim.x);
+	grid.reserve(dim.y);
+
 	xmlNode* child = node->xmlChildrenNode;
 	for (int i = 1; child != NULL; i++, child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
@@ -481,6 +484,7 @@ bool Area::processLayerData(xmlNode* node)
 			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
 				row.clear();
+				row.reserve(dim.x);
 			}
 		}
 	}
