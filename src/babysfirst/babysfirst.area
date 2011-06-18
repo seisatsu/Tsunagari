@@ -31,7 +31,7 @@
   </properties>
   <data>
    <tile gid="9"/>
-   <tile gid="9"/>
+   <tile gid="7"/>
    <tile gid="9"/>
    <tile gid="9"/>
    <tile gid="9"/>
@@ -72,7 +72,12 @@
     <property name="onEnter" value="random_warp()"/>
    </properties>
   </object>
-  <object name="tile2" type="Tile" gid="7" x="64" y="320">
+  <object name="door1" type="Tile" gid="7" x="64" y="320">
+   <properties>
+    <property name="door" value="bigbaby.area,1,1,0"/>
+   </properties>
+  </object>
+  <object name="door2" type="Tile" gid="7" x="64" y="64">
    <properties>
     <property name="door" value="bigbaby.area,1,1,0"/>
    </properties>
