@@ -7,6 +7,7 @@
 #include "area.h"
 #include "entity.h"
 #include "sprite.h"
+#include "world.h"
 
 Entity::Entity(Resourcer* rc,
                Area* area,
@@ -68,6 +69,7 @@ void Entity::moveByTile(coord_t delta)
 	}
 	sprite->moveByTile(delta);
 	redraw = true;
+	postMove();
 }
 
 void Entity::setCoordsByTile(coord_t pos)
@@ -79,5 +81,16 @@ void Entity::setCoordsByTile(coord_t pos)
 void Entity::setArea(Area* area)
 {
 	this->area = area;
+}
+
+void Entity::postMove()
+{
+	// This should only execute if we're a player, not an NPC
+	coord_t coord = sprite->getCoordsByTile();
+	Area::Tile* dest = area->getTile(coord);
+	if (dest->door) {
+		World* world = World::getWorld();
+		world->loadArea(dest->door->area, dest->door->coord);
+	}
 }
 

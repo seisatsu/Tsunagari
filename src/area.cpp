@@ -93,12 +93,7 @@ void Area::buttonDown(const Gosu::Button btn)
 			// for the player. Stop here.
 			return;
 		}
-		if (dest->door) {
-			world->loadArea(dest->door->area, dest->door->coord);
-		}
-		else {
-			player->moveByTile(posMove);
-		}
+		player->moveByTile(posMove);
 	}
 }
 

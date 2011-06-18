@@ -30,5 +30,5 @@ ITEMS
 * Refactor the movement polling code from buttonDown() into update().
   * Diagonal movement in roguelike mode.
 
-* Doors should be activated only after player is on them.
+* Move player handling code to its own class.
 

@@ -14,9 +14,17 @@
 #include "window.h"
 #include "world.h"
 
+static World* globalWorld = NULL;
+
+World* World::getWorld()
+{
+	return globalWorld;
+}
+
 World::World(Resourcer* rc, GameWindow* wnd)
 	: rc(rc), wnd(wnd), area(NULL), player(NULL)
 {
+	globalWorld = this;
 }
 
 World::~World()

@@ -53,6 +53,8 @@ public:
 	void setArea(Area* area);
 
 protected:
+	void postMove();
+
 	Resourcer* rc;
 	Sprite* sprite;
 	Area* area; // XXX init

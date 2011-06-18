@@ -26,6 +26,8 @@ class GameWindow;
 class World
 {
 public:
+	static World* getWorld();
+
 	//! World Constructor
 	World(Resourcer* rc, GameWindow* w);
 	
