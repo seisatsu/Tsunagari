@@ -618,6 +618,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("door"), 5)) {
 			t->door = parseDoor((const char*)value);
+			t->flags |= npc_nowalk;
 		}
 	}
 	return true;

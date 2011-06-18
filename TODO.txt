@@ -2,9 +2,8 @@ ITEMS
 
 
 * Command line interface using popt.
-* Investigate whether switching from DTDs to Schemas would be worth it.
+
 * Sprite doesn't support animations.
-* Finish Area parsing code, integrate.
 
 * Give World::player an Entity descriptor file.
   What does an Entity descriptor file contain? What is an Entity?
@@ -21,57 +20,15 @@ ITEMS
   Gosu might be forked to be explicit about the difference between timer-based
   redraw requests and ones spawned by window damage.
 
-* Rewrite Area parser for TMX format.
-  Though it's a bit more complex, using the TMX map format (XML based) will
-  allow ourselves and our users to edit areas with the excellent Tiled generic
-  map editor.
-  
-  UPDATE June 9, 2011: Attribute data, layers and tilesets load.
+  Gosu already has a Window::loseFocus() method. What would it take to have a
+  gainFocus()?
 
-* Area drawing shouldn't use Sprite.
-  Now that the TMX map format handles tilesets, this is especially true.
-  Tilesets were a bit different from Sprites in the first place, and we simply
-  handled them under the Sprite class for convenience, even though this method
-  was a bit hackish. Now that they're defined in full inside the Area
-  descriptor, Area should probably handle them. This means that tiles are no
-  longer Sprites. Area will also handle the tile animations. This should be
-  cleaner in the long run.
-  
-  UPDATE June 9, 2011: Sprites are no longer used, but we still need to
-  implement animations.
+* Support multiple TileSets per TMX map.
 
-* Diagonal movement in roguelike mode.
+* Area Tiles should support animations.
 
-* Doors imply "npc_nowalk" flag.
+* Refactor the movement polling code from buttonDown() into update().
+  * Diagonal movement in roguelike mode.
 
 * Doors should be activated only after player is on them.
-
-FINISHED ITEMS
-
-X Player movement is not correctly centered. The player should be absolutely 
-  centered (until they reach a wall), even if tiles on the side of the viewport 
-  have to be clipped.
-  (Fixed on June 16, 2011 in commit 53ed5291)
-
-X Map should center around player.
-  Viewport now centers around player!
-  (Fixed on June 11, 2011 in commit ec2c2736)
-
-X Remove arbitrary test values inside the code.
-  With layer and tileset parsing on TMX maps done, we can now load data from
-  there, making arbitrary test values obsolete.
-  (Fixed on June 9, 2011 in commit 2da906a3)
-
-X Find a way to pass the error "domain" to XML's error message function.
-  libxml2 provides a userData variable in the validator context.
-  (Fixed on May 28, 2011 in commit cf6bcbe3)
-
-X Switch from JSON to XML completely.
-  Although JSON is an expressive less-verbose-than-XML format, after
-  investigating a few JSON parsers, we have decided that none of them are up to
-  our expectations.
-  (Fixed on May 25, 2011 in commit 5e1c08b7)
-
-X Implement "nowalk" flags to prevent player from moving off map.
-  (Fixed on June 12, 2011 in commit 3a6e3890)
 
