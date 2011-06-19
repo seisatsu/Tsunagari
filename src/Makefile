@@ -27,9 +27,10 @@ tsunagari: area.o common.o entity.o log.o main.o resourcer.o sprite.o window.o w
 testworld: $(TESTWORLD)/*
 	cd $(TESTWORLD) && zip ../$(TESTWORLD).world *
 
+.PHONY: doc
 doc:
 	cd ../doc && doxygen
 
 clean:
-	$(RM) tsunagari *.o $(TESTWORLD).world
+	$(RM) tsunagari *.o $(TESTWORLD).world && $(RM) -r ../doc/html
 
