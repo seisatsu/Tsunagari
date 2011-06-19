@@ -1,8 +1,14 @@
 all:
 	cd src && make all
 
-tsu:
-	cd src && make tsu
+tsunagari:
+	cd src && make tsunagari
+
+testworld:
+	cd src && make testworld
+
+doc:
+	cd doc && doxygen
 
 clean:
 	cd src && make clean

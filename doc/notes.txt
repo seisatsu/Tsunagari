@@ -1,6 +1,0 @@
-Attribute:
-An attribute is an event attached to a tile, with special properties. An attribute event takes place the moment a move signal is given which would place the player on the tile on which it exists. In other words, it is activated as the player BEGINS to enter the tile. The secondary function is called automatically when the player exits onto a tile which does not contain the same attribute. It is a convenience function, useful for gimmicks such as slowing down the player on a patch of swamp.
-
-Sprite phases:
-Phases are different "parts" of a model, made up of groups of one or more tiles from the tilesheet that belongs to the sprite. For unanimated phases, a shorthand is used. Otherwise, the start and finish tile of the phase animation are listed under "members", and the animation speed under "speed". (Animated tile parts must be adjacent to each other in the tile sheet.)
-

@@ -27,6 +27,9 @@ tsunagari: area.o common.o entity.o log.o main.o resourcer.o sprite.o window.o w
 testworld: $(TESTWORLD)/*
 	cd $(TESTWORLD) && zip ../$(TESTWORLD).world *
 
+doc:
+	cd ../doc && doxygen
+
 clean:
 	$(RM) tsunagari *.o $(TESTWORLD).world
 
