@@ -32,3 +32,11 @@ ITEMS
 
 * Move player handling code to its own class.
 
+* Adopt a unified structure for singletons. Use either the World singleton form
+  or the Log singleton form.
+
+* Add brief or brief+long Doxygen Documentation to all public and private
+  classes, functions, structs, and enums.
+
+* Change config file to layman's format, rename to config.(ini|cfg)
+

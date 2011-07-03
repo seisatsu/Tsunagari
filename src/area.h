@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <Gosu/Audio.hpp>
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Graphics.hpp>
 #include <libxml/parser.h>
@@ -180,6 +181,8 @@ private:
 	World* world;
 	Entity* player;
 	const std::string descriptor;
+	Gosu::Sample* music_buf;
+	Gosu::SampleInstance* music_inst;
 
 	typedef std::vector<Tile*> row_t;
 	typedef std::vector<row_t> grid_t;
@@ -194,8 +197,8 @@ private:
 	std::string name;
 	std::string author;
 	std::vector<Tileset> tilesets;
-	Music intro;
-	Music main;
+	Music music_intro;
+	Music music_main;
 	std::string scripts;
 	std::string onLoadEvents;
 };
