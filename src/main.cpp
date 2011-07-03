@@ -5,11 +5,15 @@
 ******************************/
 
 #include <stdarg.h>
+#include <stdio.h>
 #include <string>
+#include <string.h>
 
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <popt.h>
 
 #include "common.h"
 #include "config.h"
@@ -19,6 +23,24 @@
 #ifndef LIBXML_TREE_ENABLED
 #	error Tree must be enabled in libxml2
 #endif
+
+char* customConf;
+char* verbosity;
+int cache_ttl = 300;
+char* size;
+
+struct poptOption optionsTable[] = {
+	{"conf", 'c', POPT_ARG_STRING, &customConf, 'c', "Client config file to use", "CONFFILE"},
+	{"verbosity", 'v', POPT_ARG_STRING, &verbosity, 'v', "Log message level", "ERROR,DEVEL,DEBUG"},
+	{"cache-ttl", 't', POPT_ARG_INT, &verbosity, 't', "Resource cache time-to-live", "SECONDS"},
+	{"size", 's', POPT_ARG_STRING, &size, 's', "Window dimensions", "WxH"},
+	{"fullscreen", 'f', POPT_ARG_NONE, 0, 'f', "Run in fullscreen mode", NULL},
+	{"window", 'w', POPT_ARG_NONE, 0, 'w', "Run in windowed mode", NULL},
+	POPT_AUTOHELP
+	{NULL, 0, 0, NULL, 0}
+};
+
+
 
 /**
  * Values needed prior to creating the GameWindow.
@@ -135,19 +157,74 @@ static void cleanupLibraries()
 	xmlCleanupParser();
 }
 
+static void usage(poptContext optCon, const char* msg)
+{
+	poptPrintUsage(optCon, stderr, 0);
+	fprintf(stderr, msg);
+	exit(1);
+}
+
 /**
  * Load client config and instantiate window.
  *
  * The client config tells us our window parameters along with which World
  * we're going to load. The GameWindow class then loads and plays the game.
  */
-int main()
+int main(int argc, char** argv)
 {
 	initLibraries();
 
-	boost::scoped_ptr<ClientValues> conf(parseConfig(CLIENT_CONF_FILE));
-	if (!conf.get())
+	ClientValues* conf = parseConfig(CLIENT_CONF_FILE);
+	poptContext optCon = poptGetContext(NULL, argc, (const char**)argv, optionsTable, 0);
+	poptSetOtherOptionHelp(optCon, "[WORLD FILE]");
+
+	if (!conf)
 		return 1;
+
+	std::vector<std::string> dimensions;
+	int c;
+	while ((c = poptGetNextOpt(optCon)) >= 0) {
+		switch (c) {
+		case 'c':
+			delete conf;
+			conf = parseConfig(customConf);
+			if (!conf)
+				return 1;
+			break;
+		case 'v':
+			if (!strcmp(verbosity, "error"))
+				conf->loglevel = MM_SILENT;
+			else if (!strcmp(verbosity, "devel"))
+				conf->loglevel = MM_DEVELOPER;
+			else if (!strcmp(verbosity, "debug"))
+				conf->loglevel = MM_DEBUG;
+			else
+				usage(optCon, "Log level must be one of (error, devel, debug)\n");
+			break;
+		case 't':
+			// FIXME: requires resource cache
+			break;
+		case 's':
+			dimensions = splitStr(size, "x");
+			if (dimensions.size() != 2)
+				usage(optCon, "Dimensions must be in form WxH: e.g. 800x600\n");
+			conf->windowsize.x = atoi(dimensions[0].c_str());
+			conf->windowsize.y = atoi(dimensions[1].c_str());
+			break;
+		case 'f':
+			conf->fullscreen = true;
+			break;
+		case 'w':
+			conf->fullscreen = false;
+			break;
+		}
+	}
+	const char* customWorld = poptGetArg(optCon);
+	if (customWorld)
+		conf->world = customWorld;
+	if (poptPeekArg(optCon))
+		usage(optCon, "Specify a single world: e.g. babysfirst.world\n");
+	poptFreeContext(optCon);
 
 	if (conf->loglevel)
 		Log::setMode(conf->loglevel);
@@ -157,6 +234,8 @@ int main()
 	                  conf->fullscreen);
 	if (window.init(conf->world))
 		window.show();
+
+	delete conf;
 
 	cleanupLibraries();
 
