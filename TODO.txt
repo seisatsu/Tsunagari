@@ -25,7 +25,6 @@ ITEMS
 * Area Tiles should support animations.
 
 * Refactor the movement polling code from buttonDown() into update().
-  * Diagonal movement in roguelike mode.
 
 * Move player handling code to its own class.
 

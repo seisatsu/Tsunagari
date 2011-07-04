@@ -181,8 +181,9 @@ private:
 	World* world;
 	Entity* player;
 	const std::string descriptor;
-	Gosu::Sample* music_buf;
-	Gosu::SampleInstance* music_inst;
+	// Disabled, waiting on Gosu change
+	//Gosu::Sample* music_buf;
+	//Gosu::SampleInstance* music_inst;
 
 	typedef std::vector<Tile*> row_t;
 	typedef std::vector<row_t> grid_t;
