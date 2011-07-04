@@ -5,11 +5,11 @@
 ### --- VARIABLES SECTION --- ###
 
 # Warning flags to enable.
-WFLAGS = -Wall -Wextra -Wconversion
+WFLAGS = -Wall -Wextra -Wconversion -Wno-missing-field-initializers
 
 # Compiler and linker flags.
 CXXFLAGS = -g -pedantic -ansi $(WFLAGS) `xml2-config --cflags`
-LDFLAGS = -g -lgosu -lzip `xml2-config --libs`
+LDFLAGS = -g -lgosu -lzip -lpopt `xml2-config --libs`
 
 # Compiler to use. (Suggested: "g++" or "clang")
 CXX = g++
@@ -24,7 +24,9 @@ all: tsunagari testworld
 tsunagari: area.o common.o entity.o log.o main.o resourcer.o sprite.o window.o world.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
-testworld: $(TESTWORLD)/*
+testworld: $(TESTWORLD).world
+
+$(TESTWORLD).world: $(TESTWORLD)/*
 	cd $(TESTWORLD) && zip ../$(TESTWORLD).world *
 
 .PHONY: doc
