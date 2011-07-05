@@ -46,6 +46,7 @@ Area::~Area()
 
 	// Each Area owns its own Tileset objects. Delete tileset graphics.
 	BOOST_FOREACH(Tileset tileset, tilesets) {
+		delete tileset.source;
 		BOOST_FOREACH(TileType type, tileset.defaults) {
 			BOOST_FOREACH(Gosu::Image* img, type.graphics) {
 				delete img;
@@ -261,6 +262,7 @@ bool Area::processTileset(xmlNode* node)
  </tileset>
 */
 	Tileset ts;
+	ts.source = new Gosu::Bitmap;
 	xmlChar* width = xmlGetProp(node, BAD_CAST("tilewidth"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("tileheight"));
 	ts.tiledim.x = atol((const char*)width);
@@ -285,13 +287,13 @@ bool Area::processTileset(xmlNode* node)
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("image"), 6)) {
 			xmlChar* source = xmlGetProp(child, BAD_CAST("source"));
-			ts.source = rc->getBitmap((const char*)source);
+			rc->getBitmap(*ts.source, (const char*)source);
 		}
 	}
 
 	// Generate default tile types in range (m,n] where m is the last
 	// explicitly declared type and n is the number we require.
-	unsigned srcsz = ts.source.width() * ts.source.height();
+	unsigned srcsz = ts.source->width() * ts.source->height();
 	unsigned long tilesz = (unsigned long)(ts.tiledim.x * ts.tiledim.y);
 	while (ts.defaults.size() != srcsz / tilesz) {
 		TileType tt = defaultTileType(ts.source,
@@ -303,14 +305,14 @@ bool Area::processTileset(xmlNode* node)
 	return true;
 }
 
-Area::TileType Area::defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
-                               int id)
+Area::TileType Area::defaultTileType(const Gosu::Bitmap* source,
+                                     coord_t tiledim, int id)
 {
-	unsigned x = (unsigned)((tiledim.x * id) % source.width());
-	unsigned y = (unsigned)((tiledim.y * id) / source.height() * tiledim.y); // ???
+	unsigned x = (unsigned)((tiledim.x * id) % source->width());
+	unsigned y = (unsigned)((tiledim.y * id) / source->height() * tiledim.y); // ???
 	
 	TileType tt;
-	Gosu::Image* img = rc->bitmapSection(source, x, y,
+	Gosu::Image* img = rc->bitmapSection(*source, x, y,
 	                                     (unsigned)tiledim.x, (unsigned)tiledim.y, true);
 	tt.graphics.push_back(img);
 	tt.animated = false;

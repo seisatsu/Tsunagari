@@ -45,7 +45,7 @@ public:
 	Gosu::Image* getImage(const std::string& name);
 
 	//! Requests a bitmap that can be used to construct subimages from cache.
-	Gosu::Bitmap getBitmap(const std::string& name);
+	void getBitmap(Gosu::Bitmap& bitmap, const std::string& name);
 
 	//! Converts a subrectangle of a Bitmap into an Image.
 	Gosu::Image* bitmapSection(const Gosu::Bitmap& src,

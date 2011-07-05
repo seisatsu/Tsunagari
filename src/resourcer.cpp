@@ -63,16 +63,17 @@ Gosu::Image* Resourcer::getImage(const std::string& name)
 	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
 	if (!buffer)
 		return NULL;
-	Gosu::Bitmap bitmap = Gosu::loadImageFile(buffer->frontReader());
+	Gosu::Bitmap bitmap;
+	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	return new Gosu::Image(window->graphics(), bitmap, false);
 }
 
-Gosu::Bitmap Resourcer::getBitmap(const std::string& name)
+void Resourcer::getBitmap(Gosu::Bitmap& bitmap, const std::string& name)
 {
 	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
 	if (!buffer)
-		return Gosu::Bitmap();
-	return Gosu::loadImageFile(buffer->frontReader());
+		return;
+	return Gosu::loadImageFile(bitmap, buffer->frontReader());
 }
 
 Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
