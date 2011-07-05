@@ -39,7 +39,10 @@ public:
 	//! Gosu Callback
 	bool needsRedraw() const;
 	
+	//! Retrieve entity's absolute position.
 	coord_t getCoordsByPixel();
+	
+	//! Retrieve entity's tile position.
 	coord_t getCoordsByTile();
 
 	//! Move the entity by dx, dy.

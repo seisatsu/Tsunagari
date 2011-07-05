@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <ostream>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string>
@@ -36,11 +37,10 @@ struct poptOption optionsTable[] = {
 	{"size", 's', POPT_ARG_STRING, &size, 's', "Window dimensions", "WxH"},
 	{"fullscreen", 'f', POPT_ARG_NONE, 0, 'f', "Run in fullscreen mode", NULL},
 	{"window", 'w', POPT_ARG_NONE, 0, 'w', "Run in windowed mode", NULL},
+	{"query", 'q', POPT_ARG_NONE, 0, 'q', "Query compiled-in engine defaults", NULL},
 	POPT_AUTOHELP
 	{NULL, 0, 0, NULL, 0}
 };
-
-
 
 /**
  * Values needed prior to creating the GameWindow.
@@ -160,8 +160,27 @@ static void cleanupLibraries()
 static void usage(poptContext optCon, const char* msg)
 {
 	poptPrintUsage(optCon, stderr, 0);
-	fprintf(stderr, msg);
+	std::cerr << msg;
 	exit(1);
+}
+
+static void defaultsQuery()
+{
+	std::cerr << "CLIENT_CONF_FILE:                       " 
+		<< CLIENT_CONF_FILE << std::endl;
+	std::cerr << "MESSAGE_MODE:                           ";
+	if (MESSAGE_MODE == MM_DEBUG)
+		std::cerr << "MM_DEBUG" << std::endl;
+	else if (MESSAGE_MODE == MM_DEVELOPER)
+		std::cerr << "MM_DEVELOPER" << std::endl;
+	else
+		std::cerr << "MM_ERROR" << std::endl;
+	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           " 
+		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
+	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    " 
+		<< ROGUELIKE_PERSIST_DELAY_CONSECUTIVE << std::endl;
+	std::cerr << "CACHE_EMPTY_TTL:                        " 
+		<< CACHE_EMPTY_TTL << std::endl;
 }
 
 /**
@@ -177,9 +196,6 @@ int main(int argc, char** argv)
 	ClientValues* conf = parseConfig(CLIENT_CONF_FILE);
 	poptContext optCon = poptGetContext(NULL, argc, (const char**)argv, optionsTable, 0);
 	poptSetOtherOptionHelp(optCon, "[WORLD FILE]");
-
-	if (!conf)
-		return 1;
 
 	std::vector<std::string> dimensions;
 	int c;
@@ -217,8 +233,16 @@ int main(int argc, char** argv)
 		case 'w':
 			conf->fullscreen = false;
 			break;
+		case 'q':
+			defaultsQuery();
+			return 0;
+			break;
 		}
 	}
+	
+	if (!conf)
+		return 1;
+	
 	const char* customWorld = poptGetArg(optCon);
 	if (customWorld)
 		conf->world = customWorld;

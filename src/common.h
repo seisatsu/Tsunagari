@@ -17,6 +17,7 @@ enum tern {
 	T_None
 };
 
+//! Coordinate Type
 struct coord_t {
 	long x;
 	long y;
@@ -26,11 +27,13 @@ struct coord_t {
 //! coord_t constructor
 coord_t coord(long x, long y, long z);
 
+//! Returns a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);
 
 //! Split a string by a delimiter.
 std::vector<std::string> splitStr(std::string str, const std::string& delimiter);
 
+//! Convert an integer to a representative string.
 std::string itostr(long in);
 
 #endif

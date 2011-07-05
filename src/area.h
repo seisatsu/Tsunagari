@@ -124,7 +124,8 @@ public:
 
 	//! Area Destructor
 	~Area();
-
+	
+	//! Function that must be called after the constructor.
 	bool init();
 
 	//! Gosu Callback
@@ -159,21 +160,46 @@ private:
 		std::string filename;
 	};
 
+	//! XML descriptor parsing function.
 	bool processDescriptor();
+	
+	//! XML descriptor parsing function.
 	bool processMapProperties(xmlNode* node);
+	
+	//! Constructs a tile of default type.
 	TileType defaultTileType(const Gosu::Bitmap source, coord_t tiledim,
 	                         int id);
+	
+	//! XML descriptor parsing function.
 	bool processTileset(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processTileType(xmlNode* node, Tileset& ts);
+	
+	//! XML descriptor parsing function.
 	bool processLayer(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processLayerProperties(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processLayerData(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processObjectGroup(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processObjectGroupProperties(xmlNode* node, int* zpos);
+	
+	//! XML descriptor parsing function.
 	bool processObject(xmlNode* node, int zpos);
+	
+	//! Split a tile's flags into individuals.
 	unsigned splitTileFlags(const std::string strOfFlags);
+	
+	//! Process a door convenience trigger.
 	Door* parseDoor(const std::string dest);
-
+	
 	Gosu::Transform translateCoords();
 
 
