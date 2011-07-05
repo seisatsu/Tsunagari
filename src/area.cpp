@@ -29,18 +29,16 @@ Area::Area(Resourcer* rc,
 	: rc(rc), world(world), player(player), descriptor(descriptor)
 {
 	dim.x = dim.y = dim.z = 0;
-	// Disabled, waiting on Gosu change
-	/*music_buf = NULL;
-	music_inst = NULL;*/
+	music_buf = NULL;
+	music_inst = NULL;
 }
 
 Area::~Area()
 {
-	// Disabled, waiting on Gosu change
-	/*if (music_inst)
+	if (music_inst)
 		music_inst->stop();
 	delete music_inst;
-	delete music_buf;*/
+	delete music_buf;
 	
 	// Delete each Tile. If a Tile has an allocated Door struct, delete
 	// that as well.
@@ -69,12 +67,11 @@ bool Area::init()
 {
 	if (!processDescriptor())
 		return false;
-	// Disabled, waiting on Gosu change
-	/*if (!music_main.filename.empty()) {
+	if (!music_main.filename.empty()) {
 		music_buf = rc->getSample(music_main.filename);
 		if (music_buf)
 			music_inst = new Gosu::SampleInstance(music_buf->play(1, 1, music_main.loop));
-	}*/
+	}
 	return true;
 }
 
