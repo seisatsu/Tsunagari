@@ -1,14 +1,38 @@
-CXXFLAGS = -g -Wall -Wextra -Wconversion -pedantic -ansi `xml2-config --cflags`
-LDFLAGS = -g -lgosu -lzip `xml2-config --libs`
+############################################################
+# Tsunagari Tile Engine primary source Makefile (gnu make) #
+############################################################
 
-all: tsu babysfirst.world
+### --- VARIABLES SECTION --- ###
 
-tsu: area.o common.o entity.o log.o main.o resourcer.o sprite.o window.o world.o
-	$(CXX) -o tsu *.o $(LDFLAGS)
+# Warning flags to enable.
+WFLAGS = -Wall -Wextra -Wconversion -Wno-missing-field-initializers
 
-babysfirst.world: babysfirst/*
-	cd babysfirst && zip ../babysfirst.world *
+# Compiler and linker flags.
+CXXFLAGS = -g -pedantic -ansi $(WFLAGS) `xml2-config --cflags`
+LDFLAGS = -g -lgosu -lzip -lpopt `xml2-config --libs`
+
+# Compiler to use. (Suggested: "g++" or "clang")
+CXX = g++
+
+# Name of testing world.
+TESTWORLD = babysfirst
+
+### --- MAIN SECTION --- ###
+
+all: tsunagari testworld
+
+tsunagari: area.o common.o entity.o log.o main.o resourcer.o sprite.o window.o world.o
+	$(CXX) -o tsunagari *.o $(LDFLAGS)
+
+testworld: $(TESTWORLD).world
+
+$(TESTWORLD).world: $(TESTWORLD)/*
+	cd $(TESTWORLD) && zip ../$(TESTWORLD).world *
+
+.PHONY: doc
+doc:
+	cd ../doc && doxygen
 
 clean:
-	$(RM) tsu *.o babysfirst.world
+	$(RM) tsunagari *.o $(TESTWORLD).world && $(RM) -r ../doc/html
 

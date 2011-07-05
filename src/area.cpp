@@ -29,10 +29,19 @@ Area::Area(Resourcer* rc,
 	: rc(rc), world(world), player(player), descriptor(descriptor)
 {
 	dim.x = dim.y = dim.z = 0;
+	// Disabled, waiting on Gosu change
+	/*music_buf = NULL;
+	music_inst = NULL;*/
 }
 
 Area::~Area()
 {
+	// Disabled, waiting on Gosu change
+	/*if (music_inst)
+		music_inst->stop();
+	delete music_inst;
+	delete music_buf;*/
+	
 	// Delete each Tile. If a Tile has an allocated Door struct, delete
 	// that as well.
 	BOOST_FOREACH(grid_t grid, map) {
@@ -58,7 +67,15 @@ Area::~Area()
 
 bool Area::init()
 {
-	return processDescriptor();
+	if (!processDescriptor())
+		return false;
+	// Disabled, waiting on Gosu change
+	/*if (!music_main.filename.empty()) {
+		music_buf = rc->getSample(music_main.filename);
+		if (music_buf)
+			music_inst = new Gosu::SampleInstance(music_buf->play(1, 1, music_main.loop));
+	}*/
+	return true;
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -239,9 +256,9 @@ bool Area::processMapProperties(xmlNode* node)
 		else if (!xmlStrncmp(name, BAD_CAST("name"), 5))
 			this->name = (const char*)value;
 		else if (!xmlStrncmp(name, BAD_CAST("music_loop"), 11))
-			main.loop = parseBool((const char*)value);
+			music_main.loop = parseBool((const char*)value);
 		else if (!xmlStrncmp(name, BAD_CAST("music_main"), 11))
-			main.filename = (const char*)value;
+			music_main.filename = (const char*)value;
 		else if (!xmlStrncmp(name, BAD_CAST("onLoad"), 7))
 			onLoadEvents = (const char*)value;
 		else if (!xmlStrncmp(name, BAD_CAST("scripts"), 8))

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <Gosu/Audio.hpp>
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Graphics.hpp>
 #include <libxml/parser.h>
@@ -28,15 +29,22 @@ class Resourcer;
 class Sprite;
 class World;
 
-//! Area Class
+//! This class is responsible for each map, or area in a Tsunagari World.
 /*!
-	This class is responsible for each map, or area in a Tsunagari World.
+	The Area class handles the parsing of TMX-format Area descriptor files, 
+	the initialization, placement, and drawing of tiles, and various 
+	Area-related functionality.
 */
 class Area
 {
 public:
 
 	// when changing TileFlags, be sure to make updates to Area::splitTileFlags()
+	//! List of possible flags that can be attached to a tile.
+	/*!
+		Flags are attached to tiles, and denote special behavior for 
+		the tile they are bound to.
+	*/
 	enum TileFlags {
 		nowalk        = 0x0001,
 		player_nowalk = 0x0002,
@@ -46,6 +54,11 @@ public:
 		temp_event    = 0x0020
 	};
 	
+	//! List of possible triggers for tile events.
+	/*!
+		Triggers describe the conditions for the activation of a 
+		tile-bound event script funtion.
+	*/
 	enum TileEventTriggers {
 		onUse,
 		onEnter,
@@ -53,30 +66,34 @@ public:
 		door
 	};
 
-	//! TileEvent
+	//! Stores info for an event attached to a tile.
 	/*!
-		Stores info for an event attached to a tile.
+		Events are attached to tiles, and parsed into this struct from a
+		TMX-format area descriptor file. The event is executed when the 
+		condition for its trigger is met. The event function name and 
+		the function's arguments are stored in argv.
 	*/
 	struct TileEvent {
 		TileEventTriggers trigger;
 		std::string argv; // Function name and arguments.
 	};
 
-	//! Door
+	//! Convenience trigger for inter-area teleportation.
 	/*!
-		Some tiles can teleport you to a new area or a new position
-		in your current area.
+		Tiles with a door trigger attached can teleport the player to a 
+		new area in the World. The Door struct contains the destination 
+		area and coordinates.
 	*/
 	struct Door {
 		std::string area;
 		coord_t coord;
 	};
 	
-	//! TileType
+	//! Contains the properties shared by all tiles of a certain type.
 	/*!
-		Contains the properties shared by all tiles of a certain type.
-		E.g.: all grass tiles have the same graphic, and all wall tiles
-		      are unwalkable.
+		This struct contains global tile properties for a tile of a 
+		certain type. As opposed to local properties for a single tile, 
+		all tiles of this type will share the defined characteristics.
 	*/
 	struct TileType {
 		std::vector<Gosu::Image*> graphics;
@@ -87,11 +104,12 @@ public:
 		// TODO: Door* door
 	};
 
-	//! Tile
+	//! Contains properties unique to this tile.
 	/*!
-		Stores a tile, including its animation properties, and things
-		attached to it. This is later given to the Tile class
-		constructor through TileMatrix.
+		This struct contains local tile properties for a single tile in 
+		the area. As opposed to global properties which apply to all 
+		tiles of the same type, these properties will only apply to one 
+		tile.
 	*/
 	struct Tile {
 		TileType* type;
@@ -106,7 +124,8 @@ public:
 
 	//! Area Destructor
 	~Area();
-
+	
+	//! Function that must be called after the constructor.
 	bool init();
 
 	//! Gosu Callback
@@ -141,21 +160,46 @@ private:
 		std::string filename;
 	};
 
+	//! XML descriptor parsing function.
 	bool processDescriptor();
+	
+	//! XML descriptor parsing function.
 	bool processMapProperties(xmlNode* node);
+	
+	//! Constructs a tile of default type.
 	TileType defaultTileType(const Gosu::Bitmap* source, coord_t tiledim,
 	                         int id);
+	
+	//! XML descriptor parsing function.
 	bool processTileset(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processTileType(xmlNode* node, Tileset& ts);
+	
+	//! XML descriptor parsing function.
 	bool processLayer(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processLayerProperties(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processLayerData(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processObjectGroup(xmlNode* node);
+	
+	//! XML descriptor parsing function.
 	bool processObjectGroupProperties(xmlNode* node, int* zpos);
+	
+	//! XML descriptor parsing function.
 	bool processObject(xmlNode* node, int zpos);
+	
+	//! Split a tile's flags into individuals.
 	unsigned splitTileFlags(const std::string strOfFlags);
+	
+	//! Process a door convenience trigger.
 	Door* parseDoor(const std::string dest);
-
+	
 	Gosu::Transform translateCoords();
 
 
@@ -163,6 +207,9 @@ private:
 	World* world;
 	Entity* player;
 	const std::string descriptor;
+	// Disabled, waiting on Gosu change
+	//Gosu::Sample* music_buf;
+	//Gosu::SampleInstance* music_inst;
 
 	typedef std::vector<Tile*> row_t;
 	typedef std::vector<row_t> grid_t;
@@ -177,8 +224,8 @@ private:
 	std::string name;
 	std::string author;
 	std::vector<Tileset> tilesets;
-	Music intro;
-	Music main;
+	Music music_intro;
+	Music music_main;
 	std::string scripts;
 	std::string onLoadEvents;
 };
