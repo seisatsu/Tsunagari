@@ -19,7 +19,13 @@ coord_t coord(long x, long y, long z)
 
 bool parseBool(const std::string& s)
 {
-	return s == "true" || s == "1";
+	return s == "true" || 
+	    s == "True" || 
+	    s == "TRUE" || 
+	    s == "yes" || 
+	    s == "Yes" || 
+	    s == "YES" || 
+	    s == "1";
 }
 
 std::vector<std::string> splitStr(std::string str, const std::string& delimiter)

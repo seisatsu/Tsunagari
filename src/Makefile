@@ -7,9 +7,12 @@
 # Warning flags to enable.
 WFLAGS = -Wall -Wextra -Wconversion -Wno-missing-field-initializers
 
+# Libraries to include.
+LIBS = -lgosu -lzip -lpopt -lboost_program_options `xml2-config --libs`
+
 # Compiler and linker flags.
 CXXFLAGS = -g -pedantic -ansi $(WFLAGS) `xml2-config --cflags`
-LDFLAGS = -g -lgosu -lzip -lpopt `xml2-config --libs`
+LDFLAGS = -g $(LIBS)
 
 # Compiler to use. (Suggested: "g++" or "clang")
 CXX = g++

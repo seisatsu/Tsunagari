@@ -24,7 +24,7 @@
 	
 	/* Time to live in seconds for empty resource cache entries before they
 	   are deleted. -- Command Line */
-	#define CACHE_EMPTY_TTL "300"
+	#define CACHE_EMPTY_TTL 300
 // ===
 
 #endif

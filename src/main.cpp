@@ -4,17 +4,22 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <ostream>
+#include <iostream>
+#include <fstream>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string>
 #include <string.h>
 
+#include <boost/config.hpp>
+#include <boost/program_options.hpp>
+#include <boost/program_options/detail/config_file.hpp>
+#include <boost/program_options/parsers.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <popt.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <popt.h>
 
 #include "common.h"
 #include "config.h"
@@ -45,99 +50,107 @@ struct poptOption optionsTable[] = {
 /**
  * Values needed prior to creating the GameWindow.
  */
+
 struct ClientValues {
 	std::string world;
 	coord_t windowsize;
 	bool fullscreen;
-	tern cache_enabled;
-	tern cache_ttl;
+	bool cache_enabled;
+	unsigned int cache_ttl;
 	message_mode_t loglevel;
 };
 
-static void xmlErrorCb(void*, const char* msg, ...)
-{
-	char buf[512];
-	va_list ap;
-	va_start(ap, msg);
-	sprintf(buf, msg, va_arg(ap, char*));
-	Log::err(CLIENT_CONF_FILE, buf);
-	va_end(ap);
-}
-
 /**
- * Load the values we need to start initializing the game from an XML file.
+ * Load the values we need to start initializing the game from an ini file.
  *
  * We need to know what size window to create and which World to load. This
- * information will be stored in a XML file which we parse here.
+ * information will be stored in an ini file which we parse here.
  *
- * @param filename Name of the XML-encoded file to load from.
+ * @param filename Name of the ini file to load from.
  *
  * @return ClientValues object if successful
  */
 static ClientValues* parseConfig(const char* filename)
 {
-	xmlDoc* doc = NULL;
-	xmlNode* root = NULL;
-
-	doc = xmlReadFile(filename, NULL, XML_PARSE_NOBLANKS);
-
-	if (!doc) {
-		Log::err(filename, "Could not parse file");
-		return NULL;
-	}
-
-	boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-
-	xmlValidCtxt ctxt;
-	ctxt.error = xmlErrorCb;
-	if (!xmlValidateDocument(&ctxt, doc)) {
-		Log::err(filename, "XML document does not follow DTD");
-		return NULL;
-	}
-
-	root = xmlDocGetRootElement(doc);
-	xmlNode* node = root->xmlChildrenNode; // <client>
-	xmlChar* str;
-
-	/* Extract from XML object:
-	 *  - name of World to load
-	 *  - width, height, fullscreen-ness of Window
-	 */
 	ClientValues* conf = new ClientValues;
-	node = node->xmlChildrenNode;
-	while (node != NULL) {
-		if (!xmlStrncmp(node->name, BAD_CAST("world"), 6)) {
-			xmlChar* str = xmlNodeGetContent(node);
-			conf->world = (char*)str;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("window"), 7)) {
-			str = xmlGetProp(node, BAD_CAST("x"));
-			conf->windowsize.x = atol((char*)str); // atol
-
-			str = xmlGetProp(node, BAD_CAST("y"));
-			conf->windowsize.y = atol((char*)str); // atol
-
-			str = xmlGetProp(node, BAD_CAST("fullscreen"));
-			conf->fullscreen = parseBool((char*)str);
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("cache"), 6)) {
-			str = xmlGetProp(node, BAD_CAST("enabled"));
-			conf->cache_enabled = (tern)parseBool((char*)str);
-			str = xmlGetProp(node, BAD_CAST("ttl"));
-			conf->cache_ttl = (tern)parseBool((char*)str);
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("logging"), 8)) {
-			str = xmlGetProp(node, BAD_CAST("level"));
-			if (!strcmp((char*)str, "error"))
-				conf->loglevel = MM_SILENT;
-			else if (!strcmp((char*)str, "devel"))
-				conf->loglevel = MM_DEVELOPER;
-			else if (!strcmp((char*)str, "debug"))
-				conf->loglevel = MM_DEBUG;
-		}
-		node = node->next;
+	Log::setMode(MESSAGE_MODE);
+	
+	std::ifstream config(filename);
+	if (!config) {
+		Log::err(CLIENT_CONF_FILE, "could not parse config");
+		delete conf;
+		return NULL;
 	}
+	
+	std::set<std::string> options;
+	std::map<std::string, std::string> parameters;
+	options.insert("*");
 
+	namespace pod = boost::program_options::detail;
+
+	for (pod::config_file_iterator i(config, options), e ; i != e; ++i) {
+		parameters[i->string_key] = i->value[0];
+	}
+	
+	if (parameters["engine.world"].empty()) {
+		Log::err(filename, "\"[engine] world\" option expected");
+		return NULL;
+	}
+	else
+		conf->world = parameters["engine.world"];
+	
+	if (parameters["window.width"].empty()) {
+		Log::err(filename, "\"[window] width\" option expected");
+		return NULL;
+	}
+	else
+		conf->windowsize.x = atoi(parameters["window.width"].c_str());
+	
+	if (parameters["window.height"].empty()) {
+		Log::err(filename, "\"[window] height\" option expected");
+		return NULL;
+	}
+	else
+		conf->windowsize.y = atoi(parameters["window.height"].c_str());
+	
+	if (parameters["window.fullscreen"].empty()) {
+		Log::err(filename, "\"[window] fullscreen\" option expected");
+		return NULL;
+	}
+	else
+		conf->fullscreen = parseBool(parameters["window.fullscreen"]);
+	
+	if (parameters["cache.enable"].empty())
+		conf->cache_enabled = true;
+	else if (parseBool(parameters["cache.enable"]))
+		conf->cache_enabled = true;
+	else
+		conf->cache_enabled = false;
+	
+	if (parameters["cache.ttl"].empty())
+		conf->cache_ttl = CACHE_EMPTY_TTL;
+	else
+		conf->cache_ttl = atoi(parameters["cache.ttl"].c_str());
+	
+	if (parameters["engine.loglevel"].empty())
+		conf->loglevel = MESSAGE_MODE;
+	else if (parameters["engine.loglevel"] == "error" || 
+	    parameters["engine.loglevel"] == "Error" || 
+	    parameters["engine.loglevel"] == "ERROR")
+		conf->loglevel = MM_SILENT;
+	else if (parameters["engine.loglevel"] == "devel" || 
+	    parameters["engine.loglevel"] == "Devel" || 
+	    parameters["engine.loglevel"] == "DEVEL")
+	conf->loglevel = MM_DEVELOPER;
+	else if (parameters["engine.loglevel"] == "debug" || 
+	    parameters["engine.loglevel"] == "Debug" || 
+	    parameters["engine.loglevel"] == "DEBUG")
+	conf->loglevel = MM_DEBUG;
+	else {
+		Log::err(filename, "unknown value for \"[engine] loglevel\", using default");
+		conf->loglevel = MESSAGE_MODE;
+	}
+	
 	return conf;
 }
 
@@ -192,11 +205,15 @@ static void defaultsQuery()
 int main(int argc, char** argv)
 {
 	initLibraries();
-
+	
 	ClientValues* conf = parseConfig(CLIENT_CONF_FILE);
+	
+	if (conf && conf->loglevel)
+		Log::setMode(conf->loglevel);
+	
 	poptContext optCon = poptGetContext(NULL, argc, (const char**)argv, optionsTable, 0);
 	poptSetOtherOptionHelp(optCon, "[WORLD FILE]");
-
+	
 	std::vector<std::string> dimensions;
 	int c;
 	while ((c = poptGetNextOpt(optCon)) >= 0) {
@@ -204,8 +221,13 @@ int main(int argc, char** argv)
 		case 'c':
 			delete conf;
 			conf = parseConfig(customConf);
-			if (!conf)
+			if (conf && conf->loglevel)
+				Log::setMode(conf->loglevel);
+			if (!conf) {
+				Log::err(customConf, "loading config failed");
+				delete conf;
 				return 1;
+			}
 			break;
 		case 'v':
 			if (!strcmp(verbosity, "error"))
@@ -239,9 +261,12 @@ int main(int argc, char** argv)
 			break;
 		}
 	}
-	
-	if (!conf)
+
+	if (!conf) {
+		Log::err(CLIENT_CONF_FILE, "loading config failed");
+		delete conf;
 		return 1;
+	}
 	
 	const char* customWorld = poptGetArg(optCon);
 	if (customWorld)
@@ -249,20 +274,17 @@ int main(int argc, char** argv)
 	if (poptPeekArg(optCon))
 		usage(optCon, "Specify a single world: e.g. babysfirst.world\n");
 	poptFreeContext(optCon);
-
-	if (conf->loglevel)
-		Log::setMode(conf->loglevel);
-
+	
 	GameWindow window((unsigned)conf->windowsize.x,
 	                  (unsigned)conf->windowsize.y,
 	                  conf->fullscreen);
 	if (window.init(conf->world))
 		window.show();
-
+	
 	delete conf;
-
+	
 	cleanupLibraries();
-
+	
 	return 0;
 }
 
