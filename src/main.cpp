@@ -32,13 +32,13 @@
 
 char* customConf;
 char* verbosity;
-int cache_ttl = 300;
+int cache_ttl;
 char* size;
 
 struct poptOption optionsTable[] = {
 	{"conf", 'c', POPT_ARG_STRING, &customConf, 'c', "Client config file to use", "CONFFILE"},
 	{"verbosity", 'v', POPT_ARG_STRING, &verbosity, 'v', "Log message level", "ERROR,DEVEL,DEBUG"},
-	{"cache-ttl", 't', POPT_ARG_INT, &verbosity, 't', "Resource cache time-to-live", "SECONDS"},
+	{"cache-ttl", 't', POPT_ARG_INT, &cache_ttl, 't', "Resource cache time-to-live", "SECONDS"},
 	{"size", 's', POPT_ARG_STRING, &size, 's', "Window dimensions", "WxH"},
 	{"fullscreen", 'f', POPT_ARG_NONE, 0, 'f', "Run in fullscreen mode", NULL},
 	{"window", 'w', POPT_ARG_NONE, 0, 'w', "Run in windowed mode", NULL},
@@ -129,8 +129,11 @@ static ClientValues* parseConfig(const char* filename)
 	
 	if (parameters["cache.ttl"].empty())
 		conf->cache_ttl = CACHE_EMPTY_TTL;
-	else
+	else {
+		if (atoi(parameters["cache.ttl"].c_str()) == 0)
+			conf->cache_enabled = 0;
 		conf->cache_ttl = atoi(parameters["cache.ttl"].c_str());
+	}
 	
 	if (parameters["engine.loglevel"].empty())
 		conf->loglevel = MESSAGE_MODE;
@@ -240,7 +243,9 @@ int main(int argc, char** argv)
 				usage(optCon, "Log level must be one of (error, devel, debug)\n");
 			break;
 		case 't':
-			// FIXME: requires resource cache
+			if (cache_ttl == 0)
+				conf->cache_enabled = false;
+			conf->cache_ttl = cache_ttl;
 			break;
 		case 's':
 			dimensions = splitStr(size, "x");
