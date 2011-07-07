@@ -2,13 +2,6 @@ ITEMS
 
 * Sprite doesn't support animations.
 
-* Give World::player an Entity descriptor file.
-  What does an Entity descriptor file contain? What is an Entity?
-  ->	Entity is the most complicated descriptor. It will take a while to
-  	design. It's the only descriptor with multiple types which are each
-  	different. It's possible that each type of entity will require a
-  	different DTD.
-
 * Avoid window damage when another window moves on top.
   We have an optimization that makes our window only redraw itself if something
   in the game world changed. This causes redraw requests when another window is
@@ -24,17 +17,8 @@ ITEMS
 
 * Area Tiles should support animations.
 
-* Refactor the movement polling code from buttonDown() into update().
-
 * Move player handling code to its own class.
-
-* Adopt a unified structure for singletons. Use either the World singleton form
-  or the Log singleton form.
 
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
-
-* Change config file to layman's format, rename to "config.(ini|cfg)". Possibly
-  use Boost's "Program Options" library, or make our own simple parser, or use
-  the one that Paul wrote for old Tsunagari.
 

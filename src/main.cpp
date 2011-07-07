@@ -73,7 +73,6 @@ struct ClientValues {
 static ClientValues* parseConfig(const char* filename)
 {
 	ClientValues* conf = new ClientValues;
-	Log::setMode(MESSAGE_MODE);
 	
 	std::ifstream config(filename);
 	if (!config) {

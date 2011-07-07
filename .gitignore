@@ -1,2 +1,6 @@
-src/babysfirst/techno.music
 notes.txt
+src/*/*.music
+src/*.o
+src/*.world
+src/tsunagari
+
