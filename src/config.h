@@ -27,5 +27,12 @@
 	#define CACHE_EMPTY_TTL 300
 // ===
 
+// === Compiler Specific Defines ===
+	/* Fix snprintf for VisualC++. */
+	#ifdef _MSC_VER
+		#define snprintf _snprintf
+	#endif
+// ===
+
 #endif
 
