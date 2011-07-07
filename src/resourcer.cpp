@@ -173,46 +173,6 @@ std::string Resourcer::getStringFromZip(const std::string& name)
 	return str;
 }
 
-xmlDoc* Resourcer::getXMLDoc(const std::string& name)
-{
-	const std::string docStr = getString(name);
-	if (docStr.empty())
-		return NULL;
-
-	xmlParserCtxt* ctxt = xmlNewParserCtxt();
-	const std::string pathname = path(name);
-	ctxt->vctxt.userData = (void*)&pathname;
-	ctxt->vctxt.error = xmlErrorCb;
-	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(), (int)docStr.size(),
-			NULL, NULL,
-			XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_DTDVALID);
-	if (!doc) {
-		xmlFreeParserCtxt(ctxt);
-		Log::err(pathname, "Could not parse file");
-		return NULL;
-	}
-	else if (!ctxt->valid) {
-		xmlFreeParserCtxt(ctxt);
-		Log::err(pathname, "XML document does not follow DTD");
-		return NULL;
-	}
-
-	xmlFreeParserCtxt(ctxt);
-	return doc;
-}
-
-/* FIXME
- * We use Gosu::Sample for music because Gosu::Song's SDL implementation
- * doesn't support loading from a memory buffer at the moment.
- */
-Gosu::Sample* Resourcer::getSample(const std::string& name)
-{
-	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
-	if (!buffer.get())
-		return NULL;
-	return new Gosu::Sample(buffer->frontReader());
-}
-
 Gosu::Buffer* Resourcer::read(const std::string& name)
 {
 	struct zip_stat stat;
