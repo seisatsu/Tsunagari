@@ -89,17 +89,34 @@ bool World::processDescriptor()
 			xml.author = (char*)str;
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("type"), 5)) {
-			str = xmlNodeGetContent(node);
+			str = xmlGetProp(node, BAD_CAST("locality"));
 			
 			if (xmlStrncmp(str, BAD_CAST("local"), 6))
-				xml.type = LOCAL;
+				xml.locality = LOCAL;
 			
 			if (xmlStrncmp(str, BAD_CAST("network"), 8))
-				xml.type = NETWORK;
+				xml.locality = NETWORK;
 
 			else {
 				xmlFreeDoc(doc);
 				Log::err(descriptor, "Invalid <type> value");
+				return false;
+			}
+			
+			str = xmlGetProp(node, BAD_CAST("movement"));
+			
+			if (xmlStrncmp(str, BAD_CAST("turn"), 5))
+				xml.movement = TURN;
+			
+			if (xmlStrncmp(str, BAD_CAST("tile"), 5))
+				xml.movement = TILE;
+			
+			if (xmlStrncmp(str, BAD_CAST("notile"), 7))
+				xml.movement = NOTILE;
+			
+			else {
+				xmlFreeDoc(doc);
+				Log::err(descriptor, "Invalid <locality> value");
 				return false;
 			}
 		}

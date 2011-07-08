@@ -58,14 +58,25 @@ private:
 	Area* area;
 	Entity* player;
 
-	//! WorldType XML Storage Enum
+	//! WorldTypeLocality XML Storage Enum
 	/*!
-	  Stores the World type. Options are "local" (singleplayer) world, or
-	  "network" (multiplayer) world.
+	  Stores the World locality type. Options are "local" (singleplayer),  
+	  or "network" (multiplayer).
 	*/
-	enum WorldType {
+	enum WorldTypeLocality {
 		LOCAL,
 		NETWORK
+	};
+	
+	//! WorldTypeMovement XML Storage Enum
+	/*!
+	  Stores the World movement type. Options are "turn" (roguelike), 
+	  "tile" (yume nikki), or "notile" (zeldalike).
+	*/
+	enum WorldTypeMovement {
+		TURN,
+		TILE,
+		NOTILE
 	};
 	
 	//! WorldEntry XML Storage Struct
@@ -86,7 +97,8 @@ private:
 		std::string name;
 		std::string author;
 		std::string playersprite;
-		WorldType type;
+		WorldTypeLocality locality;
+		WorldTypeMovement movement;
 		WorldEntry entry;
 		std::vector<std::string> scripts;
 	} xml;

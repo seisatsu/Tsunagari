@@ -8,7 +8,9 @@
 
 <!ELEMENT author (#PCDATA)>
 
-<!ELEMENT type (#PCDATA)>
+<!ELEMENT type EMPTY>
+<!ATTLIST type locality CDATA #REQUIRED
+               movement CDATA #REQUIRED>
 
 <!ELEMENT player EMPTY>
 <!ATTLIST player sprite CDATA #REQUIRED>
