@@ -9,7 +9,7 @@
 
 // === Default Configuration Settings ===
 	/* Tsunagari config file. -- Command Line */
-	#define CLIENT_CONF_FILE "./client.conf"
+	#define CLIENT_CONF_FILE "./client.ini"
 	
 	/* Error verbosity level. -- Command Line */
 	#define MESSAGE_MODE MM_DEBUG
@@ -27,7 +27,16 @@
 	#define CACHE_EMPTY_TTL 300
 // ===
 
-// === Compiler Specific Defines ===
+// === Platform Specifics ===
+	/* Windows check. */
+	#if defined(_Windows) && !defined(_WINDOWS)
+		#define _WINDOWS 1
+	#endif
+
+	#if defined(_WINDOWS) && !defined(_Windows)
+		#define _Windows 1
+	#endif
+	
 	/* Fix snprintf for VisualC++. */
 	#ifdef _MSC_VER
 		#define snprintf _snprintf

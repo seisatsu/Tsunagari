@@ -26,8 +26,12 @@
 #include "log.h"
 #include "window.h"
 
+#ifdef _WINDOWS
+	#include <Windows.h>
+#endif
+
 #ifndef LIBXML_TREE_ENABLED
-#	error Tree must be enabled in libxml2
+	#error Tree must be enabled in libxml2
 #endif
 
 char* customConf;
@@ -206,6 +210,13 @@ static void defaultsQuery()
  */
 int main(int argc, char** argv)
 {
+	#if _WINDOWS /* Fix console output on Windows */
+	if (AttachConsole(ATTACH_PARENT_PROCESS)) {
+		freopen("CONOUT$","wb",stdout);
+		freopen("CONOUT$","wb",stderr);
+	}
+	#endif
+	
 	initLibraries();
 	
 	ClientValues* conf = parseConfig(CLIENT_CONF_FILE);
