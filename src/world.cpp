@@ -94,7 +94,7 @@ bool World::processDescriptor()
 			if (xmlStrncmp(str, BAD_CAST("local"), 6))
 				xml.locality = LOCAL;
 			
-			if (xmlStrncmp(str, BAD_CAST("network"), 8))
+			else if (xmlStrncmp(str, BAD_CAST("network"), 8))
 				xml.locality = NETWORK;
 
 			else {
@@ -108,10 +108,10 @@ bool World::processDescriptor()
 			if (xmlStrncmp(str, BAD_CAST("turn"), 5))
 				xml.movement = TURN;
 			
-			if (xmlStrncmp(str, BAD_CAST("tile"), 5))
+			else if (xmlStrncmp(str, BAD_CAST("tile"), 5))
 				xml.movement = TILE;
 			
-			if (xmlStrncmp(str, BAD_CAST("notile"), 7))
+			else if (xmlStrncmp(str, BAD_CAST("notile"), 7))
 				xml.movement = NOTILE;
 			
 			else {
