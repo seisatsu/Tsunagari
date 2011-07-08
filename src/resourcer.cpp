@@ -7,12 +7,12 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp>
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "common.h"
 #include "config.h"
@@ -52,15 +52,14 @@ bool Resourcer::init()
 		char buf[512];
 		zip_error_to_str(buf, sizeof(buf), err, errno);
 		Log::err(zip_filename, buf);
-		return false;
 	}
 
-	return true;
+	return !err;
 }
 
 Gosu::Image* Resourcer::getImage(const std::string& name)
 {
-	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
+	boost::shared_ptr<Gosu::Buffer> buffer(read(name));
 	if (!buffer)
 		return NULL;
 	Gosu::Bitmap bitmap;
@@ -70,7 +69,7 @@ Gosu::Image* Resourcer::getImage(const std::string& name)
 
 void Resourcer::getBitmap(Gosu::Bitmap& bitmap, const std::string& name)
 {
-	boost::scoped_ptr<Gosu::Buffer> buffer(read(name));
+	boost::shared_ptr<Gosu::Buffer> buffer(read(name));
 	if (!buffer)
 		return;
 	return Gosu::loadImageFile(bitmap, buffer->frontReader());
@@ -118,7 +117,7 @@ xmlDoc* Resourcer::getXMLDoc(const std::string& name)
  */
 Gosu::Sample* Resourcer::getSample(const std::string& name)
 {
-	Gosu::Buffer* buffer = read(name);
+	boost::shared_ptr<Gosu::Buffer> buffer(read(name));
 	if (!buffer)
 		return NULL;
 	return new Gosu::Sample(buffer->frontReader());
@@ -173,7 +172,12 @@ std::string Resourcer::getStringFromZip(const std::string& name)
 	return str;
 }
 
-Gosu::Buffer* Resourcer::read(const std::string& name)
+boost::shared_ptr<Gosu::Buffer> Resourcer::read(const std::string& name)
+{
+	return readFromZip(name);
+}
+
+boost::shared_ptr<Gosu::Buffer> Resourcer::readFromZip(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;
@@ -181,7 +185,7 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
 		Log::err(path(name), "file missing");
-		return NULL;
+		return boost::shared_ptr<Gosu::Buffer>();
 	}
 
 	size = (int)stat.size;
@@ -189,16 +193,16 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
 		Log::err(path(name),
 		         std::string("opening : ") + zip_strerror(z));
-		return NULL;
+		return boost::shared_ptr<Gosu::Buffer>();
 	}
 
-	Gosu::Buffer* buffer = new Gosu::Buffer;
+	boost::shared_ptr<Gosu::Buffer> buffer(new Gosu::Buffer);
 	buffer->resize(size);
 	if (zip_fread(zf, buffer->data(), size) != size) {
-		delete buffer;
 		Log::err(path(name), "reading didn't complete");
 		zip_fclose(zf);
-		return NULL;
+		// buffer is automatically deallocated
+		return boost::shared_ptr<Gosu::Buffer>();
 	}
 
 	zip_fclose(zf);

@@ -12,6 +12,7 @@
 #include <utility>
 
 #include <boost/unordered_map.hpp>
+#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <zip.h>
@@ -68,7 +69,8 @@ private:
 	std::string getStringFromZip(const std::string& name);
 
 	//! Read a resource from disk into memory. Returns NULL on error.
-	Gosu::Buffer* read(const std::string& name);
+	boost::shared_ptr<Gosu::Buffer> read(const std::string& name);
+	boost::shared_ptr<Gosu::Buffer> readFromZip(const std::string& name);
 
 	//! Helper function 
 	std::string path(const std::string& entry_name) const;
