@@ -6,7 +6,6 @@
 		<sheet tilesizex="64" tilesizey="64">player.sheet</sheet>
 		<phases>
 			<phase name="player" pos="0" />
-			<!-- <phase tilepos="0">player</phase> -->
 		</phases>
 	</sprite>
 </tsunagari>
