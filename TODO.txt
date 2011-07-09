@@ -28,3 +28,5 @@ ITEMS
 
 * Figure out how to replace "arg" in the command line with a description of 
   the required arguments.
+
+* Good automatic formatting and indentation in CommandLineOptions.

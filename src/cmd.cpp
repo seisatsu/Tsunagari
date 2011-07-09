@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <iomanip>
 #include <iostream>
 
 #include "cmd.h"
@@ -95,6 +96,7 @@ std::string CommandLineOptions::get(std::string longopt)
 
 void CommandLineOptions::usage()
 {
+	//TODO: Formatting.
 	unsigned int opt;
 	
 	std::cerr << "Usage: " << argv[0];
@@ -109,6 +111,17 @@ void CommandLineOptions::usage()
 			    "]";
 		else
 			std::cerr << "]";
+	}
+	
+	std::cerr << std::endl << std::endl;
+	
+	for (opt = 0; opt < OptionsList.size(); opt++) {
+		if (!OptionsList[opt]->shortopt.empty())
+			std::cerr << OptionsList[opt]->shortopt << ",";
+		std::cerr << OptionsList[opt]->longopt << " ";
+		if (!OptionsList[opt]->argument.empty())
+			std::cerr << OptionsList[opt]->argument << " ";
+		std::cerr << OptionsList[opt]->description << std::endl;
 	}
 	
 	std::cerr << std::endl;
