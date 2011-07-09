@@ -6,7 +6,9 @@
 
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
+#include <Gosu/Audio.hpp>
 #include <Gosu/Image.hpp>
+#include <Gosu/Graphics.hpp>
 
 #include "area.h"
 #include "common.h"
