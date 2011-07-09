@@ -3,4 +3,4 @@ src/*/*.music
 src/*.o
 src/*.world
 src/tsunagari
-
+windows/*

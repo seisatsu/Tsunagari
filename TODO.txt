@@ -22,3 +22,6 @@ ITEMS
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
 
+* Replace popt with Boost's Program_Options command line parser.
+
+* Fix the input duplication bug.
