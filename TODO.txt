@@ -25,3 +25,6 @@ ITEMS
 * Replace popt with Boost's Program_Options command line parser.
 
 * Fix the input duplication bug.
+
+* Figure out how to replace "arg" in the command line with a description of 
+  the required arguments.

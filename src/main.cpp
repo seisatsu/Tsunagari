@@ -17,7 +17,6 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <popt.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -34,27 +33,9 @@
 	#error Tree must be enabled in libxml2
 #endif
 
-char* customConf;
-char* verbosity;
-int cache_ttl;
-char* size;
-
-struct poptOption optionsTable[] = {
-	{"conf", 'c', POPT_ARG_STRING, &customConf, 'c', "Client config file to use", "CONFFILE"},
-	{"verbosity", 'v', POPT_ARG_STRING, &verbosity, 'v', "Log message level", "ERROR,DEVEL,DEBUG"},
-	{"cache-ttl", 't', POPT_ARG_INT, &cache_ttl, 't', "Resource cache time-to-live", "SECONDS"},
-	{"size", 's', POPT_ARG_STRING, &size, 's', "Window dimensions", "WxH"},
-	{"fullscreen", 'f', POPT_ARG_NONE, 0, 'f', "Run in fullscreen mode", NULL},
-	{"window", 'w', POPT_ARG_NONE, 0, 'w', "Run in windowed mode", NULL},
-	{"query", 'q', POPT_ARG_NONE, 0, 'q', "Query compiled-in engine defaults", NULL},
-	POPT_AUTOHELP
-	{NULL, 0, 0, NULL, 0}
-};
-
 /**
  * Values needed prior to creating the GameWindow.
  */
-
 struct ClientValues {
 	std::string world;
 	coord_t windowsize;
@@ -63,6 +44,26 @@ struct ClientValues {
 	unsigned int cache_ttl;
 	message_mode_t loglevel;
 };
+
+/* Output compiled-in engine defaults. */
+static void defaultsQuery()
+{
+	std::cerr << "CLIENT_CONF_FILE:                       " 
+		<< CLIENT_CONF_FILE << std::endl;
+	std::cerr << "MESSAGE_MODE:                           ";
+	if (MESSAGE_MODE == MM_DEBUG)
+		std::cerr << "MM_DEBUG" << std::endl;
+	else if (MESSAGE_MODE == MM_DEVELOPER)
+		std::cerr << "MM_DEVELOPER" << std::endl;
+	else
+		std::cerr << "MM_ERROR" << std::endl;
+	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           " 
+		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
+	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    " 
+		<< ROGUELIKE_PERSIST_DELAY_CONSECUTIVE << std::endl;
+	std::cerr << "CACHE_EMPTY_TTL:                        " 
+		<< CACHE_EMPTY_TTL << std::endl;
+}
 
 /**
  * Load the values we need to start initializing the game from an ini file.
@@ -76,11 +77,13 @@ struct ClientValues {
  */
 static ClientValues* parseConfig(const char* filename)
 {
+	namespace pod = boost::program_options::detail;
+	
 	ClientValues* conf = new ClientValues;
 	
 	std::ifstream config(filename);
 	if (!config) {
-		Log::err(CLIENT_CONF_FILE, "could not parse config");
+		Log::err(filename, "could not parse config");
 		delete conf;
 		return NULL;
 	}
@@ -88,8 +91,6 @@ static ClientValues* parseConfig(const char* filename)
 	std::set<std::string> options;
 	std::map<std::string, std::string> parameters;
 	options.insert("*");
-
-	namespace pod = boost::program_options::detail;
 
 	for (pod::config_file_iterator i(config, options), e ; i != e; ++i) {
 		parameters[i->string_key] = i->value[0];
@@ -160,6 +161,103 @@ static ClientValues* parseConfig(const char* filename)
 	return conf;
 }
 
+/* Parse and process command line options and arguments. */
+static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
+{
+	namespace po = boost::program_options;
+	
+	po::options_description desc("Available options");
+	desc.add_options()
+		("help,h", "Show this help message")
+		("gameworld,g", po::value<std::string>(), "Game world to play")
+		("config,c", po::value<std::string>(), "Client config file to use")
+		("verbosity,v", po::value<std::string>(), "Log message level (error,devel,debug)")
+		("cache-ttl,t", po::value<unsigned int>(), "Resource cache time-to-live")
+		("cache-size,m", po::value<unsigned int>(), "Resource cache size in megabytes")
+		("size,s", po::value<std::string>(), "Window dimensions (WxH)")
+		("fullscreen,f", "Run in fullscreen mode")
+		("window,w", "Run in windowed mode")
+		("query,q", "Query compiled-in engine defaults")
+	;
+	
+	po::positional_options_description p;
+	p.add("gameworld", -1);
+	
+	po::variables_map vm;
+	po::store(po::command_line_parser(argc, argv).
+		options(desc).positional(p).run(), vm);
+	po::notify(vm);
+	
+	if (vm.count("help")) {
+		std::cout << desc << "\n";
+		return false;
+	}
+	
+	if (vm.count("config")) {
+		delete conf;
+		conf = parseConfig(vm["config"].as<std::string>().c_str());
+		if (!conf) {
+			Log::err(vm["config"].as<std::string>(), "loading config failed");
+			return false;
+		}
+	}
+	
+	if (vm.count("gameworld"))
+		conf->world = vm["gameworld"].as<std::string>();
+	
+	if (vm.count("verbosity")) {
+		if (!vm["verbosity"].as<std::string>().compare("error"))
+			conf->loglevel = MM_SILENT;
+		else if (!vm["verbosity"].as<std::string>().compare("devel"))
+			conf->loglevel = MM_DEVELOPER;
+		else if (!vm["verbosity"].as<std::string>().compare("debug"))
+			conf->loglevel = MM_DEBUG;
+		else {
+			Log::err(argv[0], "invalid argument for --verbosity");
+			return false;
+		}
+	}
+	
+	if (vm.count("cache-ttl")) {
+		conf->cache_ttl = vm["cache-ttl"].as<unsigned int>();
+		if (vm["cache-ttl"].as<unsigned int>() == 0)
+			conf->cache_enabled = false;
+	}
+	
+	if (vm.count("cache-size")) {
+		//TODO: Merge cache branch.
+	}
+	
+	if (vm.count("size")) {
+		std::vector<std::string> dim = 
+			splitStr(vm["size"].as<std::string>(), "x");
+		if (dim.size() != 2) {
+			Log::err(argv[0], "invalid argument for --size");
+			return false;
+		}
+		conf->windowsize.x = atoi(dim[0].c_str());
+		conf->windowsize.y = atoi(dim[1].c_str());
+	}
+	
+	if (vm.count("fullscreen") && vm.count("window")) {
+		Log::err(argv[0], "--fullscreen and --window mutually exclusive");
+		return false;
+	}
+	
+	if (vm.count("fullscreen"))
+		conf->fullscreen = true;
+	
+	if (vm.count("window"))
+		conf->fullscreen = false;
+	
+	if (vm.count("query")) {
+		defaultsQuery();
+		return false;
+	}
+	
+	return true;
+}
+
 static void initLibraries()
 {
 	/*
@@ -174,32 +272,6 @@ static void cleanupLibraries()
 {
 	// Clean the XML library.
 	xmlCleanupParser();
-}
-
-static void usage(poptContext optCon, const char* msg)
-{
-	poptPrintUsage(optCon, stderr, 0);
-	std::cerr << msg;
-	exit(1);
-}
-
-static void defaultsQuery()
-{
-	std::cerr << "CLIENT_CONF_FILE:                       " 
-		<< CLIENT_CONF_FILE << std::endl;
-	std::cerr << "MESSAGE_MODE:                           ";
-	if (MESSAGE_MODE == MM_DEBUG)
-		std::cerr << "MM_DEBUG" << std::endl;
-	else if (MESSAGE_MODE == MM_DEVELOPER)
-		std::cerr << "MM_DEVELOPER" << std::endl;
-	else
-		std::cerr << "MM_ERROR" << std::endl;
-	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           " 
-		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
-	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    " 
-		<< ROGUELIKE_PERSIST_DELAY_CONSECUTIVE << std::endl;
-	std::cerr << "CACHE_EMPTY_TTL:                        " 
-		<< CACHE_EMPTY_TTL << std::endl;
 }
 
 /**
@@ -220,79 +292,25 @@ int main(int argc, char** argv)
 	initLibraries();
 	
 	ClientValues* conf = parseConfig(CLIENT_CONF_FILE);
+
+	if (!parseCommandLine(argc, argv, conf)) {
+		delete conf;
+		return 1;
+	}
 	
 	if (conf && conf->loglevel)
 		Log::setMode(conf->loglevel);
 	
-	poptContext optCon = poptGetContext(NULL, argc, (const char**)argv, optionsTable, 0);
-	poptSetOtherOptionHelp(optCon, "[WORLD FILE]");
-	
-	std::vector<std::string> dimensions;
-	int c;
-	while ((c = poptGetNextOpt(optCon)) >= 0) {
-		switch (c) {
-		case 'c':
-			delete conf;
-			conf = parseConfig(customConf);
-			if (conf && conf->loglevel)
-				Log::setMode(conf->loglevel);
-			if (!conf) {
-				Log::err(customConf, "loading config failed");
-				delete conf;
-				return 1;
-			}
-			break;
-		case 'v':
-			if (!strcmp(verbosity, "error"))
-				conf->loglevel = MM_SILENT;
-			else if (!strcmp(verbosity, "devel"))
-				conf->loglevel = MM_DEVELOPER;
-			else if (!strcmp(verbosity, "debug"))
-				conf->loglevel = MM_DEBUG;
-			else
-				usage(optCon, "Log level must be one of (error, devel, debug)\n");
-			break;
-		case 't':
-			if (cache_ttl == 0)
-				conf->cache_enabled = false;
-			conf->cache_ttl = cache_ttl;
-			break;
-		case 's':
-			dimensions = splitStr(size, "x");
-			if (dimensions.size() != 2)
-				usage(optCon, "Dimensions must be in form WxH: e.g. 800x600\n");
-			conf->windowsize.x = atoi(dimensions[0].c_str());
-			conf->windowsize.y = atoi(dimensions[1].c_str());
-			break;
-		case 'f':
-			conf->fullscreen = true;
-			break;
-		case 'w':
-			conf->fullscreen = false;
-			break;
-		case 'q':
-			defaultsQuery();
-			return 0;
-			break;
-		}
-	}
-
 	if (!conf) {
 		Log::err(CLIENT_CONF_FILE, "loading config failed");
 		delete conf;
 		return 1;
 	}
 	
-	const char* customWorld = poptGetArg(optCon);
-	if (customWorld)
-		conf->world = customWorld;
-	if (poptPeekArg(optCon))
-		usage(optCon, "Specify a single world: e.g. babysfirst.world\n");
-	poptFreeContext(optCon);
-	
 	GameWindow window((unsigned)conf->windowsize.x,
 	                  (unsigned)conf->windowsize.y,
 	                  conf->fullscreen);
+
 	if (window.init(conf->world))
 		window.show();
 	
