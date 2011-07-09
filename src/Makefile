@@ -8,7 +8,7 @@
 WFLAGS = -Wall -Wextra -Wconversion -Wno-missing-field-initializers
 
 # Libraries to include.
-LIBS = -lgosu -lzip -lpopt -lboost_program_options `xml2-config --libs`
+LIBS = -lgosu -lzip -lboost_program_options `xml2-config --libs`
 
 # Compiler and linker flags.
 CXXFLAGS = -g -pedantic -ansi $(WFLAGS) `xml2-config --cflags`
@@ -24,7 +24,7 @@ TESTWORLD = babysfirst
 
 all: tsunagari testworld
 
-tsunagari: area.o common.o entity.o log.o main.o resourcer.o sprite.o window.o world.o
+tsunagari: area.o cmd.o common.o entity.o log.o main.o resourcer.o sprite.o window.o world.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 testworld: $(TESTWORLD).world

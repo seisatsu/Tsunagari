@@ -22,6 +22,7 @@
 
 #include "common.h"
 #include "config.h"
+#include "cmd.h"
 #include "log.h"
 #include "window.h"
 
@@ -164,53 +165,44 @@ static ClientValues* parseConfig(const char* filename)
 /* Parse and process command line options and arguments. */
 static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 {
-	namespace po = boost::program_options;
+	CommandLineOptions cmd(argc, argv);
 	
-	po::options_description desc("Available options");
-	desc.add_options()
-		("help,h", "Show this help message")
-		("gameworld,g", po::value<std::string>(), "Game world to play")
-		("config,c", po::value<std::string>(), "Client config file to use")
-		("verbosity,v", po::value<std::string>(), "Log message level (error,devel,debug)")
-		("cache-ttl,t", po::value<unsigned int>(), "Resource cache time-to-live")
-		("cache-size,m", po::value<unsigned int>(), "Resource cache size in megabytes")
-		("size,s", po::value<std::string>(), "Window dimensions (WxH)")
-		("fullscreen,f", "Run in fullscreen mode")
-		("window,w", "Run in windowed mode")
-		("query,q", "Query compiled-in engine defaults")
-	;
+	cmd.insert("-h", "--help", "", "Display this help message");
+	cmd.insert("-g", "--gameworld", "<world file>", "Game world to load");
+	cmd.insert("-c", "--config", "<config file>", "Client config file to use");
+	cmd.insert("-v", "--verbosity", "<error,devel,debug>", "Log message level");
+	cmd.insert("-t", "--cache-ttl", "<seconds>", "Resource cache time-to-live in seconds");
+	cmd.insert("-m", "--cache-size", "<megabytes>", "Resource cache size in megabytes");
+	cmd.insert("-s", "--size", "<WxH>", "Window dimensions");
+	cmd.insert("-f", "--fullscreen", "", "Run in fullscreen mode");
+	cmd.insert("-w", "--window", "", "Run in windowed mode");
+	cmd.insert("-q", "--query", "", "Query compiled-in engine defaults");
 	
-	po::positional_options_description p;
-	p.add("gameworld", -1);
+	cmd.parse();
 	
-	po::variables_map vm;
-	po::store(po::command_line_parser(argc, argv).
-		options(desc).positional(p).run(), vm);
-	po::notify(vm);
-	
-	if (vm.count("help")) {
-		std::cout << desc << "\n";
+	if (cmd.check("--help")) {
+		cmd.usage();
 		return false;
 	}
 	
-	if (vm.count("config")) {
+	if (cmd.check("--config")) {
 		delete conf;
-		conf = parseConfig(vm["config"].as<std::string>().c_str());
+		conf = parseConfig(cmd.get("--config").c_str());
 		if (!conf) {
-			Log::err(vm["config"].as<std::string>(), "loading config failed");
+			Log::err(cmd.get("--config"), "loading config failed");
 			return false;
 		}
 	}
 	
-	if (vm.count("gameworld"))
-		conf->world = vm["gameworld"].as<std::string>();
+	if (cmd.check("--gameworld"))
+		conf->world = cmd.get("--gameworld");
 	
-	if (vm.count("verbosity")) {
-		if (!vm["verbosity"].as<std::string>().compare("error"))
+	if (cmd.check("--verbosity")) {
+		if (!cmd.get("--verbosity").compare("error"))
 			conf->loglevel = MM_SILENT;
-		else if (!vm["verbosity"].as<std::string>().compare("devel"))
+		else if (!cmd.get("--verbosity").compare("devel"))
 			conf->loglevel = MM_DEVELOPER;
-		else if (!vm["verbosity"].as<std::string>().compare("debug"))
+		else if (!cmd.get("--verbosity").compare("debug"))
 			conf->loglevel = MM_DEBUG;
 		else {
 			Log::err(argv[0], "invalid argument for --verbosity");
@@ -218,19 +210,18 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 		}
 	}
 	
-	if (vm.count("cache-ttl")) {
-		conf->cache_ttl = vm["cache-ttl"].as<unsigned int>();
-		if (vm["cache-ttl"].as<unsigned int>() == 0)
+	if (cmd.check("--cache-ttl")) {
+		conf->cache_ttl = atoi(cmd.get("--cache-ttl").c_str());
+		if (conf->cache_ttl == 0)
 			conf->cache_enabled = false;
 	}
 	
-	if (vm.count("cache-size")) {
+	if (cmd.check("--cache-size")) {
 		//TODO: Merge cache branch.
 	}
 	
-	if (vm.count("size")) {
-		std::vector<std::string> dim = 
-			splitStr(vm["size"].as<std::string>(), "x");
+	if (cmd.check("--size")) {
+		std::vector<std::string> dim = splitStr(cmd.get("--size"), "x");
 		if (dim.size() != 2) {
 			Log::err(argv[0], "invalid argument for --size");
 			return false;
@@ -239,18 +230,18 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 		conf->windowsize.y = atoi(dim[1].c_str());
 	}
 	
-	if (vm.count("fullscreen") && vm.count("window")) {
+	if (cmd.check("--fullscreen") && cmd.check("--window")) {
 		Log::err(argv[0], "--fullscreen and --window mutually exclusive");
 		return false;
 	}
 	
-	if (vm.count("fullscreen"))
+	if (cmd.check("--fullscreen"))
 		conf->fullscreen = true;
 	
-	if (vm.count("window"))
+	if (cmd.check("--window"))
 		conf->fullscreen = false;
 	
-	if (vm.count("query")) {
+	if (cmd.check("--query")) {
 		defaultsQuery();
 		return false;
 	}
