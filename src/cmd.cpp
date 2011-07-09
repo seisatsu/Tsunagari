@@ -8,7 +8,6 @@
 #include <iostream>
 
 #include "cmd.h"
-#include "log.h"
 
 CommandLineOptions::CommandLineOptions(int argc, char** argv) :
 	argc(argc), argv(argv)
@@ -54,18 +53,14 @@ bool CommandLineOptions::parse()
 						OptionsList[opt]->value = argv[arg+1];
 						arg += 1;
 					}
-					else {
-						Log::err(argv[0], "unexpected end of command line");
+					else
 						return false;
-					}
 				}
 				break;
 			}
 		}
-		if (!found) { /* We didn't find the option. */
-			Log::err(argv[0], "bad command line option");
+		if (!found) /* We didn't find the option. */
 			return false;
-		}
 	}
 	return true;
 }

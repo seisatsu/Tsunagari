@@ -179,6 +179,7 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	cmd.insert("-q", "--query", "", "Query compiled-in engine defaults");
 	
 	if (!cmd.parse()) {
+		Log::err(argv[0], "bad command line");
 		cmd.usage();
 		return false;
 	}
