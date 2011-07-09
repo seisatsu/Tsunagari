@@ -33,7 +33,6 @@ Requirements:
 NAME		LICENSE	  LINK
 libboost        (BOOST) - http://www.boost.org/
 libgosu		(MIT)	- http://www.libgosu.org/
-libpopt		(MIT)	- http://rpm5.org/files/popt/
 libxml2		(MIT)	- http://xmlsoft.org/
 libzip		(BSD)	- http://www.nih.at/libzip/
 

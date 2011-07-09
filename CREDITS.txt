@@ -41,17 +41,6 @@ License:
 
 -----
 
-=== LibPOPT ===
-
-Copyright (c) 1998:
-	Red Hat Software
-
-License:
-	MIT License
-	<http://www.opensource.org/licenses/mit-license.php>
-
------
-
 === LibXML2 ===
 
 Copyright (c) 1998-2003:
