@@ -100,8 +100,10 @@ void CommandLineOptions::usage()
 	std::cerr << "Usage: " << argv[0];
 	
 	for (opt = 0; opt < OptionsList.size(); opt++) {
-		std::cerr << " [" << OptionsList[opt]->shortopt << 
-		    "|" << OptionsList[opt]->longopt;
+		std::cerr << " [";
+		if (!OptionsList[opt]->shortopt.empty())
+			std::cerr << OptionsList[opt]->shortopt << "|";
+		std::cerr << OptionsList[opt]->longopt;
 		if (!OptionsList[opt]->argument.empty())
 			std::cerr << " " << OptionsList[opt]->argument << 
 			    "]";

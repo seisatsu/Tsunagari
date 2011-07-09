@@ -178,7 +178,10 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	cmd.insert("-w", "--window", "", "Run in windowed mode");
 	cmd.insert("-q", "--query", "", "Query compiled-in engine defaults");
 	
-	cmd.parse();
+	if (!cmd.parse()) {
+		cmd.usage();
+		return false;
+	}
 	
 	if (cmd.check("--help")) {
 		cmd.usage();
