@@ -86,7 +86,7 @@ std::string CommandLineOptions::get(std::string longopt)
 			return OptionsList[search]->value;
 	}
 	
-	return NULL;
+	return "";
 }
 
 void CommandLineOptions::usage()
