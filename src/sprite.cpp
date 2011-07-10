@@ -20,6 +20,11 @@ Sprite::Sprite(Resourcer* rc, const std::string& descriptor)
 
 Sprite::~Sprite()
 {
+	boost::unordered_map<std::string, Gosu::Image*>::iterator it;
+	for (it = imgs.begin(); it != imgs.end(); it++) {
+		Gosu::Image* img = (*it).second;
+		delete img;
+	}
 }
 
 bool Sprite::init()
