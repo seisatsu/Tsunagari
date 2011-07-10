@@ -36,7 +36,7 @@ Area::Area(Resourcer* rc,
 
 Area::~Area()
 {
-	if (musicInst->playing())
+	if (musicInst && musicInst->playing())
 		musicInst->stop();
 
 	// Delete each Tile. If a Tile has an allocated Door struct, delete
