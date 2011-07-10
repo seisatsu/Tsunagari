@@ -26,3 +26,7 @@ ITEMS
 
 * Expire items in resource cache.
 
+* Support for persistent music.
+
+* Preserve aspect ratio in fullscreen.
+
