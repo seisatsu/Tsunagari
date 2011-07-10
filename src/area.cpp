@@ -7,8 +7,8 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp>
-#include <Gosu/Image.hpp>
 #include <Gosu/Graphics.hpp>
+#include <Gosu/Image.hpp>
 
 #include "area.h"
 #include "common.h"
@@ -26,7 +26,7 @@
 
 Area::Area(Resourcer* rc,
            World* world,
-           Entity* player,
+           Player* player,
            const std::string& descriptor)
 	: rc(rc), world(world), player(player), descriptor(descriptor),
 	  onIntro(false)
@@ -66,6 +66,7 @@ bool Area::init()
 {
 	if (!processDescriptor())
 		return false;
+
 	if (introMusic) {
 		musicInst.reset(new Gosu::SampleInstance(introMusic->play(1, 1, false)));
 		onIntro = true;
@@ -328,11 +329,11 @@ Area::TileType Area::defaultTileType(const Gosu::Bitmap* source,
                                      coord_t tiledim, int id)
 {
 	unsigned x = (unsigned)((tiledim.x * id) % source->width());
-	unsigned y = (unsigned)((tiledim.y * id) / source->height() * tiledim.y); // ???
+	unsigned y = (unsigned)((tiledim.y * id) / source->width() * tiledim.y); // ???
 	
 	TileType tt;
 	Gosu::Image* img = rc->bitmapSection(*source, x, y,
-	                                     (unsigned)tiledim.x, (unsigned)tiledim.y, true);
+			(unsigned)tiledim.x, (unsigned)tiledim.y, true);
 	tt.graphics.push_back(img);
 	tt.animated = false;
 	tt.ani_speed = 0.0;

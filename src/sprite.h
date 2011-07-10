@@ -7,13 +7,18 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <map>
 #include <string>
 
+#include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 
 #include "common.h"
 #include "resourcer.h"
+
+namespace Gosu {
+	class Bitmap;
+	class Image;
+}
 
 /**
  * Sprite is an image model for displaying 2D video game entities.
@@ -26,42 +31,48 @@
  * For example, you might have a Sprite for a player character with animated
  * models for walking in each possible movement direction (up, down, left,
  * right) along with static standing-still images for each direction. This
- * would all be handled by one Sprite.
+ * could all be handled by one Sprite.
  */
 class Sprite
 {
 public:
 	//! Sprite Constructor
-	Sprite(Resourcer* rc, const std::string& descriptor);
-	
+	Sprite(Resourcer* rc);
+
 	//! Sprite Destructor
 	~Sprite();
-	
+
 	//! Sprite Initializer
-	bool init();
-	
+	bool init(const std::string& descriptor);
+
 	//! Gosu Callback
 	void draw() const;
-	
+
+	bool setPhase(const std::string& name);
+
 	coord_t getCoordsByPixel();
 	coord_t getCoordsByTile();
-	
-	//! Gosu Callback
-	void moveByPixel(coord_t deltac);
-	void moveByTile(coord_t deltac);
+
 	void setCoordsByPixel(coord_t c);
 	void setCoordsByTile(coord_t c);
+	void moveByPixel(coord_t deltac);
+	void moveByTile(coord_t deltac);
 
 private:
 	bool processDescriptor();
 	bool processPhases(xmlNode* phases);
 	bool processPhase(xmlNode* phase);
 
+	bool loadPhases();
+	Gosu::Image* loadImage(const Gosu::Bitmap& src, unsigned pos);
+
+
 	Resourcer* rc;
-	ImageRef img;
+	boost::unordered_map<std::string, Gosu::Image*> imgs;
+	Gosu::Image* img;
 	coord_t c;
 
-	const std::string descriptor;
+	std::string descriptor;
 
 	//! SpriteValues XML Storage Struct
 	/*!
@@ -70,7 +81,7 @@ private:
 	struct SpriteValues {
 		std::string sheet;
 		coord_t tilesize; // z-coord not used
-		std::map<std::string, unsigned long> phases;
+		boost::unordered_map<std::string, unsigned> phases;
 	} xml;
 };
 

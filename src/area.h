@@ -15,6 +15,7 @@
 #include <libxml/tree.h>
 
 #include "common.h"
+#include "player.h"
 #include "resourcer.h"
 
 namespace Gosu {
@@ -122,7 +123,7 @@ public:
 
 
 	//! Area Constructor
-	Area(Resourcer* rc, World* world, Entity* player, const std::string& filename);
+	Area(Resourcer* rc, World* world, Player* player, const std::string& filename);
 
 	//! Area Destructor
 	~Area();
@@ -210,7 +211,7 @@ private:
 
 	Resourcer* rc;
 	World* world;
-	Entity* player;
+	Player* player;
 	const std::string descriptor;
 	
 	bool onIntro;

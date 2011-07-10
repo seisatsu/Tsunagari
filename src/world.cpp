@@ -8,7 +8,7 @@
 #include <libxml/tree.h>
 
 #include "area.h"
-#include "entity.h"
+#include "player.h"
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
@@ -22,15 +22,48 @@ World* World::getWorld()
 }
 
 World::World(Resourcer* rc, GameWindow* wnd)
-	: rc(rc), wnd(wnd), area(NULL), player(NULL)
+	: rc(rc), wnd(wnd), area(NULL)
 {
 	globalWorld = this;
 }
 
 World::~World()
 {
-	delete player;
 	delete area;
+}
+
+bool World::init()
+{
+	if (!processDescriptor()) // Try to load in descriptor.
+		return false;
+
+	// FIXME The player entity doesn't have a descriptor yet.
+	player.reset(new Player(rc, NULL, xml.playerentity));
+	if (!player->init())
+		return false;
+
+	wnd->setCaption(Gosu::widen(xml.name));
+	return loadArea(xml.entry.area, xml.entry.coords);
+}
+
+void World::buttonDown(const Gosu::Button btn)
+{
+	area->buttonDown(btn);
+}
+
+void World::draw()
+{
+	area->draw();
+}
+
+bool World::needsRedraw() const
+{
+	return area->needsRedraw();
+}
+
+void World::update()
+{
+	area->update();
 }
 
 bool World::processDescriptor()
@@ -113,43 +146,10 @@ bool World::processDescriptor()
 	return true;
 }
 
-bool World::init()
-{
-	if (!processDescriptor()) // Try to load in descriptor.
-		return false;
-
-	// FIXME The player entity doesn't have a descriptor yet.
-	player = new Entity(rc, NULL, xml.playerentity);
-	if (!player->init())
-		return false;
-
-	wnd->setCaption(Gosu::widen(xml.name));
-	return loadArea(xml.entry.area, xml.entry.coords);
-}
-
-void World::buttonDown(const Gosu::Button btn)
-{
-	area->buttonDown(btn);
-}
-
-void World::draw()
-{
-	area->draw();
-}
-
-bool World::needsRedraw() const
-{
-	return area->needsRedraw();
-}
-
-void World::update()
-{
-	area->update();
-}
 
 bool World::loadArea(const std::string& areaName, coord_t playerPos)
 {
-	Area* newArea = new Area(rc, this, player, areaName);
+	Area* newArea = new Area(rc, this, player.get(), areaName);
 	delete area;
 	area = newArea;
 	if (!area->init())

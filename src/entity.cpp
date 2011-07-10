@@ -14,9 +14,9 @@
 
 Entity::Entity(Resourcer* rc,
                Area* area,
-               const std::string descriptor)
+               const std::string& descriptor)
 	: rc(rc),
-	  sprite(NULL),
+	  sprite(rc),
 	  area(area),
 	  redraw(true),
 	  descriptor(descriptor)
@@ -25,7 +25,6 @@ Entity::Entity(Resourcer* rc,
 
 Entity::~Entity()
 {
-	delete sprite;
 }
 
 /**
@@ -72,17 +71,13 @@ bool Entity::processPlayerDescriptor(const xmlNode* root)
 
 bool Entity::init()
 {
-	if (!processDescriptor()) // Try to load in descriptor.
-		return false;
-	
-	sprite = new Sprite(rc, spriteDescriptor);
-	return sprite->init();
+	return processDescriptor() && sprite.init(spriteDescriptor);
 }
 
 void Entity::draw()
 {
 	redraw = false;
-	sprite->draw();
+	sprite.draw();
 }
 
 bool Entity::needsRedraw() const
@@ -92,17 +87,17 @@ bool Entity::needsRedraw() const
 
 coord_t Entity::getCoordsByPixel()
 {
-	return sprite->getCoordsByPixel();
+	return sprite.getCoordsByPixel();
 }
 
 coord_t Entity::getCoordsByTile()
 {
-	return sprite->getCoordsByTile();
+	return sprite.getCoordsByTile();
 }
 
 void Entity::moveByTile(coord_t delta)
 {
-	coord_t newCoord = sprite->getCoordsByTile();
+	coord_t newCoord = sprite.getCoordsByTile();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -113,14 +108,14 @@ void Entity::moveByTile(coord_t delta)
 		// Stop here.
 		return;
 	}
-	sprite->moveByTile(delta);
+	sprite.moveByTile(delta);
 	redraw = true;
 	postMove();
 }
 
 void Entity::setCoordsByTile(coord_t pos)
 {
-	sprite->setCoordsByTile(pos);
+	sprite.setCoordsByTile(pos);
 	redraw = true;
 }
 
@@ -131,12 +126,5 @@ void Entity::setArea(Area* area)
 
 void Entity::postMove()
 {
-	// This should only execute if we're a player, not an NPC
-	coord_t coord = sprite->getCoordsByTile();
-	Area::Tile* dest = area->getTile(coord);
-	if (dest->door) {
-		World* world = World::getWorld();
-		world->loadArea(dest->door->area, dest->door->coord);
-	}
 }
 

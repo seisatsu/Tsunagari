@@ -9,11 +9,13 @@
 
 #include <string>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "common.h"
+#include "sprite.h"
 
 class Area;
 class Resourcer;
-class Sprite;
 
 //! Entity Class
 /*!
@@ -24,10 +26,10 @@ class Entity
 {
 public:
 	//! Entity Constructor
-	Entity(Resourcer* rc, Area* area, const std::string descriptor);
+	Entity(Resourcer* rc, Area* area, const std::string& descriptor);
 	
 	//! Entity Destructor
-	~Entity();
+	virtual ~Entity();
 	
 	//! Entity Initializer
 	bool init();
@@ -45,7 +47,7 @@ public:
 	coord_t getCoordsByTile();
 
 	//! Move the entity by dx, dy.
-	void moveByTile(coord_t delta);
+	virtual void moveByTile(coord_t delta);
 
 	//! Set location to Tile at {x, y, z}.
 	void setCoordsByTile(coord_t pos);
@@ -58,11 +60,11 @@ protected:
 	bool processDescriptor();
 	bool processPlayerDescriptor(const xmlNode* root);
 	
-	void postMove();
-	
+	virtual void postMove();
+
 	Resourcer* rc;
-	Sprite* sprite;
-	Area* area; // XXX init
+	Sprite sprite;
+	Area* area;
 	bool redraw;
 	
 	enum entityType {
@@ -72,7 +74,6 @@ protected:
 	const std::string descriptor;
 	std::string spriteDescriptor;
 	entityType type;
-	
 };
 
 #endif
