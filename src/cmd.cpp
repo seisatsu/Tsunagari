@@ -4,10 +4,10 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <iomanip>
-#include <iostream>
+#include <stdio.h>
 
 #include "cmd.h"
+#include "common.h"
 
 CommandLineOptions::CommandLineOptions(int argc, char** argv) :
 	argc(argc), argv(argv)
@@ -91,33 +91,70 @@ std::string CommandLineOptions::get(std::string longopt)
 
 void CommandLineOptions::usage()
 {
-	//TODO: Formatting.
 	unsigned int opt;
-	
-	std::cerr << "Usage: " << argv[0];
+	size_t usagecurrlen = 0;
+	size_t optmaxlen = 0;
+	size_t argmaxlen = 0;
 	
 	for (opt = 0; opt < OptionsList.size(); opt++) {
-		std::cerr << " [";
+		if (OptionsList[opt]->shortopt.size() + 
+		    OptionsList[opt]->longopt.size() > optmaxlen)
+			optmaxlen = OptionsList[opt]->shortopt.size() + 
+			    OptionsList[opt]->longopt.size() + 1;
+		if (OptionsList[opt]->argument.size() > argmaxlen)
+			argmaxlen = OptionsList[opt]->argument.size();
+	}
+	
+	fprintf(stderr, "Usage: %s", argv[0]);
+	usagecurrlen = (std::string("Usage: ") + argv[0]).size();
+	
+	for (opt = 0; opt < OptionsList.size(); opt++) {
+		usagecurrlen += 3;
 		if (!OptionsList[opt]->shortopt.empty())
-			std::cerr << OptionsList[opt]->shortopt << "|";
-		std::cerr << OptionsList[opt]->longopt;
+			usagecurrlen += OptionsList[opt]->shortopt.size() + 1;
+		usagecurrlen += OptionsList[opt]->longopt.size();
 		if (!OptionsList[opt]->argument.empty())
-			std::cerr << " " << OptionsList[opt]->argument << 
-			    "]";
+			usagecurrlen += OptionsList[opt]->argument.size() + 1;
+		
+		if (usagecurrlen > 60) {
+			fprintf(stderr, "\n  ");
+			usagecurrlen = 0;
+		}
+		
+		fprintf(stderr, " [");
+		if (!OptionsList[opt]->shortopt.empty())
+			fprintf(stderr, "%s|", 
+			    OptionsList[opt]->shortopt.c_str()); 
+		fprintf(stderr, "%s", OptionsList[opt]->longopt.c_str());
+		if (!OptionsList[opt]->argument.empty())
+			fprintf(stderr, " %s]", 
+			    OptionsList[opt]->argument.c_str());
 		else
-			std::cerr << "]";
+			fprintf(stderr, "]");
 	}
 	
-	std::cerr << std::endl << std::endl;
+	fprintf(stderr, "\n\nAvailable options:\n");
 	
 	for (opt = 0; opt < OptionsList.size(); opt++) {
 		if (!OptionsList[opt]->shortopt.empty())
-			std::cerr << OptionsList[opt]->shortopt << ",";
-		std::cerr << OptionsList[opt]->longopt << " ";
+			fprintf(stderr, "  %s,",  
+			    OptionsList[opt]->shortopt.c_str()); 
+		else
+			fprintf(stderr, "  ");
+		fprintf(stderr, 
+		    (std::string("%-")+itostr(optmaxlen+1)+"s").c_str(), 
+		    OptionsList[opt]->longopt.c_str());
 		if (!OptionsList[opt]->argument.empty())
-			std::cerr << OptionsList[opt]->argument << " ";
-		std::cerr << OptionsList[opt]->description << std::endl;
+			fprintf(stderr, 
+			    (std::string("%-")+itostr(argmaxlen+3)+"s").c_str(),
+			    OptionsList[opt]->argument.c_str());
+		else
+			fprintf(stderr, 
+			    (std::string("%-")+itostr(argmaxlen+3)+"c").c_str(), 
+			    ' ');
+		fprintf(stderr, "%s\n", 
+		    OptionsList[opt]->description.c_str());
 	}
 	
-	std::cerr << std::endl;
+	fprintf(stderr, "\n\n");
 }

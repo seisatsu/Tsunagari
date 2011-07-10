@@ -171,8 +171,8 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	cmd.insert("-g", "--gameworld", "<world file>", "Game world to load");
 	cmd.insert("-c", "--config", "<config file>", "Client config file to use");
 	cmd.insert("-v", "--verbosity", "<error,devel,debug>", "Log message level");
-	cmd.insert("-t", "--cache-ttl", "<seconds>", "Resource cache time-to-live in seconds");
-	cmd.insert("-m", "--cache-size", "<megabytes>", "Resource cache size in megabytes");
+	cmd.insert("-t", "--cache-ttl", "<seconds>", "Cache time-to-live in seconds");
+	cmd.insert("-m", "--cache-size", "<megabytes>", "Cache size in megabytes");
 	cmd.insert("-s", "--size", "<WxH>", "Window dimensions");
 	cmd.insert("-f", "--fullscreen", "", "Run in fullscreen mode");
 	cmd.insert("-w", "--window", "", "Run in windowed mode");

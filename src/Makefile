@@ -30,7 +30,7 @@ tsunagari: area.o cmd.o common.o entity.o log.o main.o resourcer.o sprite.o wind
 testworld: $(TESTWORLD).world
 
 $(TESTWORLD).world: $(TESTWORLD)/*
-	cd $(TESTWORLD) && zip -9 ../$(TESTWORLD).world *
+	cd $(TESTWORLD) && zip -0 ../$(TESTWORLD).world *
 
 .PHONY: doc
 doc:
