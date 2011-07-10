@@ -136,6 +136,7 @@ xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name, const std::string
 	pc->vctxt.userData = (void*)&pathname;
 	pc->vctxt.error = xmlErrorCb;
 
+	// Parse the XML. Hand over our error callback fn.
 	xmlDoc* doc = xmlCtxtReadMemory(pc, docStr.c_str(),
 			(int)docStr.size(), NULL, NULL,
 			XML_PARSE_NOBLANKS |
@@ -146,12 +147,15 @@ xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name, const std::string
 		return NULL;
 	}
 
+	// Load up a Document Type Definition for validating the document.
 	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
 	if (!dtd) {
 		Log::err(dtdPath, "file not found");
 		return NULL;
 	}
 
+	// Assert the document is sane here and now so we don't have to have a
+	// billion if-else statements while traversing the document tree.
 	xmlValidCtxt* vc = xmlNewValidCtxt();
 	int valid = xmlValidateDtd(vc, doc, dtd);
 	xmlFreeValidCtxt(vc);
