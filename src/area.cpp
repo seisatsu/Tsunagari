@@ -28,18 +28,17 @@ Area::Area(Resourcer* rc,
            World* world,
            Entity* player,
            const std::string& descriptor)
-	: rc(rc), world(world), player(player), descriptor(descriptor)
+	: rc(rc), world(world), player(player), descriptor(descriptor),
+	  onIntro(false)
 {
 	dim.x = dim.y = dim.z = 0;
-	music_inst = NULL;
 }
 
 Area::~Area()
 {
-	if (music_inst)
-		music_inst->stop();
-	delete music_inst;
-	
+	if (musicInst->playing())
+		musicInst->stop();
+
 	// Delete each Tile. If a Tile has an allocated Door struct, delete
 	// that as well.
 	BOOST_FOREACH(grid_t grid, map) {
@@ -67,11 +66,12 @@ bool Area::init()
 {
 	if (!processDescriptor())
 		return false;
-	if (!music_main.filename.empty()) {
-		music_buf = rc->getSample(music_main.filename);
-		if (music_buf)
-			music_inst = new Gosu::SampleInstance(music_buf->play(1, 1, music_main.loop));
+	if (introMusic) {
+		musicInst.reset(new Gosu::SampleInstance(introMusic->play(1, 1, false)));
+		onIntro = true;
 	}
+	else if (mainMusic)
+		musicInst.reset(new Gosu::SampleInstance(mainMusic->play(1, 1, true)));
 	return true;
 }
 
@@ -140,6 +140,19 @@ void Area::draw()
 	graphics->popTransform();
 }
 
+bool Area::needsRedraw() const
+{
+	return player->needsRedraw();
+}
+
+void Area::update()
+{
+	if (onIntro && !musicInst->playing()) {
+		onIntro = false;
+		musicInst.reset(new Gosu::SampleInstance(mainMusic->play(1, 1, true)));
+	}
+}
+
 //! Returns the number closest to x within the range [low, high].
 /*!
 	\param low Lowest possible return.
@@ -182,11 +195,6 @@ Gosu::Transform Area::translateCoords()
 
 	Gosu::Transform trans = Gosu::translate((double)c.x, (double)c.y);
 	return trans;
-}
-
-bool Area::needsRedraw() const
-{
-	return player->needsRedraw();
 }
 
 bool Area::processDescriptor()
@@ -234,8 +242,8 @@ bool Area::processMapProperties(xmlNode* node)
   <property name="areaspec" value="1"/>
   <property name="author" value="Michael D. Reiley"/>
   <property name="name" value="Baby's First Area"/>
-  <property name="music_loop" value="true"/>
-  <property name="music_main" value="wind.music"/>
+  <property name="intro_music" value="intro.music"/>
+  <property name="main_music" value="wind.music"/>
   <property name="onLoad" value="babysfirst_init()"/>
   <property name="scripts" value="areainits.event,test.event"/>
  </properties>
@@ -249,10 +257,10 @@ bool Area::processMapProperties(xmlNode* node)
 			author = (const char*)value;
 		else if (!xmlStrncmp(name, BAD_CAST("name"), 5))
 			this->name = (const char*)value;
-		else if (!xmlStrncmp(name, BAD_CAST("music_loop"), 11))
-			music_main.loop = parseBool((const char*)value);
-		else if (!xmlStrncmp(name, BAD_CAST("music_main"), 11))
-			music_main.filename = (const char*)value;
+		else if (!xmlStrncmp(name, BAD_CAST("intro_music"), 12))
+			introMusic = rc->getSample((const char*)value);
+		else if (!xmlStrncmp(name, BAD_CAST("main_music"), 11))
+			mainMusic = rc->getSample((const char*)value);
 		else if (!xmlStrncmp(name, BAD_CAST("onLoad"), 7))
 			onLoadEvents = (const char*)value;
 		else if (!xmlStrncmp(name, BAD_CAST("scripts"), 8))

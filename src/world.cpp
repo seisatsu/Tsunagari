@@ -63,6 +63,11 @@ bool World::needsRedraw() const
 	return area->needsRedraw();
 }
 
+void World::update()
+{
+	area->update();
+}
+
 bool World::processDescriptor()
 {
 	static const std::string descriptor = "world.conf";

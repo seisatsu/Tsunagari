@@ -92,5 +92,7 @@ void GameWindow::update()
 				state.consecutive = true;
 		}
 	}
+	
+	world->update();
 }
 
