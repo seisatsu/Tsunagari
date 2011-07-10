@@ -20,7 +20,7 @@
 	
 	/* Milliseconds between persistent input sends in roguelike movement
 	   mode. -- Move to World Descriptor */
-	#define ROGUELIKE_PERSIST_DELAY_CONSECUTIVE 10
+	#define ROGUELIKE_PERSIST_DELAY_CONSECUTIVE 100
 	
 	/* Time to live in seconds for empty resource cache entries before they
 	   are deleted. -- Command Line */
