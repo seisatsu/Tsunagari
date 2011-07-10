@@ -34,40 +34,6 @@ World::~World()
 	delete area;
 }
 
-bool World::init()
-{
-	if (!processDescriptor()) // Try to load in descriptor.
-		return false;
-
-	// FIXME The player entity doesn't have a descriptor yet.
-	player = new Entity(rc, NULL, "_NONE_", xml.playersprite);
-	if (!player->init())
-		return false;
-
-	wnd->setCaption(Gosu::widen(xml.name));
-	return loadArea(xml.entry.area, xml.entry.coords);
-}
-
-void World::buttonDown(const Gosu::Button btn)
-{
-	area->buttonDown(btn);
-}
-
-void World::draw()
-{
-	area->draw();
-}
-
-bool World::needsRedraw() const
-{
-	return area->needsRedraw();
-}
-
-void World::update()
-{
-	area->update();
-}
-
 bool World::processDescriptor()
 {
 	static const std::string descriptor = "world.conf";
@@ -89,6 +55,10 @@ bool World::processDescriptor()
 		if (!xmlStrncmp(node->name, BAD_CAST("author"), 7)) {
 			str = xmlNodeGetContent(node);
 			xml.author = (char*)str;
+		}
+		if (!xmlStrncmp(node->name, BAD_CAST("player"), 7)) {
+			str = xmlNodeGetContent(node);
+			xml.playerentity = (char*)str;
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("type"), 5)) {
 			str = xmlGetProp(node, BAD_CAST("locality"));
@@ -120,10 +90,6 @@ bool World::processDescriptor()
 				return false;
 			}
 		}
-		if (!xmlStrncmp(node->name, BAD_CAST("player"), 7)) {
-			str = xmlGetProp(node, BAD_CAST("sprite"));
-			xml.playersprite = (char*)str;
-		}
 		if (!xmlStrncmp(node->name, BAD_CAST("entrypoint"), 11)) {
 			str = xmlGetProp(node, BAD_CAST("area"));
 			xml.entry.area = (char*)str;
@@ -137,7 +103,7 @@ bool World::processDescriptor()
 			str = xmlGetProp(node, BAD_CAST("z"));
 			xml.entry.coords.z = atol((char*)str);
 		}
-		if (!xmlStrncmp(node->name, BAD_CAST("eventscripts"), 13)) {
+		if (!xmlStrncmp(node->name, BAD_CAST("scripts"), 13)) {
 			node = node->xmlChildrenNode; // decend
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("script"), 7)) {
@@ -148,6 +114,39 @@ bool World::processDescriptor()
 	return true;
 }
 
+bool World::init()
+{
+	if (!processDescriptor()) // Try to load in descriptor.
+		return false;
+
+	// FIXME The player entity doesn't have a descriptor yet.
+	player = new Entity(rc, NULL, xml.playerentity);
+	if (!player->init())
+		return false;
+
+	wnd->setCaption(Gosu::widen(xml.name));
+	return loadArea(xml.entry.area, xml.entry.coords);
+}
+
+void World::buttonDown(const Gosu::Button btn)
+{
+	area->buttonDown(btn);
+}
+
+void World::draw()
+{
+	area->draw();
+}
+
+bool World::needsRedraw() const
+{
+	return area->needsRedraw();
+}
+
+void World::update()
+{
+	area->update();
+}
 
 bool World::loadArea(const std::string& areaName, coord_t playerPos)
 {

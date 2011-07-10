@@ -1,0 +1,11 @@
+<!ELEMENT entity (sprite*, sounds*)>
+<!ATTLIST entity version (1)   #REQUIRED
+                 type    CDATA #REQUIRED>
+
+<!ELEMENT sprite (#PCDATA)>
+
+<!ELEMENT sounds (sound+)>
+
+<!ELEMENT sound (#PCDATA)>
+<!ATTLIST sound name CDATA #REQUIRED>
+

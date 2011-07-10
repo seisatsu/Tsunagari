@@ -99,7 +99,7 @@ private:
 	struct WorldValues {
 		std::string name;
 		std::string author;
-		std::string playersprite;
+		std::string playerentity;
 		WorldTypeLocality locality;
 		WorldTypeMovement movement;
 		WorldEntry entry;

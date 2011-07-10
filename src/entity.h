@@ -24,8 +24,7 @@ class Entity
 {
 public:
 	//! Entity Constructor
-	Entity(Resourcer* rc, Area* area, const std::string descriptor,
-		const std::string spriteDescriptor);
+	Entity(Resourcer* rc, Area* area, const std::string descriptor);
 	
 	//! Entity Destructor
 	~Entity();
@@ -56,15 +55,24 @@ public:
 	void setArea(Area* area);
 
 protected:
+	bool processDescriptor();
+	bool processPlayerDescriptor(const xmlNode* root);
+	
 	void postMove();
-
+	
 	Resourcer* rc;
 	Sprite* sprite;
 	Area* area; // XXX init
 	bool redraw;
-
+	
+	enum entityType {
+		PLAYER
+	};
+	
 	const std::string descriptor;
-	const std::string spriteDescriptor;
+	std::string spriteDescriptor;
+	entityType type;
+	
 };
 
 #endif

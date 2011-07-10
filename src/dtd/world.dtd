@@ -1,16 +1,15 @@
-<!ELEMENT world (name, author, type, player, entrypoint, eventscripts*)>
+<!ELEMENT world (name, author, player, type, entrypoint, scripts*)>
 <!ATTLIST world version (1) #REQUIRED>
 
 <!ELEMENT name (#PCDATA)>
 
 <!ELEMENT author (#PCDATA)>
 
+<!ELEMENT player (#PCDATA)>
+
 <!ELEMENT type EMPTY>
 <!ATTLIST type locality (local | network) #REQUIRED
                movement (turn | tile | notile) #REQUIRED>
-
-<!ELEMENT player EMPTY>
-<!ATTLIST player sprite CDATA #REQUIRED>
 
 <!ELEMENT entrypoint EMPTY>
 <!ATTLIST entrypoint area CDATA #REQUIRED
@@ -18,7 +17,7 @@
                      y    CDATA #REQUIRED
                      z    CDATA #REQUIRED>
 
-<!ELEMENT eventscripts (script+)>
+<!ELEMENT scripts (script+)>
 
 <!ELEMENT script (#PCDATA)>
 
