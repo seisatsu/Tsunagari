@@ -43,6 +43,7 @@ struct ClientValues {
 	bool fullscreen;
 	bool cache_enabled;
 	unsigned int cache_ttl;
+	unsigned int cache_size;
 	message_mode_t loglevel;
 };
 
@@ -64,6 +65,8 @@ static void defaultsQuery()
 		<< ROGUELIKE_PERSIST_DELAY_CONSECUTIVE << std::endl;
 	std::cerr << "CACHE_EMPTY_TTL:                        " 
 		<< CACHE_EMPTY_TTL << std::endl;
+	std::cerr << "CACHE_MAX_SIZE:                         " 
+		<< CACHE_MAX_SIZE << std::endl;
 }
 
 /**
@@ -138,6 +141,14 @@ static ClientValues* parseConfig(const char* filename)
 		if (atoi(parameters["cache.ttl"].c_str()) == 0)
 			conf->cache_enabled = 0;
 		conf->cache_ttl = atoi(parameters["cache.ttl"].c_str());
+	}
+	
+	if (parameters["cache.size"].empty())
+		conf->cache_size = CACHE_MAX_SIZE;
+	else {
+		if (atoi(parameters["cache.size"].c_str()) == 0)
+			conf->cache_enabled = 0;
+		conf->cache_size = atoi(parameters["cache.size"].c_str());
 	}
 	
 	if (parameters["engine.loglevel"].empty())
@@ -221,7 +232,9 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	}
 	
 	if (cmd.check("--cache-size")) {
-		//TODO: Merge cache branch.
+		conf->cache_ttl = atoi(cmd.get("--cache-size").c_str());
+		if (conf->cache_size == 0)
+			conf->cache_enabled = false;
 	}
 	
 	if (cmd.check("--size")) {

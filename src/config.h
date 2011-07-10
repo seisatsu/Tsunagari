@@ -25,6 +25,9 @@
 	/* Time to live in seconds for empty resource cache entries before they
 	   are deleted. -- Command Line */
 	#define CACHE_EMPTY_TTL 300
+	
+	/* Maximum size in megabytes for the resource cache. -- Command Line */
+	#define CACHE_MAX_SIZE 100
 // ===
 
 // === Platform Specifics ===
