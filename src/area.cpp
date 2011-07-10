@@ -191,7 +191,7 @@ bool Area::needsRedraw() const
 
 bool Area::processDescriptor()
 {
-	XMLDocRef doc = rc->getXMLDoc(descriptor);
+	XMLDocRef doc = rc->getXMLDoc(descriptor, "dtd/area.dtd");
 	if (!doc)
 		return false;
 

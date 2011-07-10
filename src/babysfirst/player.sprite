@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE tsunagari SYSTEM "dtd/sprite.dtd">
-
-<tsunagari version="1">
-	<sprite version="1">
-		<sheet tilesizex="64" tilesizey="64">player.sheet</sheet>
-		<phases>
-			<phase name="player" pos="0" />
-		</phases>
-	</sprite>
-</tsunagari>
+<sprite version="1">
+	<sheet tilesizex="64" tilesizey="64">player.sheet</sheet>
+	<phases>
+		<phase name="player" pos="0" />
+	</phases>
+</sprite>
 

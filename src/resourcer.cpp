@@ -110,7 +110,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	return result;
 }
 
-XMLDocRef Resourcer::getXMLDoc(const std::string& name)
+XMLDocRef Resourcer::getXMLDoc(const std::string& name, const std::string& dtdPath)
 {
 	if (conf->cache_enabled) {
 		XMLMap::iterator entry = xmls.find(name);
@@ -118,35 +118,46 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name)
 			return entry->second;
 	}
 
-	XMLDocRef result(readXMLDocFromDisk(name));
+	XMLDocRef result(readXMLDocFromDisk(name, dtdPath));
 	xmls[name] = result;
 	return result;
 }
 
 // use RAII to ensure doc is freed
 // boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name)
+xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name, const std::string& dtdPath)
 {
 	const std::string docStr = readStringFromDisk(name);
 	if (docStr.empty())
 		return NULL;
 
-	xmlParserCtxt* ctxt = xmlNewParserCtxt();
+	xmlParserCtxt* pc = xmlNewParserCtxt();
 	const std::string pathname = path(name);
-	ctxt->vctxt.userData = (void*)&pathname;
-	ctxt->vctxt.error = xmlErrorCb;
-	boost::shared_ptr<void> ctxtDeleter(ctxt, xmlFreeParserCtxt);
+	pc->vctxt.userData = (void*)&pathname;
+	pc->vctxt.error = xmlErrorCb;
 
-	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(),
+	xmlDoc* doc = xmlCtxtReadMemory(pc, docStr.c_str(),
 			(int)docStr.size(), NULL, NULL,
 			XML_PARSE_NOBLANKS |
-			XML_PARSE_NONET |
-			XML_PARSE_DTDVALID);
+			XML_PARSE_NONET);
+	xmlFreeParserCtxt(pc);
 	if (!doc) {
 		Log::err(pathname, "Could not parse file");
 		return NULL;
 	}
-	else if (!ctxt->valid) {
+
+	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
+	if (!dtd) {
+		Log::err(dtdPath, "file not found");
+		return NULL;
+	}
+
+	xmlValidCtxt* vc = xmlNewValidCtxt();
+	int valid = xmlValidateDtd(vc, doc, dtd);
+	xmlFreeValidCtxt(vc);
+	xmlFreeDtd(dtd);
+
+	if (!valid) {
 		Log::err(pathname, "XML document does not follow DTD");
 		return NULL;
 	}

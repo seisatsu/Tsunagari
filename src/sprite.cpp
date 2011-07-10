@@ -29,7 +29,7 @@ bool Sprite::processDescriptor()
 {
 	xmlChar* str;
 
-	XMLDocRef doc = rc->getXMLDoc(descriptor);
+	XMLDocRef doc = rc->getXMLDoc(descriptor, "dtd/sprite.dtd");
 	if (!doc)
 		return false;
 	const xmlNode* root = xmlDocGetRootElement(doc.get());

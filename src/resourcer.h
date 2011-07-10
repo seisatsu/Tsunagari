@@ -66,7 +66,7 @@ public:
 	SampleRef getSample(const std::string& name);
 
 	//! Requests an XML resource from cache.
-	XMLDocRef getXMLDoc(const std::string& name);
+	XMLDocRef getXMLDoc(const std::string& name, const std::string& dtdPath);
 	
 private:
 	typedef boost::unordered_map<std::string, ImageRef> ImageRefMap;
@@ -74,7 +74,7 @@ private:
 	typedef boost::unordered_map<std::string, XMLDocRef> XMLMap;
 
 	//! Requests an XML document from disk.
-	xmlDoc* readXMLDocFromDisk(const std::string& name);
+	xmlDoc* readXMLDocFromDisk(const std::string& name, const std::string& dtdPath);
 
 	//! Requests a string resource from disk.
 	std::string readStringFromDisk(const std::string& name);

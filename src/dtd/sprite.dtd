@@ -1,6 +1,3 @@
-<!ELEMENT tsunagari (sprite)>
-<!ATTLIST tsunagari version (1) #REQUIRED>
-
 <!ELEMENT sprite (sheet, phases)>
 <!ATTLIST sprite version (1) #REQUIRED>
 
