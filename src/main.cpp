@@ -34,19 +34,6 @@
 	#error Tree must be enabled in libxml2
 #endif
 
-/**
- * Values needed prior to creating the GameWindow.
- */
-struct ClientValues {
-	std::string world;
-	coord_t windowsize;
-	bool fullscreen;
-	bool cache_enabled;
-	unsigned int cache_ttl;
-	unsigned int cache_size;
-	message_mode_t loglevel;
-};
-
 /* Output compiled-in engine defaults. */
 static void defaultsQuery()
 {
@@ -84,6 +71,8 @@ static ClientValues* parseConfig(const char* filename)
 	namespace pod = boost::program_options::detail;
 	
 	ClientValues* conf = new ClientValues;
+	
+	conf->cache_enabled = CACHE_EMPTY_TTL && CACHE_MAX_SIZE;
 	
 	std::ifstream config(filename);
 	if (!config) {
@@ -128,16 +117,14 @@ static ClientValues* parseConfig(const char* filename)
 	else
 		conf->fullscreen = parseBool(parameters["window.fullscreen"]);
 	
-	if (parameters["cache.enable"].empty())
-		conf->cache_enabled = true;
-	else if (parseBool(parameters["cache.enable"]))
-		conf->cache_enabled = true;
-	else
-		conf->cache_enabled = false;
+	if (!parameters["cache.enable"].empty()) {	
+		if (parseBool(parameters["cache.enable"]))
+			conf->cache_enabled = true;
+		else
+			conf->cache_enabled = false;
+	}
 	
-	if (parameters["cache.ttl"].empty())
-		conf->cache_ttl = CACHE_EMPTY_TTL;
-	else {
+	if (!parameters["cache.ttl"].empty()) {
 		if (atoi(parameters["cache.ttl"].c_str()) == 0)
 			conf->cache_enabled = 0;
 		conf->cache_ttl = atoi(parameters["cache.ttl"].c_str());
@@ -319,7 +306,7 @@ int main(int argc, char** argv)
 	                  (unsigned)conf->windowsize.y,
 	                  conf->fullscreen);
 
-	if (window.init(conf->world))
+	if (window.init(conf))
 		window.show();
 	
 	delete conf;

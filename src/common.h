@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "log.h"
+
 //! Ternary Data Type
 enum tern {
 	T_True = true,
@@ -22,6 +24,17 @@ struct coord_t {
 	long x;
 	long y;
 	long z;
+};
+
+//! Client Configuration
+struct ClientValues {
+	std::string world;
+	coord_t windowsize;
+	bool fullscreen;
+	bool cache_enabled;
+	unsigned int cache_ttl;
+	unsigned int cache_size;
+	message_mode_t loglevel;
 };
 
 //! coord_t constructor

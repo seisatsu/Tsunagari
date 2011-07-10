@@ -31,9 +31,9 @@ GameWindow::~GameWindow()
 	delete rc;
 }
 
-bool GameWindow::init(const std::string descriptor)
+bool GameWindow::init(ClientValues* conf)
 {
-	rc = new Resourcer(this, descriptor);
+	rc = new Resourcer(this, conf);
 	world = new World(rc, this);
 	return rc->init() && world->init();
 }

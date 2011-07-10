@@ -13,6 +13,8 @@
 
 #include <Gosu/Window.hpp>
 
+#include "common.h"
+
 namespace Gosu {
 	class Button;
 }
@@ -36,7 +38,7 @@ public:
 	virtual ~GameWindow();
 
 	//! GameWindow Initializer
-	bool init(const std::string descriptor);
+	bool init(ClientValues* conf);
 
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);

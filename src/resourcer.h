@@ -16,6 +16,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "common.h"
+
 struct zip;
 
 namespace Gosu {
@@ -42,7 +44,7 @@ class Resourcer
 {
 public:
 	//! Resourcer Constructor
-	Resourcer(GameWindow* window, const std::string& filename);
+	Resourcer(GameWindow* window, ClientValues* conf);
 
 	//! Resourcer Destructor
 	~Resourcer();
@@ -87,7 +89,7 @@ private:
 
 	GameWindow* window;
 	zip* z;
-	const std::string zip_filename;
+	ClientValues* conf;
 
 	//! Resource Cache
 	/*!

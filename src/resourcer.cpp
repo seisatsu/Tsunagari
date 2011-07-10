@@ -33,26 +33,26 @@ static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 	va_end(ap);
 }
 
-Resourcer::Resourcer(GameWindow* window, const std::string& zip_filename)
-	: window(window), z(NULL), zip_filename(zip_filename)
+Resourcer::Resourcer(GameWindow* window, ClientValues* conf)
+	: window(window), z(NULL), conf(conf)
 {
 }
 
 Resourcer::~Resourcer()
 {
 	if (z && zip_close(z))
-		Log::err(zip_filename,
+		Log::err(conf->world,
 		         std::string("closing : ") + zip_strerror(z));
 }
 
 bool Resourcer::init()
 {
 	int err;
-	z = zip_open(zip_filename.c_str(), 0x0, &err);
+	z = zip_open(conf->world.c_str(), 0x0, &err);
 	if (!z) {
 		char buf[512];
 		zip_error_to_str(buf, sizeof(buf), err, errno);
-		Log::err(zip_filename, buf);
+		Log::err(conf->world, buf);
 	}
 
 	return z;
@@ -60,9 +60,11 @@ bool Resourcer::init()
 
 ImageRef Resourcer::getImage(const std::string& name)
 {
-	ImageRefMap::iterator entry = images.find(name);
-	if (entry != images.end())
-		return entry->second;
+	if (conf->cache_enabled) {
+		ImageRefMap::iterator entry = images.find(name);
+		if (entry != images.end())
+			return entry->second;
+	}
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
@@ -90,9 +92,11 @@ Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
 
 XMLDocRef Resourcer::getXMLDoc(const std::string& name)
 {
-	XMLMap::iterator entry = xmls.find(name);
-	if (entry != xmls.end())
-		return entry->second;
+	if (conf->cache_enabled) {
+		XMLMap::iterator entry = xmls.find(name);
+		if (entry != xmls.end())
+			return entry->second;
+	}
 
 	XMLDocRef result(getXMLDocFromDisk(name));
 	xmls[name] = result;
@@ -136,9 +140,11 @@ xmlDoc* Resourcer::getXMLDocFromDisk(const std::string& name)
  */
 SampleRef Resourcer::getSample(const std::string& name)
 {
-	SampleRefMap::iterator entry = samples.find(name);
-	if (entry != samples.end())
-		return entry->second;
+	if (conf->cache_enabled) {
+		SampleRefMap::iterator entry = samples.find(name);
+		if (entry != samples.end())
+			return entry->second;
+	}
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
@@ -231,6 +237,6 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 
 std::string Resourcer::path(const std::string& entry_name) const
 {
-	return zip_filename + "/" + entry_name;
+	return conf->world + "/" + entry_name;
 }
 
