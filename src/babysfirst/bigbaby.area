@@ -977,7 +977,7 @@
   </object>
   <object name="door1" type="Tile" gid="7" x="64" y="1920">
    <properties>
-    <property name="door" value="babysfirst.area,1,1,0"/>
+    <property name="door" value="babysfirst.area,1,3,0"/>
    </properties>
   </object>
   <object name="door2" type="Tile" gid="7" x="64" y="64">
