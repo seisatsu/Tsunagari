@@ -112,7 +112,6 @@ bool World::processDescriptor()
 				xml.movement = NOTILE;
 			
 			else {
-				xmlFreeDoc(doc);
 				Log::err(descriptor, "Invalid <locality> value");
 				return false;
 			}
