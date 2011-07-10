@@ -12,7 +12,6 @@
 
 #include <boost/scoped_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
-#include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "common.h"

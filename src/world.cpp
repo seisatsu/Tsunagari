@@ -5,7 +5,6 @@
 ******************************/
 
 #include <Gosu/Utility.hpp>
-#include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "area.h"

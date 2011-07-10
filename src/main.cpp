@@ -18,7 +18,6 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
-#include <libxml/tree.h>
 
 #include "common.h"
 #include "config.h"
@@ -28,10 +27,6 @@
 
 #ifdef _WINDOWS
 	#include <Windows.h>
-#endif
-
-#ifndef LIBXML_TREE_ENABLED
-	#error Tree must be enabled in libxml2
 #endif
 
 /* Output compiled-in engine defaults. */

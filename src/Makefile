@@ -18,24 +18,22 @@ LDFLAGS = -g $(LIBS)
 CXX = g++
 
 # Name of testing world.
-TESTWORLD = babysfirst
+TESTWORLD = babysfirst.world
 
 ### --- MAIN SECTION --- ###
 
-all: tsunagari testworld
+all: tsunagari $(TESTWORLD)
 
 tsunagari: area.o cmd.o common.o entity.o log.o main.o resourcer.o sprite.o window.o world.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
-testworld: $(TESTWORLD).world
-
-$(TESTWORLD).world: $(TESTWORLD)/*
-	cd $(TESTWORLD) && zip -0 ../$(TESTWORLD).world *
+%.world: %/*
+	cd $(basename $@) && zip -0 ../$@ *
 
 .PHONY: doc
 doc:
 	cd ../doc && doxygen
 
 clean:
-	$(RM) tsunagari *.o $(TESTWORLD).world && $(RM) -r ../doc/html
+	$(RM) tsunagari *.o $(TESTWORLD) && $(RM) -r ../doc/html
 

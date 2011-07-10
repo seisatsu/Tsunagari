@@ -21,6 +21,10 @@
 #include "resourcer.h"
 #include "window.h"
 
+#ifndef LIBXML_TREE_ENABLED
+	#error Tree must be enabled in libxml2
+#endif
+
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
 	const std::string* filename = (const std::string*)pstrFilename;
