@@ -13,6 +13,7 @@
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
+#include <zip.h>
 
 #include "common.h"
 #include "config.h"
@@ -57,19 +58,25 @@ bool Resourcer::init()
 	return !err;
 }
 
-Gosu::Image* Resourcer::getImage(const std::string& name)
+ImageRef Resourcer::getImage(const std::string& name)
 {
-	boost::shared_ptr<Gosu::Buffer> buffer(read(name));
+	ImageRefMap::iterator entry = images.find(name);
+	if (entry != images.end())
+		return entry->second;
+
+	BufferPtr buffer(read(name));
 	if (!buffer)
-		return NULL;
+		return ImageRef();
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
-	return new Gosu::Image(window->graphics(), bitmap, false);
+	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
+	images[name] = result;
+	return result;
 }
 
 void Resourcer::getBitmap(Gosu::Bitmap& bitmap, const std::string& name)
 {
-	boost::shared_ptr<Gosu::Buffer> buffer(read(name));
+	BufferPtr buffer(read(name));
 	if (!buffer)
 		return;
 	return Gosu::loadImageFile(bitmap, buffer->frontReader());
@@ -81,8 +88,20 @@ Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
 	return new Gosu::Image(window->graphics(), src, x, y, w, h, tileable);
 }
 
+XMLDocRef Resourcer::getXMLDoc(const std::string& name)
+{
+	XMLMap::iterator entry = xmls.find(name);
+	if (entry != xmls.end())
+		return entry->second;
 
-xmlDoc* Resourcer::getXMLDoc(const std::string& name)
+	XMLDocRef result(getXMLDocFromDisk(name));
+	xmls[name] = result;
+	return result;
+}
+
+// use RAII to ensure doc is freed
+// boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
+xmlDoc* Resourcer::getXMLDocFromDisk(const std::string& name)
 {
 	const std::string docStr = getString(name);
 	if (docStr.empty())
@@ -115,27 +134,33 @@ xmlDoc* Resourcer::getXMLDoc(const std::string& name)
  * We use Gosu::Sample for music because Gosu::Song's SDL implementation
  * doesn't support loading from a memory buffer at the moment.
  */
-Gosu::Sample* Resourcer::getSample(const std::string& name)
+SampleRef Resourcer::getSample(const std::string& name)
 {
-	boost::shared_ptr<Gosu::Buffer> buffer(read(name));
+	SampleRefMap::iterator entry = samples.find(name);
+	if (entry != samples.end())
+		return entry->second;
+
+	BufferPtr buffer(read(name));
 	if (!buffer)
-		return NULL;
-	return new Gosu::Sample(buffer->frontReader());
+		return SampleRef();
+	SampleRef result(new Gosu::Sample(buffer->frontReader()));
+	samples[name] = result;
+	return result;
 }
 
 std::string Resourcer::getString(const std::string& name)
 {
-	strMap::iterator entry = strings.find(name);
+	StringMap::iterator entry = strings.find(name);
 	if (entry != strings.end())
 		return entry->second;
 
-	std::string result = getStringFromZip(name);
+	std::string result = getStringFromDisk(name);
 
 	strings[name] = result;
 	return result;
 }
 
-std::string Resourcer::getStringFromZip(const std::string& name)
+std::string Resourcer::getStringFromDisk(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;
@@ -172,12 +197,7 @@ std::string Resourcer::getStringFromZip(const std::string& name)
 	return str;
 }
 
-boost::shared_ptr<Gosu::Buffer> Resourcer::read(const std::string& name)
-{
-	return readFromZip(name);
-}
-
-boost::shared_ptr<Gosu::Buffer> Resourcer::readFromZip(const std::string& name)
+Gosu::Buffer* Resourcer::read(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;
@@ -185,7 +205,7 @@ boost::shared_ptr<Gosu::Buffer> Resourcer::readFromZip(const std::string& name)
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
 		Log::err(path(name), "file missing");
-		return boost::shared_ptr<Gosu::Buffer>();
+		return NULL;
 	}
 
 	size = (int)stat.size;
@@ -193,16 +213,16 @@ boost::shared_ptr<Gosu::Buffer> Resourcer::readFromZip(const std::string& name)
 	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
 		Log::err(path(name),
 		         std::string("opening : ") + zip_strerror(z));
-		return boost::shared_ptr<Gosu::Buffer>();
+		return NULL;
 	}
 
-	boost::shared_ptr<Gosu::Buffer> buffer(new Gosu::Buffer);
+	Gosu::Buffer* buffer = new Gosu::Buffer;
 	buffer->resize(size);
 	if (zip_fread(zf, buffer->data(), size) != size) {
 		Log::err(path(name), "reading didn't complete");
 		zip_fclose(zf);
-		// buffer is automatically deallocated
-		return boost::shared_ptr<Gosu::Buffer>();
+		delete buffer;
+		return NULL;
 	}
 
 	zip_fclose(zf);
@@ -212,12 +232,5 @@ boost::shared_ptr<Gosu::Buffer> Resourcer::readFromZip(const std::string& name)
 std::string Resourcer::path(const std::string& entry_name) const
 {
 	return zip_filename + "/" + entry_name;
-}
-
-void Resourcer::cacheTally(const std::string& key, const int mod)
-{
-	cache[key].first += mod;
-	if (cache[key].first < 0)
-		Log::dev(key, "cache underrun of "+itostr(cache[key].first));
 }
 

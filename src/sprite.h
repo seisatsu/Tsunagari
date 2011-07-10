@@ -13,12 +13,7 @@
 #include <libxml/parser.h>
 
 #include "common.h"
-
-namespace Gosu {
-	class Image;
-}
-
-class Resourcer;
+#include "resourcer.h"
 
 /**
  * Sprite is an image model for displaying 2D video game entities.
@@ -37,7 +32,7 @@ class Sprite
 {
 public:
 	//! Sprite Constructor
-	Sprite(Resourcer* rc, const std::string descriptor);
+	Sprite(Resourcer* rc, const std::string& descriptor);
 	
 	//! Sprite Destructor
 	~Sprite();
@@ -63,7 +58,7 @@ private:
 	bool processPhase(xmlNode* phase);
 
 	Resourcer* rc;
-	const Gosu::Image* img;
+	ImageRef img;
 	coord_t c;
 
 	const std::string descriptor;

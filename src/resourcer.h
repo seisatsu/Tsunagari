@@ -7,15 +7,16 @@
 #ifndef RESOURCER_H
 #define RESOURCER_H
 
-#include <map>
 #include <string>
 #include <utility>
 
-#include <boost/unordered_map.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <zip.h>
+
+struct zip;
 
 namespace Gosu {
 	class Bitmap;
@@ -25,6 +26,13 @@ namespace Gosu {
 }
 
 class GameWindow;
+
+// Types of Gosu resources we manage
+typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
+typedef boost::shared_ptr<Gosu::Image> ImageRef;
+typedef boost::shared_ptr<Gosu::Sample> SampleRef;
+// libxml2 resources
+typedef boost::shared_ptr<xmlDoc> XMLDocRef;
 
 //! Resourcer Class
 /*!
@@ -43,7 +51,7 @@ public:
 	bool init();
 
 	//! Requests an image resource from cache.
-	Gosu::Image* getImage(const std::string& name);
+	ImageRef getImage(const std::string& name);
 
 	//! Requests a bitmap that can be used to construct subimages from cache.
 	void getBitmap(Gosu::Bitmap& bitmap, const std::string& name);
@@ -53,27 +61,33 @@ public:
 	        unsigned x, unsigned y, unsigned w, unsigned h, bool tileable);
 
 	//! Requests an XML resource from cache.
-	xmlDoc* getXMLDoc(const std::string& name);
+	XMLDocRef getXMLDoc(const std::string& name);
 	
-	//! Close resource request and drop from cache. IMPORTANT!!!
-	void drop(const std::string& name);
-
 	//! Returns a music stream from disk or cache.
-	Gosu::Sample* getSample(const std::string& name);
+	SampleRef getSample(const std::string& name);
 
 private:
+	typedef boost::unordered_map<std::string, ImageRef> ImageRefMap;
+	typedef boost::unordered_map<std::string, SampleRef> SampleRefMap;
+	typedef boost::unordered_map<std::string, XMLDocRef> XMLMap;
+	typedef boost::unordered_map<std::string, std::string> StringMap;
+
+	//! Requests an XML document from disk.
+	xmlDoc* getXMLDocFromDisk(const std::string& name);
+
 	//! Requests a string resource from cache.
 	std::string getString(const std::string& name);
+	std::string getStringFromDisk(const std::string& name);
 
-	//! Requests a string resource from cache.
-	std::string getStringFromZip(const std::string& name);
-
-	//! Read a resource from disk into memory. Returns NULL on error.
-	boost::shared_ptr<Gosu::Buffer> read(const std::string& name);
-	boost::shared_ptr<Gosu::Buffer> readFromZip(const std::string& name);
+	//! Read a generic resource from disk into memory.
+	Gosu::Buffer* read(const std::string& name);
 
 	//! Helper function 
 	std::string path(const std::string& entry_name) const;
+
+	GameWindow* window;
+	zip* z;
+	const std::string zip_filename;
 
 	//! Resource Cache
 	/*!
@@ -84,17 +98,10 @@ private:
 		zero, nothing is using the resource, and it is dropped after a
 		few minutes. The cache drop timer is in a thread.
 	*/
-	std::map<std::string, std::pair<int, void*> > cache;
-
-	//! Modify the cache tally. Logs a Developer warning on tally underrun.
-	void cacheTally(const std::string& key, const int mod);
-
-	GameWindow* window;
-	zip* z;
-	const std::string zip_filename;
-
-	typedef boost::unordered_map<std::string, std::string> strMap;
-	strMap strings;
+	ImageRefMap images;
+	SampleRefMap samples;
+	XMLMap xmls;
+	StringMap strings;
 };
 
 #endif
