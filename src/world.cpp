@@ -68,14 +68,12 @@ bool World::processDescriptor()
 	static const std::string descriptor = "world.conf";
 	xmlChar* str;
 	
-	xmlDoc* doc = rc->getXMLDoc(descriptor);
+	XMLDocRef doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
-	const xmlNode* root = xmlDocGetRootElement(doc);
-	if (!root) {
-		xmlFreeDoc(doc);
+	const xmlNode* root = xmlDocGetRootElement(doc.get());
+	if (!root)
 		return false;
-	}
 
 	xmlNode* node = root->xmlChildrenNode; // <world>
 	node = node->xmlChildrenNode; // decend into children of <world>
@@ -98,7 +96,6 @@ bool World::processDescriptor()
 				xml.locality = NETWORK;
 
 			else {
-				xmlFreeDoc(doc);
 				Log::err(descriptor, "Invalid <type> value");
 				return false;
 			}
@@ -145,7 +142,6 @@ bool World::processDescriptor()
 			xml.scripts.push_back((char*)str);
 		}
 	}
-	xmlFreeDoc(doc);
 	return true;
 }
 

@@ -31,7 +31,6 @@ Area::Area(Resourcer* rc,
 	: rc(rc), world(world), player(player), descriptor(descriptor)
 {
 	dim.x = dim.y = dim.z = 0;
-	music_buf = NULL;
 	music_inst = NULL;
 }
 
@@ -40,7 +39,6 @@ Area::~Area()
 	if (music_inst)
 		music_inst->stop();
 	delete music_inst;
-	delete music_buf;
 	
 	// Delete each Tile. If a Tile has an allocated Door struct, delete
 	// that as well.
@@ -193,15 +191,12 @@ bool Area::needsRedraw() const
 
 bool Area::processDescriptor()
 {
-	xmlDoc* doc = rc->getXMLDoc(descriptor);
+	XMLDocRef doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
 
-	// use RAII to ensure doc is freed
-	boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-
 	// Iterate and process children of <map>
-	xmlNode* root = xmlDocGetRootElement(doc); // <map> element
+	xmlNode* root = xmlDocGetRootElement(doc.get()); // <map> element
 
 	xmlChar* width = xmlGetProp(root, BAD_CAST("width"));
 	xmlChar* height = xmlGetProp(root, BAD_CAST("height"));

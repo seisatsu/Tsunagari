@@ -12,15 +12,14 @@
 #include "resourcer.h"
 #include "sprite.h"
 
-Sprite::Sprite(Resourcer* rc, const std::string descriptor)
-	: rc(rc), img(NULL), descriptor(descriptor)
+Sprite::Sprite(Resourcer* rc, const std::string& descriptor)
+	: rc(rc), descriptor(descriptor)
 {
 	c.x = c.y = c.z = 0;
 }
 
 Sprite::~Sprite()
 {
-	delete img;
 }
 
 /**
@@ -30,14 +29,12 @@ bool Sprite::processDescriptor()
 {
 	xmlChar* str;
 
-	xmlDoc* doc = rc->getXMLDoc(descriptor);
+	XMLDocRef doc = rc->getXMLDoc(descriptor);
 	if (!doc)
 		return false;
-	const xmlNode* root = xmlDocGetRootElement(doc);
-	if (!root) {
-		xmlFreeDoc(doc);
+	const xmlNode* root = xmlDocGetRootElement(doc.get());
+	if (!root)
 		return false;
-	}
 	xmlNode* node = root->xmlChildrenNode; // <sprite>
 
 	node = node->xmlChildrenNode; // decend into children of <sprite>
@@ -54,11 +51,9 @@ bool Sprite::processDescriptor()
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("phases"), 7) &&
 				!processPhases(node)) {
-			xmlFreeDoc(doc);
 			return false;
 		}
 	}
-	xmlFreeDoc(doc);
 	return true;
 }
 
@@ -111,7 +106,7 @@ bool Sprite::init()
 	if (!processDescriptor())
 		return false;
 	img = rc->getImage(xml.sheet);
-	return img != NULL;
+	return img.get() != NULL;
 }
 
 void Sprite::draw() const

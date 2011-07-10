@@ -15,6 +15,7 @@
 #include <libxml/tree.h>
 
 #include "common.h"
+#include "resourcer.h"
 
 namespace Gosu {
 	class Bitmap;
@@ -208,7 +209,7 @@ private:
 	World* world;
 	Entity* player;
 	const std::string descriptor;
-	Gosu::Sample* music_buf;
+	SampleRef music_buf;
 	Gosu::SampleInstance* music_inst;
 
 	typedef std::vector<Tile*> row_t;
