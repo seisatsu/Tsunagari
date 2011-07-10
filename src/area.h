@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/scoped_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -139,6 +140,9 @@ public:
 	//! Gosu Callback
 	bool needsRedraw() const;
 
+	//! Gosu Callback
+	void update();
+
 	coord_t getDimensions() const;
 	Tile* getTile(coord_t c);
 
@@ -209,8 +213,10 @@ private:
 	World* world;
 	Entity* player;
 	const std::string descriptor;
-	SampleRef music_buf;
-	Gosu::SampleInstance* music_inst;
+	
+	bool onIntro;
+	SampleRef introMusic, mainMusic;
+	boost::scoped_ptr<Gosu::SampleInstance> musicInst;
 
 	typedef std::vector<Tile*> row_t;
 	typedef std::vector<row_t> grid_t;
@@ -225,8 +231,6 @@ private:
 	std::string name;
 	std::string author;
 	std::vector<Tileset> tilesets;
-	Music music_intro;
-	Music music_main;
 	std::string scripts;
 	std::string onLoadEvents;
 };

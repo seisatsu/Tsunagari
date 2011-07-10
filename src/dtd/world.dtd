@@ -1,6 +1,3 @@
-<!ELEMENT tsunagari (world)>
-<!ATTLIST tsunagari version (1) #REQUIRED>
-
 <!ELEMENT world (name, author, type, player, entrypoint, eventscripts*)>
 <!ATTLIST world version (1) #REQUIRED>
 

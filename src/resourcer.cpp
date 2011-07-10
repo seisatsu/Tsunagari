@@ -72,7 +72,8 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
-	images[name] = result;
+	if (conf->cache_enabled)
+		images[name] = result;
 	return result;
 }
 
@@ -88,50 +89,6 @@ Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
         unsigned x, unsigned y, unsigned w, unsigned h, bool tileable)
 {
 	return new Gosu::Image(window->graphics(), src, x, y, w, h, tileable);
-}
-
-XMLDocRef Resourcer::getXMLDoc(const std::string& name)
-{
-	if (conf->cache_enabled) {
-		XMLMap::iterator entry = xmls.find(name);
-		if (entry != xmls.end())
-			return entry->second;
-	}
-
-	XMLDocRef result(getXMLDocFromDisk(name));
-	xmls[name] = result;
-	return result;
-}
-
-// use RAII to ensure doc is freed
-// boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-xmlDoc* Resourcer::getXMLDocFromDisk(const std::string& name)
-{
-	const std::string docStr = getString(name);
-	if (docStr.empty())
-		return NULL;
-
-	xmlParserCtxt* ctxt = xmlNewParserCtxt();
-	const std::string pathname = path(name);
-	ctxt->vctxt.userData = (void*)&pathname;
-	ctxt->vctxt.error = xmlErrorCb;
-	boost::shared_ptr<void> ctxtDeleter(ctxt, xmlFreeParserCtxt);
-
-	xmlDoc* doc = xmlCtxtReadMemory(ctxt, docStr.c_str(),
-			(int)docStr.size(), NULL, NULL,
-			XML_PARSE_NOBLANKS |
-			XML_PARSE_NONET |
-			XML_PARSE_DTDVALID);
-	if (!doc) {
-		Log::err(pathname, "Could not parse file");
-		return NULL;
-	}
-	else if (!ctxt->valid) {
-		Log::err(pathname, "XML document does not follow DTD");
-		return NULL;
-	}
-
-	return doc;
 }
 
 /* FIXME
@@ -150,23 +107,72 @@ SampleRef Resourcer::getSample(const std::string& name)
 	if (!buffer)
 		return SampleRef();
 	SampleRef result(new Gosu::Sample(buffer->frontReader()));
-	samples[name] = result;
+	if (conf->cache_enabled)
+		samples[name] = result;
 	return result;
 }
 
-std::string Resourcer::getString(const std::string& name)
+XMLDocRef Resourcer::getXMLDoc(const std::string& name, const std::string& dtdPath)
 {
-	StringMap::iterator entry = strings.find(name);
-	if (entry != strings.end())
-		return entry->second;
+	if (conf->cache_enabled) {
+		XMLMap::iterator entry = xmls.find(name);
+		if (entry != xmls.end())
+			return entry->second;
+	}
 
-	std::string result = getStringFromDisk(name);
-
-	strings[name] = result;
+	XMLDocRef result(readXMLDocFromDisk(name, dtdPath));
+	if (conf->cache_enabled)
+		xmls[name] = result;
 	return result;
 }
 
-std::string Resourcer::getStringFromDisk(const std::string& name)
+// use RAII to ensure doc is freed
+// boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
+xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name, const std::string& dtdPath)
+{
+	const std::string docStr = readStringFromDisk(name);
+	if (docStr.empty())
+		return NULL;
+
+	xmlParserCtxt* pc = xmlNewParserCtxt();
+	const std::string pathname = path(name);
+	pc->vctxt.userData = (void*)&pathname;
+	pc->vctxt.error = xmlErrorCb;
+
+	// Parse the XML. Hand over our error callback fn.
+	xmlDoc* doc = xmlCtxtReadMemory(pc, docStr.c_str(),
+			(int)docStr.size(), NULL, NULL,
+			XML_PARSE_NOBLANKS |
+			XML_PARSE_NONET);
+	xmlFreeParserCtxt(pc);
+	if (!doc) {
+		Log::err(pathname, "Could not parse file");
+		return NULL;
+	}
+
+	// Load up a Document Type Definition for validating the document.
+	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
+	if (!dtd) {
+		Log::err(dtdPath, "file not found");
+		return NULL;
+	}
+
+	// Assert the document is sane here and now so we don't have to have a
+	// billion if-else statements while traversing the document tree.
+	xmlValidCtxt* vc = xmlNewValidCtxt();
+	int valid = xmlValidateDtd(vc, doc, dtd);
+	xmlFreeValidCtxt(vc);
+	xmlFreeDtd(dtd);
+
+	if (!valid) {
+		Log::err(pathname, "XML document does not follow DTD");
+		return NULL;
+	}
+
+	return doc;
+}
+
+std::string Resourcer::readStringFromDisk(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;

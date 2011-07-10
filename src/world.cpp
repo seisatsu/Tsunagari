@@ -63,20 +63,24 @@ bool World::needsRedraw() const
 	return area->needsRedraw();
 }
 
+void World::update()
+{
+	area->update();
+}
+
 bool World::processDescriptor()
 {
 	static const std::string descriptor = "world.conf";
 	xmlChar* str;
 	
-	XMLDocRef doc = rc->getXMLDoc(descriptor);
+	XMLDocRef doc = rc->getXMLDoc(descriptor, "dtd/world.dtd");
 	if (!doc)
 		return false;
-	const xmlNode* root = xmlDocGetRootElement(doc.get());
+	const xmlNode* root = xmlDocGetRootElement(doc.get()); // <world>
 	if (!root)
 		return false;
 
-	xmlNode* node = root->xmlChildrenNode; // <world>
-	node = node->xmlChildrenNode; // decend into children of <world>
+	xmlNode* node = root->xmlChildrenNode; // children of <world>
 	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
 			str = xmlNodeGetContent(node);
