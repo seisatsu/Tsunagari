@@ -90,6 +90,26 @@ Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
 	return new Gosu::Image(window->graphics(), src, x, y, w, h, tileable);
 }
 
+/* FIXME
+ * We use Gosu::Sample for music because Gosu::Song's SDL implementation
+ * doesn't support loading from a memory buffer at the moment.
+ */
+SampleRef Resourcer::getSample(const std::string& name)
+{
+	if (conf->cache_enabled) {
+		SampleRefMap::iterator entry = samples.find(name);
+		if (entry != samples.end())
+			return entry->second;
+	}
+
+	BufferPtr buffer(read(name));
+	if (!buffer)
+		return SampleRef();
+	SampleRef result(new Gosu::Sample(buffer->frontReader()));
+	samples[name] = result;
+	return result;
+}
+
 XMLDocRef Resourcer::getXMLDoc(const std::string& name)
 {
 	if (conf->cache_enabled) {
@@ -98,16 +118,16 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name)
 			return entry->second;
 	}
 
-	XMLDocRef result(getXMLDocFromDisk(name));
+	XMLDocRef result(readXMLDocFromDisk(name));
 	xmls[name] = result;
 	return result;
 }
 
 // use RAII to ensure doc is freed
 // boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-xmlDoc* Resourcer::getXMLDocFromDisk(const std::string& name)
+xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name)
 {
-	const std::string docStr = getString(name);
+	const std::string docStr = readStringFromDisk(name);
 	if (docStr.empty())
 		return NULL;
 
@@ -134,39 +154,7 @@ xmlDoc* Resourcer::getXMLDocFromDisk(const std::string& name)
 	return doc;
 }
 
-/* FIXME
- * We use Gosu::Sample for music because Gosu::Song's SDL implementation
- * doesn't support loading from a memory buffer at the moment.
- */
-SampleRef Resourcer::getSample(const std::string& name)
-{
-	if (conf->cache_enabled) {
-		SampleRefMap::iterator entry = samples.find(name);
-		if (entry != samples.end())
-			return entry->second;
-	}
-
-	BufferPtr buffer(read(name));
-	if (!buffer)
-		return SampleRef();
-	SampleRef result(new Gosu::Sample(buffer->frontReader()));
-	samples[name] = result;
-	return result;
-}
-
-std::string Resourcer::getString(const std::string& name)
-{
-	StringMap::iterator entry = strings.find(name);
-	if (entry != strings.end())
-		return entry->second;
-
-	std::string result = getStringFromDisk(name);
-
-	strings[name] = result;
-	return result;
-}
-
-std::string Resourcer::getStringFromDisk(const std::string& name)
+std::string Resourcer::readStringFromDisk(const std::string& name)
 {
 	struct zip_stat stat;
 	zip_file* zf;

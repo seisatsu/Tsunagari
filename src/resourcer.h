@@ -62,26 +62,24 @@ public:
 	Gosu::Image* bitmapSection(const Gosu::Bitmap& src,
 	        unsigned x, unsigned y, unsigned w, unsigned h, bool tileable);
 
-	//! Requests an XML resource from cache.
-	XMLDocRef getXMLDoc(const std::string& name);
-	
 	//! Returns a music stream from disk or cache.
 	SampleRef getSample(const std::string& name);
 
+	//! Requests an XML resource from cache.
+	XMLDocRef getXMLDoc(const std::string& name);
+	
 private:
 	typedef boost::unordered_map<std::string, ImageRef> ImageRefMap;
 	typedef boost::unordered_map<std::string, SampleRef> SampleRefMap;
 	typedef boost::unordered_map<std::string, XMLDocRef> XMLMap;
-	typedef boost::unordered_map<std::string, std::string> StringMap;
 
 	//! Requests an XML document from disk.
-	xmlDoc* getXMLDocFromDisk(const std::string& name);
+	xmlDoc* readXMLDocFromDisk(const std::string& name);
 
-	//! Requests a string resource from cache.
-	std::string getString(const std::string& name);
-	std::string getStringFromDisk(const std::string& name);
+	//! Requests a string resource from disk.
+	std::string readStringFromDisk(const std::string& name);
 
-	//! Read a generic resource from disk into memory.
+	//! Read a generic resource from disk.
 	Gosu::Buffer* read(const std::string& name);
 
 	//! Helper function 
@@ -103,7 +101,6 @@ private:
 	ImageRefMap images;
 	SampleRefMap samples;
 	XMLMap xmls;
-	StringMap strings;
 };
 
 #endif
