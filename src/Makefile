@@ -5,7 +5,7 @@
 ### --- VARIABLES SECTION --- ###
 
 # Warning flags to enable.
-WFLAGS = -Wall -Wextra -Wconversion -Wno-missing-field-initializers
+WFLAGS = -Wall -Wextra -Wconversion
 
 # Libraries to include.
 LIBS = -lgosu -lzip -lboost_program_options `xml2-config --libs`
