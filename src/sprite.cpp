@@ -32,12 +32,11 @@ bool Sprite::processDescriptor()
 	XMLDocRef doc = rc->getXMLDoc(descriptor, "dtd/sprite.dtd");
 	if (!doc)
 		return false;
-	const xmlNode* root = xmlDocGetRootElement(doc.get());
+	const xmlNode* root = xmlDocGetRootElement(doc.get()); // <sprite>
 	if (!root)
 		return false;
-	xmlNode* node = root->xmlChildrenNode; // <sprite>
+	xmlNode* node = root->xmlChildrenNode; // decend into children of <sprite>
 
-	node = node->xmlChildrenNode; // decend into children of <sprite>
 	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("sheet"), 6)) {
 			str = xmlNodeGetContent(node);
