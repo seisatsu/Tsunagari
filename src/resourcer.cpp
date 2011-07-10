@@ -72,7 +72,8 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
-	images[name] = result;
+	if (conf->cache_enabled)
+		images[name] = result;
 	return result;
 }
 
@@ -106,7 +107,8 @@ SampleRef Resourcer::getSample(const std::string& name)
 	if (!buffer)
 		return SampleRef();
 	SampleRef result(new Gosu::Sample(buffer->frontReader()));
-	samples[name] = result;
+	if (conf->cache_enabled)
+		samples[name] = result;
 	return result;
 }
 
@@ -119,7 +121,8 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name, const std::string& dtdPa
 	}
 
 	XMLDocRef result(readXMLDocFromDisk(name, dtdPath));
-	xmls[name] = result;
+	if (conf->cache_enabled)
+		xmls[name] = result;
 	return result;
 }
 
