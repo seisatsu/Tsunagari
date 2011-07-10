@@ -22,8 +22,6 @@ ITEMS
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
 
-* Fix the input duplication bug.
-
 * Create our own C++ wrapper of libxml2 so we can use std::strings to avoid memory leaks.
 
 * Expire items in resource cache.

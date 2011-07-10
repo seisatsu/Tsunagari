@@ -144,6 +144,7 @@ bool World::processDescriptor()
 	return true;
 }
 
+
 bool World::loadArea(const std::string& areaName, coord_t playerPos)
 {
 	Area* newArea = new Area(rc, this, player, areaName);

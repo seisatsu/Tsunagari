@@ -57,7 +57,12 @@ private:
 	Resourcer* rc;
 	World* world;
 	
-	std::map<Gosu::Button, std::pair<bool, unsigned long> > keystates;
+	struct keystate {
+		bool consecutive, initiallyResolved;
+		unsigned long since;
+	};
+	
+	std::map<Gosu::Button, keystate > keystates;
 };
 
 #endif

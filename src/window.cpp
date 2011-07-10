@@ -43,9 +43,12 @@ void GameWindow::buttonDown(const Gosu::Button btn)
 	if (btn == Gosu::kbEscape)
 		close();
 	else {
-		if (keystates.find(btn) == keystates.end())
-			keystates[btn].second = Gosu::milliseconds();
-		world->buttonDown(btn);
+		if (keystates.find(btn) == keystates.end()) {
+			keystate& state = keystates[btn];
+			state.since = Gosu::milliseconds();
+			state.initiallyResolved = false;
+			state.consecutive = false;
+		}
 	}
 }
 
@@ -67,28 +70,26 @@ bool GameWindow::needsRedraw() const
 
 void GameWindow::update()
 {
-	std::map<Gosu::Button, std::pair<bool, unsigned long> >::iterator it;
-	
+	std::map<Gosu::Button, keystate>::iterator it;
+	unsigned long millis = Gosu::milliseconds();
+
 	// Persistent input handling code
 	for (it = keystates.begin(); it != keystates.end(); it++) {
-		if ((*it).second.first == false) {
-			if (Gosu::milliseconds() >= 
-			   (*it).second.second+ROGUELIKE_PERSIST_DELAY_INIT) {
-			   	(*it).second.second = Gosu::milliseconds();
-				(*it).second.first = true;
-				world->buttonDown((*it).first);
-			}
-			else
-				continue;
+		Gosu::Button btn = (*it).first;
+		keystate& state = (*it).second;
+		if (!state.initiallyResolved) {
+			world->buttonDown(btn);
+			state.initiallyResolved = true;
+			continue;
 		}
-		else {
-			if (Gosu::milliseconds() >= 
-			   (*it).second.second+ROGUELIKE_PERSIST_DELAY_CONSECUTIVE) {
-			   	(*it).second.second = Gosu::milliseconds();
-				world->buttonDown((*it).first);
-			}
-			else
-				continue;
+		int delay = state.consecutive ?
+		    ROGUELIKE_PERSIST_DELAY_CONSECUTIVE :
+		    ROGUELIKE_PERSIST_DELAY_INIT;
+		if (millis >= state.since + delay) {
+			state.since = Gosu::milliseconds();
+			world->buttonDown(btn);
+			if (!state.consecutive)
+				state.consecutive = true;
 		}
 	}
 }
