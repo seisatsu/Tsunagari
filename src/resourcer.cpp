@@ -52,10 +52,9 @@ bool Resourcer::init()
 		char buf[512];
 		zip_error_to_str(buf, sizeof(buf), err, errno);
 		Log::err(zip_filename, buf);
-		return false;
 	}
 
-	return true;
+	return z;
 }
 
 Gosu::Image* Resourcer::getImage(const std::string& name)

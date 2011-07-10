@@ -30,3 +30,9 @@ ITEMS
   the required arguments.
 
 * Good automatic formatting and indentation in CommandLineOptions.
+
+* Cache pre-loaded Images, Samples.
+
+* Create our own C++ wrapper of libxml2 so we can use std::strings to avoid memory leaks.
+
+

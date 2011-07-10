@@ -10,17 +10,18 @@
 #include <string>
 #include <vector>
 
-#include <Gosu/Audio.hpp>
-#include <Gosu/Bitmap.hpp>
-#include <Gosu/Graphics.hpp>
+#include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "common.h"
 
 namespace Gosu {
+	class Bitmap;
 	class Button;
 	class Image;
+	class Sample;
+	class SampleInstance;
 }
 
 class Entity;
