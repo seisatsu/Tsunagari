@@ -10,6 +10,32 @@ Player::Player(Resourcer* rc, Area* area, const std::string& descriptor)
 
 void Player::moveByTile(coord_t delta)
 {
+	bool changed = false;
+
+	// TODO: use double array of directions
+	// would make diagonals easier to handle
+	if (delta.x > 0) {
+		sprite.setPhase("right");
+		changed = true;
+	}
+	else if (delta.x < 0) {
+		sprite.setPhase("left");
+		changed = true;
+	}
+	else if (delta.y > 0) {
+		sprite.setPhase("down");
+		changed = true;
+	}
+	else if (delta.y < 0) {
+		sprite.setPhase("up");
+		changed = true;
+	}
+
+	// Redraw the player if we change graphics.
+	if (changed)
+		redraw = true;
+
+	// Try to actually move.
 	coord_t newCoord = sprite.getCoordsByTile();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
@@ -21,16 +47,6 @@ void Player::moveByTile(coord_t delta)
 		// Stop here.
 		return;
 	}
-
-	// TODO: make double array of directions
-	if (delta.x > 0)
-		sprite.setPhase("right");
-	else if (delta.x < 0)
-		sprite.setPhase("left");
-	else if (delta.y > 0)
-		sprite.setPhase("down");
-	else if (delta.y < 0)
-		sprite.setPhase("up");
 
 	return Entity::moveByTile(delta);
 }

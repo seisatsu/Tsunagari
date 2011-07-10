@@ -40,11 +40,15 @@ void Sprite::draw() const
 
 bool Sprite::setPhase(const std::string& name)
 {
+	bool changed = false;
 	boost::unordered_map<std::string, Gosu::Image*>::iterator phase;
 	phase = imgs.find(name);
-	if (phase != imgs.end())
-		img = (*phase).second;
-	return phase != imgs.end();
+	if (phase != imgs.end()) {
+		Gosu::Image* newImg = (*phase).second;
+		changed = img != newImg;
+		img = newImg;
+	}
+	return changed;
 }
 
 coord_t Sprite::getCoordsByPixel()

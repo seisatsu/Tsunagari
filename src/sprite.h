@@ -48,6 +48,8 @@ public:
 	//! Gosu Callback
 	void draw() const;
 
+	//! Change the Sprite's graphic. Returns true if it was changed to
+	//! something different.
 	bool setPhase(const std::string& name);
 
 	coord_t getCoordsByPixel();
