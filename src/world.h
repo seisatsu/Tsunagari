@@ -17,7 +17,7 @@ namespace Gosu {
 }
 
 class Area;
-class Entity;
+class Player;
 class Resourcer;
 class GameWindow;
 
@@ -59,7 +59,7 @@ private:
 	Resourcer* rc;
 	GameWindow* wnd;
 	Area* area;
-	Entity* player;
+	boost::scoped_ptr<Player> player;
 
 	//! WorldTypeLocality XML Storage Enum
 	/*!

@@ -9,11 +9,13 @@
 
 #include <string>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "common.h"
+#include "sprite.h"
 
 class Area;
 class Resourcer;
-class Sprite;
 
 //! Entity Class
 /*!
@@ -24,11 +26,11 @@ class Entity
 {
 public:
 	//! Entity Constructor
-	Entity(Resourcer* rc, Area* area, const std::string descriptor,
-		const std::string spriteDescriptor);
+	Entity(Resourcer* rc, Area* area, const std::string& descriptor,
+	       const std::string& spriteDescriptor);
 	
 	//! Entity Destructor
-	~Entity();
+	virtual ~Entity();
 	
 	//! Entity Initializer
 	bool init();
@@ -46,7 +48,7 @@ public:
 	coord_t getCoordsByTile();
 
 	//! Move the entity by dx, dy.
-	void moveByTile(coord_t delta);
+	virtual void moveByTile(coord_t delta);
 
 	//! Set location to Tile at {x, y, z}.
 	void setCoordsByTile(coord_t pos);
@@ -56,15 +58,14 @@ public:
 	void setArea(Area* area);
 
 protected:
-	void postMove();
+	virtual void postMove();
 
 	Resourcer* rc;
-	Sprite* sprite;
-	Area* area; // XXX init
+	Sprite sprite;
+	Area* area;
 	bool redraw;
 
 	const std::string descriptor;
-	const std::string spriteDescriptor;
 };
 
 #endif

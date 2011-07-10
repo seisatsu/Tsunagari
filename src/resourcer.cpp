@@ -77,12 +77,12 @@ ImageRef Resourcer::getImage(const std::string& name)
 	return result;
 }
 
-void Resourcer::getBitmap(Gosu::Bitmap& bitmap, const std::string& name)
+bool Resourcer::getBitmap(Gosu::Bitmap& bitmap, const std::string& name)
 {
 	BufferPtr buffer(read(name));
-	if (!buffer)
-		return;
-	return Gosu::loadImageFile(bitmap, buffer->frontReader());
+	if (buffer)
+		Gosu::loadImageFile(bitmap, buffer->frontReader());
+	return buffer;
 }
 
 Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,

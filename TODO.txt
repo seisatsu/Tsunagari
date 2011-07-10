@@ -17,12 +17,16 @@ ITEMS
 
 * Area Tiles should support animations.
 
-* Move player handling code to its own class.
-
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
 
 * Create our own C++ wrapper of libxml2 so we can use std::strings to avoid memory leaks.
 
 * Expire items in resource cache.
+
+* Resourcer should hand out vector<ImageRef> for tilesheet-based graphics in
+  Area and Sprite. This way they can use ImageRef instead of Image*.
+
+* Try moving descriptor filenames from constructors + class members to init()
+  parameters.
 

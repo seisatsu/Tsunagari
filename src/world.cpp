@@ -9,7 +9,7 @@
 #include <libxml/tree.h>
 
 #include "area.h"
-#include "entity.h"
+#include "player.h"
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
@@ -23,14 +23,13 @@ World* World::getWorld()
 }
 
 World::World(Resourcer* rc, GameWindow* wnd)
-	: rc(rc), wnd(wnd), area(NULL), player(NULL)
+	: rc(rc), wnd(wnd), area(NULL)
 {
 	globalWorld = this;
 }
 
 World::~World()
 {
-	delete player;
 	delete area;
 }
 
@@ -40,7 +39,7 @@ bool World::init()
 		return false;
 
 	// FIXME The player entity doesn't have a descriptor yet.
-	player = new Entity(rc, NULL, "_NONE_", xml.playersprite);
+	player.reset(new Player(rc, NULL, "_NONE_", xml.playersprite));
 	if (!player->init())
 		return false;
 
@@ -151,7 +150,7 @@ bool World::processDescriptor()
 
 bool World::loadArea(const std::string& areaName, coord_t playerPos)
 {
-	Area* newArea = new Area(rc, this, player, areaName);
+	Area* newArea = new Area(rc, this, player.get(), areaName);
 	delete area;
 	area = newArea;
 	if (!area->init())
