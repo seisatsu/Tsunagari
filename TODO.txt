@@ -22,17 +22,9 @@ ITEMS
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
 
-* Replace popt with Boost's Program_Options command line parser.
-
 * Fix the input duplication bug.
-
-* Figure out how to replace "arg" in the command line with a description of 
-  the required arguments.
-
-* Good automatic formatting and indentation in CommandLineOptions.
-
-* Cache pre-loaded Images, Samples.
 
 * Create our own C++ wrapper of libxml2 so we can use std::strings to avoid memory leaks.
 
+* Expire items in resource cache.
 
