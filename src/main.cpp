@@ -124,7 +124,9 @@ static ClientValues* parseConfig(const char* filename)
 			conf->cache_enabled = false;
 	}
 	
-	if (!parameters["cache.ttl"].empty()) {
+	if (parameters["cache.ttl"].empty())
+		conf->cache_ttl = CACHE_EMPTY_TTL;
+	else {
 		if (atoi(parameters["cache.ttl"].c_str()) == 0)
 			conf->cache_enabled = 0;
 		conf->cache_ttl = atoi(parameters["cache.ttl"].c_str());
@@ -219,7 +221,7 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	}
 	
 	if (cmd.check("--cache-size")) {
-		conf->cache_ttl = atoi(cmd.get("--cache-size").c_str());
+		conf->cache_size = atoi(cmd.get("--cache-size").c_str());
 		if (conf->cache_size == 0)
 			conf->cache_enabled = false;
 	}
