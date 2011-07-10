@@ -106,7 +106,7 @@ void CommandLineOptions::usage()
 	}
 	
 	fprintf(stderr, "Usage: %s", argv[0]);
-	usagecurrlen = (std::string("Usage: ") + argv[0]).size();
+	usagecurrlen += (std::string("Usage: ") + argv[0]).size();
 	
 	for (opt = 0; opt < OptionsList.size(); opt++) {
 		usagecurrlen += 3;
