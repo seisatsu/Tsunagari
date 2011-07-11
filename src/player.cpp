@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** player.cpp                **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include "area.h"
 #include "entity.h"
 #include "player.h"

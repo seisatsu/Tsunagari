@@ -97,20 +97,8 @@ void Area::buttonDown(const Gosu::Button btn)
 		attemptingMove = true;
 	}
 
-	if (attemptingMove) {
-		coord_t newCoord = player->getCoordsByTile();
-		newCoord.x += posMove.x;
-		newCoord.y += posMove.y;
-		newCoord.z += posMove.z;
-		Tile* dest = getTile(newCoord);
-		if ((dest->flags       & player_nowalk) != 0 ||
-		    (dest->type->flags & player_nowalk) != 0) {
-			// The tile we're trying to move onto is set as nowalk
-			// for the player. Stop here.
-			return;
-		}
+	if (attemptingMove)
 		player->moveByTile(posMove);
-	}
 }
 
 void Area::draw()
