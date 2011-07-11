@@ -140,7 +140,7 @@ void CommandLineOptions::usage()
 			fprintf(stderr, "  %s,",  
 			    OptionsList[opt]->shortopt.c_str()); 
 		else
-			fprintf(stderr, "  ");
+			fprintf(stderr, "     ");
 		fprintf(stderr, 
 		    (std::string("%-")+itostr(optmaxlen+1)+"s").c_str(), 
 		    OptionsList[opt]->longopt.c_str());

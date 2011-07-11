@@ -172,6 +172,7 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	cmd.insert("-f", "--fullscreen", "", "Run in fullscreen mode");
 	cmd.insert("-w", "--window", "", "Run in windowed mode");
 	cmd.insert("-q", "--query", "", "Query compiled-in engine defaults");
+	cmd.insert("", "--version", "", "Print the engine version string");
 	
 	if (!cmd.parse()) {
 		Log::err(argv[0], "bad command line");
@@ -181,6 +182,11 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	
 	if (cmd.check("--help")) {
 		cmd.usage();
+		return false;
+	}
+	
+	if (cmd.check("--version")) {
+		std::cerr << TSUNAGARI_RELEASE_VERSION << std::endl;
 		return false;
 	}
 	

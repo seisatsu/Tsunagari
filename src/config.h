@@ -7,6 +7,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP1 Revision 6"
+
 // === Default Configuration Settings ===
 	/* Tsunagari config file. -- Command Line */
 	#define CLIENT_CONF_FILE "./client.ini"
