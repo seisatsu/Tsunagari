@@ -76,23 +76,34 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
+
 	if (conf->cache_enabled)
 		images[name] = result;
 	return result;
 }
 
-bool Resourcer::getBitmap(Gosu::Bitmap& bitmap, const std::string& name)
+bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
+		unsigned w, unsigned h, bool tileable)
 {
-	BufferPtr buffer(read(name));
-	if (buffer)
-		Gosu::loadImageFile(bitmap, buffer->frontReader());
-	return buffer;
-}
+	if (conf->cache_enabled) {
+		TiledImageMap::iterator entry = tiles.find(name);
+		if (entry != tiles.end()) {
+			img = entry->second;
+			return true;
+		}
+	}
 
-Gosu::Image* Resourcer::bitmapSection(const Gosu::Bitmap& src,
-        unsigned x, unsigned y, unsigned w, unsigned h, bool tileable)
-{
-	return new Gosu::Image(window->graphics(), src, x, y, w, h, tileable);
+	BufferPtr buffer(read(name));
+	if (!buffer)
+		return false;
+	Gosu::Bitmap bitmap;
+	Gosu::loadImageFile(bitmap, buffer->frontReader());
+	Gosu::imagesFromTiledBitmap(window->graphics(), bitmap, w, h,
+			tileable, img);
+
+	if (conf->cache_enabled)
+		tiles[name] = img;
+	return true;
 }
 
 /* FIXME
@@ -111,6 +122,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	if (!buffer)
 		return SampleRef();
 	SampleRef result(new Gosu::Sample(buffer->frontReader()));
+
 	if (conf->cache_enabled)
 		samples[name] = result;
 	return result;

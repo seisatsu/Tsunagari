@@ -7,6 +7,7 @@
 #ifndef RESOURCER_H
 #define RESOURCER_H
 
+#include <deque>
 #include <string>
 #include <utility>
 
@@ -29,10 +30,11 @@ namespace Gosu {
 
 class GameWindow;
 
-// Types of Gosu resources we manage
+// We hand out and manage Gosu resources in these forms:
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Gosu::Sample> SampleRef;
+typedef std::deque<ImageRef> TiledImage;
 // libxml2 resources
 typedef boost::shared_ptr<xmlDoc> XMLDocRef;
 
@@ -55,27 +57,28 @@ public:
 	//! Requests an image resource from cache.
 	ImageRef getImage(const std::string& name);
 
-	//! Requests a bitmap that can be used to construct subimages from
-	//  cache.
-	bool getBitmap(Gosu::Bitmap& bitmap, const std::string& name);
-
-	//! Converts a subrectangle of a Bitmap into an Image.
-	Gosu::Image* bitmapSection(const Gosu::Bitmap& src,
-	        unsigned x, unsigned y, unsigned w, unsigned h, bool tileable);
+	//! Requests an image resource from cache and splits it into a number
+	//  of tiles each with with and height w by x. Returns false if the 
+	//  source image wasn't found.
+	bool getTiledImage(TiledImage& img, const std::string& name,
+		unsigned w, unsigned h, bool tileable);
 
 	//! Returns a music stream from disk or cache.
 	SampleRef getSample(const std::string& name);
 
 	//! Requests an XML resource from cache.
-	XMLDocRef getXMLDoc(const std::string& name, const std::string& dtdPath);
+	XMLDocRef getXMLDoc(const std::string& name,
+		const std::string& dtdPath);
 	
 private:
 	typedef boost::unordered_map<std::string, ImageRef> ImageRefMap;
 	typedef boost::unordered_map<std::string, SampleRef> SampleRefMap;
 	typedef boost::unordered_map<std::string, XMLDocRef> XMLMap;
+	typedef boost::unordered_map<std::string, TiledImage> TiledImageMap;
 
 	//! Requests an XML document from disk.
-	xmlDoc* readXMLDocFromDisk(const std::string& name, const std::string& dtdPath);
+	xmlDoc* readXMLDocFromDisk(const std::string& name,
+		const std::string& dtdPath);
 
 	//! Requests a string resource from disk.
 	std::string readStringFromDisk(const std::string& name);
@@ -102,6 +105,7 @@ private:
 	ImageRefMap images;
 	SampleRefMap samples;
 	XMLMap xmls;
+	TiledImageMap tiles;
 };
 
 #endif

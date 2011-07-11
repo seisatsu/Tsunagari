@@ -21,11 +21,6 @@ Entity::Entity(Resourcer* rc, Area* area)
 
 Entity::~Entity()
 {
-	boost::unordered_map<std::string, Gosu::Image*>::iterator it;
-	for (it = imgs.begin(); it != imgs.end(); it++) {
-		Gosu::Image* img = it->second;
-		delete img;
-	}
 }
 
 bool Entity::init(const std::string& descriptor)
@@ -48,11 +43,11 @@ bool Entity::needsRedraw() const
 bool Entity::setPhase(const std::string& name)
 {
 	bool changed = false;
-	boost::unordered_map<std::string, Gosu::Image*>::iterator phase;
+	boost::unordered_map<std::string, ImageRef>::iterator phase;
 	phase = imgs.find(name);
 	if (phase != imgs.end()) {
-		Gosu::Image* newImg = phase->second;
-		changed = img != newImg;
+		ImageRef newImg = phase->second;
+		changed = (img != newImg);
 		img = newImg;
 	}
 	return changed;
@@ -256,8 +251,9 @@ bool Entity::processSound(xmlNode* sound)
 
 bool Entity::loadPhases()
 {
-	Gosu::Bitmap src;
-	if (!rc->getBitmap(src, xml.sheet))
+	TiledImage tiles;
+	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)xml.tileSize.x,
+			(unsigned)xml.tileSize.y, false))
 		return false;
 
 	// TODO: redo with vector<ImageRef> index fn
@@ -266,23 +262,10 @@ bool Entity::loadPhases()
 	for (it = xml.phases.begin(); it != xml.phases.end(); it++) {
 		const std::string& name = it->first;
 		unsigned idx = it->second;
-		Gosu::Image* image = loadImage(src, idx);
+		ImageRef image = tiles[idx];
 		imgs[name] = img = image;
 	}
 	return true;
-}
-
-Gosu::Image* Entity::loadImage(const Gosu::Bitmap& src, unsigned pos)
-{
-	unsigned x = (unsigned)((xml.tileSize.x * pos) %
-			src.width());
-	unsigned y = (unsigned)((xml.tileSize.y * pos) /
-			src.width() * xml.tileSize.y); // ???
-
-	// FIXME: check for index out of bounds
-
-	return rc->bitmapSection(src, x, y, (unsigned)xml.tileSize.x,
-			(unsigned)xml.tileSize.y, true);
 }
 
 void Entity::postMove()

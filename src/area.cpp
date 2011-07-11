@@ -7,6 +7,7 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp>
+#include <Gosu/Timing.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Image.hpp>
 
@@ -40,25 +41,10 @@ Area::~Area()
 
 	// Delete each Tile. If a Tile has an allocated Door struct, delete
 	// that as well.
-	BOOST_FOREACH(grid_t grid, map) {
-		BOOST_FOREACH(row_t row, grid) {
-			BOOST_FOREACH(Tile* tile, row) {
-				delete tile->door;
+	BOOST_FOREACH(grid_t grid, map)
+		BOOST_FOREACH(row_t row, grid)
+			BOOST_FOREACH(Tile* tile, row)
 				delete tile;
-			}
-		}
-	}
-
-	// Each Area owns its own Tileset objects. Delete tileset graphics.
-	BOOST_FOREACH(Tileset tileset, tilesets) {
-		delete tileset.source;
-		BOOST_FOREACH(TileType type, tileset.defaults) {
-			BOOST_FOREACH(Gosu::Image* img, type.graphics) {
-				delete img;
-			}
-			// TODO: delete TileEvents when we start using them
-		}
-	}
 }
 
 bool Area::init()
@@ -67,11 +53,14 @@ bool Area::init()
 		return false;
 
 	if (introMusic) {
-		musicInst.reset(new Gosu::SampleInstance(introMusic->play(1, 1, false)));
+		musicInst.reset(new Gosu::SampleInstance(
+				introMusic->play(1, 1, false)));
 		onIntro = true;
 	}
-	else if (mainMusic)
-		musicInst.reset(new Gosu::SampleInstance(mainMusic->play(1, 1, true)));
+	else if (mainMusic) {
+		musicInst.reset(new Gosu::SampleInstance(
+				mainMusic->play(1, 1, true)));
+	}
 	return true;
 }
 
@@ -104,9 +93,12 @@ void Area::buttonDown(const Gosu::Button btn)
 void Area::draw()
 {
 	GameWindow* window = GameWindow::getWindow();
-	Gosu::Graphics* graphics = &window->graphics();
-	Gosu::Transform trans = translateCoords();
-	graphics->pushTransform(trans);
+	Gosu::Graphics& graphics = window->graphics();
+	const Gosu::Transform trans = translateCoords();
+	graphics.pushTransform(trans);
+
+	unsigned long millis = Gosu::milliseconds();
+	double second = (double)(millis % 1000);
 
 	for (unsigned layer = 0; layer != map.size(); layer++)
 	{
@@ -118,19 +110,29 @@ void Area::draw()
 			{
 				// TODO support animations
 				Tile* tile = row[x];
-				Gosu::Image* img = tile->type->graphics[0];
+				TileType* type = tile->type;
+				double frameLen = 1000.0 / type->ani_speed;
+				int i = (int)(second / frameLen);
+				Gosu::Image* img = type->graphics[i].get();
 				img->draw(x*img->width(), y*img->height(), 0);
 			}
 		}
 	}
 	player->draw();
 
-	graphics->popTransform();
+	graphics.popTransform();
 }
 
 bool Area::needsRedraw() const
 {
-	return player->needsRedraw();
+	if (player->needsRedraw())
+		return true;
+	BOOST_FOREACH(grid_t grid, map)
+		BOOST_FOREACH(row_t row, grid)
+			BOOST_FOREACH(Tile* tile, row)
+				if (tile->type->animated)
+					return true;
+	return false;
 }
 
 void Area::update()
@@ -272,11 +274,10 @@ bool Area::processTileset(xmlNode* node)
  </tileset>
 */
 	Tileset ts;
-	ts.source = new Gosu::Bitmap;
 	xmlChar* width = xmlGetProp(node, BAD_CAST("tilewidth"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("tileheight"));
-	ts.tiledim.x = atol((const char*)width);
-	ts.tiledim.y = atol((const char*)height);
+	long x = ts.tiledim.x = atol((const char*)width);
+	long y = ts.tiledim.y = atol((const char*)height);
 	
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -285,10 +286,9 @@ bool Area::processTileset(xmlNode* node)
 			unsigned id = (unsigned)atoi((const char*)idstr);
 
 			// Undeclared TileTypes have default properties.
-			while (ts.defaults.size() != id) {
-				TileType tt = defaultTileType(ts.source,
-					ts.tiledim, (int)ts.defaults.size());
-				ts.defaults.push_back(tt);
+			while (ts.tileTypes.size() != id) {
+				TileType tt = defaultTileType(ts);
+				ts.tileTypes.push_back(tt);
 			}
 
 			// Handle explicit TileType
@@ -296,38 +296,30 @@ bool Area::processTileset(xmlNode* node)
 				return false;
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("image"), 6)) {
-			xmlChar* source = xmlGetProp(child, BAD_CAST("source"));
-			rc->getBitmap(*ts.source, (const char*)source);
+			const char* source = (const char*)xmlGetProp(child,
+				BAD_CAST("source"));
+			rc->getTiledImage(ts.tiles, source,
+				(unsigned)x, (unsigned)y, true);
 		}
 	}
 
-	// Generate default tile types in range (m,n] where m is the last
-	// explicitly declared type and n is the number we require.
-	unsigned srcsz = ts.source->width() * ts.source->height();
-	unsigned long tilesz = (unsigned long)(ts.tiledim.x * ts.tiledim.y);
-	while (ts.defaults.size() != srcsz / tilesz) {
-		TileType tt = defaultTileType(ts.source,
-			ts.tiledim, (int)ts.defaults.size());
-		ts.defaults.push_back(tt);
+	while (ts.tiles.size()) {
+		TileType tt = defaultTileType(ts);
+		ts.tileTypes.push_back(tt);
 	}
 
 	tilesets.push_back(ts);
 	return true;
 }
 
-Area::TileType Area::defaultTileType(const Gosu::Bitmap* source,
-                                     coord_t tiledim, int id)
+Area::TileType Area::defaultTileType(Tileset& ts)
 {
-	unsigned x = (unsigned)((tiledim.x * id) % source->width());
-	unsigned y = (unsigned)((tiledim.y * id) / source->width() * tiledim.y);
-	
 	TileType tt;
-	Gosu::Image* img = rc->bitmapSection(*source, x, y,
-			(unsigned)tiledim.x, (unsigned)tiledim.y, true);
-	tt.graphics.push_back(img);
 	tt.animated = false;
 	tt.ani_speed = 0.0;
 	tt.flags = 0x0;
+	tt.graphics.push_back(ts.tiles.front());
+	ts.tiles.pop_front();
 	return tt;
 }
 
@@ -352,15 +344,14 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 */
 
 	// Initialize a default TileType, we'll build on that.
-	TileType tt = defaultTileType(ts.source,
-		ts.tiledim, (int)ts.defaults.size());
+	TileType tt = defaultTileType(ts);
 
 	xmlChar* idstr = xmlGetProp(node, BAD_CAST("id"));
-	unsigned id = (unsigned)atoi((const char*)idstr);
-	if (id != ts.defaults.size()) {
-		// XXX we need to know the Area we're loading...
+	unsigned id = (unsigned)atoi((const char*)idstr); // atoi
+	long expectedId = ts.tileTypes.size();
+	if (id != expectedId) {
 		Log::err(descriptor, std::string("expected TileType id ") +
-		         itostr((long)ts.defaults.size()) + ", but got " +
+		         itostr(expectedId) + ", but got " +
 			 itostr(id));
 		return false;
 	}
@@ -383,14 +374,26 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 			tt.animated = parseBool((const char*)value);
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("size"), 5)) {
-			// TODO animation
+			int size = atoi((const char*)value); // atoi
+
+			// Add size-1 more frames to our animation.
+			// We already have one from defaultTileType.
+			for (int i = 1; i < size; i++) {
+				if (ts.tiles.empty()) {
+					Log::err(descriptor, "ran out of tiles"
+						"/frames for animated tile");
+					return false;
+				}
+				tt.graphics.push_back(ts.tiles.front());
+				ts.tiles.pop_front();
+			}
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("speed"), 6)) {
 			tt.ani_speed = atof((const char*)value);
 		}
 	}
 
-	ts.defaults.push_back(tt);
+	ts.tileTypes.push_back(tt);
 	return true;
 }
 
@@ -491,10 +494,9 @@ bool Area::processLayerData(xmlNode* node)
 			xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
 			unsigned gid = (unsigned)atoi((const char*)gidStr)-1;
 			Tile* t = new Tile;
-			t->type = &tilesets[0].defaults[gid]; // XXX can only
+			t->type = &tilesets[0].tileTypes[gid]; // XXX can only
 					// access first tileset
 			t->flags = 0x0;
-			t->door = NULL;
 			row.push_back(t);
 			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
@@ -632,7 +634,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 			// TODO events
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("door"), 5)) {
-			t->door = parseDoor((const char*)value);
+			t->door.reset(parseDoor((const char*)value));
 			t->flags |= npc_nowalk;
 		}
 	}

@@ -100,7 +100,7 @@ public:
 		all tiles of this type will share the defined characteristics.
 	*/
 	struct TileType {
-		std::vector<Gosu::Image*> graphics;
+		std::vector<ImageRef> graphics;
 		bool animated; // Is the tile animated?
 		double ani_speed; // Speed of animation in hertz
 		std::vector<TileEvent> events;
@@ -119,12 +119,13 @@ public:
 		TileType* type;
 		std::vector<TileEvent> events;
 		unsigned flags; // bitflags for each option in TileFlags enum
-		Door* door;
+		boost::scoped_ptr<Door> door;
 	};
 
 
 	//! Area Constructor
-	Area(Resourcer* rc, World* world, Player* player, const std::string& filename);
+	Area(Resourcer* rc, World* world, Player* player,
+			const std::string& filename);
 
 	//! Area Destructor
 	~Area();
@@ -154,11 +155,9 @@ private:
 		Stores info for a tileset, and global settings for tiles.
 	*/
 	struct Tileset {
-		Gosu::Bitmap* source; // TODO: make shared_ptr for memory
-		                      // sureness, also delete after done
-		                      // loading tileset
+		TiledImage tiles;
 		coord_t tiledim; // Dimensions per tile
-		std::vector<TileType> defaults; // Global tile properties
+		std::vector<TileType> tileTypes; // Global tile properties
 	};
 
 	//! Music
@@ -176,12 +175,11 @@ private:
 	//! XML descriptor parsing function.
 	bool processMapProperties(xmlNode* node);
 
-	//! Constructs a tile of default type.
-	TileType defaultTileType(const Gosu::Bitmap* source, coord_t tiledim,
-	                         int id);
-
 	//! XML descriptor parsing function.
 	bool processTileset(xmlNode* node);
+
+	//! Constructs a tile of default type.
+	TileType defaultTileType(Tileset& ts);
 
 	//! XML descriptor parsing function.
 	bool processTileType(xmlNode* node, Tileset& ts);

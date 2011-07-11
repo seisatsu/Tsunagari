@@ -95,8 +95,8 @@ protected:
 	Resourcer* rc;
 
 	boost::unordered_map<std::string, SampleRef> sounds;
-	boost::unordered_map<std::string, Gosu::Image*> imgs;
-	Gosu::Image* img;
+	boost::unordered_map<std::string, ImageRef> imgs;
+	ImageRef img;
 	bool redraw;
 
 	Area* area;
