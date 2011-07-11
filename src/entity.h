@@ -1,6 +1,6 @@
 /******************************
 ** Tsunagari Tile Engine     **
-** sprite.h                  **
+** entity.h                  **
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
@@ -75,6 +75,8 @@ public:
 	//! Sets the Area object this entity will ask when looking for
 	//  nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
+	
+	SampleRef getSound(const std::string& name);
 
 protected:
 	bool processDescriptor();

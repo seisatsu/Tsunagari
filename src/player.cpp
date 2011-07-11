@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Audio.hpp>
 #include <Gosu/Input.hpp>
 
 #include "area.h"
@@ -67,6 +68,10 @@ void Player::moveByTile(coord_t delta)
 
 void Player::postMove()
 {
+	SampleRef step_sound = getSound("step");
+	if (step_sound)
+		step_sound->play(1, 1, 0);
+	
 	coord_t coord = getCoordsByTile();
 	Area::Tile* dest = area->getTile(coord);
 	Area::Door* door = dest->door;

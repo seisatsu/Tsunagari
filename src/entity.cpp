@@ -123,6 +123,17 @@ void Entity::setArea(Area* a)
 	area = a;
 }
 
+SampleRef Entity::getSound(const std::string& name)
+{
+	boost::unordered_map<std::string, SampleRef>::iterator it;
+	
+	it = sounds.find(name);
+	if (it != sounds.end())
+		return it->second;
+	else
+		return SampleRef();
+}
+
 /**
  * Try to load in descriptor.
  */
