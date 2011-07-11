@@ -99,11 +99,19 @@ public:
 		certain type. As opposed to local properties for a single tile, 
 		all tiles of this type will share the defined characteristics.
 	*/
+	struct Tile;
 	struct TileType {
 		std::vector<ImageRef> graphics;
-		bool animated; // Is the tile animated?
-		double ani_speed; // Speed of animation in hertz
 		std::vector<TileEvent> events;
+		std::vector<Tile*> allOfType;
+		Gosu::Image* graphic; // Current graphic to use for all tiles of
+		                      // this type
+		bool animated; // Is the tile animated?
+		int frameLen; // Length of each frame in animation
+		int animLen; // Total length of one complete cycle through
+		             // animation
+		int frameShowing; // Index of frame currently displaying on
+		                  // screen
 		unsigned flags; // bitflags for each option in TileFlags enum
 		// TODO: Door* door
 	};
@@ -150,13 +158,13 @@ public:
 	Tile* getTile(coord_t c);
 
 private:
-	//! Tileset
+	//! TileSet
 	/*!
 		Stores info for a tileset, and global settings for tiles.
 	*/
-	struct Tileset {
+	struct TileSet {
 		TiledImage tiles;
-		coord_t tiledim; // Dimensions per tile
+		coord_t tileDim; // Dimensions per tile
 		std::vector<TileType> tileTypes; // Global tile properties
 	};
 
@@ -176,13 +184,13 @@ private:
 	bool processMapProperties(xmlNode* node);
 
 	//! XML descriptor parsing function.
-	bool processTileset(xmlNode* node);
+	bool processTileSet(xmlNode* node);
 
 	//! Constructs a tile of default type.
-	TileType defaultTileType(Tileset& ts);
+	TileType defaultTileType(TileSet& set);
 
 	//! XML descriptor parsing function.
-	bool processTileType(xmlNode* node, Tileset& ts);
+	bool processTileType(xmlNode* node, TileSet& ts);
 
 	//! XML descriptor parsing function.
 	bool processLayer(xmlNode* node);
@@ -232,7 +240,7 @@ private:
 
 	std::string name;
 	std::string author;
-	std::vector<Tileset> tilesets;
+	std::vector<TileSet> tilesets;
 	std::string scripts;
 	std::string onLoadEvents;
 };

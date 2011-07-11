@@ -7,9 +7,10 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp>
-#include <Gosu/Timing.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Image.hpp>
+#include <Gosu/Math.hpp>
+#include <Gosu/Timing.hpp>
 
 #include "area.h"
 #include "common.h"
@@ -19,7 +20,7 @@
 #include "window.h"
 #include "world.h"
 
-/* NOTE: Tileset tiles start counting their positions from 0, while layer tiles
+/* NOTE: TileSet tiles start counting their positions from 0, while layer tiles
          start counting from 1. I can't imagine why the author did this, but we
          have to take it into account. 
 */
@@ -41,8 +42,8 @@ Area::~Area()
 
 	// Delete each Tile. If a Tile has an allocated Door struct, delete
 	// that as well.
-	BOOST_FOREACH(grid_t grid, map)
-		BOOST_FOREACH(row_t row, grid)
+	BOOST_FOREACH(grid_t& grid, map)
+		BOOST_FOREACH(row_t& row, grid)
 			BOOST_FOREACH(Tile* tile, row)
 				delete tile;
 }
@@ -97,8 +98,18 @@ void Area::draw()
 	const Gosu::Transform trans = translateCoords();
 	graphics.pushTransform(trans);
 
-	unsigned long millis = Gosu::milliseconds();
-	double second = (double)(millis % 1000);
+	// Calculate frame to show for each type of tile
+	int millis = (int)Gosu::milliseconds();
+	BOOST_FOREACH(TileSet& set, tilesets) {
+		BOOST_FOREACH(TileType& type, set.tileTypes) {
+			if (type.animated) {
+				int frame = (millis % type.animLen) /
+					type.frameLen;
+				type.frameShowing = frame;
+				type.graphic = type.graphics[frame].get();
+			}
+		}
+	}
 
 	for (unsigned layer = 0; layer != map.size(); layer++)
 	{
@@ -108,12 +119,9 @@ void Area::draw()
 			row_t row = grid[y];
 			for (unsigned x = 0; x != row.size(); x++)
 			{
-				// TODO support animations
-				Tile* tile = row[x];
-				TileType* type = tile->type;
-				double frameLen = 1000.0 / type->ani_speed;
-				int i = (int)(second / frameLen);
-				Gosu::Image* img = type->graphics[i].get();
+				const Tile* tile = row[x];
+				const TileType* type = tile->type;
+				const Gosu::Image* img = type->graphic;
 				img->draw(x*img->width(), y*img->height(), 0);
 			}
 		}
@@ -127,11 +135,20 @@ bool Area::needsRedraw() const
 {
 	if (player->needsRedraw())
 		return true;
-	BOOST_FOREACH(grid_t grid, map)
-		BOOST_FOREACH(row_t row, grid)
-			BOOST_FOREACH(Tile* tile, row)
-				if (tile->type->animated)
+
+	// Do any types of tiles need to update their animations?
+	int millis = (int)Gosu::milliseconds();
+	BOOST_FOREACH(const TileSet& set, tilesets) {
+		BOOST_FOREACH(const TileType& type, set.tileTypes) {
+			if (type.animated) {
+				int frame = (millis % type.animLen) /
+					type.frameLen;
+				if (frame != type.frameShowing)
 					return true;
+			}
+		}
+	}
+
 	return false;
 }
 
@@ -144,26 +161,9 @@ void Area::update()
 	}
 }
 
-//! Returns the number closest to x within the range [low, high].
-/*!
-	\param low Lowest possible return.
-	\param x Value to be bounded.
-	\param high Highest possible return.
-	\return A number close to x.
-	\sa center() and translateCoords()
-*/
-static double bound(double low, double x, double high)
-{
-	if (low > x)
-		x = low;
-	if (x > high)
-		x = high;
-	return x;
-}
-
 static double center(double w, double g, double p)
 {
-	return w>g ? (w-g)/2.0 : bound(w-g, w/2.0-p, 0);
+	return w>g ? (w-g)/2.0 : Gosu::boundBy(w/2.0-p, w-g, 0.0);
 }
 
 Gosu::Transform Area::translateCoords()
@@ -171,8 +171,8 @@ Gosu::Transform Area::translateCoords()
 	GameWindow* window = GameWindow::getWindow();
 	Gosu::Graphics* graphics = &window->graphics();
 
-	double tileWidth = (double)tilesets[0].tiledim.x;
-	double tileHeight = (double)tilesets[0].tiledim.y;
+	double tileWidth = (double)tilesets[0].tileDim.x;
+	double tileHeight = (double)tilesets[0].tileDim.y;
 	double windowWidth = (double)graphics->width() / tileWidth;
 	double windowHeight = (double)graphics->height() / tileHeight;
 	double gridWidth = (double)dim.x;
@@ -211,7 +211,7 @@ bool Area::processDescriptor()
 				return false;
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("tileset"), 8)) {
-			if (!processTileset(child))
+			if (!processTileSet(child))
 				return false;
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("layer"), 6)) {
@@ -262,7 +262,7 @@ bool Area::processMapProperties(xmlNode* node)
 	return true;
 }
 
-bool Area::processTileset(xmlNode* node)
+bool Area::processTileSet(xmlNode* node)
 {
 
 /*	
@@ -273,11 +273,11 @@ bool Area::processTileset(xmlNode* node)
   </tile>
  </tileset>
 */
-	Tileset ts;
+	TileSet ts;
 	xmlChar* width = xmlGetProp(node, BAD_CAST("tilewidth"));
 	xmlChar* height = xmlGetProp(node, BAD_CAST("tileheight"));
-	long x = ts.tiledim.x = atol((const char*)width);
-	long y = ts.tiledim.y = atol((const char*)height);
+	long x = ts.tileDim.x = atol((const char*)width);
+	long y = ts.tileDim.y = atol((const char*)height);
 	
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -312,18 +312,19 @@ bool Area::processTileset(xmlNode* node)
 	return true;
 }
 
-Area::TileType Area::defaultTileType(Tileset& ts)
+Area::TileType Area::defaultTileType(TileSet& set)
 {
-	TileType tt;
-	tt.animated = false;
-	tt.ani_speed = 0.0;
-	tt.flags = 0x0;
-	tt.graphics.push_back(ts.tiles.front());
-	ts.tiles.pop_front();
-	return tt;
+	TileType type;
+	type.animated = false;
+	type.frameLen = 1000;
+	type.flags = 0x0;
+	type.graphics.push_back(set.tiles.front());
+	type.graphic = type.graphics[0].get();
+	set.tiles.pop_front();
+	return type;
 }
 
-bool Area::processTileType(xmlNode* node, Tileset& ts)
+bool Area::processTileType(xmlNode* node, TileSet& ts)
 {
 
 /*
@@ -387,9 +388,11 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 				tt.graphics.push_back(ts.tiles.front());
 				ts.tiles.pop_front();
 			}
+			tt.animLen = tt.frameLen * (int)tt.graphics.size();
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("speed"), 6)) {
-			tt.ani_speed = atof((const char*)value);
+			tt.frameLen = (int)(1000.0/atof((const char*)value));
+			tt.animLen = tt.frameLen * (int)tt.graphics.size();
 		}
 	}
 
@@ -493,10 +496,14 @@ bool Area::processLayerData(xmlNode* node)
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
 			xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
 			unsigned gid = (unsigned)atoi((const char*)gidStr)-1;
+
+			// XXX can only access first tileset
+			TileType* type = &tilesets[0].tileTypes[gid];
+
 			Tile* t = new Tile;
-			t->type = &tilesets[0].tileTypes[gid]; // XXX can only
-					// access first tileset
+			t->type = type;
 			t->flags = 0x0;
+			type->allOfType.push_back(t);
 			row.push_back(t);
 			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
@@ -611,9 +618,9 @@ bool Area::processObject(xmlNode* node, int zpos)
 	xmlChar* yStr = xmlGetProp(node, BAD_CAST("y"));
 	// XXX we ignore the object gid... is that okay?
 
-	// wouldn't have to access tilesets if we had tiledim ourselves
-	long x = atol((const char*)xStr) / tilesets[0].tiledim.x;
-	long y = atol((const char*)yStr) / tilesets[0].tiledim.y;
+	// wouldn't have to access tilesets if we had tileDim ourselves
+	long x = atol((const char*)xStr) / tilesets[0].tileDim.x;
+	long y = atol((const char*)yStr) / tilesets[0].tileDim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay
@@ -647,7 +654,7 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 	strs = splitStr(strOfFlags, ",");
 
 	unsigned flags = 0x0;
-	BOOST_FOREACH(std::string str, strs)
+	BOOST_FOREACH(const std::string& str, strs)
 	{
 		// TODO: reimplement comparisons as a hash table
 		if (str == "nowalk") {
@@ -679,7 +686,7 @@ coord_t Area::getDimensions() const
 
 coord_t Area::getTileDimensions() const
 {
-	return tilesets[0].tiledim; // XXX only considers first tileset
+	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
 Area::Tile* Area::getTile(coord_t c)
