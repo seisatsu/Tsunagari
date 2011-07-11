@@ -42,7 +42,8 @@ class Area
 {
 public:
 
-	// when changing TileFlags, be sure to make updates to Area::splitTileFlags()
+	// when changing TileFlags, be sure to make updates to
+	// Area::splitTileFlags()
 	//! List of possible flags that can be attached to a tile.
 	/*!
 		Flags are attached to tiles, and denote special behavior for 
@@ -153,7 +154,9 @@ private:
 		Stores info for a tileset, and global settings for tiles.
 	*/
 	struct Tileset {
-		Gosu::Bitmap* source; // TODO: make shared_ptr for memory sureness, also delete after done loading tileset
+		Gosu::Bitmap* source; // TODO: make shared_ptr for memory
+		                      // sureness, also delete after done
+		                      // loading tileset
 		coord_t tiledim; // Dimensions per tile
 		std::vector<TileType> defaults; // Global tile properties
 	};

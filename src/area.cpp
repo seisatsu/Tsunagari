@@ -137,7 +137,8 @@ void Area::update()
 {
 	if (onIntro && !musicInst->playing()) {
 		onIntro = false;
-		musicInst.reset(new Gosu::SampleInstance(mainMusic->play(1, 1, true)));
+		musicInst.reset(new Gosu::SampleInstance(
+				mainMusic->play(1, 1, true)));
 	}
 }
 
@@ -174,8 +175,10 @@ Gosu::Transform Area::translateCoords()
 	double windowHeight = (double)graphics->height() / tileHeight;
 	double gridWidth = (double)dim.x;
 	double gridHeight = (double)dim.y;
-	double playerX = (double)player->getCoordsByPixel().x / tileWidth + 0.5;
-	double playerY = (double)player->getCoordsByPixel().y / tileHeight + 0.5;
+	double playerX = (double)player->getCoordsByPixel().x /
+			tileWidth + 0.5;
+	double playerY = (double)player->getCoordsByPixel().y /
+			tileHeight + 0.5;
 
 	coord_t c;
 	c.x = (long)(center(windowWidth, gridWidth, playerX) * tileWidth);
@@ -316,7 +319,7 @@ Area::TileType Area::defaultTileType(const Gosu::Bitmap* source,
                                      coord_t tiledim, int id)
 {
 	unsigned x = (unsigned)((tiledim.x * id) % source->width());
-	unsigned y = (unsigned)((tiledim.y * id) / source->width() * tiledim.y); // ???
+	unsigned y = (unsigned)((tiledim.y * id) / source->width() * tiledim.y);
 	
 	TileType tt;
 	Gosu::Image* img = rc->bitmapSection(*source, x, y,
@@ -356,8 +359,9 @@ bool Area::processTileType(xmlNode* node, Tileset& ts)
 	unsigned id = (unsigned)atoi((const char*)idstr);
 	if (id != ts.defaults.size()) {
 		// XXX we need to know the Area we're loading...
-		Log::err("unknown area", std::string("expected TileType id ") +
-		         itostr((long)ts.defaults.size()) + ", but got " + itostr(id));
+		Log::err(descriptor, std::string("expected TileType id ") +
+		         itostr((long)ts.defaults.size()) + ", but got " +
+			 itostr(id));
 		return false;
 	}
 
@@ -417,7 +421,7 @@ bool Area::processLayer(xmlNode* node)
 
 	if (dim.x != x || dim.y != y) {
 		// XXX we need to know the Area we're loading...
-		Log::err("unknown area", "layer x,y size != map x,y size");
+		Log::err(descriptor, "layer x,y size != map x,y size");
 		return false;
 	}
 
@@ -451,7 +455,7 @@ bool Area::processLayerProperties(xmlNode* node)
 		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
 			int depth = atoi((const char*)value);
 			if (depth != dim.z) {
-				Log::err("unknown area", "invalid layer depth");
+				Log::err(descriptor, "invalid layer depth");
 				return false;
 			}
 		}
@@ -487,7 +491,8 @@ bool Area::processLayerData(xmlNode* node)
 			xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
 			unsigned gid = (unsigned)atoi((const char*)gidStr)-1;
 			Tile* t = new Tile;
-			t->type = &tilesets[0].defaults[gid]; // XXX can only access first tileset
+			t->type = &tilesets[0].defaults[gid]; // XXX can only
+					// access first tileset
 			t->flags = 0x0;
 			t->door = NULL;
 			row.push_back(t);
@@ -532,7 +537,8 @@ bool Area::processObjectGroup(xmlNode* node)
 
 	if (dim.x != x || dim.y != y) {
 		// XXX we need to know the Area we're loading...
-		Log::err("unknown area", "objectgroup x,y size != map x,y size");
+		Log::err(descriptor,
+				"objectgroup x,y size != map x,y size");
 		return false;
 	}
 
@@ -568,7 +574,7 @@ bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
 			int layer = atoi((const char*)value);
 			if (0 < layer || layer >= (int)dim.z) {
 				// XXX we need to know the Area we're loading...
-				Log::err("unknown area",
+				Log::err(descriptor,
 					"objectgroup must correspond with layer"
 				);
 				return false;
@@ -595,7 +601,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 
 	xmlChar* type = xmlGetProp(node, BAD_CAST("type"));
 	if (xmlStrncmp(type, BAD_CAST("Tile"), 5)) {
-		Log::err("unknown area", "object type must be Tile");
+		Log::err(descriptor, "object type must be Tile");
 		return false;
 	}
 
@@ -671,7 +677,7 @@ coord_t Area::getDimensions() const
 
 coord_t Area::getTileDimensions() const
 {
-	return tilesets[0].tiledim;
+	return tilesets[0].tiledim; // XXX only considers first tileset
 }
 
 Area::Tile* Area::getTile(coord_t c)
