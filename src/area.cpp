@@ -148,6 +148,7 @@ void Area::update()
 		onIntro = false;
 		musicInst.reset(mainMusic->play(1, 1, true));
 	}
+	player->update();
 }
 
 static double center(double w, double g, double p)

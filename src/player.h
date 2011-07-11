@@ -18,6 +18,7 @@ public:
 	void moveByTile(coord_t delta);
 
 private:
+	void preMove(coord_t dest);
 	void postMove();
 };
 

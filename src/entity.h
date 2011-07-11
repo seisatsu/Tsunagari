@@ -56,6 +56,8 @@ public:
 	void draw();
 	bool needsRedraw() const;
 
+	void update();
+
 	//! Change the graphic. Returns true if it was changed to something
 	//  different.
 	bool setPhase(const std::string& name);
@@ -89,6 +91,10 @@ protected:
 	bool loadPhases();
 	Gosu::Image* loadImage(const Gosu::Bitmap& src, unsigned pos);
 
+	//! Called right before starting to moving onto another tile.
+	virtual void preMove(coord_t dest);
+
+	//! Called after we've arrived at another tile.
 	virtual void postMove();
 
 
@@ -99,8 +105,14 @@ protected:
 	ImageRef img;
 	bool redraw;
 
+	bool moving;
+	coord_t dest;
+	double speed;
+	unsigned long lastTime;
+
 	Area* area;
 	coord_t c;
+	double rx, ry, rz; // real x,y position, holds partial pixel transversal
 
 	std::string descriptor;
 

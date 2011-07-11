@@ -5,6 +5,8 @@
 ******************************/
 
 #include <Gosu/Image.hpp>
+#include <Gosu/Math.hpp>
+#include <Gosu/Timing.hpp>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -14,7 +16,12 @@
 #include "resourcer.h"
 
 Entity::Entity(Resourcer* rc, Area* area)
-	: rc(rc), redraw(true), area(area)
+	: rc(rc),
+	  redraw(true),
+	  moving(false),
+	  speed(240.0 / 1000),
+	  lastTime(Gosu::milliseconds()),
+	  area(area)
 {
 	c.x = c.y = c.z = 0;
 }
@@ -38,6 +45,39 @@ void Entity::draw()
 bool Entity::needsRedraw() const
 {
 	return redraw;
+}
+
+void Entity::update()
+{
+	// TODO: optimize to window
+	unsigned long now = Gosu::milliseconds();
+	unsigned long dt = now - lastTime;
+	lastTime = now;
+
+	if (true && moving) {
+		redraw = true;
+
+		double destDist = Gosu::distance((double)c.x, (double)c.y,
+				(double)dest.x, (double)dest.y); 
+		if (destDist < speed * (double)dt) {
+			c = dest;
+			moving = false;
+			postMove();
+		}
+		else {
+			double angle = Gosu::angle((double)c.x, (double)c.y,
+					(double)dest.x, (double)dest.y); 
+			double x = Gosu::offsetX(angle, speed * (double)dt);
+			double y = Gosu::offsetY(angle, speed * (double)dt);
+
+			// Save state of partial pixels traveled in double
+			rx += x;
+			ry += y;
+
+			c.x = (long)rx;
+			c.y = (long)ry;
+		}
+	}
 }
 
 bool Entity::setPhase(const std::string& name)
@@ -94,10 +134,16 @@ void Entity::moveByPixel(coord_t dc)
 
 void Entity::moveByTile(coord_t dc)
 {
+	if (true && moving)
+		// support queueing moves?
+		return;
+
 	coord_t newCoord = getCoordsByTile();
 	newCoord.x += dc.x;
 	newCoord.y += dc.y;
 	newCoord.z += dc.z;
+
+	// Can we move?
 	Area::Tile& dest = area->getTile(newCoord);
 	if ((dest.flags       & Area::nowalk) != 0 ||
 	    (dest.type->flags & Area::nowalk) != 0) {
@@ -105,12 +151,27 @@ void Entity::moveByTile(coord_t dc)
 		// Stop here.
 		return;
 	}
-	coord_t tileDim = area->getTileDimensions();
-	c.x += dc.x * tileDim.x;
-	c.y += dc.y * tileDim.y;
-	// XXX: set c.z when we have Z-buffers
+
+	// Move!
 	redraw = true;
-	postMove();
+	coord_t tileDim = area->getTileDimensions();
+	dest.x = c.x + dc.x * tileDim.x;
+	dest.y = c.y + dc.y * tileDim.y;
+	dest.z = 0; // XXX: set dest.z when we have Z-buffers
+
+	preMove(dest);
+
+	if (false) {
+		c.x = dest.x;
+		c.y = dest.y;
+		// XXX: set c.z when we have Z-buffers
+		postMove();
+	}
+	else if (true) {
+		moving = true;
+		rx = (double)c.x;
+		ry = (double)c.y;
+	}
 }
 
 void Entity::setArea(Area* a)
@@ -256,8 +317,6 @@ bool Entity::loadPhases()
 			(unsigned)xml.tileSize.y, false))
 		return false;
 
-	// TODO: redo with vector<ImageRef> index fn
-	//       remove rc->bitmapSection fn
 	boost::unordered_map<std::string, unsigned>::iterator it;
 	for (it = xml.phases.begin(); it != xml.phases.end(); it++) {
 		const std::string& name = it->first;
@@ -266,6 +325,10 @@ bool Entity::loadPhases()
 		imgs[name] = img = image;
 	}
 	return true;
+}
+
+void Entity::preMove(coord_t)
+{
 }
 
 void Entity::postMove()
