@@ -44,6 +44,7 @@ void Player::moveByTile(coord_t delta)
 	if (changed)
 		redraw = true;
 
+	// Left CTRL allows changing facing, but disallows movement.
 	GameWindow* w = GameWindow::getWindow();
 	if (w->input().down(Gosu::kbLeftControl))
 		return;
