@@ -56,6 +56,10 @@ public:
 	void usage();
 	
 private:
+	void usageSize(size_t* optmaxlen, size_t* argmaxlen);
+	void usagePrintShort();
+	void usagePrintLong(size_t optmaxlen, size_t argmaxlen);
+	
 	int argc;
 	char** argv;
 	

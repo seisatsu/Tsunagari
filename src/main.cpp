@@ -190,6 +190,11 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 		return false;
 	}
 	
+	if (cmd.check("--query")) {
+		defaultsQuery();
+		return false;
+	}
+	
 	if (cmd.check("--config")) {
 		delete conf;
 		conf = parseConfig(cmd.get("--config").c_str());
@@ -247,11 +252,6 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	
 	if (cmd.check("--window"))
 		conf->fullscreen = false;
-	
-	if (cmd.check("--query")) {
-		defaultsQuery();
-		return false;
-	}
 	
 	return true;
 }
