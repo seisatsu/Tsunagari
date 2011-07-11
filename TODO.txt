@@ -15,8 +15,6 @@ ITEMS
 
 * Support multiple TileSets per TMX map.
 
-* Area Tiles should support animations.
-
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
 
@@ -33,4 +31,13 @@ ITEMS
 
 * Try moving descriptor filenames from constructors + class members to init()
   parameters.
+
+* Allow the dtd directory to be set from client.ini or the command line.
+
+* Tsunagari crashes on Windows after the window is closed.
+
+* Fix the --help option's formatting.
+
+* Tsunagari loses access to the console once the game window is opened on 
+  Windows.
 
