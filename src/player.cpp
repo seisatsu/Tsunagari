@@ -74,7 +74,7 @@ void Player::postMove()
 	
 	coord_t coord = getCoordsByTile();
 	Area::Tile* dest = area->getTile(coord);
-	Area::Door* door = dest->door;
+	Area::Door* door = dest->door.get();
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
 }
