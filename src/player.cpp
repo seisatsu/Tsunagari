@@ -1,10 +1,10 @@
 #include "area.h"
+#include "entity.h"
 #include "player.h"
-#include "sprite.h"
 #include "world.h"
 
-Player::Player(Resourcer* rc, Area* area, const std::string& descriptor)
-	: Entity(rc, area, descriptor)
+Player::Player(Resourcer* rc, Area* area)
+	: Entity(rc, area)
 {
 }
 
@@ -15,19 +15,19 @@ void Player::moveByTile(coord_t delta)
 	// TODO: use double array of directions
 	// would make diagonals easier to handle
 	if (delta.x > 0) {
-		sprite.setPhase("right");
+		setPhase("right");
 		changed = true;
 	}
 	else if (delta.x < 0) {
-		sprite.setPhase("left");
+		setPhase("left");
 		changed = true;
 	}
 	else if (delta.y > 0) {
-		sprite.setPhase("down");
+		setPhase("down");
 		changed = true;
 	}
 	else if (delta.y < 0) {
-		sprite.setPhase("up");
+		setPhase("up");
 		changed = true;
 	}
 
@@ -36,7 +36,7 @@ void Player::moveByTile(coord_t delta)
 		redraw = true;
 
 	// Try to actually move.
-	coord_t newCoord = sprite.getCoordsByTile();
+	coord_t newCoord = getCoordsByTile();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -53,7 +53,7 @@ void Player::moveByTile(coord_t delta)
 
 void Player::postMove()
 {
-	coord_t coord = sprite.getCoordsByTile();
+	coord_t coord = getCoordsByTile();
 	Area::Tile* dest = area->getTile(coord);
 	Area::Door* door = dest->door;
 	if (door)

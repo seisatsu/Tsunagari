@@ -12,7 +12,7 @@
 class Player : public Entity
 {
 public:
-	Player(Resourcer* rc, Area* area, const std::string& descriptor);
+	Player(Resourcer* rc, Area* area);
 
 	//! Move the entity by dx, dy.
 	void moveByTile(coord_t delta);

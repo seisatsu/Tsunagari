@@ -38,8 +38,8 @@ bool World::init()
 		return false;
 
 	// FIXME The player entity doesn't have a descriptor yet.
-	player.reset(new Player(rc, NULL, xml.playerentity));
-	if (!player->init())
+	player.reset(new Player(rc, NULL));
+	if (!player->init(xml.playerentity))
 		return false;
 
 	wnd->setCaption(Gosu::widen(xml.name));

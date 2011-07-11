@@ -144,6 +144,7 @@ public:
 	void update();
 
 	coord_t getDimensions() const;
+	coord_t getTileDimensions() const;
 	Tile* getTile(coord_t c);
 
 private:
@@ -168,44 +169,44 @@ private:
 
 	//! XML descriptor parsing function.
 	bool processDescriptor();
-	
+
 	//! XML descriptor parsing function.
 	bool processMapProperties(xmlNode* node);
-	
+
 	//! Constructs a tile of default type.
 	TileType defaultTileType(const Gosu::Bitmap* source, coord_t tiledim,
 	                         int id);
-	
+
 	//! XML descriptor parsing function.
 	bool processTileset(xmlNode* node);
-	
+
 	//! XML descriptor parsing function.
 	bool processTileType(xmlNode* node, Tileset& ts);
-	
+
 	//! XML descriptor parsing function.
 	bool processLayer(xmlNode* node);
-	
+
 	//! XML descriptor parsing function.
 	bool processLayerProperties(xmlNode* node);
-	
+
 	//! XML descriptor parsing function.
 	bool processLayerData(xmlNode* node);
-	
+
 	//! XML descriptor parsing function.
 	bool processObjectGroup(xmlNode* node);
-	
+
 	//! XML descriptor parsing function.
 	bool processObjectGroupProperties(xmlNode* node, int* zpos);
-	
+
 	//! XML descriptor parsing function.
 	bool processObject(xmlNode* node, int zpos);
-	
+
 	//! Split a tile's flags into individuals.
 	unsigned splitTileFlags(const std::string strOfFlags);
-	
+
 	//! Process a door convenience trigger.
 	Door* parseDoor(const std::string dest);
-	
+
 	Gosu::Transform translateCoords();
 
 
@@ -213,7 +214,7 @@ private:
 	World* world;
 	Player* player;
 	const std::string descriptor;
-	
+
 	bool onIntro;
 	SampleRef introMusic, mainMusic;
 	boost::scoped_ptr<Gosu::SampleInstance> musicInst;
@@ -227,7 +228,7 @@ private:
 	 */
 	tilematrix_t map;
 	coord_t dim;
-	
+
 	std::string name;
 	std::string author;
 	std::vector<Tileset> tilesets;

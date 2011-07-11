@@ -15,7 +15,6 @@
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
-#include "sprite.h"
 #include "window.h"
 #include "world.h"
 
@@ -680,6 +679,11 @@ Area::Door* Area::parseDoor(const std::string dest)
 coord_t Area::getDimensions() const
 {
 	return dim;
+}
+
+coord_t Area::getTileDimensions() const
+{
+	return tilesets[0].tiledim;
 }
 
 Area::Tile* Area::getTile(coord_t c)

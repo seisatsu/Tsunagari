@@ -1,10 +1,23 @@
-<!ELEMENT entity (sprite*, sounds*)>
-<!ATTLIST entity version (1)   #REQUIRED
-                 type    CDATA #REQUIRED>
+<!ELEMENT entity (sprite, sounds)>
+<!ATTLIST entity version (1) #REQUIRED>
 
-<!ELEMENT sprite (#PCDATA)>
+<!ELEMENT sprite (sheet, phases)>
 
-<!ELEMENT sounds (sound+)>
+<!ELEMENT sheet (#PCDATA)>
+<!ATTLIST sheet tilewidth  CDATA #REQUIRED
+                tileheight CDATA #REQUIRED>
+
+<!ELEMENT phases (phase+)>
+
+<!ELEMENT phase (member*)>
+<!ATTLIST phase name  CDATA #REQUIRED
+                pos   CDATA #IMPLIED
+                speed CDATA #IMPLIED>
+
+<!ELEMENT member EMPTY>
+<!ATTLIST member pos CDATA #REQUIRED>
+
+<!ELEMENT sounds (sound*)>
 
 <!ELEMENT sound (#PCDATA)>
 <!ATTLIST sound name CDATA #REQUIRED>
