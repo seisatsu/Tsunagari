@@ -75,8 +75,8 @@ void GameWindow::update()
 
 	// Persistent input handling code
 	for (it = keystates.begin(); it != keystates.end(); it++) {
-		Gosu::Button btn = (*it).first;
-		keystate& state = (*it).second;
+		Gosu::Button btn = it->first;
+		keystate& state = it->second;
 		if (!state.initiallyResolved) {
 			world->buttonDown(btn);
 			state.initiallyResolved = true;

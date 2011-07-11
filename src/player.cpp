@@ -4,10 +4,13 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Input.hpp>
+
 #include "area.h"
 #include "entity.h"
 #include "player.h"
 #include "world.h"
+#include "window.h"
 
 Player::Player(Resourcer* rc, Area* area)
 	: Entity(rc, area)
@@ -41,6 +44,10 @@ void Player::moveByTile(coord_t delta)
 	if (changed)
 		redraw = true;
 
+	GameWindow* w = GameWindow::getWindow();
+	if (w->input().down(Gosu::kbLeftControl))
+		return;
+
 	// Try to actually move.
 	coord_t newCoord = getCoordsByTile();
 	newCoord.x += delta.x;
@@ -54,7 +61,7 @@ void Player::moveByTile(coord_t delta)
 		return;
 	}
 
-	return Entity::moveByTile(delta);
+	Entity::moveByTile(delta);
 }
 
 void Player::postMove()

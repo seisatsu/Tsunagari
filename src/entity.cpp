@@ -23,7 +23,7 @@ Entity::~Entity()
 {
 	boost::unordered_map<std::string, Gosu::Image*>::iterator it;
 	for (it = imgs.begin(); it != imgs.end(); it++) {
-		Gosu::Image* img = (*it).second;
+		Gosu::Image* img = it->second;
 		delete img;
 	}
 }
@@ -51,7 +51,7 @@ bool Entity::setPhase(const std::string& name)
 	boost::unordered_map<std::string, Gosu::Image*>::iterator phase;
 	phase = imgs.find(name);
 	if (phase != imgs.end()) {
-		Gosu::Image* newImg = (*phase).second;
+		Gosu::Image* newImg = phase->second;
 		changed = img != newImg;
 		img = newImg;
 	}
@@ -253,8 +253,8 @@ bool Entity::loadPhases()
 	//       remove rc->bitmapSection fn
 	boost::unordered_map<std::string, unsigned>::iterator it;
 	for (it = xml.phases.begin(); it != xml.phases.end(); it++) {
-		const std::string& name = (*it).first;
-		unsigned idx = (*it).second;
+		const std::string& name = it->first;
+		unsigned idx = it->second;
 		Gosu::Image* image = loadImage(src, idx);
 		imgs[name] = img = image;
 	}
