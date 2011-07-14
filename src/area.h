@@ -10,7 +10,9 @@
 #include <string>
 #include <vector>
 
+#include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <Gosu/Audio.hpp> // for Gosu::SampleInstance
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <libxml/tree.h>
 
@@ -226,7 +228,7 @@ private:
 
 	bool onIntro;
 	SampleRef introMusic, mainMusic;
-	boost::scoped_ptr<Gosu::SampleInstance> musicInst;
+	boost::optional<Gosu::SampleInstance> musicInst;
 
 	typedef std::vector<Tile*> row_t;
 	typedef std::vector<row_t> grid_t;

@@ -6,7 +6,6 @@
 
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
-#include <Gosu/Audio.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
@@ -54,13 +53,11 @@ bool Area::init()
 		return false;
 
 	if (introMusic) {
-		musicInst.reset(new Gosu::SampleInstance(
-				introMusic->play(1, 1, false)));
+		musicInst.reset(introMusic->play(1, 1, false));
 		onIntro = true;
 	}
 	else if (mainMusic) {
-		musicInst.reset(new Gosu::SampleInstance(
-				mainMusic->play(1, 1, true)));
+		musicInst.reset(mainMusic->play(1, 1, true));
 	}
 	return true;
 }
@@ -156,8 +153,7 @@ void Area::update()
 {
 	if (onIntro && !musicInst->playing()) {
 		onIntro = false;
-		musicInst.reset(new Gosu::SampleInstance(
-				mainMusic->play(1, 1, true)));
+		musicInst.reset(mainMusic->play(1, 1, true));
 	}
 }
 
