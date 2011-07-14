@@ -136,7 +136,7 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name, const std::string& dtdPa
 			return entry->second;
 	}
 
-	XMLDocRef result(readXMLDocFromDisk(name, dtdPath));
+	XMLDocRef result(readXMLDocFromDisk(name, dtdPath), xmlFreeDoc);
 	if (conf->cache_enabled)
 		xmls[name] = result;
 	return result;
@@ -144,7 +144,8 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name, const std::string& dtdPa
 
 // use RAII to ensure doc is freed
 // boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name, const std::string& dtdPath)
+xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
+                                      const std::string& dtdPath)
 {
 	const std::string docStr = readStringFromDisk(name);
 	if (docStr.empty())
