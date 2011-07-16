@@ -49,7 +49,7 @@ public:
 	bool needsRedraw() const;
 	
 	//! Gosu Callback
-	void update();
+	void update(unsigned long dt);
 
 	bool loadArea(const std::string& areaName, coord_t playerPos);
 

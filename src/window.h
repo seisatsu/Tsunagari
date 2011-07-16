@@ -56,8 +56,19 @@ public:
 	void update();
 
 private:
+	//! Calculate time passed since engine state was last updated
+	void calculateDt();
+	
+	//! Process persistent keyboard input
+	void handleKeyboardInput();
+
 	Resourcer* rc;
 	World* world;
+
+	//! Last time engine state was updated
+	unsigned long lastTime;
+	//! Milliseconds that have passed since engine last updated
+	unsigned long dt; // delta time
 	
 	struct keystate {
 		bool consecutive, initiallyResolved;

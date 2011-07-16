@@ -20,7 +20,6 @@ Entity::Entity(Resourcer* rc, Area* area)
 	  redraw(true),
 	  moving(false),
 	  speed(240.0 / 1000),
-	  lastTime(Gosu::milliseconds()),
 	  area(area)
 {
 	c.x = c.y = c.z = 0;
@@ -47,13 +46,8 @@ bool Entity::needsRedraw() const
 	return redraw;
 }
 
-void Entity::update()
+void Entity::update(unsigned long dt)
 {
-	// TODO: optimize to window
-	unsigned long now = Gosu::milliseconds();
-	unsigned long dt = now - lastTime;
-	lastTime = now;
-
 	if (true && moving) {
 		redraw = true;
 
@@ -144,9 +138,9 @@ void Entity::moveByTile(coord_t dc)
 	newCoord.z += dc.z;
 
 	// Can we move?
-	Area::Tile& dest = area->getTile(newCoord);
-	if ((dest.flags       & Area::nowalk) != 0 ||
-	    (dest.type->flags & Area::nowalk) != 0) {
+	Area::Tile& tile = area->getTile(newCoord);
+	if ((tile.flags       & Area::nowalk) != 0 ||
+	    (tile.type->flags & Area::nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
 		// Stop here.
 		return;

@@ -20,7 +20,8 @@ GameWindow* GameWindow::getWindow()
 }
 
 GameWindow::GameWindow(unsigned x, unsigned y, bool fullscreen)
-	: Gosu::Window(x, y, fullscreen)
+	: Gosu::Window(x, y, fullscreen),
+	  lastTime(Gosu::milliseconds())
 {
 	globalWindow = this;
 }
@@ -48,14 +49,18 @@ void GameWindow::buttonDown(const Gosu::Button btn)
 			state.since = Gosu::milliseconds();
 			state.initiallyResolved = false;
 			state.consecutive = false;
+
+			// We process the initial buttonDown here so that it
+			// gets handled even if we receive a buttonUp before an
+			// update.
+			world->buttonDown(btn);
 		}
 	}
 }
 
 void GameWindow::buttonUp(const Gosu::Button btn)
 {
-	if (keystates.find(btn) != keystates.end())
-		keystates.erase(btn);
+	keystates.erase(btn);
 }
 
 void GameWindow::draw()
@@ -70,6 +75,20 @@ bool GameWindow::needsRedraw() const
 
 void GameWindow::update()
 {
+	calculateDt();
+	handleKeyboardInput();
+	world->update(dt);
+}
+
+void GameWindow::calculateDt()
+{
+	unsigned long now = Gosu::milliseconds();
+	dt = now - lastTime;
+	lastTime = now;
+}
+
+void GameWindow::handleKeyboardInput()
+{
 	std::map<Gosu::Button, keystate>::iterator it;
 	unsigned long millis = Gosu::milliseconds();
 
@@ -77,11 +96,18 @@ void GameWindow::update()
 	for (it = keystates.begin(); it != keystates.end(); it++) {
 		Gosu::Button btn = it->first;
 		keystate& state = it->second;
+		
+		// If there is PERSIST_DELAY_CONSECUTIVE milliseconds of latency
+		// between when a button is depressed and when we first look at
+		// it here, we'll incorrectly try to fire off a second round of
+		// input.
+		// This can happen if an intermediary function blocks the thread
+		// for a while.
 		if (!state.initiallyResolved) {
-			world->buttonDown(btn);
 			state.initiallyResolved = true;
 			continue;
 		}
+		
 		int delay = state.consecutive ?
 		    ROGUELIKE_PERSIST_DELAY_CONSECUTIVE :
 		    ROGUELIKE_PERSIST_DELAY_INIT;
@@ -92,7 +118,5 @@ void GameWindow::update()
 				state.consecutive = true;
 		}
 	}
-	
-	world->update();
 }
 

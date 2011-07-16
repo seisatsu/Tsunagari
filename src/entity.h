@@ -56,7 +56,7 @@ public:
 	void draw();
 	bool needsRedraw() const;
 
-	void update();
+	void update(unsigned long dt);
 
 	//! Change the graphic. Returns true if it was changed to something
 	//  different.
@@ -108,7 +108,6 @@ protected:
 	bool moving;
 	coord_t dest;
 	double speed;
-	unsigned long lastTime;
 
 	Area* area;
 	coord_t c;

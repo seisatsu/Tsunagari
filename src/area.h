@@ -153,7 +153,7 @@ public:
 	bool needsRedraw() const;
 
 	//! Gosu Callback
-	void update();
+	void update(unsigned long dt);
 
 	coord_t getDimensions() const;
 	coord_t getTileDimensions() const;

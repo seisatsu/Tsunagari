@@ -61,9 +61,9 @@ bool World::needsRedraw() const
 	return area->needsRedraw();
 }
 
-void World::update()
+void World::update(unsigned long dt)
 {
-	area->update();
+	area->update(dt);
 }
 
 bool World::processDescriptor()

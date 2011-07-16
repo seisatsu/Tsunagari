@@ -142,13 +142,13 @@ bool Area::needsRedraw() const
 	return false;
 }
 
-void Area::update()
+void Area::update(unsigned long dt)
 {
 	if (onIntro && !musicInst->playing()) {
 		onIntro = false;
 		musicInst.reset(mainMusic->play(1, 1, true));
 	}
-	player->update();
+	player->update(dt);
 }
 
 static double center(double w, double g, double p)
