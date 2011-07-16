@@ -104,9 +104,9 @@ void Area::draw()
 	}
 
 	for (unsigned z = 0; z != map.size(); z++) {
-		grid_t grid = map[z];
+		const grid_t& grid = map[z];
 		for (unsigned y = 0; y != grid.size(); y++) {
-			row_t row = grid[y];
+			const row_t& row = grid[y];
 			for (unsigned x = 0; x != row.size(); x++) {
 				const Tile& tile = row[x];
 				const TileType* type = tile.type;
@@ -227,11 +227,9 @@ bool Area::tileTypeOnScreen(const Area::TileType& search) const
 {
 	coordcube_t tiles = visibleTiles();
 	for (unsigned z = tiles.z1; z != tiles.z2; z++) {
-		grid_t grid = map[z];
 		for (unsigned y = tiles.y1; y != tiles.y2; y++) {
-			row_t row = grid[y];
 			for (unsigned x = tiles.x1; x != tiles.x2; x++) {
-				const Tile& tile = row[x];
+				const Tile& tile = map[z][y][x];
 				const TileType* type = tile.type;
 				if (type == &search)
 					return true;
