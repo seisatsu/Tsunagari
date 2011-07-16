@@ -55,9 +55,9 @@ void Player::moveByTile(coord_t delta)
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
-	Area::Tile* dest = area->getTile(newCoord);
-	if ((dest->flags       & Area::player_nowalk) != 0 ||
-	    (dest->type->flags & Area::player_nowalk) != 0) {
+	Area::Tile& dest = area->getTile(newCoord);
+	if ((dest.flags       & Area::player_nowalk) != 0 ||
+	    (dest.type->flags & Area::player_nowalk) != 0) {
 		// The tile we're trying to move onto is set as player_nowalk.
 		// Stop here.
 		return;
@@ -73,8 +73,8 @@ void Player::postMove()
 		step_sound->play(1, 1, 0);
 	
 	coord_t coord = getCoordsByTile();
-	Area::Tile* dest = area->getTile(coord);
-	Area::Door* door = dest->door.get();
+	Area::Tile& dest = area->getTile(coord);
+	boost::optional<Area::Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
 }

@@ -98,9 +98,9 @@ void Entity::moveByTile(coord_t dc)
 	newCoord.x += dc.x;
 	newCoord.y += dc.y;
 	newCoord.z += dc.z;
-	Area::Tile* dest = area->getTile(newCoord);
-	if ((dest->flags       & Area::nowalk) != 0 ||
-	    (dest->type->flags & Area::nowalk) != 0) {
+	Area::Tile& dest = area->getTile(newCoord);
+	if ((dest.flags       & Area::nowalk) != 0 ||
+	    (dest.type->flags & Area::nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
 		// Stop here.
 		return;

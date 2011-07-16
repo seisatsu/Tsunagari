@@ -129,7 +129,7 @@ public:
 		TileType* type;
 		std::vector<TileEvent> events;
 		unsigned flags; // bitflags for each option in TileFlags enum
-		boost::shared_ptr<Door> door;
+		boost::optional<Door> door;
 	};
 
 
@@ -216,7 +216,7 @@ private:
 	unsigned splitTileFlags(const std::string strOfFlags);
 
 	//! Process a door convenience trigger.
-	Door* parseDoor(const std::string dest);
+	Door parseDoor(const std::string dest);
 
 	Gosu::Transform translateCoords();
 

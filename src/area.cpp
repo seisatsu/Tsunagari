@@ -653,7 +653,7 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 	return flags;
 }
 
-Area::Door* Area::parseDoor(const std::string dest)
+Area::Door Area::parseDoor(const std::string dest)
 {
 
 /*
@@ -666,11 +666,11 @@ Area::Door* Area::parseDoor(const std::string dest)
 
 	// TODO: verify the validity of the input string... it's coming from
 	// user land
-	Door* door = new Door;
-	door->area = strs[0];
-	door->coord.x = atol(strs[1].c_str());
-	door->coord.y = atol(strs[2].c_str());
-	door->coord.z = atol(strs[3].c_str());
+	Door door;
+	door.area = strs[0];
+	door.coord.x = atol(strs[1].c_str());
+	door.coord.y = atol(strs[2].c_str());
+	door.coord.z = atol(strs[3].c_str());
 	return door;
 }
 
