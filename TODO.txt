@@ -41,3 +41,9 @@ ITEMS
 * Tsunagari loses access to the console once the game window is opened on 
   Windows.
 
+* Add installers for releases.
+
+  Windows: installer .exe, uninstaller .exe
+  Mac: .dmg installer
+  Linux: .deb and .rpm control install/uninstall, self contained .tar.gz for other systems
+
