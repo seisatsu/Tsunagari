@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <math.h>
+
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp>
@@ -85,7 +87,7 @@ void Area::draw()
 {
 	GameWindow* window = GameWindow::getWindow();
 	Gosu::Graphics& graphics = window->graphics();
-	const Gosu::Transform trans = translateCoords();
+	const Gosu::Transform trans = viewportTransform();
 	graphics.pushTransform(trans);
 
 	// Calculate frame to show for each type of tile
@@ -101,14 +103,11 @@ void Area::draw()
 		}
 	}
 
-	for (unsigned layer = 0; layer != map.size(); layer++)
-	{
-		grid_t grid = map[layer];
-		for (unsigned y = 0; y != grid.size(); y++)
-		{
+	for (unsigned z = 0; z != map.size(); z++) {
+		grid_t grid = map[z];
+		for (unsigned y = 0; y != grid.size(); y++) {
 			row_t row = grid[y];
-			for (unsigned x = 0; x != row.size(); x++)
-			{
+			for (unsigned x = 0; x != row.size(); x++) {
 				const Tile& tile = row[x];
 				const TileType* type = tile.type;
 				const Gosu::Image* img = type->graphic;
@@ -134,7 +133,7 @@ bool Area::needsRedraw() const
 				int frame = (millis % type.animLen) /
 					type.frameLen;
 				if (frame != type.frameShowing)
-					return true;
+					return tileTypeOnScreen(type);
 			}
 		}
 	}
@@ -151,12 +150,27 @@ void Area::update(unsigned long dt)
 	player->update(dt);
 }
 
+coord_t Area::getDimensions() const
+{
+	return dim;
+}
+
+coord_t Area::getTileDimensions() const
+{
+	return tilesets[0].tileDim; // XXX only considers first tileset
+}
+
+Area::Tile& Area::getTile(coord_t c)
+{
+	return map[c.z][c.y][c.x];
+}
+
 static double center(double w, double g, double p)
 {
 	return w>g ? (w-g)/2.0 : Gosu::boundBy(w/2.0-p, w-g, 0.0);
 }
 
-Gosu::Transform Area::translateCoords()
+coord_t Area::viewportOffset() const
 {
 	GameWindow* window = GameWindow::getWindow();
 	Gosu::Graphics* graphics = &window->graphics();
@@ -175,9 +189,56 @@ Gosu::Transform Area::translateCoords()
 	coord_t c;
 	c.x = (long)(center(windowWidth, gridWidth, playerX) * tileWidth);
 	c.y = (long)(center(windowHeight, gridHeight, playerY) * tileHeight);
+	c.z = 0;
 
+	return c;
+}
+
+Gosu::Transform Area::viewportTransform() const
+{
+	coord_t c = viewportOffset();
 	Gosu::Transform trans = Gosu::translate((double)c.x, (double)c.y);
 	return trans;
+}
+
+coordcube_t Area::visibleTiles() const
+{
+	GameWindow* window = GameWindow::getWindow();
+	Gosu::Graphics* graphics = &window->graphics();
+
+	int tileWidth = tilesets[0].tileDim.x;
+	int tileHeight = tilesets[0].tileDim.y;
+	int windowWidth = graphics->width();
+	int windowHeight = graphics->height();
+	coord_t off = viewportOffset();
+
+	coordcube_t tiles;
+	tiles.x1 = -off.x / tileWidth;
+	tiles.y1 = -off.y / tileHeight;
+	tiles.z1 = 0;
+
+	tiles.x2 = ceil((windowWidth - off.x) / (double)tileWidth);
+	tiles.y2 = ceil((windowHeight - off.y) / (double)tileHeight);
+	tiles.z2 = 1;
+	return tiles;
+}
+
+bool Area::tileTypeOnScreen(const Area::TileType& search) const
+{
+	coordcube_t tiles = visibleTiles();
+	for (unsigned z = tiles.z1; z != tiles.z2; z++) {
+		grid_t grid = map[z];
+		for (unsigned y = tiles.y1; y != tiles.y2; y++) {
+			row_t row = grid[y];
+			for (unsigned x = tiles.x1; x != tiles.x2; x++) {
+				const Tile& tile = row[x];
+				const TileType* type = tile.type;
+				if (type == &search)
+					return true;
+			}
+		}
+	}
+	return false;
 }
 
 bool Area::processDescriptor()
@@ -673,20 +734,5 @@ Area::Door Area::parseDoor(const std::string dest)
 	door.coord.y = atol(strs[2].c_str());
 	door.coord.z = atol(strs[3].c_str());
 	return door;
-}
-
-coord_t Area::getDimensions() const
-{
-	return dim;
-}
-
-coord_t Area::getTileDimensions() const
-{
-	return tilesets[0].tileDim; // XXX only considers first tileset
-}
-
-Area::Tile& Area::getTile(coord_t c)
-{
-	return map[c.z][c.y][c.x];
 }
 

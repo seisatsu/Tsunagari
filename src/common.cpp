@@ -17,6 +17,19 @@ coord_t coord(long x, long y, long z)
 	return c;
 }
 
+coordcube_t coordcube(long x1, long y1, long z1,
+                      long x2, long y2, long z2)
+{
+	coordcube_t c;
+	c.x1 = x1;
+	c.y1 = y1;
+	c.z1 = z1;
+	c.x2 = x2;
+	c.y2 = y2;
+	c.z2 = z2;
+	return c;
+}
+
 bool parseBool(const std::string& s)
 {
 	return s == "true" || 

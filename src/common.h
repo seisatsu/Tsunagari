@@ -26,6 +26,18 @@ struct coord_t {
 	long z;
 };
 
+//! coord_t constructor
+coord_t coord(long x, long y, long z);
+
+struct coordcube_t {
+	long x1, x2;
+	long y1, y2;
+	long z1, z2;
+};
+
+coordcube_t coordcube(long x1, long y1, long z1,
+                      long x2, long y2, long z2);
+
 //! Client Configuration
 struct ClientValues {
 	std::string world;
@@ -36,9 +48,6 @@ struct ClientValues {
 	unsigned int cache_size;
 	message_mode_t loglevel;
 };
-
-//! coord_t constructor
-coord_t coord(long x, long y, long z);
 
 //! Returns a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);
