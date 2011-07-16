@@ -38,13 +38,6 @@ Area::~Area()
 {
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
-
-	// Delete each Tile. If a Tile has an allocated Door struct, delete
-	// that as well.
-	BOOST_FOREACH(grid_t& grid, map)
-		BOOST_FOREACH(row_t& row, grid)
-			BOOST_FOREACH(Tile* tile, row)
-				delete tile;
 }
 
 bool Area::init()
@@ -116,8 +109,8 @@ void Area::draw()
 			row_t row = grid[y];
 			for (unsigned x = 0; x != row.size(); x++)
 			{
-				const Tile* tile = row[x];
-				const TileType* type = tile->type;
+				const Tile& tile = row[x];
+				const TileType* type = tile.type;
 				const Gosu::Image* img = type->graphic;
 				img->draw(x*img->width(), y*img->height(), 0);
 			}
@@ -496,10 +489,10 @@ bool Area::processLayerData(xmlNode* node)
 			// XXX can only access first tileset
 			TileType* type = &tilesets[0].tileTypes[gid];
 
-			Tile* t = new Tile;
-			t->type = type;
-			t->flags = 0x0;
-			type->allOfType.push_back(t);
+			Tile t;
+			t.type = type;
+			t.flags = 0x0;
+			type->allOfType.push_back(&t);
 			row.push_back(t);
 			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
@@ -620,7 +613,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay
-	Tile* t = map[zpos][y][x];
+	Tile& t = map[zpos][y][x];
 
 	xmlNode* child = node->xmlChildrenNode; // <properties>
 	child = child->xmlChildrenNode; // <property>
@@ -628,7 +621,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
 		if (!xmlStrncmp(name, BAD_CAST("flags"), 6)) {
-			t->flags = splitTileFlags((const char*)value);
+			t.flags = splitTileFlags((const char*)value);
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
 			// TODO events
@@ -637,8 +630,8 @@ bool Area::processObject(xmlNode* node, int zpos)
 			// TODO events
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("door"), 5)) {
-			t->door.reset(parseDoor((const char*)value));
-			t->flags |= npc_nowalk;
+			t.door.reset(parseDoor((const char*)value));
+			t.flags |= npc_nowalk;
 		}
 	}
 	return true;
@@ -662,6 +655,12 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 
 Area::Door* Area::parseDoor(const std::string dest)
 {
+
+/*
+  Format: destination Area, x, y, z
+  E.g.:   "babysfirst.area,1,3,0"
+*/
+
 	std::vector<std::string> strs;
 	strs = splitStr(dest, ",");
 
@@ -685,7 +684,7 @@ coord_t Area::getTileDimensions() const
 	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
-Area::Tile* Area::getTile(coord_t c)
+Area::Tile& Area::getTile(coord_t c)
 {
 	return map[c.z][c.y][c.x];
 }

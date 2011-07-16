@@ -115,7 +115,7 @@ public:
 		int frameShowing; // Index of frame currently displaying on
 		                  // screen
 		unsigned flags; // bitflags for each option in TileFlags enum
-		// TODO: Door* door
+		// TODO: boost::scoped_ptr<Door> door
 	};
 
 	//! Contains properties unique to this tile.
@@ -129,7 +129,7 @@ public:
 		TileType* type;
 		std::vector<TileEvent> events;
 		unsigned flags; // bitflags for each option in TileFlags enum
-		boost::scoped_ptr<Door> door;
+		boost::shared_ptr<Door> door;
 	};
 
 
@@ -157,7 +157,7 @@ public:
 
 	coord_t getDimensions() const;
 	coord_t getTileDimensions() const;
-	Tile* getTile(coord_t c);
+	Tile& getTile(coord_t c);
 
 private:
 	//! TileSet
@@ -230,7 +230,7 @@ private:
 	SampleRef introMusic, mainMusic;
 	boost::optional<Gosu::SampleInstance> musicInst;
 
-	typedef std::vector<Tile*> row_t;
+	typedef std::vector<Tile> row_t;
 	typedef std::vector<row_t> grid_t;
 	typedef std::vector<grid_t> tilematrix_t;
 
