@@ -41,6 +41,7 @@ bool World::init()
 	player.reset(new Player(rc, NULL));
 	if (!player->init(xml.playerentity))
 		return false;
+	player->setPhase("down");
 
 	wnd->setCaption(Gosu::widen(xml.name));
 	return loadArea(xml.entry.area, xml.entry.coords);

@@ -72,8 +72,10 @@ private:
 
 	//! Last time engine state was updated
 	int lastTime;
+
 	//! Milliseconds that have passed since engine last updated
 	int dt; // delta time
+
 	//! Milliseconds that have passed since game started. Loops on overflow.
 	int now;
 
@@ -82,7 +84,7 @@ private:
 		int since;
 	};
 
-	std::map<Gosu::Button, keystate > keystates;
+	std::map<Gosu::Button, keystate> keystates;
 };
 
 #endif

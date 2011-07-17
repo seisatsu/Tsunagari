@@ -23,6 +23,7 @@ Player::Player(Resourcer* rc, Area* area)
 void Player::startMovement(coord_t delta)
 {
 	if (GAME_MODE == JUMP_MOVE) {
+		// TODO Move by velocity would allow true diagonal movement
 		moveByTile(delta);
 	}
 	else if (GAME_MODE == SLIDE_MOVE) {
@@ -73,67 +74,26 @@ void Player::moveByTile(coord_t delta)
 
 void Player::preMove(coord_t delta)
 {
+	Entity::preMove(delta);
+
 	SampleRef step = getSound("step");
 	if (step)
 		step->play(1, 1, 0);
 
-	// TODO: use double array of directions
-	// would make diagonals easier to handle
-	if (delta.x > 0) {
-		if (GAME_MODE == JUMP_MOVE) {
-			setPhase("right");
-		}
-		else {
-			setPhase("walking right");
-			nextPhase = "right";
-		}
-		redraw = true;
-	}
-	else if (delta.x < 0) {
-		if (GAME_MODE == JUMP_MOVE) {
-			setPhase("left");
-		}
-		else {
-			setPhase("walking left");
-			nextPhase = "left";
-		}
-		redraw = true;
-	}
-	else if (delta.y > 0) {
-		if (GAME_MODE == JUMP_MOVE) {
-			setPhase("down");
-		}
-		else {
-			setPhase("walking down");
-			nextPhase = "down";
-		}
-		redraw = true;
-	}
-	else if (delta.y < 0) {
-		if (GAME_MODE == JUMP_MOVE) {
-			setPhase("up");
-		}
-		else {
-			setPhase("walking up");
-			nextPhase = "up";
-		}
-		redraw = true;
-	}
 }
 
 void Player::postMove()
 {
+	Entity::postMove();
+
 	const coord_t coord = getCoordsByTile();
 	const Area::Tile& dest = area->getTile(coord);
 	const boost::optional<Area::Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
-	if (GAME_MODE == SLIDE_MOVE) {
+	if (GAME_MODE == SLIDE_MOVE)
 		if (velocity.x || velocity.y || velocity.z)
 			moveByTile(velocity);
-		else
-			setPhase(nextPhase);
-	}
 }
 
 void Player::normalizeVelocity()

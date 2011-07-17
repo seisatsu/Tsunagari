@@ -17,6 +17,18 @@
 #include "resourcer.h"
 #include "window.h"
 
+static const char* facingPhases[][3] = {
+	{"up-left",   "up",   "up-right"},
+	{"left",      "",     "right"},
+	{"down-left", "down", "down-right"},
+};
+
+static const char* movingPhases[][3] = {
+	{"moving up-left",   "moving up",   "moving up-right"},
+	{"moving left",      "",            "moving right"},
+	{"moving down-left", "moving down", "moving down-right"},
+};
+
 Entity::Entity(Resourcer* rc, Area* area)
 	: rc(rc),
 	  redraw(true),
@@ -38,10 +50,7 @@ bool Entity::init(const std::string& descriptor)
 		return false;
 
 	// Set an initial phase
-	boost::unordered_map<std::string, Animation>::iterator it;
-	it = phases.begin();
-	phase = &it->second;
-
+	phase = &phases.begin()->second;
 	return true;
 }
 
@@ -89,15 +98,17 @@ void Entity::update(unsigned long dt)
 
 bool Entity::setPhase(const std::string& name)
 {
-	bool changed = false;
 	boost::unordered_map<std::string, Animation>::iterator it;
 	it = phases.find(name);
 	if (it != phases.end()) {
 		Animation* newPhase = &it->second;
-		changed = (phase != newPhase);
-		phase = newPhase;
+		if (phase != newPhase) {
+			phase = newPhase;
+			redraw = true;
+			return true;
+		}
 	}
-	return changed;
+	return false;
 }
 
 coord_t Entity::getCoordsByPixel() const
@@ -160,11 +171,11 @@ void Entity::moveByTile(coord_t dc)
 	}
 
 	// Move!
-	redraw = true;
 	const coord_t tileDim = area->getTileDimensions();
 	dest.x = c.x + dc.x * tileDim.x;
 	dest.y = c.y + dc.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers
+	redraw = true;
 
 	preMove(dc);
 
@@ -344,11 +355,36 @@ bool Entity::processSound(xmlNode* sound)
 	return s;
 }
 
-void Entity::preMove(coord_t)
+void Entity::preMove(coord_t delta)
 {
+	int x, y;
+
+	if (delta.x < 0)
+		x = 0;
+	else if (delta.x == 0)
+		x = 1;
+	else
+		x = 2;
+
+	if (delta.y < 0)
+		y = 0;
+	else if (delta.y == 0)
+		y = 1;
+	else
+		y = 2;
+
+	if (GAME_MODE == JUMP_MOVE) {
+		setPhase(facingPhases[y][x]);
+	}
+	else {
+		setPhase(movingPhases[y][x]);
+		facing = facingPhases[y][x];
+	}
 }
 
 void Entity::postMove()
 {
+	if (GAME_MODE != JUMP_MOVE)
+		setPhase(facing);
 }
 

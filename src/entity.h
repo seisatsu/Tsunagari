@@ -94,6 +94,7 @@ protected:
 	boost::unordered_map<std::string, Animation> phases;
 	Animation* phase;
 	bool redraw;
+	std::string facing;
 
 	boost::unordered_map<std::string, SampleRef> sounds;
 
