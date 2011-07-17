@@ -16,6 +16,7 @@
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <libxml/tree.h>
 
+#include "animation.h"
 #include "common.h"
 #include "player.h"
 #include "resourcer.h"
@@ -103,17 +104,9 @@ public:
 	*/
 	struct Tile;
 	struct TileType {
-		std::vector<ImageRef> graphics;
+		Animation anim; // Graphics for tiles of this type.
 		std::vector<TileEvent> events;
 		std::vector<Tile*> allOfType;
-		Gosu::Image* graphic; // Current graphic to use for all tiles of
-		                      // this type
-		bool animated; // Is the tile animated?
-		int frameLen; // Length of each frame in animation
-		int animLen; // Total length of one complete cycle through
-		             // animation
-		int frameShowing; // Index of frame currently displaying on
-		                  // screen
 		unsigned flags; // bitflags for each option in TileFlags enum
 		// TODO: boost::scoped_ptr<Door> door
 	};

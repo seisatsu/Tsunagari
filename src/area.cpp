@@ -98,16 +98,9 @@ void Area::drawTiles()
 {
 	// Calculate frame to show for each type of tile
 	int millis = (int)Gosu::milliseconds();
-	BOOST_FOREACH(TileSet& set, tilesets) {
-		BOOST_FOREACH(TileType& type, set.tileTypes) {
-			if (type.animated) {
-				int frame = (millis % type.animLen) /
-					type.frameLen;
-				type.frameShowing = frame;
-				type.graphic = type.graphics[frame].get();
-			}
-		}
-	}
+	BOOST_FOREACH(TileSet& set, tilesets)
+		BOOST_FOREACH(TileType& type, set.tileTypes)
+			type.anim.updateFrame(millis);
 
 	// Render
 	for (unsigned z = 0; z != map.size(); z++) {
@@ -117,7 +110,7 @@ void Area::drawTiles()
 			for (unsigned x = 0; x != row.size(); x++) {
 				const Tile& tile = row[x];
 				const TileType* type = tile.type;
-				const Gosu::Image* img = type->graphic;
+				const Gosu::Image* img = type->anim.image();
 				img->draw(x*img->width(), y*img->height(), 0);
 			}
 		}
@@ -136,18 +129,11 @@ bool Area::needsRedraw() const
 
 	// Do any onscreen tile types need to update their animations?
 	int millis = (int)Gosu::milliseconds();
-	BOOST_FOREACH(const TileSet& set, tilesets) {
-		BOOST_FOREACH(const TileType& type, set.tileTypes) {
-			if (type.animated) {
-				int frame = (millis % type.animLen) /
-					type.frameLen;
-				if (frame != type.frameShowing &&
+	BOOST_FOREACH(const TileSet& set, tilesets)
+		BOOST_FOREACH(const TileType& type, set.tileTypes)
+			if (type.anim.needsUpdate(millis) &&
 					tileTypeOnScreen(type))
-					return true;
-			}
-		}
-	}
-
+				return true;
 	return false;
 }
 
@@ -371,16 +357,12 @@ bool Area::processTileSet(xmlNode* node)
 Area::TileType Area::defaultTileType(TileSet& set)
 {
 	TileType type;
-	type.animated = false;
-	type.frameLen = 1000;
-	type.flags = 0x0;
-	type.graphics.push_back(set.tiles.front());
-	type.graphic = type.graphics[0].get();
+	type.anim.addFrame(set.tiles.front());
 	set.tiles.pop_front();
 	return type;
 }
 
-bool Area::processTileType(xmlNode* node, TileSet& ts)
+bool Area::processTileType(xmlNode* node, TileSet& set)
 {
 
 /*
@@ -401,11 +383,11 @@ bool Area::processTileType(xmlNode* node, TileSet& ts)
 */
 
 	// Initialize a default TileType, we'll build on that.
-	TileType tt = defaultTileType(ts);
+	TileType type = defaultTileType(set);
 
 	xmlChar* idstr = xmlGetProp(node, BAD_CAST("id"));
 	unsigned id = (unsigned)atoi((const char*)idstr); // atoi
-	long expectedId = ts.tileTypes.size();
+	long expectedId = set.tileTypes.size();
 	if (id != expectedId) {
 		Log::err(descriptor, std::string("expected TileType id ") +
 		         itostr(expectedId) + ", but got " +
@@ -419,7 +401,7 @@ bool Area::processTileType(xmlNode* node, TileSet& ts)
 		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
 		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
 		if (!xmlStrncmp(name, BAD_CAST("flags"), 6)) {
-			tt.flags = splitTileFlags((const char*)value);
+			type.flags = splitTileFlags((const char*)value);
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
 			// TODO events
@@ -428,7 +410,8 @@ bool Area::processTileType(xmlNode* node, TileSet& ts)
 			// TODO events
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("animated"), 9)) {
-			tt.animated = parseBool((const char*)value);
+			// XXX still needed?
+			// type.animated = parseBool((const char*)value);
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("size"), 5)) {
 			int size = atoi((const char*)value); // atoi
@@ -436,23 +419,22 @@ bool Area::processTileType(xmlNode* node, TileSet& ts)
 			// Add size-1 more frames to our animation.
 			// We already have one from defaultTileType.
 			for (int i = 1; i < size; i++) {
-				if (ts.tiles.empty()) {
+				if (set.tiles.empty()) {
 					Log::err(descriptor, "ran out of tiles"
 						"/frames for animated tile");
 					return false;
 				}
-				tt.graphics.push_back(ts.tiles.front());
-				ts.tiles.pop_front();
+				type.anim.addFrame(set.tiles.front());
+				set.tiles.pop_front();
 			}
-			tt.animLen = tt.frameLen * (int)tt.graphics.size();
 		}
 		else if (!xmlStrncmp(name, BAD_CAST("speed"), 6)) {
-			tt.frameLen = (int)(1000.0/atof((const char*)value));
-			tt.animLen = tt.frameLen * (int)tt.graphics.size();
+			int len = (int)(1000.0/atof((const char*)value));
+			type.anim.setFrameLen(len);
 		}
 	}
 
-	ts.tileTypes.push_back(tt);
+	set.tileTypes.push_back(type);
 	return true;
 }
 

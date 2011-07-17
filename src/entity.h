@@ -4,8 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
 #include <string>
 
