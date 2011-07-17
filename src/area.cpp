@@ -213,7 +213,7 @@ const Gosu::Transform Area::viewportTransform() const
 	return Gosu::translate((double)c.x, (double)c.y);
 }
 
-coordcube_t Area::visibleTiles() const
+cube_t Area::visibleTiles() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
 	const long tileWidth = tilesets[0].tileDim.x;
@@ -226,13 +226,13 @@ coordcube_t Area::visibleTiles() const
 		(double)tileWidth);
 	const long y2 = (long)ceil((double)(windowHeight - off.y) /
 		(double)tileHeight);
-	return coordcube(-off.x / tileWidth, -off.y / tileHeight, 0,
-	                 x2, y2, 1);
+	return cube(-off.x / tileWidth, -off.y / tileHeight, 0,
+		x2, y2, 1);
 }
 
 bool Area::tileTypeOnScreen(const Area::TileType& search) const
 {
-	const coordcube_t tiles = visibleTiles();
+	const cube_t tiles = visibleTiles();
 	for (long z = tiles.z1; z != tiles.z2; z++) {
 		for (long y = tiles.y1; y != tiles.y2; y++) {
 			for (long x = tiles.x1; x != tiles.x2; x++) {

@@ -17,10 +17,10 @@ coord_t coord(long x, long y, long z)
 	return c;
 }
 
-coordcube_t coordcube(long x1, long y1, long z1,
-                      long x2, long y2, long z2)
+cube_t cube(long x1, long y1, long z1,
+            long x2, long y2, long z2)
 {
-	coordcube_t c;
+	cube_t c;
 	c.x1 = x1;
 	c.y1 = y1;
 	c.z1 = z1;

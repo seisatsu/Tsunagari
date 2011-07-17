@@ -9,6 +9,10 @@
 
 #define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP1 Revision 6"
 
+#define JUMP_MOVE  0 /* Roguelike */
+#define SLIDE_MOVE 1 /* Yume Nikki-like */
+#define FREE_MOVE  2 /* Zelda-like... not implemented yet */
+
 // === Default Configuration Settings ===
 	/* Tsunagari config file. -- Command Line */
 	#define CLIENT_CONF_FILE "./client.ini"
@@ -16,6 +20,9 @@
 	/* Error verbosity level. -- Command Line */
 	#define MESSAGE_MODE MM_DEBUG
 	
+	/* Game movement mode */
+	#define GAME_MODE SLIDE_MOVE
+
 	/* Milliseconds of button down before starting persistent input in
 	   roguelike movement mode. -- Move to World Descriptor */
 	#define ROGUELIKE_PERSIST_DELAY_INIT 500

@@ -187,7 +187,7 @@ private:
 	const coord_t viewportOffset() const;
 	const Gosu::Transform viewportTransform() const;
 
-	coordcube_t visibleTiles() const;
+	cube_t visibleTiles() const;
 	bool tileTypeOnScreen(const TileType& type) const;
 
 	//! XML descriptor parsing function.

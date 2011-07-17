@@ -41,6 +41,13 @@ static void defaultsQuery()
 		std::cerr << "MM_DEVELOPER" << std::endl;
 	else
 		std::cerr << "MM_ERROR" << std::endl;
+	std::cerr << "GAME_MODE:                              ";
+	if (GAME_MODE == JUMP_MOVE)
+		std::cerr << "JUMP_MOVE" << std::endl;
+	else if (GAME_MODE == SLIDE_MOVE)
+		std::cerr << "SLIDE_MOVE" << std::endl;
+	else
+		std::cerr << "FREE_MOVE" << std::endl;
 	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           " 
 		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
 	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    " 

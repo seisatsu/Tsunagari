@@ -29,14 +29,16 @@ struct coord_t {
 //! coord_t constructor
 coord_t coord(long x, long y, long z);
 
-struct coordcube_t {
+//! 3D Cube Type
+struct cube_t {
 	long x1, x2;
 	long y1, y2;
 	long z1, z2;
 };
 
-coordcube_t coordcube(long x1, long y1, long z1,
-                      long x2, long y2, long z2);
+//! cube_t constructor
+cube_t cube(long x1, long y1, long z1,
+            long x2, long y2, long z2);
 
 //! Client Configuration
 struct ClientValues {

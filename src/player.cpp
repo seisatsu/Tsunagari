@@ -9,6 +9,7 @@
 #include <Gosu/Math.hpp>
 
 #include "area.h"
+#include "config.h"
 #include "entity.h"
 #include "player.h"
 #include "world.h"
@@ -21,19 +22,26 @@ Player::Player(Resourcer* rc, Area* area)
 
 void Player::startMovement(coord_t delta)
 {
-	velocity.x += delta.x;
-	velocity.y += delta.y;
-	velocity.z += delta.z;
-	normalizeVelocity();
-	moveByTile(velocity);
+	if (GAME_MODE == JUMP_MOVE) {
+		moveByTile(delta);
+	}
+	else if (GAME_MODE == SLIDE_MOVE) {
+		velocity.x += delta.x;
+		velocity.y += delta.y;
+		velocity.z += delta.z;
+		normalizeVelocity();
+		moveByTile(velocity);
+	}
 }
 
 void Player::stopMovement(coord_t delta)
 {
-	velocity.x -= delta.x;
-	velocity.y -= delta.y;
-	velocity.z -= delta.z;
-	normalizeVelocity();
+	if (GAME_MODE == SLIDE_MOVE) {
+		velocity.x -= delta.x;
+		velocity.y -= delta.y;
+		velocity.z -= delta.z;
+		normalizeVelocity();
+	}
 }
 
 void Player::moveByTile(coord_t delta)
@@ -96,8 +104,9 @@ void Player::postMove()
 	const boost::optional<Area::Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
-	if (velocity.x || velocity.y || velocity.z)
-		moveByTile(velocity);
+	if (GAME_MODE == SLIDE_MOVE)
+		if (velocity.x || velocity.y || velocity.z)
+			moveByTile(velocity);
 }
 
 void Player::normalizeVelocity()

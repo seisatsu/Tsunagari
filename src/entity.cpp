@@ -11,6 +11,7 @@
 #include <libxml/tree.h>
 
 #include "area.h"
+#include "config.h"
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
@@ -48,7 +49,7 @@ bool Entity::needsRedraw() const
 
 void Entity::update(unsigned long dt)
 {
-	if (true && moving) {
+	if (GAME_MODE == SLIDE_MOVE && moving) {
 		redraw = true;
 
 		double destDist = Gosu::distance((double)c.x, (double)c.y,
@@ -61,12 +62,12 @@ void Entity::update(unsigned long dt)
 		else {
 			double angle = Gosu::angle((double)c.x, (double)c.y,
 					(double)dest.x, (double)dest.y); 
-			double x = Gosu::offsetX(angle, speed * (double)dt);
-			double y = Gosu::offsetY(angle, speed * (double)dt);
+			double dx = Gosu::offsetX(angle, speed * (double)dt);
+			double dy = Gosu::offsetY(angle, speed * (double)dt);
 
 			// Save state of partial pixels traveled in double
-			rx += x;
-			ry += y;
+			rx += dx;
+			ry += dy;
 
 			c.x = (long)rx;
 			c.y = (long)ry;
@@ -128,7 +129,7 @@ void Entity::moveByPixel(coord_t dc)
 
 void Entity::moveByTile(coord_t dc)
 {
-	if (true && moving)
+	if (GAME_MODE == SLIDE_MOVE && moving)
 		// support queueing moves?
 		return;
 
@@ -155,13 +156,13 @@ void Entity::moveByTile(coord_t dc)
 
 	preMove(dest);
 
-	if (false) {
+	if (GAME_MODE == JUMP_MOVE) {
 		c.x = dest.x;
 		c.y = dest.y;
 		// XXX: set c.z when we have Z-buffers
 		postMove();
 	}
-	else if (true) {
+	else if (GAME_MODE == SLIDE_MOVE) {
 		moving = true;
 		rx = (double)c.x;
 		ry = (double)c.y;
