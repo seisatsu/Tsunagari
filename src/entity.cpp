@@ -15,6 +15,7 @@
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
+#include "window.h"
 
 Entity::Entity(Resourcer* rc, Area* area)
 	: rc(rc),
@@ -46,7 +47,7 @@ bool Entity::init(const std::string& descriptor)
 
 void Entity::draw()
 {
-	int millis = (int)Gosu::milliseconds();
+	int millis = GameWindow::getWindow().time();
 	phase->updateFrame(millis);
 	phase->frame()->draw((double)c.x, (double)c.y, (double)0);
 	redraw = false;
@@ -54,7 +55,7 @@ void Entity::draw()
 
 bool Entity::needsRedraw() const
 {
-	int millis = (int)Gosu::milliseconds();
+	int millis = GameWindow::getWindow().time();
 	return redraw || phase->needsRedraw(millis);
 }
 
