@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** animation.cpp             **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include "animation.h"
 
 Animation::Animation()
@@ -43,7 +49,7 @@ void Animation::updateFrame(int milliseconds)
 	}
 }
 
-Gosu::Image* Animation::image() const
+Gosu::Image* Animation::frame() const
 {
 	return img;
 }

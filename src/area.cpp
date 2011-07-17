@@ -110,7 +110,7 @@ void Area::drawTiles()
 			for (unsigned x = 0; x != row.size(); x++) {
 				const Tile& tile = row[x];
 				const TileType* type = tile.type;
-				const Gosu::Image* img = type->anim.image();
+				const Gosu::Image* img = type->anim.frame();
 				img->draw(x*img->width(), y*img->height(), 0);
 			}
 		}

@@ -27,7 +27,7 @@ public:
 
 	bool needsUpdate(int milliseconds) const;
 	void updateFrame(int milliseconds);
-	Gosu::Image* image() const;
+	Gosu::Image* frame() const;
 
 private:
 	//! List of images in animation.
