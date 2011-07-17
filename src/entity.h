@@ -9,7 +9,6 @@
 
 #include <string>
 
-#include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 
@@ -71,9 +70,9 @@ public:
 	//  nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
 	
+protected:
 	SampleRef getSound(const std::string& name);
 
-protected:
 	bool processDescriptor();
 	bool processSprite(const xmlNode* sprite);
 	bool processPhases(const xmlNode* phases);
@@ -93,10 +92,11 @@ protected:
 
 	Resourcer* rc;
 
-	boost::unordered_map<std::string, SampleRef> sounds;
 	boost::unordered_map<std::string, ImageRef> imgs;
 	ImageRef img;
 	bool redraw;
+
+	boost::unordered_map<std::string, SampleRef> sounds;
 
 	bool moving;
 	coord_t dest;

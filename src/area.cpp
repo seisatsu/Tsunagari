@@ -207,8 +207,8 @@ coordcube_t Area::visibleTiles() const
 	GameWindow* window = GameWindow::getWindow();
 	Gosu::Graphics* graphics = &window->graphics();
 
-	int tileWidth = tilesets[0].tileDim.x;
-	int tileHeight = tilesets[0].tileDim.y;
+	long tileWidth = tilesets[0].tileDim.x;
+	long tileHeight = tilesets[0].tileDim.y;
 	int windowWidth = graphics->width();
 	int windowHeight = graphics->height();
 	coord_t off = viewportOffset();
@@ -218,8 +218,10 @@ coordcube_t Area::visibleTiles() const
 	tiles.y1 = -off.y / tileHeight;
 	tiles.z1 = 0;
 
-	tiles.x2 = ceil((windowWidth - off.x) / (double)tileWidth);
-	tiles.y2 = ceil((windowHeight - off.y) / (double)tileHeight);
+	tiles.x2 = (long)ceil((double)(windowWidth - off.x) /
+			(double)tileWidth);
+	tiles.y2 = (long)ceil((double)(windowHeight - off.y) /
+			(double)tileHeight);
 	tiles.z2 = 1;
 	return tiles;
 }
@@ -227,9 +229,9 @@ coordcube_t Area::visibleTiles() const
 bool Area::tileTypeOnScreen(const Area::TileType& search) const
 {
 	coordcube_t tiles = visibleTiles();
-	for (unsigned z = tiles.z1; z != tiles.z2; z++) {
-		for (unsigned y = tiles.y1; y != tiles.y2; y++) {
-			for (unsigned x = tiles.x1; x != tiles.x2; x++) {
+	for (long z = tiles.z1; z != tiles.z2; z++) {
+		for (long y = tiles.y1; y != tiles.y2; y++) {
+			for (long x = tiles.x1; x != tiles.x2; x++) {
 				const Tile& tile = map[z][y][x];
 				const TileType* type = tile.type;
 				if (type == &search)
