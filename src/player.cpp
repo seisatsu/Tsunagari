@@ -22,32 +22,32 @@ void Player::moveByTile(coord_t delta)
 {
 	bool changed = false;
 
-	// We can change our facing if we're not in the middle of moving
-	// already.
-	if (!moving) {
-		// TODO: use double array of directions
-		// would make diagonals easier to handle
-		if (delta.x > 0) {
-			setPhase("right");
-			changed = true;
-		}
-		else if (delta.x < 0) {
-			setPhase("left");
-			changed = true;
-		}
-		else if (delta.y > 0) {
-			setPhase("down");
-			changed = true;
-		}
-		else if (delta.y < 0) {
-			setPhase("up");
-			changed = true;
-		}
+	// You can't stop an in-progress movement.
+	if (moving)
+		return;
 
-		// Redraw the player if we change graphics.
-		if (changed)
-			redraw = true;
+	// TODO: use double array of directions
+	// would make diagonals easier to handle
+	if (delta.x > 0) {
+		setPhase("right");
+		changed = true;
 	}
+	else if (delta.x < 0) {
+		setPhase("left");
+		changed = true;
+	}
+	else if (delta.y > 0) {
+		setPhase("down");
+		changed = true;
+	}
+	else if (delta.y < 0) {
+		setPhase("up");
+		changed = true;
+	}
+
+	// Redraw the player if we change graphics.
+	if (changed)
+		redraw = true;
 
 	// Left CTRL allows changing facing, but disallows movement.
 	GameWindow* w = GameWindow::getWindow();

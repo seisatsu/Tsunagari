@@ -125,15 +125,16 @@ bool Area::needsRedraw() const
 	if (player->needsRedraw())
 		return true;
 
-	// Do any types of tiles need to update their animations?
+	// Do any onscreen tile types need to update their animations?
 	int millis = (int)Gosu::milliseconds();
 	BOOST_FOREACH(const TileSet& set, tilesets) {
 		BOOST_FOREACH(const TileType& type, set.tileTypes) {
 			if (type.animated) {
 				int frame = (millis % type.animLen) /
 					type.frameLen;
-				if (frame != type.frameShowing)
-					return tileTypeOnScreen(type);
+				if (frame != type.frameShowing &&
+					tileTypeOnScreen(type))
+					return true;
 			}
 		}
 	}
