@@ -15,6 +15,12 @@ Animation::Animation()
 {
 }
 
+Animation::Animation(ImageRef frame)
+{
+	Animation();
+	addFrame(frame);
+}
+
 void Animation::addFrame(ImageRef frame)
 {
 	frames.push_back(frame);
@@ -31,7 +37,7 @@ void Animation::setFrameLen(int milliseconds)
 	animLen = frameLen * (int)frames.size();
 }
 
-bool Animation::needsUpdate(int milliseconds) const
+bool Animation::needsRedraw(int milliseconds) const
 {
 	if (animated) {
 		int frame = (milliseconds % animLen) / frameLen;

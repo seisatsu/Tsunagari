@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity version="1">
+	<sprite>
+		<sheet tilewidth="64" tileheight="64">vlad.sheet</sheet>
+		<phases>
+			<phase name="down" pos="0" />
+			<phase name="down-left" pos="1" />
+			<phase name="left" pos="2" />
+			<phase name="up-left" pos="3" />
+			<phase name="up" pos="4" />
+			<phase name="up-right" pos="5" />
+			<phase name="right" pos="6" />
+			<phase name="down-right" pos="7" />
+
+			<phase name="walking up" speed="8">
+				<member pos="8" />
+				<member pos="9" />
+				<member pos="10" />
+				<member pos="11" />
+				<member pos="12" />
+				<member pos="13" />
+				<member pos="14" />
+				<member pos="15" />
+			</phase>
+
+			<phase name="walking up-right" speed="8">
+				<member pos="16" />
+				<member pos="17" />
+				<member pos="18" />
+				<member pos="19" />
+				<member pos="20" />
+				<member pos="21" />
+				<member pos="22" />
+				<member pos="23" />
+			</phase>
+
+			<phase name="walking right" speed="8">
+				<member pos="24" />
+				<member pos="25" />
+				<member pos="26" />
+				<member pos="27" />
+				<member pos="28" />
+				<member pos="29" />
+				<member pos="30" />
+				<member pos="31" />
+			</phase>
+
+			<phase name="walking down-right" speed="8">
+				<member pos="32" />
+				<member pos="33" />
+				<member pos="34" />
+				<member pos="35" />
+				<member pos="36" />
+				<member pos="37" />
+				<member pos="38" />
+				<member pos="39" />
+			</phase>
+
+			<phase name="walking down" speed="8">
+				<member pos="40" />
+				<member pos="41" />
+				<member pos="42" />
+				<member pos="43" />
+				<member pos="44" />
+				<member pos="45" />
+				<member pos="46" />
+				<member pos="47" />
+			</phase>
+
+			<phase name="walking down-left" speed="8">
+				<member pos="48" />
+				<member pos="49" />
+				<member pos="50" />
+				<member pos="51" />
+				<member pos="52" />
+				<member pos="53" />
+				<member pos="54" />
+				<member pos="55" />
+			</phase>
+
+			<phase name="walking left" speed="8">
+				<member pos="56" />
+				<member pos="57" />
+				<member pos="58" />
+				<member pos="59" />
+				<member pos="60" />
+				<member pos="61" />
+				<member pos="62" />
+				<member pos="63" />
+			</phase>
+
+			<phase name="walking up-left" speed="8">
+				<member pos="64" />
+				<member pos="65" />
+				<member pos="66" />
+				<member pos="67" />
+				<member pos="68" />
+				<member pos="69" />
+				<member pos="70" />
+				<member pos="71" />
+			</phase>
+		</phases>
+	</sprite>
+
+	<sounds>
+		<sound name="step">step.sound</sound>
+	</sounds>
+</entity>
+

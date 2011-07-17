@@ -131,7 +131,7 @@ bool Area::needsRedraw() const
 	int millis = (int)Gosu::milliseconds();
 	BOOST_FOREACH(const TileSet& set, tilesets)
 		BOOST_FOREACH(const TileType& type, set.tileTypes)
-			if (type.anim.needsUpdate(millis) &&
+			if (type.anim.needsRedraw(millis) &&
 					tileTypeOnScreen(type))
 				return true;
 	return false;

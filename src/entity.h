@@ -76,15 +76,14 @@ protected:
 	bool processDescriptor();
 	bool processSprite(const xmlNode* sprite);
 	bool processPhases(const xmlNode* phases);
-	bool processPhase(xmlNode* phase);
+	bool processPhase(xmlNode* phase, const TiledImage& tiles);
+	bool processMember(xmlNode* phase, Animation& anim,
+                           const TiledImage& tiles);
 	bool processSounds(const xmlNode* sounds);
 	bool processSound(xmlNode* sound);
 
-	bool loadPhases();
-	Gosu::Image* loadImage(const Gosu::Bitmap& src, unsigned pos);
-
 	//! Called right before starting to moving onto another tile.
-	virtual void preMove(coord_t dest);
+	virtual void preMove(coord_t delta);
 
 	//! Called after we've arrived at another tile.
 	virtual void postMove();
@@ -92,8 +91,8 @@ protected:
 
 	Resourcer* rc;
 
-	boost::unordered_map<std::string, ImageRef> imgs;
-	ImageRef img;
+	boost::unordered_map<std::string, Animation> phases;
+	Animation* phase;
 	bool redraw;
 
 	boost::unordered_map<std::string, SampleRef> sounds;

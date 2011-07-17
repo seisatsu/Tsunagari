@@ -21,11 +21,12 @@ class Animation
 {
 public:
 	Animation();
+	Animation(ImageRef frame);
 	
 	void addFrame(ImageRef frame);
 	void setFrameLen(int milliseconds);
 
-	bool needsUpdate(int milliseconds) const;
+	bool needsRedraw(int milliseconds) const;
 	void updateFrame(int milliseconds);
 	Gosu::Image* frame() const;
 

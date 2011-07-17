@@ -50,25 +50,6 @@ void Player::moveByTile(coord_t delta)
 	if (moving)
 		return;
 
-	// TODO: use double array of directions
-	// would make diagonals easier to handle
-	if (delta.x > 0) {
-		setPhase("right");
-		redraw = true;
-	}
-	else if (delta.x < 0) {
-		setPhase("left");
-		redraw = true;
-	}
-	else if (delta.y > 0) {
-		setPhase("down");
-		redraw = true;
-	}
-	else if (delta.y < 0) {
-		setPhase("up");
-		redraw = true;
-	}
-
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
 	if (window.input().down(Gosu::kbLeftControl))
@@ -90,11 +71,54 @@ void Player::moveByTile(coord_t delta)
 	Entity::moveByTile(delta);
 }
 
-void Player::preMove(coord_t)
+void Player::preMove(coord_t delta)
 {
 	SampleRef step = getSound("step");
 	if (step)
 		step->play(1, 1, 0);
+
+	// TODO: use double array of directions
+	// would make diagonals easier to handle
+	if (delta.x > 0) {
+		if (GAME_MODE == JUMP_MOVE) {
+			setPhase("right");
+		}
+		else {
+			setPhase("walking right");
+			nextPhase = "right";
+		}
+		redraw = true;
+	}
+	else if (delta.x < 0) {
+		if (GAME_MODE == JUMP_MOVE) {
+			setPhase("left");
+		}
+		else {
+			setPhase("walking left");
+			nextPhase = "left";
+		}
+		redraw = true;
+	}
+	else if (delta.y > 0) {
+		if (GAME_MODE == JUMP_MOVE) {
+			setPhase("down");
+		}
+		else {
+			setPhase("walking down");
+			nextPhase = "down";
+		}
+		redraw = true;
+	}
+	else if (delta.y < 0) {
+		if (GAME_MODE == JUMP_MOVE) {
+			setPhase("up");
+		}
+		else {
+			setPhase("walking up");
+			nextPhase = "up";
+		}
+		redraw = true;
+	}
 }
 
 void Player::postMove()
@@ -104,9 +128,12 @@ void Player::postMove()
 	const boost::optional<Area::Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
-	if (GAME_MODE == SLIDE_MOVE)
+	if (GAME_MODE == SLIDE_MOVE) {
 		if (velocity.x || velocity.y || velocity.z)
 			moveByTile(velocity);
+		else
+			setPhase(nextPhase);
+	}
 }
 
 void Player::normalizeVelocity()

@@ -33,18 +33,29 @@ Entity::~Entity()
 bool Entity::init(const std::string& descriptor)
 {
 	this->descriptor = descriptor;
-	return processDescriptor() && loadPhases();
+	if (!processDescriptor())
+		return false;
+
+	// Set an initial phase
+	boost::unordered_map<std::string, Animation>::iterator it;
+	it = phases.begin();
+	phase = &it->second;
+
+	return true;
 }
 
 void Entity::draw()
 {
+	int millis = (int)Gosu::milliseconds();
+	phase->updateFrame(millis);
+	phase->frame()->draw((double)c.x, (double)c.y, (double)0);
 	redraw = false;
-	img->draw((double)c.x, (double)c.y, (double)0);
 }
 
 bool Entity::needsRedraw() const
 {
-	return redraw;
+	int millis = (int)Gosu::milliseconds();
+	return redraw || phase->needsRedraw(millis);
 }
 
 void Entity::update(unsigned long dt)
@@ -78,12 +89,12 @@ void Entity::update(unsigned long dt)
 bool Entity::setPhase(const std::string& name)
 {
 	bool changed = false;
-	boost::unordered_map<std::string, ImageRef>::iterator phase;
-	phase = imgs.find(name);
-	if (phase != imgs.end()) {
-		ImageRef newImg = phase->second;
-		changed = (img != newImg);
-		img = newImg;
+	boost::unordered_map<std::string, Animation>::iterator it;
+	it = phases.find(name);
+	if (it != phases.end()) {
+		Animation* newPhase = &it->second;
+		changed = (phase != newPhase);
+		phase = newPhase;
 	}
 	return changed;
 }
@@ -154,7 +165,7 @@ void Entity::moveByTile(coord_t dc)
 	dest.y = c.y + dc.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers
 
-	preMove(dest);
+	preMove(dc);
 
 	if (GAME_MODE == JUMP_MOVE) {
 		c.x = dest.x;
@@ -235,15 +246,20 @@ bool Entity::processSprite(const xmlNode* sprite)
 
 bool Entity::processPhases(const xmlNode* phases)
 {
+	TiledImage tiles;
+	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)xml.tileSize.x,
+			(unsigned)xml.tileSize.y, false))
+		return false;
+
 	for (xmlNode* phase = phases->xmlChildrenNode; phase != NULL;
 			phase = phase->next)
-		if (!xmlStrncmp(phase->name, BAD_CAST("phase"), 6)) // necessary?
-			if (!processPhase(phase))
+		if (!xmlStrncmp(phase->name, BAD_CAST("phase"), 6)) // needed?
+			if (!processPhase(phase, tiles))
 				return false;
 	return true;
 }
 
-bool Entity::processPhase(xmlNode* phase)
+bool Entity::processPhase(xmlNode* phase, const TiledImage& tiles)
 {
 	/* Each phase requires a 'name'. Additionally,
 	 * one of either 'pos' or 'speed' is needed.
@@ -252,31 +268,53 @@ bool Entity::processPhase(xmlNode* phase)
 	 */
 	const std::string name = (char*)xmlGetProp(phase, BAD_CAST("name"));
 
-	const xmlChar* pos = xmlGetProp(phase, BAD_CAST("pos"));
-	const xmlChar* speed = xmlGetProp(phase, BAD_CAST("speed"));
+	const xmlChar* posStr = xmlGetProp(phase, BAD_CAST("pos"));
+	const xmlChar* speedStr = xmlGetProp(phase, BAD_CAST("speed"));
 
 	// FIXME: check name + pos | speed for 0 length
 
-	if (pos && speed) {
+	if (posStr && speedStr) {
 		Log::err(descriptor, "pos and speed attributes in "
 				"element phase are mutually exclusive");
 		return false;
 	}
-	if (!pos && !speed) {
+	if (!posStr && !speedStr) {
 		Log::err(descriptor, "must have pos or speed attribute "
 			       "in element phase");
 		return false;
 	}
 
-	if (pos) {
-		const unsigned value = (unsigned)atoi((const char*)pos); // atol
-		xml.phases[name] = value;
+	if (posStr) {
+		// atoi
+		const unsigned pos = (unsigned)atoi((const char*)posStr);
+		// FIXME: check for out of bounds
+		phases[name] = Animation(tiles[pos]);
 	}
-	else { // speed
-		// TODO: Load animated sprites
-		// Load <member> subelements
+	else { // speedStr
+		// atoi
+		const double speed = (unsigned)atof((const char*)speedStr);
+		// FIXME: check for out of bounds
+
+		phases[name] = Animation();
+		int len = (int)(1000.0/speed);
+		phases[name].setFrameLen(len);
+		for (xmlNode* member = phase->xmlChildrenNode; member != NULL;
+				member = member->next)
+			if (!xmlStrncmp(member->name, BAD_CAST("member"), 7)) // needed?
+				if (!processMember(member, phases[name], tiles))
+					return false;
 	}
 
+	return true;
+}
+
+bool Entity::processMember(xmlNode* phase, Animation& anim,
+                           const TiledImage& tiles)
+{
+	const xmlChar* posStr = xmlGetProp(phase, BAD_CAST("pos"));
+	const unsigned pos = (unsigned)atoi((const char*)posStr); // atoi
+	// FIXME: check for out of bounds
+	anim.addFrame(tiles[pos]);
 	return true;
 }
 
@@ -284,7 +322,7 @@ bool Entity::processSounds(const xmlNode* sounds)
 {
 	for (xmlNode* sound = sounds->xmlChildrenNode; sound != NULL;
 			sound = sound->next)
-		if (!xmlStrncmp(sound->name, BAD_CAST("sound"), 6)) // necessary?
+		if (!xmlStrncmp(sound->name, BAD_CAST("sound"), 6)) // needed?
 			if (!processSound(sound))
 				return false;
 	return true;
@@ -303,23 +341,6 @@ bool Entity::processSound(xmlNode* sound)
 		Log::err(descriptor, std::string("sound ") +
 				filename + " not found");
 	return s;
-}
-
-bool Entity::loadPhases()
-{
-	TiledImage tiles;
-	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)xml.tileSize.x,
-			(unsigned)xml.tileSize.y, false))
-		return false;
-
-	boost::unordered_map<std::string, unsigned>::iterator it;
-	for (it = xml.phases.begin(); it != xml.phases.end(); it++) {
-		const std::string& name = it->first;
-		unsigned idx = it->second;
-		ImageRef image = tiles[idx];
-		imgs[name] = img = image;
-	}
-	return true;
 }
 
 void Entity::preMove(coord_t)

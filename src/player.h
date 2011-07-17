@@ -22,13 +22,14 @@ public:
 	void moveByTile(coord_t delta);
 
 protected:
-	void preMove(coord_t dest);
+	void preMove(coord_t delta);
 	void postMove();
 
 private:
 	void normalizeVelocity();
 
 	coord_t velocity;
+	std::string nextPhase;
 };
 
 #endif
