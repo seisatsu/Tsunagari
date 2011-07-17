@@ -14,12 +14,21 @@ class Player : public Entity
 public:
 	Player(Resourcer* rc, Area* area);
 
-	//! Move the entity by dx, dy.
+	//! Smooth continuous movement.
+	void startMovement(coord_t delta);
+	void stopMovement(coord_t delta);
+
+	//! Move the player by dx, dy. Not guaranteed to be smooth.
 	void moveByTile(coord_t delta);
 
-private:
+protected:
 	void preMove(coord_t dest);
 	void postMove();
+
+private:
+	void normalizeVelocity();
+
+	coord_t velocity;
 };
 
 #endif

@@ -6,6 +6,7 @@
 
 #include <Gosu/Audio.hpp>
 #include <Gosu/Input.hpp>
+#include <Gosu/Math.hpp>
 
 #include "area.h"
 #include "entity.h"
@@ -14,8 +15,25 @@
 #include "window.h"
 
 Player::Player(Resourcer* rc, Area* area)
-	: Entity(rc, area)
+	: Entity(rc, area), velocity(coord(0, 0, 0))
 {
+}
+
+void Player::startMovement(coord_t delta)
+{
+	velocity.x += delta.x;
+	velocity.y += delta.y;
+	velocity.z += delta.z;
+	normalizeVelocity();
+	moveByTile(velocity);
+}
+
+void Player::stopMovement(coord_t delta)
+{
+	velocity.x -= delta.x;
+	velocity.y -= delta.y;
+	velocity.z -= delta.z;
+	normalizeVelocity();
 }
 
 void Player::moveByTile(coord_t delta)
@@ -78,5 +96,14 @@ void Player::postMove()
 	const boost::optional<Area::Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
+	if (velocity.x || velocity.y || velocity.z)
+		moveByTile(velocity);
+}
+
+void Player::normalizeVelocity()
+{
+	velocity.x = Gosu::boundBy(velocity.x, -1L, 1L);
+	velocity.y = Gosu::boundBy(velocity.y, -1L, 1L);
+	velocity.z = Gosu::boundBy(velocity.z, -1L, 1L);
 }
 

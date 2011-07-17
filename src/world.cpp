@@ -51,6 +51,11 @@ void World::buttonDown(const Gosu::Button btn)
 	area->buttonDown(btn);
 }
 
+void World::buttonUp(const Gosu::Button btn)
+{
+	area->buttonUp(btn);
+}
+
 void World::draw()
 {
 	area->draw();

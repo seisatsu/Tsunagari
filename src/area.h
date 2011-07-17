@@ -145,6 +145,7 @@ public:
 
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
+	void buttonUp(const Gosu::Button btn);
 
 	//! Gosu Callback
 	void draw();

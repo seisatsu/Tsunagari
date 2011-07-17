@@ -41,6 +41,9 @@ public:
 	static void dev(std::string domain, std::string message);
 	static void dbg(std::string domain, std::string message);
 
+	//! Send a blank line to the console.
+	static void blank();
+
 private:
 	static Log* instance(); // Access to our singleton instance.
 	static std::string& rtrim(std::string& str);

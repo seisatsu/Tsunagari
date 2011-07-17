@@ -60,6 +60,7 @@ void GameWindow::buttonDown(const Gosu::Button btn)
 void GameWindow::buttonUp(const Gosu::Button btn)
 {
 	keystates.erase(btn);
+	world->buttonUp(btn);
 }
 
 void GameWindow::draw()

@@ -104,7 +104,7 @@ protected:
 
 	Area* area;
 	coord_t c;
-	double rx, ry, rz; // real x,y position, holds partial pixel transversal
+	double rx, ry, rz; // real x,y position: hold partial pixel transversal
 
 	std::string descriptor;
 
@@ -114,7 +114,7 @@ protected:
 	*/
 	struct SpriteValues {
 		std::string sheet;
-		coord_t tileSize; // z-coord not used
+		coord_t tileSize;
 		boost::unordered_map<std::string, unsigned> phases;
 	} xml;
 };

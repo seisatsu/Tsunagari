@@ -60,6 +60,11 @@ void Log::dbg(std::string domain, std::string message)
 		          << std::endl;
 }
 
+void Log::blank()
+{
+	std::cerr << std::endl;
+}
+
 std::string& Log::rtrim(std::string& str)
 {
 	if (str[str.length()-1] == '\n')

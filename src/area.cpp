@@ -21,9 +21,10 @@
 #include "window.h"
 #include "world.h"
 
-/* NOTE: TileSet tiles start counting their positions from 0, while layer tiles
-         start counting from 1. I can't imagine why the author did this, but we
-         have to take it into account. 
+/* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
+         their Y-positions from 0, while layer tiles start counting from 1. I
+         can't imagine why the author did this, but we have to take it into
+         account.
 */
 
 Area::Area(Resourcer* rc,
@@ -60,13 +61,25 @@ bool Area::init()
 void Area::buttonDown(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
-		player->moveByTile(coord(1, 0, 0));
+		player->startMovement(coord(1, 0, 0));
 	else if (btn == Gosu::kbLeft)
-		player->moveByTile(coord(-1, 0, 0));
+		player->startMovement(coord(-1, 0, 0));
 	else if (btn == Gosu::kbUp)
-		player->moveByTile(coord(0, -1, 0));
+		player->startMovement(coord(0, -1, 0));
 	else if (btn == Gosu::kbDown)
-		player->moveByTile(coord(0, 1, 0));
+		player->startMovement(coord(0, 1, 0));
+}
+
+void Area::buttonUp(const Gosu::Button btn)
+{
+	if (btn == Gosu::kbRight)
+		player->stopMovement(coord(1, 0, 0));
+	else if (btn == Gosu::kbLeft)
+		player->stopMovement(coord(-1, 0, 0));
+	else if (btn == Gosu::kbUp)
+		player->stopMovement(coord(0, -1, 0));
+	else if (btn == Gosu::kbDown)
+		player->stopMovement(coord(0, 1, 0));
 }
 
 void Area::draw()
@@ -197,8 +210,7 @@ const coord_t Area::viewportOffset() const
 const Gosu::Transform Area::viewportTransform() const
 {
 	const coord_t c = viewportOffset();
-	const Gosu::Transform trans = Gosu::translate((double)c.x, (double)c.y);
-	return trans;
+	return Gosu::translate((double)c.x, (double)c.y);
 }
 
 coordcube_t Area::visibleTiles() const
@@ -210,17 +222,12 @@ coordcube_t Area::visibleTiles() const
 	const int windowHeight = graphics.height();
 	const coord_t off = viewportOffset();
 
-	coordcube_t tiles;
-	tiles.x1 = -off.x / tileWidth;
-	tiles.y1 = -off.y / tileHeight;
-	tiles.z1 = 0;
-
-	tiles.x2 = (long)ceil((double)(windowWidth - off.x) /
-			(double)tileWidth);
-	tiles.y2 = (long)ceil((double)(windowHeight - off.y) /
-			(double)tileHeight);
-	tiles.z2 = 1;
-	return tiles;
+	const long x2 = (long)ceil((double)(windowWidth - off.x) /
+		(double)tileWidth);
+	const long y2 = (long)ceil((double)(windowHeight - off.y) /
+		(double)tileHeight);
+	return coordcube(-off.x / tileWidth, -off.y / tileHeight, 0,
+	                 x2, y2, 1);
 }
 
 bool Area::tileTypeOnScreen(const Area::TileType& search) const
@@ -475,7 +482,6 @@ bool Area::processLayer(xmlNode* node)
 	int y = atoi((const char*)height);
 
 	if (dim.x != x || dim.y != y) {
-		// XXX we need to know the Area we're loading...
 		Log::err(descriptor, "layer x,y size != map x,y size");
 		return false;
 	}
@@ -594,9 +600,7 @@ bool Area::processObjectGroup(xmlNode* node)
 	int zpos = -1;
 
 	if (dim.x != x || dim.y != y) {
-		// XXX we need to know the Area we're loading...
-		Log::err(descriptor,
-				"objectgroup x,y size != map x,y size");
+		Log::err(descriptor, "objectgroup x,y size != map x,y size");
 		return false;
 	}
 
@@ -631,7 +635,6 @@ bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
 		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
 			int layer = atoi((const char*)value);
 			if (0 < layer || layer >= (int)dim.z) {
-				// XXX we need to know the Area we're loading...
 				Log::err(descriptor,
 					"objectgroup must correspond with layer"
 				);
@@ -703,12 +706,9 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 	strs = splitStr(strOfFlags, ",");
 
 	unsigned flags = 0x0;
-	BOOST_FOREACH(const std::string& str, strs)
-	{
-		// TODO: reimplement comparisons as a hash table
-		if (str == "nowalk") {
+	BOOST_FOREACH(const std::string& str, strs) {
+		if (str == "nowalk")
 			flags |= nowalk;
-		}
 	}
 	return flags;
 }
