@@ -138,7 +138,7 @@ void Entity::moveByTile(coord_t dc)
 	newCoord.z += dc.z;
 
 	// Can we move?
-	Area::Tile& tile = area->getTile(newCoord);
+	const Area::Tile& tile = area->getTile(newCoord);
 	if ((tile.flags       & Area::nowalk) != 0 ||
 	    (tile.type->flags & Area::nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
@@ -148,7 +148,7 @@ void Entity::moveByTile(coord_t dc)
 
 	// Move!
 	redraw = true;
-	coord_t tileDim = area->getTileDimensions();
+	const coord_t tileDim = area->getTileDimensions();
 	dest.x = c.x + dc.x * tileDim.x;
 	dest.y = c.y + dc.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers

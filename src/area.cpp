@@ -59,37 +59,30 @@ bool Area::init()
 
 void Area::buttonDown(const Gosu::Button btn)
 {
-	bool attemptingMove = false;
-	coord_t posMove;
-
-	if (btn == Gosu::kbRight) {
-		posMove = coord(1, 0, 0);
-		attemptingMove = true;
-	}
-	else if (btn == Gosu::kbLeft) {
-		posMove = coord(-1, 0, 0);
-		attemptingMove = true;
-	}
-	else if (btn == Gosu::kbUp) {
-		posMove = coord(0, -1, 0);
-		attemptingMove = true;
-	}
-	else if (btn == Gosu::kbDown) {
-		posMove = coord(0, 1, 0);
-		attemptingMove = true;
-	}
-
-	if (attemptingMove)
-		player->moveByTile(posMove);
+	if (btn == Gosu::kbRight)
+		player->moveByTile(coord(1, 0, 0));
+	else if (btn == Gosu::kbLeft)
+		player->moveByTile(coord(-1, 0, 0));
+	else if (btn == Gosu::kbUp)
+		player->moveByTile(coord(0, -1, 0));
+	else if (btn == Gosu::kbDown)
+		player->moveByTile(coord(0, 1, 0));
 }
 
 void Area::draw()
 {
-	GameWindow* window = GameWindow::getWindow();
-	Gosu::Graphics& graphics = window->graphics();
+	Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
 	const Gosu::Transform trans = viewportTransform();
 	graphics.pushTransform(trans);
 
+	drawTiles();
+	drawEntities();
+
+	graphics.popTransform();
+}
+
+void Area::drawTiles()
+{
 	// Calculate frame to show for each type of tile
 	int millis = (int)Gosu::milliseconds();
 	BOOST_FOREACH(TileSet& set, tilesets) {
@@ -103,6 +96,7 @@ void Area::draw()
 		}
 	}
 
+	// Render
 	for (unsigned z = 0; z != map.size(); z++) {
 		const grid_t& grid = map[z];
 		for (unsigned y = 0; y != grid.size(); y++) {
@@ -115,9 +109,11 @@ void Area::draw()
 			}
 		}
 	}
-	player->draw();
+}
 
-	graphics.popTransform();
+void Area::drawEntities()
+{
+	player->draw();
 }
 
 bool Area::needsRedraw() const
@@ -161,6 +157,11 @@ coord_t Area::getTileDimensions() const
 	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
+const Area::Tile& Area::getTile(coord_t c) const
+{
+	return map[c.z][c.y][c.x];
+}
+
 Area::Tile& Area::getTile(coord_t c)
 {
 	return map[c.z][c.y][c.x];
@@ -171,20 +172,18 @@ static double center(double w, double g, double p)
 	return w>g ? (w-g)/2.0 : Gosu::boundBy(w/2.0-p, w-g, 0.0);
 }
 
-coord_t Area::viewportOffset() const
+const coord_t Area::viewportOffset() const
 {
-	GameWindow* window = GameWindow::getWindow();
-	Gosu::Graphics* graphics = &window->graphics();
-
-	double tileWidth = (double)tilesets[0].tileDim.x;
-	double tileHeight = (double)tilesets[0].tileDim.y;
-	double windowWidth = (double)graphics->width() / tileWidth;
-	double windowHeight = (double)graphics->height() / tileHeight;
-	double gridWidth = (double)dim.x;
-	double gridHeight = (double)dim.y;
-	double playerX = (double)player->getCoordsByPixel().x /
+	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
+	const double tileWidth = (double)tilesets[0].tileDim.x;
+	const double tileHeight = (double)tilesets[0].tileDim.y;
+	const double windowWidth = (double)graphics.width() / tileWidth;
+	const double windowHeight = (double)graphics.height() / tileHeight;
+	const double gridWidth = (double)dim.x;
+	const double gridHeight = (double)dim.y;
+	const double playerX = (double)player->getCoordsByPixel().x /
 			tileWidth + 0.5;
-	double playerY = (double)player->getCoordsByPixel().y /
+	const double playerY = (double)player->getCoordsByPixel().y /
 			tileHeight + 0.5;
 
 	coord_t c;
@@ -195,23 +194,21 @@ coord_t Area::viewportOffset() const
 	return c;
 }
 
-Gosu::Transform Area::viewportTransform() const
+const Gosu::Transform Area::viewportTransform() const
 {
-	coord_t c = viewportOffset();
-	Gosu::Transform trans = Gosu::translate((double)c.x, (double)c.y);
+	const coord_t c = viewportOffset();
+	const Gosu::Transform trans = Gosu::translate((double)c.x, (double)c.y);
 	return trans;
 }
 
 coordcube_t Area::visibleTiles() const
 {
-	GameWindow* window = GameWindow::getWindow();
-	Gosu::Graphics* graphics = &window->graphics();
-
-	long tileWidth = tilesets[0].tileDim.x;
-	long tileHeight = tilesets[0].tileDim.y;
-	int windowWidth = graphics->width();
-	int windowHeight = graphics->height();
-	coord_t off = viewportOffset();
+	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
+	const long tileWidth = tilesets[0].tileDim.x;
+	const long tileHeight = tilesets[0].tileDim.y;
+	const int windowWidth = graphics.width();
+	const int windowHeight = graphics.height();
+	const coord_t off = viewportOffset();
 
 	coordcube_t tiles;
 	tiles.x1 = -off.x / tileWidth;
@@ -228,7 +225,7 @@ coordcube_t Area::visibleTiles() const
 
 bool Area::tileTypeOnScreen(const Area::TileType& search) const
 {
-	coordcube_t tiles = visibleTiles();
+	const coordcube_t tiles = visibleTiles();
 	for (long z = tiles.z1; z != tiles.z2; z++) {
 		for (long y = tiles.y1; y != tiles.y2; y++) {
 			for (long x = tiles.x1; x != tiles.x2; x++) {

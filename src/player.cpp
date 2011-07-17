@@ -20,8 +20,6 @@ Player::Player(Resourcer* rc, Area* area)
 
 void Player::moveByTile(coord_t delta)
 {
-	bool changed = false;
-
 	// You can't stop an in-progress movement.
 	if (moving)
 		return;
@@ -30,28 +28,24 @@ void Player::moveByTile(coord_t delta)
 	// would make diagonals easier to handle
 	if (delta.x > 0) {
 		setPhase("right");
-		changed = true;
+		redraw = true;
 	}
 	else if (delta.x < 0) {
 		setPhase("left");
-		changed = true;
+		redraw = true;
 	}
 	else if (delta.y > 0) {
 		setPhase("down");
-		changed = true;
+		redraw = true;
 	}
 	else if (delta.y < 0) {
 		setPhase("up");
-		changed = true;
+		redraw = true;
 	}
 
-	// Redraw the player if we change graphics.
-	if (changed)
-		redraw = true;
-
 	// Left CTRL allows changing facing, but disallows movement.
-	GameWindow* w = GameWindow::getWindow();
-	if (w->input().down(Gosu::kbLeftControl))
+	const GameWindow& window = GameWindow::getWindow();
+	if (window.input().down(Gosu::kbLeftControl))
 		return;
 
 	// Try to actually move.
@@ -59,7 +53,7 @@ void Player::moveByTile(coord_t delta)
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
-	Area::Tile& dest = area->getTile(newCoord);
+	const Area::Tile& dest = area->getTile(newCoord);
 	if ((dest.flags       & Area::player_nowalk) != 0 ||
 	    (dest.type->flags & Area::player_nowalk) != 0) {
 		// The tile we're trying to move onto is set as player_nowalk.
@@ -72,16 +66,16 @@ void Player::moveByTile(coord_t delta)
 
 void Player::preMove(coord_t)
 {
-	SampleRef step_sound = getSound("step");
-	if (step_sound)
-		step_sound->play(1, 1, 0);
+	SampleRef step = getSound("step");
+	if (step)
+		step->play(1, 1, 0);
 }
 
 void Player::postMove()
 {
-	coord_t coord = getCoordsByTile();
-	Area::Tile& dest = area->getTile(coord);
-	boost::optional<Area::Door> door = dest.door;
+	const coord_t coord = getCoordsByTile();
+	const Area::Tile& dest = area->getTile(coord);
+	const boost::optional<Area::Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
 }

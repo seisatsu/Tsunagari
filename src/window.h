@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 
+#include <boost/scoped_ptr.hpp>
 #include <Gosu/Window.hpp>
 
 #include "common.h"
@@ -24,12 +25,13 @@ class World;
 
 //! GameWindow Class
 /*!
-	This class is structurally the main class of the Tsunagari Tile Engine. It handles input and drawing.
+	This class is structurally the main class of the Tsunagari Tile Engine.
+	It handles input and drawing.
 */
 class GameWindow : public Gosu::Window
 {
 public:
-	static GameWindow* getWindow();
+	static GameWindow& getWindow();
 
 	//! GameWindow Constructor
 	GameWindow(unsigned x, unsigned y, bool fullscreen);
@@ -58,23 +60,23 @@ public:
 private:
 	//! Calculate time passed since engine state was last updated
 	void calculateDt();
-	
+
 	//! Process persistent keyboard input
 	void handleKeyboardInput();
 
-	Resourcer* rc;
-	World* world;
+	boost::scoped_ptr<Resourcer> rc;
+	boost::scoped_ptr<World> world;
 
 	//! Last time engine state was updated
 	unsigned long lastTime;
 	//! Milliseconds that have passed since engine last updated
 	unsigned long dt; // delta time
-	
+
 	struct keystate {
 		bool consecutive, initiallyResolved;
 		unsigned long since;
 	};
-	
+
 	std::map<Gosu::Button, keystate > keystates;
 };
 

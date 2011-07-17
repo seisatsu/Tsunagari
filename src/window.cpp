@@ -12,11 +12,12 @@
 #include "world.h"
 #include "window.h"
 
+
 static GameWindow* globalWindow = NULL;
 
-GameWindow* GameWindow::getWindow()
+GameWindow& GameWindow::getWindow()
 {
-	return globalWindow;
+	return *globalWindow;
 }
 
 GameWindow::GameWindow(unsigned x, unsigned y, bool fullscreen)
@@ -28,14 +29,12 @@ GameWindow::GameWindow(unsigned x, unsigned y, bool fullscreen)
 
 GameWindow::~GameWindow()
 {
-	delete world;
-	delete rc;
 }
 
 bool GameWindow::init(ClientValues* conf)
 {
-	rc = new Resourcer(this, conf);
-	world = new World(rc, this);
+	rc.reset(new Resourcer(this, conf));
+	world.reset(new World(rc.get(), this));
 	return rc->init() && world->init();
 }
 
@@ -96,7 +95,7 @@ void GameWindow::handleKeyboardInput()
 	for (it = keystates.begin(); it != keystates.end(); it++) {
 		Gosu::Button btn = it->first;
 		keystate& state = it->second;
-		
+
 		// If there is PERSIST_DELAY_CONSECUTIVE milliseconds of latency
 		// between when a button is depressed and when we first look at
 		// it here, we'll incorrectly try to fire off a second round of
@@ -107,15 +106,14 @@ void GameWindow::handleKeyboardInput()
 			state.initiallyResolved = true;
 			continue;
 		}
-		
+
 		int delay = state.consecutive ?
 		    ROGUELIKE_PERSIST_DELAY_CONSECUTIVE :
 		    ROGUELIKE_PERSIST_DELAY_INIT;
 		if (millis >= state.since + delay) {
-			state.since = Gosu::milliseconds();
+			state.since = millis;
 			world->buttonDown(btn);
-			if (!state.consecutive)
-				state.consecutive = true;
+			state.consecutive = true;
 		}
 	}
 }

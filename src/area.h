@@ -157,6 +157,7 @@ public:
 
 	coord_t getDimensions() const;
 	coord_t getTileDimensions() const;
+	const Tile& getTile(coord_t c) const;
 	Tile& getTile(coord_t c);
 
 private:
@@ -179,9 +180,11 @@ private:
 		std::string filename;
 	};
 
+	void drawTiles();
+	void drawEntities();
 
-	coord_t viewportOffset() const;
-	Gosu::Transform viewportTransform() const;
+	const coord_t viewportOffset() const;
+	const Gosu::Transform viewportTransform() const;
 
 	coordcube_t visibleTiles() const;
 	bool tileTypeOnScreen(const TileType& type) const;
