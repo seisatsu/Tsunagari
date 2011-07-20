@@ -67,6 +67,7 @@ void Resourcer::garbageCollect()
 {
 	reclaim<ImageRefMap, ImageRef>(images);
 	reclaim<SampleRefMap, SampleRef>(samples);
+	reclaim<XMLMap, XMLDocRef>(xmls);
 }
 
 template<class Map, class MapValue>
@@ -171,17 +172,26 @@ SampleRef Resourcer::getSample(const std::string& name)
 	return result;
 }
 
-XMLDocRef Resourcer::getXMLDoc(const std::string& name, const std::string& dtdPath)
+XMLDocRef Resourcer::getXMLDoc(const std::string& name,
+                               const std::string& dtdPath)
 {
 	if (conf->cache_enabled) {
 		XMLMap::iterator entry = xmls.find(name);
-		if (entry != xmls.end())
-			return entry->second;
+		if (entry != xmls.end()) {
+			int now = GameWindow::getWindow().time();
+			Log::dbg("Resourcer", name + " used again");
+			entry->second.lastUsed = now;
+			return entry->second.resource;
+		}
 	}
 
 	XMLDocRef result(readXMLDocFromDisk(name, dtdPath), xmlFreeDoc);
-	if (conf->cache_enabled)
-		xmls[name] = result;
+	if (conf->cache_enabled) {
+		CachedItem<XMLDocRef> data;
+		data.resource = result;
+		data.lastUsed = 0; 
+		xmls[name] = data;
+	}
 	return result;
 }
 

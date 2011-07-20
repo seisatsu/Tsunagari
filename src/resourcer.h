@@ -77,11 +77,13 @@ private:
 		int memoryUsed;
 	};
 
+	//! Resource maps.
 	typedef boost::unordered_map<std::string, CachedItem<ImageRef> >
 		ImageRefMap;
 	typedef boost::unordered_map<std::string, CachedItem<SampleRef> >
 		SampleRefMap;
-	typedef boost::unordered_map<std::string, XMLDocRef> XMLMap;
+	typedef boost::unordered_map<std::string, CachedItem<XMLDocRef> >
+		XMLMap;
 	typedef boost::unordered_map<std::string, TiledImage> TiledImageMap;
 
 	//! Garbage collect a map.
