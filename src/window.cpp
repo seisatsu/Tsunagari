@@ -115,8 +115,7 @@ void GameWindow::handleKeyboardInput()
 		}
 
 		int delay = state.consecutive ?
-		    ROGUELIKE_PERSIST_DELAY_CONSECUTIVE :
-		    ROGUELIKE_PERSIST_DELAY_INIT;
+		    PERSIST_DELAY_CONSECUTIVE : PERSIST_DELAY_INIT;
 		if (now >= state.since + delay) {
 			state.since = now;
 			world->buttonDown(btn);

@@ -16,25 +16,36 @@
 // === Default Configuration Settings ===
 	/* Tsunagari config file. -- Command Line */
 	#define CLIENT_CONF_FILE "./client.ini"
-	
+
 	/* Error verbosity level. -- Command Line */
 	#define MESSAGE_MODE MM_DEBUG
-	
+
 	/* Game movement mode */
 	#define GAME_MODE SLIDE_MOVE
 
 	/* Milliseconds of button down before starting persistent input in
 	   roguelike movement mode. -- Move to World Descriptor */
 	#define ROGUELIKE_PERSIST_DELAY_INIT 500
-	
+
 	/* Milliseconds between persistent input sends in roguelike movement
 	   mode. -- Move to World Descriptor */
 	#define ROGUELIKE_PERSIST_DELAY_CONSECUTIVE 100
-	
+
+	#define YUME_NIKKI_PERSIST_DELAY_INIT 1
+	#define YUME_NIKKI_PERSIST_DELAY_CONSECUTIVE 1
+
+#ifdef JUMP_MOVE
+	#define PERSIST_DELAY_INIT ROGUELIKE_PERSIST_DELAY_INIT
+	#define PERSIST_DELAY_CONSECUTIVE ROGUELIKE_PERSIST_DELAY_CONSECUTIVE
+#elif SLIDE_MOVE
+	#define PERSIST_DELAY_INIT YUME_NIKKI_PERSIST_DELAY_INIT
+	#define PERSIST_DELAY_CONSECUTIVE YUME_NIKKI_PERSIST_DELAY_CONSECUTIVE
+#endif
+
 	/* Time to live in seconds for empty resource cache entries before they
 	   are deleted. -- Command Line */
 	#define CACHE_EMPTY_TTL 300
-	
+
 	/* Maximum size in megabytes for the resource cache. -- Command Line */
 	#define CACHE_MAX_SIZE 100
 // ===
@@ -48,7 +59,7 @@
 	#if defined(_WINDOWS) && !defined(_Windows)
 		#define _Windows 1
 	#endif
-	
+
 	/* Fix snprintf for VisualC++. */
 	#ifdef _MSC_VER
 		#define snprintf _snprintf

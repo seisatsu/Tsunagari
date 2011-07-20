@@ -47,7 +47,7 @@ void Player::stopMovement(coord_t delta)
 
 void Player::moveByTile(coord_t delta)
 {
-	// You can't stop an in-progress movement.
+	// You can't interrupt an in-progress movement.
 	if (moving)
 		return;
 
