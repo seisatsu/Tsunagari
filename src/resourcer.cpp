@@ -84,7 +84,11 @@ void Resourcer::reclaim(Map& map)
 				cache.lastUsed = now;
 				Log::dbg("Resourcer", name + " unused");
 			}
-			else if (now > cache.lastUsed + CACHE_EMPTY_TTL*1000) {
+			else if (now < cache.lastUsed) {
+				// Handle time overflow
+				cache.lastUsed = now;
+			}
+			else if (now > cache.lastUsed + conf->cache_ttl*1000) {
 				dead.push_back(name);
 				Log::dbg("Resourcer", "Removing " + name);
 			}

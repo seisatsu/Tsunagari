@@ -46,8 +46,8 @@ struct ClientValues {
 	coord_t windowsize;
 	bool fullscreen;
 	bool cache_enabled;
-	unsigned int cache_ttl;
-	unsigned int cache_size;
+	int cache_ttl;
+	int cache_size;
 	message_mode_t loglevel;
 };
 
@@ -55,7 +55,8 @@ struct ClientValues {
 bool parseBool(const std::string& s);
 
 //! Split a string by a delimiter.
-std::vector<std::string> splitStr(std::string str, const std::string& delimiter);
+std::vector<std::string> splitStr(std::string str,
+	const std::string& delimiter);
 
 //! Convert an integer to a representative string.
 std::string itostr(long in);
