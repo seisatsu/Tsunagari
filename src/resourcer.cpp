@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp>
@@ -62,6 +63,36 @@ bool Resourcer::init()
 	return z;
 }
 
+void Resourcer::garbageCollect()
+{
+	int now = GameWindow::getWindow().time();
+	std::vector<std::string> dead;
+	BOOST_FOREACH(SampleRefMap::value_type& i, samples) {
+		const std::string& name = i.first;
+		CachedItem<SampleRef>& cache = i.second;
+		long extUses = cache.resource.use_count() - 1;
+		if (extUses == 0) {
+			if (!cache.lastUsed) {
+				cache.lastUsed = now;
+				Log::dbg("Resourcer", name + " unused");
+			}
+			else if (now > cache.lastUsed + 10*1000) {
+				dead.push_back(name);
+				Log::dbg("Resourcer", "Removing " + name);
+			}
+		}
+		else {
+			if (cache.lastUsed) {
+				cache.lastUsed = 0;
+				Log::dbg("Resourcer", name + " used again");
+			}
+		}
+	}
+	BOOST_FOREACH(std::string name, dead) {
+		samples.erase(name);
+	}
+}
+
 ImageRef Resourcer::getImage(const std::string& name)
 {
 	if (conf->cache_enabled) {
@@ -115,7 +146,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	if (conf->cache_enabled) {
 		SampleRefMap::iterator entry = samples.find(name);
 		if (entry != samples.end())
-			return entry->second;
+			return entry->second.resource;
 	}
 
 	BufferPtr buffer(read(name));
@@ -123,8 +154,12 @@ SampleRef Resourcer::getSample(const std::string& name)
 		return SampleRef();
 	SampleRef result(new Gosu::Sample(buffer->frontReader()));
 
-	if (conf->cache_enabled)
-		samples[name] = result;
+	if (conf->cache_enabled) {
+		CachedItem<SampleRef> data;
+		data.resource = result;
+		data.lastUsed = 0; 
+		samples[name] = data;
+	}
 	return result;
 }
 

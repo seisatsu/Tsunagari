@@ -70,14 +70,17 @@ private:
 	boost::scoped_ptr<Resourcer> rc;
 	boost::scoped_ptr<World> world;
 
-	//! Last time engine state was updated
+	//! Last time engine state was updated.
 	int lastTime;
 
-	//! Milliseconds that have passed since engine last updated
+	//! Milliseconds that have passed since engine last updated.
 	int dt; // delta time
 
 	//! Milliseconds that have passed since game started. Loops on overflow.
 	int now;
+
+	//! Call the garbage colelctor once a second.
+	int currentSecond;
 
 	struct keystate {
 		bool consecutive, initiallyResolved;

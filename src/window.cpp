@@ -23,7 +23,8 @@ GameWindow& GameWindow::getWindow()
 GameWindow::GameWindow(unsigned x, unsigned y, bool fullscreen)
 	: Gosu::Window(x, y, fullscreen),
 	  lastTime((int)Gosu::milliseconds()),
-	  now(lastTime)
+	  now(lastTime),
+	  currentSecond(now/1000)
 {
 	globalWindow = this;
 }
@@ -80,6 +81,12 @@ void GameWindow::update()
 	calculateDt();
 	handleKeyboardInput();
 	world->update(dt);
+
+	// Run once per second.
+	if (now/1000 > currentSecond) {
+		currentSecond = now/1000;
+		rc->garbageCollect();
+	}
 }
 
 int GameWindow::time()

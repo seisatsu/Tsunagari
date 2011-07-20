@@ -45,20 +45,18 @@ typedef boost::shared_ptr<xmlDoc> XMLDocRef;
 class Resourcer
 {
 public:
-	//! Resourcer Constructor
 	Resourcer(GameWindow* window, ClientValues* conf);
-
-	//! Resourcer Destructor
 	~Resourcer();
-
-	//! Resourcer Initializer
 	bool init();
+
+	//! Expunge old stuff from the cache.
+	void garbageCollect();
 
 	//! Requests an image resource from cache.
 	ImageRef getImage(const std::string& name);
 
 	//! Requests an image resource from cache and splits it into a number
-	//  of tiles each with with and height w by x. Returns false if the 
+	//  of tiles each with width and height w by x. Returns false if the 
 	//  source image wasn't found.
 	bool getTiledImage(TiledImage& img, const std::string& name,
 		unsigned w, unsigned h, bool tileable);
@@ -69,10 +67,19 @@ public:
 	//! Requests an XML resource from cache.
 	XMLDocRef getXMLDoc(const std::string& name,
 		const std::string& dtdPath);
-	
+
 private:
+	template<class Res>
+	struct CachedItem
+	{
+		Res resource;
+		unsigned long lastUsed;
+		int memoryUsed;
+	};
+
 	typedef boost::unordered_map<std::string, ImageRef> ImageRefMap;
-	typedef boost::unordered_map<std::string, SampleRef> SampleRefMap;
+	typedef boost::unordered_map<std::string, CachedItem<SampleRef> >
+		SampleRefMap;
 	typedef boost::unordered_map<std::string, XMLDocRef> XMLMap;
 	typedef boost::unordered_map<std::string, TiledImage> TiledImageMap;
 
