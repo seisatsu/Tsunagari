@@ -65,32 +65,36 @@ bool Resourcer::init()
 
 void Resourcer::garbageCollect()
 {
+	reclaim<ImageRefMap, ImageRef>(images);
+	reclaim<SampleRefMap, SampleRef>(samples);
+}
+
+template<class Map, class MapValue>
+void Resourcer::reclaim(Map& map)
+{
 	int now = GameWindow::getWindow().time();
 	std::vector<std::string> dead;
-	BOOST_FOREACH(SampleRefMap::value_type& i, samples) {
+	BOOST_FOREACH(typename Map::value_type& i, map) {
 		const std::string& name = i.first;
-		CachedItem<SampleRef>& cache = i.second;
+		CachedItem<MapValue>& cache = i.second;
 		long extUses = cache.resource.use_count() - 1;
 		if (extUses == 0) {
 			if (!cache.lastUsed) {
 				cache.lastUsed = now;
 				Log::dbg("Resourcer", name + " unused");
 			}
-			else if (now > cache.lastUsed + 10*1000) {
+			else if (now > cache.lastUsed + CACHE_EMPTY_TTL*1000) {
 				dead.push_back(name);
 				Log::dbg("Resourcer", "Removing " + name);
 			}
 		}
-		else {
-			if (cache.lastUsed) {
-				cache.lastUsed = 0;
-				Log::dbg("Resourcer", name + " used again");
-			}
+		else if (cache.lastUsed) {
+			cache.lastUsed = 0;
+			Log::dbg("Resourcer", name + " used again");
 		}
 	}
-	BOOST_FOREACH(std::string name, dead) {
-		samples.erase(name);
-	}
+	BOOST_FOREACH(std::string name, dead)
+		map.erase(name);
 }
 
 ImageRef Resourcer::getImage(const std::string& name)
@@ -98,7 +102,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	if (conf->cache_enabled) {
 		ImageRefMap::iterator entry = images.find(name);
 		if (entry != images.end())
-			return entry->second;
+			return entry->second.resource;
 	}
 
 	BufferPtr buffer(read(name));
@@ -108,8 +112,12 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
 
-	if (conf->cache_enabled)
-		images[name] = result;
+	if (conf->cache_enabled) {
+		CachedItem<ImageRef> data;
+		data.resource = result;
+		data.lastUsed = 0; 
+		images[name] = data;
+	}
 	return result;
 }
 

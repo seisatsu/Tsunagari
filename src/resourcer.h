@@ -73,15 +73,20 @@ private:
 	struct CachedItem
 	{
 		Res resource;
-		unsigned long lastUsed;
+		int lastUsed;
 		int memoryUsed;
 	};
 
-	typedef boost::unordered_map<std::string, ImageRef> ImageRefMap;
+	typedef boost::unordered_map<std::string, CachedItem<ImageRef> >
+		ImageRefMap;
 	typedef boost::unordered_map<std::string, CachedItem<SampleRef> >
 		SampleRefMap;
 	typedef boost::unordered_map<std::string, XMLDocRef> XMLMap;
 	typedef boost::unordered_map<std::string, TiledImage> TiledImageMap;
+
+	//! Garbage collect a map.
+	template<class Map, class MapValue>
+	void reclaim(Map& map);
 
 	//! Requests an XML document from disk.
 	xmlDoc* readXMLDocFromDisk(const std::string& name,
