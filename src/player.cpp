@@ -23,6 +23,7 @@ Player::Player(Resourcer* rc, Area* area)
 void Player::startMovement(coord_t delta)
 {
 	if (GAME_MODE == JUMP_MOVE) {
+		// TODO Move by velocity would allow true diagonal movement
 		moveByTile(delta);
 	}
 	else if (GAME_MODE == SLIDE_MOVE) {
@@ -46,33 +47,17 @@ void Player::stopMovement(coord_t delta)
 
 void Player::moveByTile(coord_t delta)
 {
-	// You can't stop an in-progress movement.
+	// You can't interrupt an in-progress movement.
 	if (moving)
 		return;
 
-	// TODO: use double array of directions
-	// would make diagonals easier to handle
-	if (delta.x > 0) {
-		setPhase("right");
-		redraw = true;
-	}
-	else if (delta.x < 0) {
-		setPhase("left");
-		redraw = true;
-	}
-	else if (delta.y > 0) {
-		setPhase("down");
-		redraw = true;
-	}
-	else if (delta.y < 0) {
-		setPhase("up");
-		redraw = true;
-	}
-
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
-	if (window.input().down(Gosu::kbLeftControl))
+	if (window.input().down(Gosu::kbLeftControl)) {
+		calculateFacing(delta);
+		setPhase(facing);
 		return;
+	}
 
 	// Try to actually move.
 	coord_t newCoord = getCoordsByTile();
@@ -83,22 +68,29 @@ void Player::moveByTile(coord_t delta)
 	if ((dest.flags       & Area::player_nowalk) != 0 ||
 	    (dest.type->flags & Area::player_nowalk) != 0) {
 		// The tile we're trying to move onto is set as player_nowalk.
-		// Stop here.
+		// Turn to face the direction, but don't move.
+		calculateFacing(delta);
+		setPhase(facing);
 		return;
 	}
 
 	Entity::moveByTile(delta);
 }
 
-void Player::preMove(coord_t)
+void Player::preMove(coord_t delta)
 {
+	Entity::preMove(delta);
+
 	SampleRef step = getSound("step");
 	if (step)
 		step->play(1, 1, 0);
+
 }
 
 void Player::postMove()
 {
+	Entity::postMove();
+
 	const coord_t coord = getCoordsByTile();
 	const Area::Tile& dest = area->getTile(coord);
 	const boost::optional<Area::Door> door = dest.door;

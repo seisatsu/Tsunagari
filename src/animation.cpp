@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** animation.cpp             **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include "animation.h"
 
 Animation::Animation()
@@ -7,6 +13,12 @@ Animation::Animation()
 	  animLen(0),
 	  frameShowing(0)
 {
+}
+
+Animation::Animation(ImageRef frame)
+{
+	Animation();
+	addFrame(frame);
 }
 
 void Animation::addFrame(ImageRef frame)
@@ -25,7 +37,7 @@ void Animation::setFrameLen(int milliseconds)
 	animLen = frameLen * (int)frames.size();
 }
 
-bool Animation::needsUpdate(int milliseconds) const
+bool Animation::needsRedraw(int milliseconds) const
 {
 	if (animated) {
 		int frame = (milliseconds % animLen) / frameLen;
@@ -43,7 +55,7 @@ void Animation::updateFrame(int milliseconds)
 	}
 }
 
-Gosu::Image* Animation::image() const
+Gosu::Image* Animation::frame() const
 {
 	return img;
 }

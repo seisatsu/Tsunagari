@@ -57,6 +57,9 @@ public:
 	//! Gosu Callback
 	void update();
 
+	//! Syncronized time value used throughout the engine
+	int time();
+
 private:
 	//! Calculate time passed since engine state was last updated
 	void calculateDt();
@@ -68,16 +71,20 @@ private:
 	boost::scoped_ptr<World> world;
 
 	//! Last time engine state was updated
-	unsigned long lastTime;
+	int lastTime;
+
 	//! Milliseconds that have passed since engine last updated
-	unsigned long dt; // delta time
+	int dt; // delta time
+
+	//! Milliseconds that have passed since game started. Loops on overflow.
+	int now;
 
 	struct keystate {
 		bool consecutive, initiallyResolved;
-		unsigned long since;
+		int since;
 	};
 
-	std::map<Gosu::Button, keystate > keystates;
+	std::map<Gosu::Button, keystate> keystates;
 };
 
 #endif

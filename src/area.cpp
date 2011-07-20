@@ -97,7 +97,7 @@ void Area::draw()
 void Area::drawTiles()
 {
 	// Calculate frame to show for each type of tile
-	int millis = (int)Gosu::milliseconds();
+	int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(TileSet& set, tilesets)
 		BOOST_FOREACH(TileType& type, set.tileTypes)
 			type.anim.updateFrame(millis);
@@ -110,7 +110,7 @@ void Area::drawTiles()
 			for (unsigned x = 0; x != row.size(); x++) {
 				const Tile& tile = row[x];
 				const TileType* type = tile.type;
-				const Gosu::Image* img = type->anim.image();
+				const Gosu::Image* img = type->anim.frame();
 				img->draw(x*img->width(), y*img->height(), 0);
 			}
 		}
@@ -128,10 +128,10 @@ bool Area::needsRedraw() const
 		return true;
 
 	// Do any onscreen tile types need to update their animations?
-	int millis = (int)Gosu::milliseconds();
+	int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(const TileSet& set, tilesets)
 		BOOST_FOREACH(const TileType& type, set.tileTypes)
-			if (type.anim.needsUpdate(millis) &&
+			if (type.anim.needsRedraw(millis) &&
 					tileTypeOnScreen(type))
 				return true;
 	return false;

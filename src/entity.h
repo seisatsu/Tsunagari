@@ -63,8 +63,8 @@ public:
 	void setCoordsByTile(coord_t c);
 
 	//! Move within Area.
-	void moveByPixel(coord_t deltac);
-	void moveByTile(coord_t deltac);
+	void moveByPixel(coord_t delta);
+	void moveByTile(coord_t delta);
 
 	//! Sets the Area object this entity will ask when looking for
 	//  nearby Tiles. Doesn't change x,y,z position.
@@ -73,28 +73,32 @@ public:
 protected:
 	SampleRef getSound(const std::string& name);
 
-	bool processDescriptor();
-	bool processSprite(const xmlNode* sprite);
-	bool processPhases(const xmlNode* phases);
-	bool processPhase(xmlNode* phase);
-	bool processSounds(const xmlNode* sounds);
-	bool processSound(xmlNode* sound);
-
-	bool loadPhases();
-	Gosu::Image* loadImage(const Gosu::Bitmap& src, unsigned pos);
+	//! Calculate which way to face based upon a movement delta.
+	void calculateFacing(coord_t delta);
 
 	//! Called right before starting to moving onto another tile.
-	virtual void preMove(coord_t dest);
+	virtual void preMove(coord_t delta);
 
 	//! Called after we've arrived at another tile.
 	virtual void postMove();
 
+	bool processDescriptor();
+	bool processSprite(const xmlNode* sprite);
+	bool processPhases(const xmlNode* phases);
+	bool processPhase(xmlNode* phase, const TiledImage& tiles);
+	bool processMember(xmlNode* phase, Animation& anim,
+                           const TiledImage& tiles);
+	bool processSounds(const xmlNode* sounds);
+	bool processSound(xmlNode* sound);
+
+
 
 	Resourcer* rc;
 
-	boost::unordered_map<std::string, ImageRef> imgs;
-	ImageRef img;
+	boost::unordered_map<std::string, Animation> phases;
+	Animation* phase;
 	bool redraw;
+	std::string facing;
 
 	boost::unordered_map<std::string, SampleRef> sounds;
 

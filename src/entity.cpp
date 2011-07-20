@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <math.h>
+
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
@@ -15,12 +17,20 @@
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
+#include "window.h"
+
+static std::string facings[][3] = {
+	{"up-left",   "up",   "up-right"},
+	{"left",      "",     "right"},
+	{"down-left", "down", "down-right"},
+};
+
 
 Entity::Entity(Resourcer* rc, Area* area)
 	: rc(rc),
 	  redraw(true),
 	  moving(false),
-	  speed(240.0 / 1000),
+	  speed(240.0 / 1000), // FIXME
 	  area(area)
 {
 	c.x = c.y = c.z = 0;
@@ -33,18 +43,59 @@ Entity::~Entity()
 bool Entity::init(const std::string& descriptor)
 {
 	this->descriptor = descriptor;
-	return processDescriptor() && loadPhases();
+	if (!processDescriptor())
+		return false;
+
+	// Set an initial phase
+	phase = &phases.begin()->second;
+	return true;
 }
 
 void Entity::draw()
 {
+	int millis = GameWindow::getWindow().time();
+	phase->updateFrame(millis);
+	phase->frame()->draw((double)c.x, (double)c.y, (double)0);
 	redraw = false;
-	img->draw((double)c.x, (double)c.y, (double)0);
 }
 
 bool Entity::needsRedraw() const
 {
-	return redraw;
+	int millis = GameWindow::getWindow().time();
+	return redraw || phase->needsRedraw(millis);
+}
+
+
+static double angleFromXY(long x, long y)
+{
+	double angle = 0.0;
+
+	// Moving at an angle
+	if (x != 0 && y != 0) {
+		angle = atan((double)y / (double)x);
+		if (y < 0 && x < 0)
+			;
+		else if (y < 0 && x > 0)
+			angle += M_PI;
+		else if (y > 0 && x < 0)
+			angle += M_PI*2;
+		else if (y > 0 && x > 0)
+			angle += M_PI;
+	}
+
+	// Moving straight
+	else {
+		if (x < 0)
+			angle = 0;
+		else if (x > 0)
+			angle = M_PI;
+		else if (y < 0)
+			angle = M_PI_2;
+		else if (y > 0)
+			angle = 3*M_PI_2;
+	}
+
+	return angle;
 }
 
 void Entity::update(unsigned long dt)
@@ -60,14 +111,19 @@ void Entity::update(unsigned long dt)
 			postMove();
 		}
 		else {
-			double angle = Gosu::angle((double)c.x, (double)c.y,
-					(double)dest.x, (double)dest.y); 
-			double dx = Gosu::offsetX(angle, speed * (double)dt);
-			double dy = Gosu::offsetY(angle, speed * (double)dt);
+			double angle = angleFromXY(c.x - dest.x, dest.y - c.y);
+			double dx = cos(angle);
+			double dy = -sin(angle);
+
+			// Fix inaccurate trig functions
+			if (-1e-10 < dx && dx < 1e-10)
+				dx = 0.0;
+			if (-1e-10 < dy && dy < 1e-10)
+				dy = 0.0;
 
 			// Save state of partial pixels traveled in double
-			rx += dx;
-			ry += dy;
+			rx += dx * speed * (double)dt;
+			ry += dy * speed * (double)dt;
 
 			c.x = (long)rx;
 			c.y = (long)ry;
@@ -77,15 +133,17 @@ void Entity::update(unsigned long dt)
 
 bool Entity::setPhase(const std::string& name)
 {
-	bool changed = false;
-	boost::unordered_map<std::string, ImageRef>::iterator phase;
-	phase = imgs.find(name);
-	if (phase != imgs.end()) {
-		ImageRef newImg = phase->second;
-		changed = (img != newImg);
-		img = newImg;
+	boost::unordered_map<std::string, Animation>::iterator it;
+	it = phases.find(name);
+	if (it != phases.end()) {
+		Animation* newPhase = &it->second;
+		if (phase != newPhase) {
+			phase = newPhase;
+			redraw = true;
+			return true;
+		}
 	}
-	return changed;
+	return false;
 }
 
 coord_t Entity::getCoordsByPixel() const
@@ -96,11 +154,8 @@ coord_t Entity::getCoordsByPixel() const
 coord_t Entity::getCoordsByTile() const
 {
 	coord_t tileDim = area->getTileDimensions();
-	coord_t coords;
-	coords.x = c.x / tileDim.x;
-	coords.y = c.y / tileDim.y;
-	coords.z = c.z; // XXX: revisit when we have Z-buffers
-	return coords;
+	// XXX: revisit when we have Z-buffers
+	return coord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
 void Entity::setCoordsByPixel(coord_t coords)
@@ -119,42 +174,44 @@ void Entity::setCoordsByTile(coord_t coords)
 	redraw = true;
 }
 
-void Entity::moveByPixel(coord_t dc)
+void Entity::moveByPixel(coord_t delta)
 {
-	c.x += dc.x;
-	c.y += dc.y;
-	c.z += dc.z;
+	c.x += delta.x;
+	c.y += delta.y;
+	c.z += delta.z;
 	redraw = true;
 }
 
-void Entity::moveByTile(coord_t dc)
+void Entity::moveByTile(coord_t delta)
 {
 	if (GAME_MODE == SLIDE_MOVE && moving)
 		// support queueing moves?
 		return;
 
 	coord_t newCoord = getCoordsByTile();
-	newCoord.x += dc.x;
-	newCoord.y += dc.y;
-	newCoord.z += dc.z;
+	newCoord.x += delta.x;
+	newCoord.y += delta.y;
+	newCoord.z += delta.z;
 
 	// Can we move?
 	const Area::Tile& tile = area->getTile(newCoord);
 	if ((tile.flags       & Area::nowalk) != 0 ||
 	    (tile.type->flags & Area::nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
-		// Stop here.
+		// Turn to face the direction, but don't move.
+		calculateFacing(delta);
+		setPhase(facing);
 		return;
 	}
 
 	// Move!
-	redraw = true;
 	const coord_t tileDim = area->getTileDimensions();
-	dest.x = c.x + dc.x * tileDim.x;
-	dest.y = c.y + dc.y * tileDim.y;
+	dest.x = c.x + delta.x * tileDim.x;
+	dest.y = c.y + delta.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers
+	redraw = true;
 
-	preMove(dest);
+	preMove(delta);
 
 	if (GAME_MODE == JUMP_MOVE) {
 		c.x = dest.x;
@@ -183,6 +240,42 @@ SampleRef Entity::getSound(const std::string& name)
 		return it->second;
 	else
 		return SampleRef();
+}
+
+void Entity::calculateFacing(coord_t delta)
+{
+	int x, y;
+
+	if (delta.x < 0)
+		x = 0;
+	else if (delta.x == 0)
+		x = 1;
+	else
+		x = 2;
+
+	if (delta.y < 0)
+		y = 0;
+	else if (delta.y == 0)
+		y = 1;
+	else
+		y = 2;
+
+	facing = facings[y][x];
+}
+
+void Entity::preMove(coord_t delta)
+{
+	calculateFacing(delta);
+	if (GAME_MODE == JUMP_MOVE)
+		setPhase(facing);
+	else
+		setPhase("moving " + facing);
+}
+
+void Entity::postMove()
+{
+	if (GAME_MODE != JUMP_MOVE)
+		setPhase(facing);
 }
 
 /**
@@ -235,15 +328,20 @@ bool Entity::processSprite(const xmlNode* sprite)
 
 bool Entity::processPhases(const xmlNode* phases)
 {
+	TiledImage tiles;
+	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)xml.tileSize.x,
+			(unsigned)xml.tileSize.y, false))
+		return false;
+
 	for (xmlNode* phase = phases->xmlChildrenNode; phase != NULL;
 			phase = phase->next)
-		if (!xmlStrncmp(phase->name, BAD_CAST("phase"), 6)) // necessary?
-			if (!processPhase(phase))
+		if (!xmlStrncmp(phase->name, BAD_CAST("phase"), 6)) // needed?
+			if (!processPhase(phase, tiles))
 				return false;
 	return true;
 }
 
-bool Entity::processPhase(xmlNode* phase)
+bool Entity::processPhase(xmlNode* phase, const TiledImage& tiles)
 {
 	/* Each phase requires a 'name'. Additionally,
 	 * one of either 'pos' or 'speed' is needed.
@@ -252,31 +350,53 @@ bool Entity::processPhase(xmlNode* phase)
 	 */
 	const std::string name = (char*)xmlGetProp(phase, BAD_CAST("name"));
 
-	const xmlChar* pos = xmlGetProp(phase, BAD_CAST("pos"));
-	const xmlChar* speed = xmlGetProp(phase, BAD_CAST("speed"));
+	const xmlChar* posStr = xmlGetProp(phase, BAD_CAST("pos"));
+	const xmlChar* speedStr = xmlGetProp(phase, BAD_CAST("speed"));
 
 	// FIXME: check name + pos | speed for 0 length
 
-	if (pos && speed) {
+	if (posStr && speedStr) {
 		Log::err(descriptor, "pos and speed attributes in "
 				"element phase are mutually exclusive");
 		return false;
 	}
-	if (!pos && !speed) {
+	if (!posStr && !speedStr) {
 		Log::err(descriptor, "must have pos or speed attribute "
 			       "in element phase");
 		return false;
 	}
 
-	if (pos) {
-		const unsigned value = (unsigned)atoi((const char*)pos); // atol
-		xml.phases[name] = value;
+	if (posStr) {
+		// atoi
+		const unsigned pos = (unsigned)atoi((const char*)posStr);
+		// FIXME: check for out of bounds
+		phases[name] = Animation(tiles[pos]);
 	}
-	else { // speed
-		// TODO: Load animated sprites
-		// Load <member> subelements
+	else { // speedStr
+		// atoi
+		const double speed = (unsigned)atof((const char*)speedStr);
+		// FIXME: check for out of bounds
+
+		phases[name] = Animation();
+		int len = (int)(1000.0/speed);
+		phases[name].setFrameLen(len);
+		for (xmlNode* member = phase->xmlChildrenNode; member != NULL;
+				member = member->next)
+			if (!xmlStrncmp(member->name, BAD_CAST("member"), 7)) // needed?
+				if (!processMember(member, phases[name], tiles))
+					return false;
 	}
 
+	return true;
+}
+
+bool Entity::processMember(xmlNode* phase, Animation& anim,
+                           const TiledImage& tiles)
+{
+	const xmlChar* posStr = xmlGetProp(phase, BAD_CAST("pos"));
+	const unsigned pos = (unsigned)atoi((const char*)posStr); // atoi
+	// FIXME: check for out of bounds
+	anim.addFrame(tiles[pos]);
 	return true;
 }
 
@@ -284,7 +404,7 @@ bool Entity::processSounds(const xmlNode* sounds)
 {
 	for (xmlNode* sound = sounds->xmlChildrenNode; sound != NULL;
 			sound = sound->next)
-		if (!xmlStrncmp(sound->name, BAD_CAST("sound"), 6)) // necessary?
+		if (!xmlStrncmp(sound->name, BAD_CAST("sound"), 6)) // needed?
 			if (!processSound(sound))
 				return false;
 	return true;
@@ -303,30 +423,5 @@ bool Entity::processSound(xmlNode* sound)
 		Log::err(descriptor, std::string("sound ") +
 				filename + " not found");
 	return s;
-}
-
-bool Entity::loadPhases()
-{
-	TiledImage tiles;
-	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)xml.tileSize.x,
-			(unsigned)xml.tileSize.y, false))
-		return false;
-
-	boost::unordered_map<std::string, unsigned>::iterator it;
-	for (it = xml.phases.begin(); it != xml.phases.end(); it++) {
-		const std::string& name = it->first;
-		unsigned idx = it->second;
-		ImageRef image = tiles[idx];
-		imgs[name] = img = image;
-	}
-	return true;
-}
-
-void Entity::preMove(coord_t)
-{
-}
-
-void Entity::postMove()
-{
 }
 

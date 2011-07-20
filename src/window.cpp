@@ -22,7 +22,8 @@ GameWindow& GameWindow::getWindow()
 
 GameWindow::GameWindow(unsigned x, unsigned y, bool fullscreen)
 	: Gosu::Window(x, y, fullscreen),
-	  lastTime(Gosu::milliseconds())
+	  lastTime((int)Gosu::milliseconds()),
+	  now(lastTime)
 {
 	globalWindow = this;
 }
@@ -40,12 +41,13 @@ bool GameWindow::init(ClientValues* conf)
 
 void GameWindow::buttonDown(const Gosu::Button btn)
 {
+	now = (int)Gosu::milliseconds();
 	if (btn == Gosu::kbEscape)
 		close();
 	else {
 		if (keystates.find(btn) == keystates.end()) {
 			keystate& state = keystates[btn];
-			state.since = Gosu::milliseconds();
+			state.since = now;
 			state.initiallyResolved = false;
 			state.consecutive = false;
 
@@ -80,9 +82,14 @@ void GameWindow::update()
 	world->update(dt);
 }
 
+int GameWindow::time()
+{
+	return now;
+}
+
 void GameWindow::calculateDt()
 {
-	unsigned long now = Gosu::milliseconds();
+	now = (int)Gosu::milliseconds();
 	dt = now - lastTime;
 	lastTime = now;
 }
@@ -90,7 +97,6 @@ void GameWindow::calculateDt()
 void GameWindow::handleKeyboardInput()
 {
 	std::map<Gosu::Button, keystate>::iterator it;
-	unsigned long millis = Gosu::milliseconds();
 
 	// Persistent input handling code
 	for (it = keystates.begin(); it != keystates.end(); it++) {
@@ -109,10 +115,9 @@ void GameWindow::handleKeyboardInput()
 		}
 
 		int delay = state.consecutive ?
-		    ROGUELIKE_PERSIST_DELAY_CONSECUTIVE :
-		    ROGUELIKE_PERSIST_DELAY_INIT;
-		if (millis >= state.since + delay) {
-			state.since = millis;
+		    PERSIST_DELAY_CONSECUTIVE : PERSIST_DELAY_INIT;
+		if (now >= state.since + delay) {
+			state.since = now;
 			world->buttonDown(btn);
 			state.consecutive = true;
 		}
