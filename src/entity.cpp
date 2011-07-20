@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <math.h>
+
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
@@ -17,23 +19,18 @@
 #include "resourcer.h"
 #include "window.h"
 
-static const char* facingPhases[][3] = {
+static std::string facings[][3] = {
 	{"up-left",   "up",   "up-right"},
 	{"left",      "",     "right"},
 	{"down-left", "down", "down-right"},
 };
 
-static const char* movingPhases[][3] = {
-	{"moving up-left",   "moving up",   "moving up-right"},
-	{"moving left",      "",            "moving right"},
-	{"moving down-left", "moving down", "moving down-right"},
-};
 
 Entity::Entity(Resourcer* rc, Area* area)
 	: rc(rc),
 	  redraw(true),
 	  moving(false),
-	  speed(240.0 / 1000),
+	  speed(240.0 / 1000), // FIXME
 	  area(area)
 {
 	c.x = c.y = c.z = 0;
@@ -68,6 +65,39 @@ bool Entity::needsRedraw() const
 	return redraw || phase->needsRedraw(millis);
 }
 
+
+static double angleFromXY(long x, long y)
+{
+	double angle = 0.0;
+
+	// Moving at an angle
+	if (x != 0 && y != 0) {
+		angle = atan((double)y / (double)x);
+		if (y < 0 && x < 0)
+			;
+		else if (y < 0 && x > 0)
+			angle += M_PI;
+		else if (y > 0 && x < 0)
+			angle += M_PI*2;
+		else if (y > 0 && x > 0)
+			angle += M_PI;
+	}
+
+	// Moving straight
+	else {
+		if (x < 0)
+			angle = 0;
+		else if (x > 0)
+			angle = M_PI;
+		else if (y < 0)
+			angle = M_PI_2;
+		else if (y > 0)
+			angle = 3*M_PI_2;
+	}
+
+	return angle;
+}
+
 void Entity::update(unsigned long dt)
 {
 	if (GAME_MODE == SLIDE_MOVE && moving) {
@@ -81,14 +111,19 @@ void Entity::update(unsigned long dt)
 			postMove();
 		}
 		else {
-			double angle = Gosu::angle((double)c.x, (double)c.y,
-					(double)dest.x, (double)dest.y); 
-			double dx = Gosu::offsetX(angle, speed * (double)dt);
-			double dy = Gosu::offsetY(angle, speed * (double)dt);
+			double angle = angleFromXY(c.x - dest.x, dest.y - c.y);
+			double dx = cos(angle);
+			double dy = -sin(angle);
+
+			// Fix inaccurate trig functions
+			if (-1e-10 < dx && dx < 1e-10)
+				dx = 0.0;
+			if (-1e-10 < dy && dy < 1e-10)
+				dy = 0.0;
 
 			// Save state of partial pixels traveled in double
-			rx += dx;
-			ry += dy;
+			rx += dx * speed * (double)dt;
+			ry += dy * speed * (double)dt;
 
 			c.x = (long)rx;
 			c.y = (long)ry;
@@ -142,24 +177,24 @@ void Entity::setCoordsByTile(coord_t coords)
 	redraw = true;
 }
 
-void Entity::moveByPixel(coord_t dc)
+void Entity::moveByPixel(coord_t delta)
 {
-	c.x += dc.x;
-	c.y += dc.y;
-	c.z += dc.z;
+	c.x += delta.x;
+	c.y += delta.y;
+	c.z += delta.z;
 	redraw = true;
 }
 
-void Entity::moveByTile(coord_t dc)
+void Entity::moveByTile(coord_t delta)
 {
 	if (GAME_MODE == SLIDE_MOVE && moving)
 		// support queueing moves?
 		return;
 
 	coord_t newCoord = getCoordsByTile();
-	newCoord.x += dc.x;
-	newCoord.y += dc.y;
-	newCoord.z += dc.z;
+	newCoord.x += delta.x;
+	newCoord.y += delta.y;
+	newCoord.z += delta.z;
 
 	// Can we move?
 	const Area::Tile& tile = area->getTile(newCoord);
@@ -167,17 +202,19 @@ void Entity::moveByTile(coord_t dc)
 	    (tile.type->flags & Area::nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
 		// Stop here.
+		calculateFacing(delta);
+		setPhase(facing);
 		return;
 	}
 
 	// Move!
 	const coord_t tileDim = area->getTileDimensions();
-	dest.x = c.x + dc.x * tileDim.x;
-	dest.y = c.y + dc.y * tileDim.y;
+	dest.x = c.x + delta.x * tileDim.x;
+	dest.y = c.y + delta.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers
 	redraw = true;
 
-	preMove(dc);
+	preMove(delta);
 
 	if (GAME_MODE == JUMP_MOVE) {
 		c.x = dest.x;
@@ -206,6 +243,42 @@ SampleRef Entity::getSound(const std::string& name)
 		return it->second;
 	else
 		return SampleRef();
+}
+
+void Entity::calculateFacing(coord_t delta)
+{
+	int x, y;
+
+	if (delta.x < 0)
+		x = 0;
+	else if (delta.x == 0)
+		x = 1;
+	else
+		x = 2;
+
+	if (delta.y < 0)
+		y = 0;
+	else if (delta.y == 0)
+		y = 1;
+	else
+		y = 2;
+
+	facing = facings[y][x];
+}
+
+void Entity::preMove(coord_t delta)
+{
+	calculateFacing(delta);
+	if (GAME_MODE == JUMP_MOVE)
+		setPhase(facing);
+	else
+		setPhase("moving " + facing);
+}
+
+void Entity::postMove()
+{
+	if (GAME_MODE != JUMP_MOVE)
+		setPhase(facing);
 }
 
 /**
@@ -353,38 +426,5 @@ bool Entity::processSound(xmlNode* sound)
 		Log::err(descriptor, std::string("sound ") +
 				filename + " not found");
 	return s;
-}
-
-void Entity::preMove(coord_t delta)
-{
-	int x, y;
-
-	if (delta.x < 0)
-		x = 0;
-	else if (delta.x == 0)
-		x = 1;
-	else
-		x = 2;
-
-	if (delta.y < 0)
-		y = 0;
-	else if (delta.y == 0)
-		y = 1;
-	else
-		y = 2;
-
-	if (GAME_MODE == JUMP_MOVE) {
-		setPhase(facingPhases[y][x]);
-	}
-	else {
-		setPhase(movingPhases[y][x]);
-		facing = facingPhases[y][x];
-	}
-}
-
-void Entity::postMove()
-{
-	if (GAME_MODE != JUMP_MOVE)
-		setPhase(facing);
 }
 

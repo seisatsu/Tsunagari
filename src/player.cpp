@@ -66,6 +66,8 @@ void Player::moveByTile(coord_t delta)
 	    (dest.type->flags & Area::player_nowalk) != 0) {
 		// The tile we're trying to move onto is set as player_nowalk.
 		// Stop here.
+		calculateFacing(delta);
+		setPhase(facing);
 		return;
 	}
 

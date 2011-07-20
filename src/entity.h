@@ -63,8 +63,8 @@ public:
 	void setCoordsByTile(coord_t c);
 
 	//! Move within Area.
-	void moveByPixel(coord_t deltac);
-	void moveByTile(coord_t deltac);
+	void moveByPixel(coord_t delta);
+	void moveByTile(coord_t delta);
 
 	//! Sets the Area object this entity will ask when looking for
 	//  nearby Tiles. Doesn't change x,y,z position.
@@ -72,6 +72,15 @@ public:
 	
 protected:
 	SampleRef getSound(const std::string& name);
+
+	//! Calculate which way to face based upon a movement delta.
+	void calculateFacing(coord_t delta);
+
+	//! Called right before starting to moving onto another tile.
+	virtual void preMove(coord_t delta);
+
+	//! Called after we've arrived at another tile.
+	virtual void postMove();
 
 	bool processDescriptor();
 	bool processSprite(const xmlNode* sprite);
@@ -82,11 +91,6 @@ protected:
 	bool processSounds(const xmlNode* sounds);
 	bool processSound(xmlNode* sound);
 
-	//! Called right before starting to moving onto another tile.
-	virtual void preMove(coord_t delta);
-
-	//! Called after we've arrived at another tile.
-	virtual void postMove();
 
 
 	Resourcer* rc;
