@@ -2,17 +2,6 @@ ITEMS
 
 * Sprite doesn't support animations.
 
-* Avoid window damage when another window moves on top.
-  We have an optimization that makes our window only redraw itself if something
-  in the game world changed. This causes redraw requests when another window is
-  passing over us to be ignored.
-
-  Gosu might be forked to be explicit about the difference between timer-based
-  redraw requests and ones spawned by window damage.
-
-  Gosu already has a Window::loseFocus() method. What would it take to have a
-  gainFocus()?
-
 * Support multiple TileSets per TMX map.
 
 * Add brief or brief+long Doxygen Documentation to all public and private
