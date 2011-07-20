@@ -154,11 +154,8 @@ coord_t Entity::getCoordsByPixel() const
 coord_t Entity::getCoordsByTile() const
 {
 	coord_t tileDim = area->getTileDimensions();
-	coord_t coords;
-	coords.x = c.x / tileDim.x;
-	coords.y = c.y / tileDim.y;
-	coords.z = c.z; // XXX: revisit when we have Z-buffers
-	return coords;
+	// XXX: revisit when we have Z-buffers
+	return coord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
 void Entity::setCoordsByPixel(coord_t coords)
@@ -201,7 +198,7 @@ void Entity::moveByTile(coord_t delta)
 	if ((tile.flags       & Area::nowalk) != 0 ||
 	    (tile.type->flags & Area::nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
-		// Stop here.
+		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
 		return;

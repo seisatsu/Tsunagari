@@ -53,8 +53,11 @@ void Player::moveByTile(coord_t delta)
 
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
-	if (window.input().down(Gosu::kbLeftControl))
+	if (window.input().down(Gosu::kbLeftControl)) {
+		calculateFacing(delta);
+		setPhase(facing);
 		return;
+	}
 
 	// Try to actually move.
 	coord_t newCoord = getCoordsByTile();
@@ -65,7 +68,7 @@ void Player::moveByTile(coord_t delta)
 	if ((dest.flags       & Area::player_nowalk) != 0 ||
 	    (dest.type->flags & Area::player_nowalk) != 0) {
 		// The tile we're trying to move onto is set as player_nowalk.
-		// Stop here.
+		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
 		return;
