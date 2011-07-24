@@ -66,6 +66,8 @@ bool Resourcer::init()
 void Resourcer::garbageCollect()
 {
 	reclaim<ImageRefMap, ImageRef>(images);
+	// FIXME: TiledImages aren't held on to while in map
+	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
 	reclaim<SampleRefMap, SampleRef>(samples);
 	reclaim<XMLMap, XMLDocRef>(xmls);
 }
@@ -93,6 +95,7 @@ void Resourcer::reclaim(Map& map)
 				Log::dbg("Resourcer", "Removing " + name);
 			}
 		}
+		// Redundant?
 		else if (cache.lastUsed) {
 			cache.lastUsed = 0;
 			Log::dbg("Resourcer", name + " used again");
@@ -106,8 +109,13 @@ ImageRef Resourcer::getImage(const std::string& name)
 {
 	if (conf->cache_enabled) {
 		ImageRefMap::iterator entry = images.find(name);
-		if (entry != images.end())
+		if (entry != images.end()) {
+			if (entry->second.lastUsed) {
+				Log::dbg("Resourcer", name + " used again");
+				entry->second.lastUsed = 0;
+			}
 			return entry->second.resource;
+		}
 	}
 
 	BufferPtr buffer(read(name));
@@ -132,7 +140,12 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 	if (conf->cache_enabled) {
 		TiledImageMap::iterator entry = tiles.find(name);
 		if (entry != tiles.end()) {
-			img = entry->second;
+			int now = GameWindow::getWindow().time();
+			Log::dbg("Resourcer", name + " used again");
+			// We set lastUsed to now because it won't be used by
+			// the time reclaim() gets to it.
+			entry->second.lastUsed = now;
+			img = *entry->second.resource.get();
 			return true;
 		}
 	}
@@ -142,11 +155,17 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		return false;
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
+	boost::shared_ptr<TiledImage> result(new TiledImage);
 	Gosu::imagesFromTiledBitmap(window->graphics(), bitmap, w, h,
-			tileable, img);
+			tileable, *result.get());
+	img = *result.get();
 
-	if (conf->cache_enabled)
-		tiles[name] = img;
+	if (conf->cache_enabled) {
+		CachedItem<boost::shared_ptr<TiledImage> > data;
+		data.resource = result;
+		data.lastUsed = 0;
+		tiles[name] = data;
+	}
 	return true;
 }
 
@@ -158,8 +177,13 @@ SampleRef Resourcer::getSample(const std::string& name)
 {
 	if (conf->cache_enabled) {
 		SampleRefMap::iterator entry = samples.find(name);
-		if (entry != samples.end())
+		if (entry != samples.end()) {
+			if (entry->second.lastUsed) {
+				Log::dbg("Resourcer", name + " used again");
+				entry->second.lastUsed = 0;
+			}
 			return entry->second.resource;
+		}
 	}
 
 	BufferPtr buffer(read(name));
@@ -184,6 +208,8 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 		if (entry != xmls.end()) {
 			int now = GameWindow::getWindow().time();
 			Log::dbg("Resourcer", name + " used again");
+			// We set lastUsed to now because it won't be used by
+			// the time reclaim() gets to it.
 			entry->second.lastUsed = now;
 			return entry->second.resource;
 		}

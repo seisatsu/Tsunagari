@@ -84,7 +84,8 @@ private:
 		SampleRefMap;
 	typedef boost::unordered_map<std::string, CachedItem<XMLDocRef> >
 		XMLMap;
-	typedef boost::unordered_map<std::string, TiledImage> TiledImageMap;
+	typedef boost::unordered_map<std::string, CachedItem<
+		boost::shared_ptr<TiledImage> > > TiledImageMap;
 
 	//! Garbage collect a map.
 	template<class Map, class MapValue>

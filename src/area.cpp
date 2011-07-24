@@ -208,12 +208,22 @@ cube_t Area::visibleTiles() const
 	const int windowHeight = graphics.height();
 	const coord_t off = viewportOffset();
 
+	const long x1 = -off.x / tileWidth;
+	const long y1 = -off.y / tileHeight;
 	const long x2 = (long)ceil((double)(windowWidth - off.x) /
 		(double)tileWidth);
 	const long y2 = (long)ceil((double)(windowHeight - off.y) /
 		(double)tileHeight);
-	return cube(-off.x / tileWidth, -off.y / tileHeight, 0,
-		x2, y2, 1);
+
+	// Does the entire width or height of the map fit onscreen?
+	if (x1 > 0 && y1 > 0)
+		return cube(x1, y1, 0, x2, y2, 1);
+	else if (x1 > 0)
+		return cube(x1, 0, 0, x2, dim.y, 1);
+	else if (y1 > 0)
+		return cube(0, y1, 0, dim.x, y2, 1);
+	else
+		return cube(0, 0, 0, dim.x, dim.y, 1);
 }
 
 bool Area::tileTypeOnScreen(const Area::TileType& search) const
