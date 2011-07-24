@@ -42,6 +42,8 @@ void Player::stopMovement(coord_t delta)
 		velocity.y -= delta.y;
 		velocity.z -= delta.z;
 		normalizeVelocity();
+		if (velocity.x || velocity.y || velocity.z)
+			moveByTile(velocity);
 	}
 }
 

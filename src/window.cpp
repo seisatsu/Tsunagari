@@ -79,7 +79,8 @@ bool GameWindow::needsRedraw() const
 void GameWindow::update()
 {
 	calculateDt();
-	handleKeyboardInput();
+	if (GAME_MODE == JUMP_MOVE)
+		handleKeyboardInput();
 	world->update(dt);
 
 	// Run once per second.
@@ -122,7 +123,7 @@ void GameWindow::handleKeyboardInput()
 		}
 
 		int delay = state.consecutive ?
-		    PERSIST_DELAY_CONSECUTIVE : PERSIST_DELAY_INIT;
+		    ROGUELIKE_PERSIST_DELAY_CONSECUTIVE : ROGUELIKE_PERSIST_DELAY_INIT;
 		if (now >= state.since + delay) {
 			state.since = now;
 			world->buttonDown(btn);
