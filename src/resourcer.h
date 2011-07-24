@@ -91,18 +91,18 @@ private:
 	template<class Map, class MapValue>
 	void reclaim(Map& map);
 
-	//! Requests an XML document from disk.
+	//! Reads an XML document from disk and parses it.
 	xmlDoc* readXMLDocFromDisk(const std::string& name,
 		const std::string& dtdPath);
 
-	//! Requests a string resource from disk.
+	//! Read a string resource from disk.
 	std::string readStringFromDisk(const std::string& name);
 
 	//! Read a generic resource from disk.
 	Gosu::Buffer* read(const std::string& name);
 
 	//! Helper function 
-	std::string path(const std::string& entry_name) const;
+	std::string path(const std::string& entryName) const;
 
 	GameWindow* window;
 	zip* z;

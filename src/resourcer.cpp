@@ -95,13 +95,14 @@ void Resourcer::reclaim(Map& map)
 				Log::dbg("Resourcer", "Removing " + name);
 			}
 		}
-		// Redundant?
+		// XXX: Redundant? We're working around this because it won't
+		// catch XML documents.
 		else if (cache.lastUsed) {
 			cache.lastUsed = 0;
 			Log::dbg("Resourcer", name + " used again");
 		}
 	}
-	BOOST_FOREACH(std::string name, dead)
+	BOOST_FOREACH(std::string& name, dead)
 		map.erase(name);
 }
 
@@ -341,8 +342,8 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 	return buffer;
 }
 
-std::string Resourcer::path(const std::string& entry_name) const
+std::string Resourcer::path(const std::string& entryName) const
 {
-	return conf->world + "/" + entry_name;
+	return conf->world + "/" + entryName;
 }
 
