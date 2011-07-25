@@ -19,6 +19,13 @@ enum tern {
 	T_None
 };
 
+//! Game Movement Mode
+enum movement_mode_t {
+	TURN,
+	TILE,
+	NOTILE
+};
+
 //! Coordinate Type
 struct coord_t {
 	long x;
@@ -43,7 +50,7 @@ cube_t cube(long x1, long y1, long z1,
 //! Client Configuration
 struct ClientValues {
 	std::string world;
-	std::string dtdDir;
+	movement_mode_t movemode;
 	coord_t windowsize;
 	bool fullscreen;
 	bool cache_enabled;

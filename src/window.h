@@ -34,13 +34,13 @@ public:
 	static GameWindow& getWindow();
 
 	//! GameWindow Constructor
-	GameWindow(unsigned x, unsigned y, bool fullscreen);
+	GameWindow(ClientValues* conf);
 
 	//! GameWindow Destructor
 	virtual ~GameWindow();
 
 	//! GameWindow Initializer
-	bool init(ClientValues* conf);
+	bool init();
 
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
@@ -81,6 +81,8 @@ private:
 
 	//! Call the garbage colelctor once a second.
 	int currentSecond;
+	
+	ClientValues* conf;
 
 	struct keystate {
 		bool consecutive, initiallyResolved;

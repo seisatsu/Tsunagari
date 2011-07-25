@@ -31,7 +31,7 @@ public:
 	static World* getWorld();
 
 	//! World Constructor
-	World(Resourcer* rc, GameWindow* w);
+	World(GameWindow* wnd, Resourcer* rc, ClientValues* conf);
 	
 	//! World Destructor
 	~World();
@@ -59,6 +59,7 @@ private:
 
 	Resourcer* rc;
 	GameWindow* wnd;
+	ClientValues* conf;
 	Area* area;
 	boost::scoped_ptr<Player> player;
 
@@ -70,17 +71,6 @@ private:
 	enum WorldTypeLocality {
 		LOCAL,
 		NETWORK
-	};
-	
-	//! WorldTypeMovement XML Storage Enum
-	/*!
-	  Stores the World movement type. Options are "turn" (roguelike), 
-	  "tile" (yume nikki), or "notile" (zeldalike).
-	*/
-	enum WorldTypeMovement {
-		TURN,
-		TILE,
-		NOTILE
 	};
 	
 	//! WorldEntry XML Storage Struct
@@ -102,7 +92,6 @@ private:
 		std::string author;
 		std::string playerentity;
 		WorldTypeLocality locality;
-		WorldTypeMovement movement;
 		WorldEntry entry;
 		std::vector<std::string> scripts;
 	} xml;

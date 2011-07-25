@@ -9,19 +9,15 @@
 
 #define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP1 Revision 6"
 
-#define JUMP_MOVE  0 /* Roguelike */
-#define SLIDE_MOVE 1 /* Yume Nikki-like */
-#define FREE_MOVE  2 /* Zelda-like... not implemented yet */
-
 // === Default Configuration Settings ===
-	/* Tsunagari config file. -- Command Line */
+	/* Tsunagari config file. */
 	#define CLIENT_CONF_FILE "./client.ini"
+	
+	/* Tsunagari XML DTD directory. */
+	#define DTD_DIRECTORY "./dtd/"
 
-	/* Error verbosity level. -- Command Line */
+	/* Error verbosity level. */
 	#define MESSAGE_MODE MM_DEBUG
-
-	/* Game movement mode */
-	#define GAME_MODE SLIDE_MOVE
 
 	/* Milliseconds of button down before starting persistent input in
 	   roguelike movement mode. -- Move to World Descriptor */
@@ -32,10 +28,10 @@
 	#define ROGUELIKE_PERSIST_DELAY_CONSECUTIVE 100
 
 	/* Time to live in seconds for empty resource cache entries before they
-	   are deleted. -- Command Line */
+	   are deleted. */
 	#define CACHE_EMPTY_TTL 300
 
-	/* Maximum size in megabytes for the resource cache. -- Command Line */
+	/* Maximum size in megabytes for the resource cache. */
 	#define CACHE_MAX_SIZE 100
 // ===
 

@@ -8,6 +8,7 @@
 #include <libxml/tree.h>
 
 #include "area.h"
+#include "common.h"
 #include "player.h"
 #include "log.h"
 #include "resourcer.h"
@@ -21,8 +22,8 @@ World* World::getWorld()
 	return globalWorld;
 }
 
-World::World(Resourcer* rc, GameWindow* wnd)
-	: rc(rc), wnd(wnd), area(NULL)
+World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
+	: rc(rc), wnd(wnd), conf(conf), area(NULL)
 {
 	globalWorld = this;
 }
@@ -38,7 +39,7 @@ bool World::init()
 		return false;
 
 	// FIXME The player entity doesn't have a descriptor yet.
-	player.reset(new Player(rc, NULL));
+	player.reset(new Player(rc, NULL, conf));
 	if (!player->init(xml.playerentity))
 		return false;
 	player->setPhase("down");
@@ -108,23 +109,23 @@ bool World::processDescriptor()
 				xml.locality = NETWORK;
 
 			else {
-				Log::err(descriptor, "Invalid <type> value");
+				Log::err(descriptor, "Invalid <locality> value");
 				return false;
 			}
 			
 			str = xmlGetProp(node, BAD_CAST("movement"));
 			
 			if (xmlStrncmp(str, BAD_CAST("turn"), 5))
-				xml.movement = TURN;
+				conf->movemode = TURN;
 			
 			else if (xmlStrncmp(str, BAD_CAST("tile"), 5))
-				xml.movement = TILE;
+				conf->movemode = TILE;
 			
 			else if (xmlStrncmp(str, BAD_CAST("notile"), 7))
-				xml.movement = NOTILE;
+				conf->movemode = NOTILE;
 			
 			else {
-				Log::err(descriptor, "Invalid <locality> value");
+				Log::err(descriptor, "Invalid <movement> value");
 				return false;
 			}
 		}

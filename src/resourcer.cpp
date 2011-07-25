@@ -252,7 +252,7 @@ xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
 	}
 
 	// Load up a Document Type Definition for validating the document.
-	std::string dtdPath = conf->dtdDir + "/" + dtdFile;
+	std::string dtdPath = std::string(DTD_DIRECTORY) + "/" + dtdFile;
 	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
 	if (!dtd) {
 		Log::err(dtdPath, "file not found");

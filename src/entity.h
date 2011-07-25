@@ -38,7 +38,7 @@ namespace Gosu {
 class Entity
 {
 public:
-	Entity(Resourcer* rc, Area* area);
+	Entity(Resourcer* rc, Area* area, ClientValues* conf);
 	~Entity();
 
 	//! Entity Initializer
@@ -111,6 +111,8 @@ protected:
 	double rx, ry, rz; // real x,y position: hold partial pixel transversal
 
 	std::string descriptor;
+	
+	ClientValues* conf;
 
 	//! SpriteValues XML Storage Struct
 	/*!

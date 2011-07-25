@@ -26,12 +26,13 @@ static std::string facings[][3] = {
 };
 
 
-Entity::Entity(Resourcer* rc, Area* area)
+Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	: rc(rc),
 	  redraw(true),
 	  moving(false),
 	  speed(240.0 / 1000), // FIXME
-	  area(area)
+	  area(area),
+	  conf(conf)
 {
 	c.x = c.y = c.z = 0;
 }
@@ -100,7 +101,7 @@ static double angleFromXY(long x, long y)
 
 void Entity::update(unsigned long dt)
 {
-	if (GAME_MODE == SLIDE_MOVE && moving) {
+	if (conf->movemode == TILE && moving) {
 		redraw = true;
 
 		double destDist = Gosu::distance((double)c.x, (double)c.y,
@@ -184,7 +185,7 @@ void Entity::moveByPixel(coord_t delta)
 
 void Entity::moveByTile(coord_t delta)
 {
-	if (GAME_MODE == SLIDE_MOVE && moving)
+	if (conf->movemode == TILE && moving)
 		// support queueing moves?
 		return;
 
@@ -213,13 +214,13 @@ void Entity::moveByTile(coord_t delta)
 
 	preMove(delta);
 
-	if (GAME_MODE == JUMP_MOVE) {
+	if (conf->movemode == TURN) {
 		c.x = dest.x;
 		c.y = dest.y;
 		// XXX: set c.z when we have Z-buffers
 		postMove();
 	}
-	else if (GAME_MODE == SLIDE_MOVE) {
+	else if (conf->movemode == TILE) {
 		moving = true;
 		rx = (double)c.x;
 		ry = (double)c.y;
@@ -266,7 +267,7 @@ void Entity::calculateFacing(coord_t delta)
 void Entity::preMove(coord_t delta)
 {
 	calculateFacing(delta);
-	if (GAME_MODE == JUMP_MOVE)
+	if (conf->movemode == TURN)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
@@ -274,7 +275,7 @@ void Entity::preMove(coord_t delta)
 
 void Entity::postMove()
 {
-	if (GAME_MODE != JUMP_MOVE)
+	if (conf->movemode != TURN)
 		setPhase(facing);
 }
 

@@ -20,11 +20,13 @@ GameWindow& GameWindow::getWindow()
 	return *globalWindow;
 }
 
-GameWindow::GameWindow(unsigned x, unsigned y, bool fullscreen)
-	: Gosu::Window(x, y, fullscreen),
+GameWindow::GameWindow(ClientValues* conf)
+	: Gosu::Window((unsigned)conf->windowsize.x, 
+	  (unsigned)conf->windowsize.y, conf->fullscreen),
 	  lastTime((int)Gosu::milliseconds()),
 	  now(lastTime),
-	  currentSecond(now/1000)
+	  currentSecond(now/1000),
+	  conf(conf)
 {
 	globalWindow = this;
 }
@@ -33,10 +35,10 @@ GameWindow::~GameWindow()
 {
 }
 
-bool GameWindow::init(ClientValues* conf)
+bool GameWindow::init()
 {
 	rc.reset(new Resourcer(this, conf));
-	world.reset(new World(rc.get(), this));
+	world.reset(new World(this, rc.get(), conf));
 	return rc->init() && world->init();
 }
 
@@ -79,7 +81,7 @@ bool GameWindow::needsRedraw() const
 void GameWindow::update()
 {
 	calculateDt();
-	if (GAME_MODE == JUMP_MOVE)
+	if (conf->movemode == TURN)
 		handleKeyboardInput();
 	world->update(dt);
 

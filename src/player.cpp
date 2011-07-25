@@ -15,18 +15,18 @@
 #include "world.h"
 #include "window.h"
 
-Player::Player(Resourcer* rc, Area* area)
-	: Entity(rc, area), velocity(coord(0, 0, 0))
+Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
+	: Entity(rc, area, conf), velocity(coord(0, 0, 0))
 {
 }
 
 void Player::startMovement(coord_t delta)
 {
-	if (GAME_MODE == JUMP_MOVE) {
+	if (conf->movemode == TURN) {
 		// TODO Move by velocity would allow true diagonal movement
 		moveByTile(delta);
 	}
-	else if (GAME_MODE == SLIDE_MOVE) {
+	else if (conf->movemode == TILE) {
 		velocity.x += delta.x;
 		velocity.y += delta.y;
 		velocity.z += delta.z;
@@ -37,7 +37,7 @@ void Player::startMovement(coord_t delta)
 
 void Player::stopMovement(coord_t delta)
 {
-	if (GAME_MODE == SLIDE_MOVE) {
+	if (conf->movemode == TILE) {
 		velocity.x -= delta.x;
 		velocity.y -= delta.y;
 		velocity.z -= delta.z;
@@ -98,7 +98,7 @@ void Player::postMove()
 	const boost::optional<Area::Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
-	if (GAME_MODE == SLIDE_MOVE)
+	if (conf->movemode == TILE)
 		if (velocity.x || velocity.y || velocity.z)
 			moveByTile(velocity);
 }

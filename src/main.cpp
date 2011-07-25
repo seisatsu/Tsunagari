@@ -34,6 +34,8 @@ static void defaultsQuery()
 {
 	std::cerr << "CLIENT_CONF_FILE:                       " 
 		<< CLIENT_CONF_FILE << std::endl;
+	std::cerr << "DTD_DIRECTORY:                          " 
+		<< DTD_DIRECTORY << std::endl;
 	std::cerr << "MESSAGE_MODE:                           ";
 	if (MESSAGE_MODE == MM_DEBUG)
 		std::cerr << "MM_DEBUG" << std::endl;
@@ -41,13 +43,6 @@ static void defaultsQuery()
 		std::cerr << "MM_DEVELOPER" << std::endl;
 	else
 		std::cerr << "MM_ERROR" << std::endl;
-	std::cerr << "GAME_MODE:                              ";
-	if (GAME_MODE == JUMP_MOVE)
-		std::cerr << "JUMP_MOVE" << std::endl;
-	else if (GAME_MODE == SLIDE_MOVE)
-		std::cerr << "SLIDE_MOVE" << std::endl;
-	else
-		std::cerr << "FREE_MOVE" << std::endl;
 	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           " 
 		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
 	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    " 
@@ -97,13 +92,6 @@ static ClientValues* parseConfig(const char* filename)
 	}
 	else
 		conf->world = parameters["engine.world"];
-
-	if (parameters["engine.dtddir"].empty()) {
-		Log::err(filename, "\"[engine] dtddir\" option expected");
-		return NULL;
-	}
-	else
-		conf->dtdDir = parameters["engine.dtddir"];
 
 	if (parameters["window.width"].empty()) {
 		Log::err(filename, "\"[window] width\" option expected");
@@ -319,11 +307,9 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
-	GameWindow window((unsigned)conf->windowsize.x,
-	                  (unsigned)conf->windowsize.y,
-	                  conf->fullscreen);
+	GameWindow window(conf);
 
-	if (window.init(conf))
+	if (window.init())
 		window.show();
 	
 	delete conf;

@@ -12,7 +12,7 @@
 class Player : public Entity
 {
 public:
-	Player(Resourcer* rc, Area* area);
+	Player(Resourcer* rc, Area* area, ClientValues* conf);
 
 	//! Smooth continuous movement.
 	void startMovement(coord_t delta);

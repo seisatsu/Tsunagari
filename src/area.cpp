@@ -398,7 +398,7 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 
 	xmlChar* idstr = xmlGetProp(node, BAD_CAST("id"));
 	unsigned id = (unsigned)atoi((const char*)idstr); // atoi
-	unsigned expectedId = set.tileTypes.size();
+	unsigned expectedId = (unsigned)set.tileTypes.size();
 	if (id != expectedId) {
 		Log::err(descriptor, std::string("expected TileType id ") +
 		         itostr(expectedId) + ", but got " +
