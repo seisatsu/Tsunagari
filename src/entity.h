@@ -15,6 +15,7 @@
 #include "common.h"
 #include "resourcer.h"
 
+class Animation;
 class Area;
 class Resourcer;
 

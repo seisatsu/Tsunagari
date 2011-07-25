@@ -17,6 +17,7 @@
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
+#include "script.h"
 #include "window.h"
 
 static std::string facings[][3] = {
@@ -271,6 +272,10 @@ void Entity::preMove(coord_t delta)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
+	Script s;
+	s.init("test.lua");
+//	s.createTable();
+	s.run();
 }
 
 void Entity::postMove()
