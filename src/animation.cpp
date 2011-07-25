@@ -16,6 +16,11 @@ Animation::Animation()
 }
 
 Animation::Animation(ImageRef frame)
+	: img(NULL),
+	  animated(false),
+	  frameLen(0),
+	  animLen(0),
+	  frameShowing(0)
 {
 	Animation();
 	addFrame(frame);
