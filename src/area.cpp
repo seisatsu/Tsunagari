@@ -367,6 +367,7 @@ bool Area::processTileSet(xmlNode* node)
 Area::TileType Area::defaultTileType(TileSet& set)
 {
 	TileType type;
+	type.flags = 0x0;
 	type.anim.addFrame(set.tiles.front());
 	set.tiles.pop_front();
 	return type;
