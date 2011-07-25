@@ -66,7 +66,7 @@ public:
 
 	//! Requests an XML resource from cache.
 	XMLDocRef getXMLDoc(const std::string& name,
-		const std::string& dtdPath);
+		const std::string& dtdFile);
 
 private:
 	template<class Res>
@@ -93,7 +93,7 @@ private:
 
 	//! Reads an XML document from disk and parses it.
 	xmlDoc* readXMLDocFromDisk(const std::string& name,
-		const std::string& dtdPath);
+		const std::string& dtdFile);
 
 	//! Read a string resource from disk.
 	std::string readStringFromDisk(const std::string& name);

@@ -71,18 +71,18 @@ static void defaultsQuery()
 static ClientValues* parseConfig(const char* filename)
 {
 	namespace pod = boost::program_options::detail;
-	
+
 	ClientValues* conf = new ClientValues;
-	
+
 	conf->cache_enabled = CACHE_EMPTY_TTL && CACHE_MAX_SIZE;
-	
+
 	std::ifstream config(filename);
 	if (!config) {
 		Log::err(filename, "could not parse config");
 		delete conf;
 		return NULL;
 	}
-	
+
 	std::set<std::string> options;
 	std::map<std::string, std::string> parameters;
 	options.insert("*");
@@ -90,42 +90,49 @@ static ClientValues* parseConfig(const char* filename)
 	for (pod::config_file_iterator i(config, options), e ; i != e; ++i) {
 		parameters[i->string_key] = i->value[0];
 	}
-	
+
 	if (parameters["engine.world"].empty()) {
 		Log::err(filename, "\"[engine] world\" option expected");
 		return NULL;
 	}
 	else
 		conf->world = parameters["engine.world"];
-	
+
+	if (parameters["engine.dtddir"].empty()) {
+		Log::err(filename, "\"[engine] dtddir\" option expected");
+		return NULL;
+	}
+	else
+		conf->dtdDir = parameters["engine.dtddir"];
+
 	if (parameters["window.width"].empty()) {
 		Log::err(filename, "\"[window] width\" option expected");
 		return NULL;
 	}
 	else
 		conf->windowsize.x = atoi(parameters["window.width"].c_str());
-	
+
 	if (parameters["window.height"].empty()) {
 		Log::err(filename, "\"[window] height\" option expected");
 		return NULL;
 	}
 	else
 		conf->windowsize.y = atoi(parameters["window.height"].c_str());
-	
+
 	if (parameters["window.fullscreen"].empty()) {
 		Log::err(filename, "\"[window] fullscreen\" option expected");
 		return NULL;
 	}
 	else
 		conf->fullscreen = parseBool(parameters["window.fullscreen"]);
-	
+
 	if (!parameters["cache.enable"].empty()) {	
 		if (parseBool(parameters["cache.enable"]))
 			conf->cache_enabled = true;
 		else
 			conf->cache_enabled = false;
 	}
-	
+
 	if (parameters["cache.ttl"].empty())
 		conf->cache_ttl = CACHE_EMPTY_TTL;
 	else {
@@ -133,7 +140,7 @@ static ClientValues* parseConfig(const char* filename)
 			conf->cache_enabled = 0;
 		conf->cache_ttl = atoi(parameters["cache.ttl"].c_str());
 	}
-	
+
 	if (parameters["cache.size"].empty())
 		conf->cache_size = CACHE_MAX_SIZE;
 	else {
@@ -141,7 +148,7 @@ static ClientValues* parseConfig(const char* filename)
 			conf->cache_enabled = 0;
 		conf->cache_size = atoi(parameters["cache.size"].c_str());
 	}
-	
+
 	if (parameters["engine.loglevel"].empty())
 		conf->loglevel = MESSAGE_MODE;
 	else if (parameters["engine.loglevel"] == "error" || 
@@ -160,7 +167,7 @@ static ClientValues* parseConfig(const char* filename)
 		Log::err(filename, "unknown value for \"[engine] loglevel\", using default");
 		conf->loglevel = MESSAGE_MODE;
 	}
-	
+
 	return conf;
 }
 

@@ -77,7 +77,7 @@ bool World::processDescriptor()
 	static const std::string descriptor = "world.conf";
 	xmlChar* str;
 	
-	XMLDocRef doc = rc->getXMLDoc(descriptor, "dtd/world.dtd");
+	XMLDocRef doc = rc->getXMLDoc(descriptor, "world.dtd");
 	if (!doc)
 		return false;
 	const xmlNode* root = xmlDocGetRootElement(doc.get()); // <world>

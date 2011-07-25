@@ -244,7 +244,7 @@ bool Area::tileTypeOnScreen(const Area::TileType& search) const
 
 bool Area::processDescriptor()
 {
-	XMLDocRef doc = rc->getXMLDoc(descriptor, "dtd/area.dtd");
+	XMLDocRef doc = rc->getXMLDoc(descriptor, "area.dtd");
 	if (!doc)
 		return false;
 

@@ -202,7 +202,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 }
 
 XMLDocRef Resourcer::getXMLDoc(const std::string& name,
-                               const std::string& dtdPath)
+                               const std::string& dtdFile)
 {
 	if (conf->cache_enabled) {
 		XMLMap::iterator entry = xmls.find(name);
@@ -216,7 +216,7 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 		}
 	}
 
-	XMLDocRef result(readXMLDocFromDisk(name, dtdPath), xmlFreeDoc);
+	XMLDocRef result(readXMLDocFromDisk(name, dtdFile), xmlFreeDoc);
 	if (conf->cache_enabled) {
 		CachedItem<XMLDocRef> data;
 		data.resource = result;
@@ -229,7 +229,7 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 // use RAII to ensure doc is freed
 // boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
 xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
-                                      const std::string& dtdPath)
+                                      const std::string& dtdFile)
 {
 	const std::string docStr = readStringFromDisk(name);
 	if (docStr.empty())
@@ -252,6 +252,7 @@ xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
 	}
 
 	// Load up a Document Type Definition for validating the document.
+	std::string dtdPath = conf->dtdDir + "/" + dtdFile;
 	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
 	if (!dtd) {
 		Log::err(dtdPath, "file not found");

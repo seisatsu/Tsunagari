@@ -43,6 +43,7 @@ cube_t cube(long x1, long y1, long z1,
 //! Client Configuration
 struct ClientValues {
 	std::string world;
+	std::string dtdDir;
 	coord_t windowsize;
 	bool fullscreen;
 	bool cache_enabled;
