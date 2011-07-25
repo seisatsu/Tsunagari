@@ -216,11 +216,11 @@ cube_t Area::visibleTiles() const
 		(double)tileHeight);
 
 	// Does the entire width or height of the map fit onscreen?
-	if (x1 > 0 && y1 > 0)
+	if (x1 >= 0 && y1 >= 0)
 		return cube(x1, y1, 0, x2, y2, 1);
-	else if (x1 > 0)
+	else if (x1 >= 0)
 		return cube(x1, 0, 0, x2, dim.y, 1);
-	else if (y1 > 0)
+	else if (y1 >= 0)
 		return cube(0, y1, 0, dim.x, y2, 1);
 	else
 		return cube(0, 0, 0, dim.x, dim.y, 1);
