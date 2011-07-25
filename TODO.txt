@@ -8,8 +8,6 @@ ITEMS
 * Create our own C++ wrapper of libxml2 so we can use std::strings to avoid
   memory leaks.
 
-* Expire items in resource cache.
-
 * Support for persistent music.
 
 * Preserve aspect ratio in fullscreen.
@@ -17,17 +15,10 @@ ITEMS
 * Try moving descriptor filenames from constructors + class members to init()
   parameters.
 
-* Allow the dtd directory to be set from client.ini or the command line.
-
 * Fix the --help option's formatting.
 
 * Tsunagari loses access to the console once the game window is opened on 
   Windows.
 
-* Add installers for releases.
-
-  Windows: installer .exe, uninstaller .exe
-  Mac: .dmg installer
-  Linux: .deb and .rpm control install/uninstall, self contained .tar.gz for
-         other systems
+* Diagonal movement in all modes with correct input detection.
 
