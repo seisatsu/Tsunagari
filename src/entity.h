@@ -91,6 +91,7 @@ protected:
 
 	//! Called after we've arrived at another tile.
 	virtual void postMove();
+	virtual void postMoveHook();
 
 	bool processDescriptor();
 	bool processSprite(const xmlNode* sprite);

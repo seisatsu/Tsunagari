@@ -284,7 +284,11 @@ void Entity::postMove()
 {
 	if (conf->movemode != TURN)
 		setPhase(facing);
+	postMoveHook();
+}
 
+void Entity::postMoveHook()
+{
 	coord_t tile = getCoordsByTile();
 	Script script;
 	script.addFn("gotoUpperLeft", lua_Entity_gotoUpperLeft);
