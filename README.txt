@@ -34,7 +34,8 @@ Note: Tsunagari will only compile with Gosu's GIT development branch.
 Requirements:
 NAME		LICENSE	  LINK
 libboost        (BOOST) - http://www.boost.org/
-libgosu		(MIT)	- http://www.libgosu.org/
-libxml2		(MIT)	- http://xmlsoft.org/
-libzip		(BSD)	- http://www.nih.at/libzip/
+libgosu         (MIT)   - http://www.libgosu.org/
+liblua5.1       (MIT)   - http://www.lua.org/
+libxml2         (MIT)   - http://xmlsoft.org/
+libzip          (BSD)   - http://www.nih.at/libzip/
 
