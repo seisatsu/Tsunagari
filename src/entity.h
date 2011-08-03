@@ -70,6 +70,8 @@ public:
 	//! Sets the Area object this entity will ask when looking for
 	//  nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
+
+	void gotoUpperLeft();
 	
 protected:
 	SampleRef getSound(const std::string& name);
@@ -79,6 +81,8 @@ protected:
 
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove(coord_t delta);
+
+	void runScript();
 
 	//! Called after we've arrived at another tile.
 	virtual void postMove();
@@ -91,6 +95,7 @@ protected:
                            const TiledImage& tiles);
 	bool processSounds(const xmlNode* sounds);
 	bool processSound(xmlNode* sound);
+
 
 
 

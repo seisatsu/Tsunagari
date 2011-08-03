@@ -1,5 +1,9 @@
 #!/usr/bin/lua
-print("Hello, world!")
+print("Lua says: I'm at x " .. x .. ", y " .. y)
+
+if x == 11 and y == 4 then
+	gotoUpperLeft(entity)
+end
 
 -- script.lua
 -- Receives a table, returns the sum of its components.

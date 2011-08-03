@@ -272,16 +272,72 @@ void Entity::preMove(coord_t delta)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
-	Script s;
-	s.init("test.lua");
-//	s.createTable();
-	s.run();
+}
+
+static int lua_Entity_gotoUpperLeft(lua_State* L)
+{
+	int n = lua_gettop(L);
+	if (n != 1) {
+		Log::err("CppFn", "CppFn needs 1 argument");
+		return 0;
+	}
+	if (!lua_isuserdata(L, 1)) {
+		Log::err("CppFn", "CppFn's first argument needs to be a userdata");
+		return 0;
+	}
+	// assert obj.type == Entity*
+
+	Entity* obj = (Entity*)lua_touserdata(L, 1);
+	obj->gotoUpperLeft();
+	return 0;
+}
+
+void Entity::gotoUpperLeft()
+{
+	setCoordsByTile(coord(1, 1, 0));
+}
+
+void Entity::runScript()
+{
+	lua_State* L;
+	const char* filename = "postMove.lua";
+
+	// Create Lua context
+	L = lua_open();
+	luaL_openlibs(L);
+
+	// Provide C function to call C++ function
+	lua_register(L, "gotoUpperLeft", lua_Entity_gotoUpperLeft);
+	lua_pushlightuserdata(L, this);
+	lua_setglobal(L, "entity");
+
+	// Provide x,y coordinate variables to script
+	coord_t tile = getCoordsByTile();
+	lua_pushinteger(L, tile.x);
+	lua_setglobal(L, "x");
+	lua_pushinteger(L, tile.y);
+	lua_setglobal(L, "y");
+
+	// Parse script
+	if (luaL_loadfile(L, filename)) {
+		Log::err(filename, std::string("Couldn't load file: ") +
+				lua_tostring(L, -1));
+		lua_close(L);
+		return;
+	}
+
+	// Run script
+	lua_call(L, 0, 0);
+
+	// Destroy Lua context
+	lua_close(L);
 }
 
 void Entity::postMove()
 {
 	if (conf->movemode != TURN)
 		setPhase(facing);
+	runScript();
 }
 
 /**
