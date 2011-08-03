@@ -11,24 +11,20 @@
 
 #include <lua.hpp>
 
-#include "entity.h"
-
 class Script
 {
 public:
 	Script();
 	~Script();
 
-	bool init(const std::string& filename);
+	void addFn(const char* name, lua_CFunction fn);
+	void addInt(const char* name, lua_Integer i);
+	void addData(const char* name, void* data);
 
-	void registerCppFn(const std::string& name, Entity* obj, void* fn);
-//	void* getObj(const std::string& name);
-	bool run();
+	void run(const char* fn);
 
 private:
 	lua_State* L;
-	std::string name;
-	void* obj;
 };
 
 #endif

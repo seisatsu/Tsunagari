@@ -24,7 +24,7 @@ TESTWORLD = babysfirst.world
 
 all: tsunagari $(TESTWORLD)
 
-tsunagari: animation.o area.o cmd.o common.o entity.o log.o main.o player.o resourcer.o script.o window.o world.o
+tsunagari: animation.o area.o cmd.o common.o entity.o entity-lua.o log.o main.o player.o resourcer.o script.o window.o world.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*

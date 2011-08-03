@@ -71,6 +71,11 @@ public:
 	//  nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
 
+	//
+	// Lua callback targets
+	//
+	
+	//! Move to the upper left corner. Sets x,y tile positions to 1,1.
 	void gotoUpperLeft();
 	
 protected:
