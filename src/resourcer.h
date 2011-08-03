@@ -9,13 +9,10 @@
 
 #include <deque>
 #include <string>
-#include <utility>
 
-#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
-#include <libxml/tree.h>
 
 #include "common.h"
 
@@ -31,7 +28,6 @@ namespace Gosu {
 class GameWindow;
 
 // We hand out and manage Gosu resources in these forms:
-typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Gosu::Sample> SampleRef;
 typedef std::deque<ImageRef> TiledImage;

@@ -16,8 +16,6 @@
 #include <boost/program_options.hpp>
 #include <boost/program_options/detail/config_file.hpp>
 #include <boost/program_options/parsers.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 
 #include "common.h"

@@ -9,8 +9,6 @@
 
 #include <vector>
 
-#include <Gosu/Graphics.hpp>
-
 #include "resourcer.h"
 
 namespace Gosu {

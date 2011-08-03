@@ -26,6 +26,8 @@
 	#error Tree must be enabled in libxml2
 #endif
 
+typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
+
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
 	const std::string* filename = (const std::string*)pstrFilename;

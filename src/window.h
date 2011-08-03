@@ -12,7 +12,7 @@
 #include <utility>
 
 #include <boost/scoped_ptr.hpp>
-#include <Gosu/Window.hpp>
+#include <Gosu/Window.hpp> // for Gosu::Window
 
 #include "common.h"
 
