@@ -76,7 +76,7 @@ public:
 	//
 	
 	//! Move to the upper left corner. Sets x,y tile positions to 1,1.
-	void gotoUpperLeft();
+	void gotoRandomTile();
 	
 protected:
 	SampleRef getSound(const std::string& name);

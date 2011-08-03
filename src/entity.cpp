@@ -234,9 +234,17 @@ void Entity::setArea(Area* a)
 	area = a;
 }
 
-void Entity::gotoUpperLeft()
+void Entity::gotoRandomTile()
 {
-	setCoordsByTile(coord(1, 1, 0));
+	coord_t map = area->getDimensions();
+	coord_t pos;
+	Area::Tile* tile;
+	do {
+		pos = coord(rand() % map.x, rand() % map.y, 0);
+		tile = &area->getTile(pos);
+	} while (((tile->flags & Area::nowalk) |
+	          (tile->type->flags & Area::nowalk)) != 0);
+	setCoordsByTile(pos);
 }
 
 SampleRef Entity::getSound(const std::string& name)
@@ -291,7 +299,7 @@ void Entity::postMoveHook()
 {
 	coord_t tile = getCoordsByTile();
 	Script script;
-	script.addFn("gotoUpperLeft", lua_Entity_gotoUpperLeft);
+	script.addFn("gotoRandomTile", lua_Entity_gotoRandomTile);
 	script.addInt("x", tile.x);
 	script.addInt("y", tile.y);
 	script.addData("entity", this);

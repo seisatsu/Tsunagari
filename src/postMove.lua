@@ -6,7 +6,7 @@
 -- passed some game data. We pass three variables to this script from the Entity
 -- object: x, y, and entity, which represents the Entity itself.
 --
--- We also have a C function we can call, gotoUpperLeft, which takes an Entity
+-- We also have a C function we can call, gotoRandomTile, which takes an Entity
 -- object as a parameter.
 --
 
@@ -14,7 +14,7 @@ print("Lua says: Entity is at " .. x .. ", " .. y)
 
 -- The red portal teleports us! *gasp* Excitement!
 if x == 11 and y == 4 then
-	gotoUpperLeft(entity)
+	gotoRandomTile(entity)
 	-- The x,y variables in this script aren't updated yet, but they will
 	-- be next time we're called.
 end
