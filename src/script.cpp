@@ -7,27 +7,65 @@
 #include "log.h"
 #include "script.h"
 
+enum ObjType {
+	ENTITY
+};
+
+struct CppObj {
+	ObjType type;
+	union {
+		Entity* entity;
+	};
+};
+
 Script::Script()
+	: ownState(true), L(lua_open())
 {
-	L = lua_open();
 	luaL_openlibs(L);
 }
 
-void Script::addFn(const char* name, lua_CFunction fn)
+Script::Script(lua_State* L)
+	:ownState(false), L(L)
+{
+}
+
+Script::~Script()
+{
+	if (ownState)
+		lua_close(L);
+}
+
+void Script::bindFn(const char* name, lua_CFunction fn)
 {
 	lua_register(L, name, fn);
 }
 
-void Script::addInt(const char* name, lua_Integer i)
+void Script::bindInt(const char* name, lua_Integer i)
 {
 	lua_pushinteger(L, i);
 	lua_setglobal(L, name);
 }
 
-void Script::addData(const char* name, void* data)
+void Script::bindEntity(const char* name, Entity* entity)
 {
-	lua_pushlightuserdata(L, data);
+	CppObj* obj = (CppObj*)lua_newuserdata(L, sizeof(CppObj));
+	obj->type = ENTITY;
+	obj->entity = entity;
 	lua_setglobal(L, name);
+}
+
+Entity* Script::getEntity(int pos)
+{
+//	if (!lua_isuserdata(L, pos)) {
+//		Log::err("gotoRandomTile", "gotoRandomTile's first argument "
+//				"needs to be a userdata");
+//		return 0;
+//	}
+
+	CppObj* obj = (CppObj*)lua_touserdata(L, pos);
+//	assert obj->type == ENTITY
+
+	return obj->entity;
 }
 
 void Script::run(const char* fn)
@@ -38,10 +76,5 @@ void Script::run(const char* fn)
 		return;
 	}
 	lua_call(L, 0, 0);
-}
-
-Script::~Script()
-{
-	lua_close(L);
 }
 
