@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include "common.h"
 #include "log.h"
 #include "script.h"
 
@@ -56,25 +57,37 @@ void Script::bindEntity(const char* name, Entity* entity)
 
 Entity* Script::getEntity(int pos)
 {
-//	if (!lua_isuserdata(L, pos)) {
-//		Log::err("gotoRandomTile", "gotoRandomTile's first argument "
-//				"needs to be a userdata");
-//		return 0;
-//	}
-
+	if (!lua_isuserdata(L, pos))
+		return NULL;
 	CppObj* obj = (CppObj*)lua_touserdata(L, pos);
-//	assert obj->type == ENTITY
-
+	if (obj->type != ENTITY)
+		return NULL;
 	return obj->entity;
 }
 
 void Script::run(const char* fn)
 {
 	if (luaL_loadfile(L, fn)) {
-		Log::err("Script::run", std::string("Couldn't load file: ") +
+		Log::err("Script::run", std::string("couldn't load file: ") +
 		               lua_tostring(L, -1));
 		return;
 	}
-	lua_call(L, 0, 0);
+
+	// TODO: make fourth parameter to lua_call an error handler so we can
+	// gather stack trace through Lua state... we can't do it after the
+	// call
+	switch (lua_pcall(L, 0, 0, 0)) {
+		case LUA_ERRRUN:
+			Log::err("Script::run", lua_tostring(L, -1));
+			break;
+		case LUA_ERRMEM:
+			// Should we even bother with this?
+			Log::err("Script::run", "Lua: out of memory");
+			break;
+		case LUA_ERRERR:
+			Log::err("Script::run", "error in Lua error facility"
+					"... what did you do!?");
+			break;
+	}
 }
 

@@ -19,6 +19,9 @@ int lua_Entity_gotoRandomTile(lua_State* L)
 	}
 
 	Entity* entity = script.getEntity(1);
+	if (!entity)
+		return luaL_error(L, "gotoRandomTile: argument 1 should be an "
+				"Entity");
 	entity->gotoRandomTile();
 	return 0;
 }
