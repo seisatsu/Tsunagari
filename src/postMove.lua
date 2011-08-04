@@ -13,7 +13,9 @@
 print("Lua says: Entity is at " .. x .. ", " .. y)
 
 -- The red portal teleports us! *gasp* Excitement!
-if x == 11 and y == 4 then
+local onRedPortal = (x == 11 and y == 4) or (x == 4 and y == 11)
+
+if onRedPortal then
 	gotoRandomTile(entity)
 	-- The x,y variables in this script aren't updated yet, but they will
 	-- be next time we're called.
