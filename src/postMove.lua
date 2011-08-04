@@ -1,23 +1,38 @@
 #!/usr/bin/lua
 --
--- This script is executed every time an entity finishes walking onto a tile.
+-- This script is executed every time an Entity finishes walking onto a tile.
 --
 -- We are called from within Entity::postMove() in entity.cpp. There, we are
--- passed some game data. We pass three variables to this script from the Entity
--- object: x, y, and entity, which represents the Entity itself.
+-- passed some game data. We pass three variables to this script from the
+-- Entity object: x, y, and entity, which represents the Entity itself.
 --
 -- We also have a C function we can call, gotoRandomTile, which takes an Entity
 -- object as a parameter.
 --
 
-print("Lua says: Entity is at " .. x .. ", " .. y)
+-- Returns true if we are standing on the specified X,Y location.
+function on(X, Y)
+	return x == X and y == Y
+end
 
--- The red portal teleports us! *gasp* Excitement!
-local onRedPortal = (x == 11 and y == 4) or (x == 4 and y == 11)
+-- Returns true if we are standing on any of the specified locations.
+function onAny(locations)
+	for _,loc in ipairs(locations) do
+		if on(loc.x, loc.y) then
+			return true
+		end
+	end
+	return false
+end
 
-if onRedPortal then
+local redPortalLocations = {
+	{x = 11, y = 4},
+	{x = 4, y = 11}
+}
+
+-- The red portals teleport us! *gasp* Excitement!
+if onAny(redPortalLocations) then
+	print("Teleported!")
 	gotoRandomTile(entity)
-	-- The x,y variables in this script aren't updated yet, but they will
-	-- be next time we're called.
 end
 
