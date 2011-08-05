@@ -303,7 +303,7 @@ void Entity::postMoveHook()
 	script.bindObjFn("entity", "gotoRandomTile", lua_Entity_gotoRandomTile);
 	script.bindInt("x", tile.x);
 	script.bindInt("y", tile.y);
-	script.run("postMove.lua");
+	script.run(rc, "postMove.lua");
 }
 
 /**

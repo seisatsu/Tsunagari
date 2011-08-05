@@ -6,6 +6,7 @@
 
 #include "common.h"
 #include "log.h"
+#include "resourcer.h"
 #include "script.h"
 
 enum ObjType {
@@ -97,29 +98,26 @@ Entity* Script::getEntity(int pos)
 	return obj->entity;
 }
 
-void Script::run(const char* fn)
+void Script::run(Resourcer* rc, const char* fn)
 {
-	if (luaL_loadfile(L, fn)) {
-		Log::err("Script::run", std::string("couldn't load file: ") +
-		               lua_tostring(L, -1));
+	if (!rc->getLuaScript(fn, L)) // error logged
 		return;
-	}
 
 	// TODO: make fourth parameter to lua_call an error handler so we can
 	// gather stack trace through Lua state... we can't do it after the
 	// call
 	switch (lua_pcall(L, 0, 0, 0)) {
-		case LUA_ERRRUN:
-			Log::err("Script::run", lua_tostring(L, -1));
-			break;
-		case LUA_ERRMEM:
-			// Should we even bother with this?
-			Log::err("Script::run", "Lua: out of memory");
-			break;
-		case LUA_ERRERR:
-			Log::err("Script::run", "error in Lua error facility"
-					"... what did you do!?");
-			break;
+	case LUA_ERRRUN:
+		Log::err("Script::run", lua_tostring(L, -1));
+		break;
+	case LUA_ERRMEM:
+		// Should we even bother with this?
+		Log::err("Script::run", "Lua: out of memory");
+		break;
+	case LUA_ERRERR:
+		Log::err("Script::run", "error in Lua error facility"
+				"... what did you do!?");
+		break;
 	}
 }
 

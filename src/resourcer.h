@@ -13,6 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
+#include <lua.hpp>
 
 #include "common.h"
 
@@ -63,6 +64,9 @@ public:
 	//! Requests an XML resource from cache.
 	XMLDocRef getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
+
+	//! Requests a Lua script from cache. Lua state L will parse the script.
+	bool getLuaScript(const std::string& name, lua_State* L);
 
 private:
 	template<class Res>

@@ -1,4 +1,3 @@
-#!/usr/bin/lua
 --
 -- This script is executed every time an Entity finishes walking onto a tile.
 --
@@ -32,7 +31,7 @@ local redPortalLocations = {
 
 -- The red portals teleport us! *gasp* Excitement!
 if onAny(redPortalLocations) then
-	print("Teleported!")
+	print("Lua says: Teleported!")
 	entity:gotoRandomTile()
 end
 

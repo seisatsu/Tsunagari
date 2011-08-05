@@ -228,6 +228,39 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 	return result;
 }
 
+static void parseError(const std::string& name, lua_State* L)
+{
+	const char* err = lua_tostring(L, -1);
+	const char* afterFile = strchr(err, ':') + 1; // +1 for ':'
+	const char* afterLine = strchr(afterFile, ':') + 2; // +2 for ': '
+	char line[512];
+	memcpy(line, afterFile, afterLine - afterFile - 2);
+	Log::err(name + ":" + line, std::string("parsing error: ") + afterLine);
+}
+
+bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
+{
+	const std::string script = readStringFromDisk(name);
+	if (script.empty()) // error logged
+		return false;
+
+	int status = luaL_loadbuffer(L, script.data(), script.size(),
+			name.c_str());
+
+
+	switch (status) {
+	case LUA_ERRSYNTAX:
+		parseError(name, L);
+		return false;
+	case LUA_ERRMEM:
+		// Should we even bother with this?
+		Log::err(name, "out of memory while parsing");
+		return false;
+	}
+
+	return true;
+}
+
 // use RAII to ensure doc is freed
 // boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
 xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,

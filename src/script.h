@@ -12,6 +12,7 @@
 #include <lua.hpp>
 
 class Entity;
+class Resourcer;
 
 //! Compile and execute Lua code at runtime.
 /*!
@@ -62,7 +63,7 @@ public:
 
 
 	//! Compile and run a script, keeping all existing bindings intact.
-	void run(const char* fn);
+	void run(Resourcer* rc, const char* fn);
 
 private:
 	//! Did we create our state, or are we borrowing it from another Script
