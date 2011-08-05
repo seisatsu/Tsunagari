@@ -15,8 +15,10 @@
 #include "area.h"
 #include "config.h"
 #include "entity.h"
+#include "entity-lua.h"
 #include "log.h"
 #include "resourcer.h"
+#include "script.h"
 #include "window.h"
 
 static std::string facings[][3] = {
@@ -232,6 +234,19 @@ void Entity::setArea(Area* a)
 	area = a;
 }
 
+void Entity::gotoRandomTile()
+{
+	coord_t map = area->getDimensions();
+	coord_t pos;
+	Area::Tile* tile;
+	do {
+		pos = coord(rand() % map.x, rand() % map.y, 0);
+		tile = &area->getTile(pos);
+	} while (((tile->flags & Area::nowalk) |
+	          (tile->type->flags & Area::nowalk)) != 0);
+	setCoordsByTile(pos);
+}
+
 SampleRef Entity::getSound(const std::string& name)
 {
 	boost::unordered_map<std::string, SampleRef>::iterator it;
@@ -277,6 +292,20 @@ void Entity::postMove()
 {
 	if (conf->movemode != TURN)
 		setPhase(facing);
+	postMoveHook();
+}
+
+void Entity::postMoveHook()
+{
+	if (rc->resourceExists("postMove.lua")) {
+		const coord_t tile = getCoordsByTile();
+		Script script;
+		script.bindEntity("entity", this);
+		script.bindObjFn("entity", "gotoRandomTile", lua_Entity_gotoRandomTile);
+		script.bindInt("x", tile.x);
+		script.bindInt("y", tile.y);
+		script.run(rc, "postMove.lua");
+	}
 }
 
 /**

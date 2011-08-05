@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Graphics.hpp>
+
 #include "animation.h"
 
 Animation::Animation()

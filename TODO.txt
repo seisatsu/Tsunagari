@@ -1,14 +1,10 @@
 ITEMS
 
-* Support multiple TileSets per TMX map.
-
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
 
 * Create our own C++ wrapper of libxml2 so we can use std::strings to avoid
   memory leaks.
-
-* Support for persistent music.
 
 * Preserve aspect ratio in fullscreen.
 
@@ -17,5 +13,14 @@ ITEMS
 
 * Diagonal movement in all modes with correct input detection.
 
+* Diagonal movement should not work at corners.
+
 * Entity movement speed should be declared in Entity descriptor.
+
+* Package our own Lua so that it can be built as C++ with g++ (and whatever on
+  Windows). Being built as C causes lua_error() to use longjmp which doesn't
+  play well with C++ deconstructors, leading to memory leaks on Lua errors if
+  a C++ callback is in the callstack.
+
+  http://marcusirven.com/blog/2009/02/19/dangers-of-lua_error-when-using-c++.html
 

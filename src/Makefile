@@ -8,10 +8,10 @@
 WFLAGS = -Wall -Wextra -Wconversion
 
 # Libraries to include.
-LIBS = -lgosu -lzip -lboost_program_options `xml2-config --libs`
+LIBS = -lgosu -lzip -lboost_program_options `xml2-config --libs` `pkg-config --libs lua5.1`
 
 # Compiler and linker flags.
-CXXFLAGS = -g -pedantic -ansi $(WFLAGS) `xml2-config --cflags`
+CXXFLAGS = -g -pedantic -ansi $(WFLAGS) `xml2-config --cflags` `pkg-config --cflags lua5.1`
 LDFLAGS = -g $(LIBS)
 
 # Compiler to use. (Suggested: "g++" or "clang")
@@ -24,7 +24,7 @@ TESTWORLD = babysfirst.world
 
 all: tsunagari $(TESTWORLD)
 
-tsunagari: animation.o area.o cmd.o common.o entity.o log.o main.o player.o resourcer.o window.o world.o
+tsunagari: animation.o area.o cmd.o common.o entity.o entity-lua.o log.o main.o player.o resourcer.o script.o window.o world.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*

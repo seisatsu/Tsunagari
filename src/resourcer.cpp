@@ -26,6 +26,8 @@
 	#error Tree must be enabled in libxml2
 #endif
 
+typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
+
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
 	const std::string* filename = (const std::string*)pstrFilename;
@@ -104,6 +106,12 @@ void Resourcer::reclaim(Map& map)
 	}
 	BOOST_FOREACH(std::string& name, dead)
 		map.erase(name);
+}
+
+bool Resourcer::resourceExists(const std::string& name)
+{
+	struct zip_stat stat;
+	return zip_stat(z, name.c_str(), 0x0, &stat) == 0;
 }
 
 ImageRef Resourcer::getImage(const std::string& name)
@@ -224,6 +232,39 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 		xmls[name] = data;
 	}
 	return result;
+}
+
+static void parseError(const std::string& name, lua_State* L)
+{
+	const char* err = lua_tostring(L, -1);
+	const char* afterFile = strchr(err, ':') + 1; // +1 for ':'
+	const char* afterLine = strchr(afterFile, ':') + 2; // +2 for ': '
+	char line[512];
+	memcpy(line, afterFile, afterLine - afterFile - 2);
+	Log::err(name + ":" + line, std::string("parsing error: ") + afterLine);
+}
+
+bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
+{
+	const std::string script = readStringFromDisk(name);
+	if (script.empty()) // error logged
+		return false;
+
+	int status = luaL_loadbuffer(L, script.data(), script.size(),
+			name.c_str());
+
+
+	switch (status) {
+	case LUA_ERRSYNTAX:
+		parseError(name, L);
+		return false;
+	case LUA_ERRMEM:
+		// Should we even bother with this?
+		Log::err(name, "out of memory while parsing");
+		return false;
+	}
+
+	return true;
 }
 
 // use RAII to ensure doc is freed

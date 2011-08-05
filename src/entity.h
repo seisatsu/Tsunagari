@@ -15,6 +15,7 @@
 #include "common.h"
 #include "resourcer.h"
 
+class Animation;
 class Area;
 class Resourcer;
 
@@ -69,6 +70,13 @@ public:
 	//! Sets the Area object this entity will ask when looking for
 	//  nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
+
+	//
+	// Lua callback targets
+	//
+	
+	//! Move to the upper left corner. Sets x,y tile positions to 1,1.
+	void gotoRandomTile();
 	
 protected:
 	SampleRef getSound(const std::string& name);
@@ -79,8 +87,11 @@ protected:
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove(coord_t delta);
 
+	void runScript();
+
 	//! Called after we've arrived at another tile.
 	virtual void postMove();
+	virtual void postMoveHook();
 
 	bool processDescriptor();
 	bool processSprite(const xmlNode* sprite);
@@ -90,6 +101,7 @@ protected:
                            const TiledImage& tiles);
 	bool processSounds(const xmlNode* sounds);
 	bool processSound(xmlNode* sound);
+
 
 
 

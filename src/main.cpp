@@ -10,13 +10,12 @@
 #include <stdio.h>
 #include <string>
 #include <string.h>
+#include <time.h>
 
 #include <boost/config.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/detail/config_file.hpp>
 #include <boost/program_options/parsers.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 
 #include "common.h"
@@ -260,6 +259,9 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 
 static void initLibraries()
 {
+	// Initialize the C library's random seed.
+	srand((unsigned)time(NULL));
+
 	/*
 	 * This initializes the library and checks for potential ABI mismatches
 	 * between the version it was compiled for and the actual shared

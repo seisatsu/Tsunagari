@@ -9,13 +9,11 @@
 
 #include <deque>
 #include <string>
-#include <utility>
 
-#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
-#include <libxml/tree.h>
+#include <lua.hpp>
 
 #include "common.h"
 
@@ -31,7 +29,6 @@ namespace Gosu {
 class GameWindow;
 
 // We hand out and manage Gosu resources in these forms:
-typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Gosu::Sample> SampleRef;
 typedef std::deque<ImageRef> TiledImage;
@@ -52,6 +49,9 @@ public:
 	//! Expunge old stuff from the cache.
 	void garbageCollect();
 
+	//! Returns true if the world contains a resource by that name.
+	bool resourceExists(const std::string& name);
+
 	//! Requests an image resource from cache.
 	ImageRef getImage(const std::string& name);
 
@@ -67,6 +67,9 @@ public:
 	//! Requests an XML resource from cache.
 	XMLDocRef getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
+
+	//! Requests a Lua script from cache. Lua state L will parse the script.
+	bool getLuaScript(const std::string& name, lua_State* L);
 
 private:
 	template<class Res>

@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "common.h"
 
 namespace Gosu {
