@@ -36,9 +36,23 @@ Script::~Script()
 		lua_close(L);
 }
 
-void Script::bindFn(const char* name, lua_CFunction fn)
+void Script::bindGlobalFn(const char* name, lua_CFunction fn)
 {
 	lua_register(L, name, fn);
+}
+
+void Script::bindObjFn(const char* table, const char* index, lua_CFunction fn)
+{
+	// Get table.
+	lua_getglobal(L, table);
+
+	// table.name = fn
+	lua_pushstring(L, index);
+	lua_pushcfunction(L, fn);
+	lua_settable(L, -3);
+
+	// Done with table.
+	lua_remove(L, -1);
 }
 
 void Script::bindInt(const char* name, lua_Integer i)
@@ -49,17 +63,35 @@ void Script::bindInt(const char* name, lua_Integer i)
 
 void Script::bindEntity(const char* name, Entity* entity)
 {
+	// Create table to hold our object and its functions/variables.
+	lua_createtable(L, 0, 3);
+
+	lua_pushstring(L, "object");
+
+	// Create type-aware wrapper around Entity.
 	CppObj* obj = (CppObj*)lua_newuserdata(L, sizeof(CppObj));
 	obj->type = ENTITY;
 	obj->entity = entity;
+
+	// table.object = entity
+	lua_settable(L, -3);
+
+	// Bind table to Lua.
 	lua_setglobal(L, name);
 }
 
 Entity* Script::getEntity(int pos)
 {
-	if (!lua_isuserdata(L, pos))
+	// Get table.object
+	if (!lua_istable(L, pos))
 		return NULL;
-	CppObj* obj = (CppObj*)lua_touserdata(L, pos);
+	lua_pushstring(L, "object");
+	lua_gettable(L, pos);
+
+	// Check if table.object is an Entity
+	if (!lua_isuserdata(L, -1))
+		return NULL;
+	CppObj* obj = (CppObj*)lua_touserdata(L, -1);
 	if (obj->type != ENTITY)
 		return NULL;
 	return obj->entity;

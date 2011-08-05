@@ -299,10 +299,10 @@ void Entity::postMoveHook()
 {
 	coord_t tile = getCoordsByTile();
 	Script script;
-	script.bindFn("gotoRandomTile", lua_Entity_gotoRandomTile);
+	script.bindEntity("entity", this);
+	script.bindObjFn("entity", "gotoRandomTile", lua_Entity_gotoRandomTile);
 	script.bindInt("x", tile.x);
 	script.bindInt("y", tile.y);
-	script.bindEntity("entity", this);
 	script.run("postMove.lua");
 }
 

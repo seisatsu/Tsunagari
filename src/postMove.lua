@@ -33,6 +33,6 @@ local redPortalLocations = {
 -- The red portals teleport us! *gasp* Excitement!
 if onAny(redPortalLocations) then
 	print("Teleported!")
-	gotoRandomTile(entity)
+	entity:gotoRandomTile()
 end
 
