@@ -297,13 +297,15 @@ void Entity::postMove()
 
 void Entity::postMoveHook()
 {
-	coord_t tile = getCoordsByTile();
-	Script script;
-	script.bindEntity("entity", this);
-	script.bindObjFn("entity", "gotoRandomTile", lua_Entity_gotoRandomTile);
-	script.bindInt("x", tile.x);
-	script.bindInt("y", tile.y);
-	script.run(rc, "postMove.lua");
+	if (rc->resourceExists("postMove.lua")) {
+		const coord_t tile = getCoordsByTile();
+		Script script;
+		script.bindEntity("entity", this);
+		script.bindObjFn("entity", "gotoRandomTile", lua_Entity_gotoRandomTile);
+		script.bindInt("x", tile.x);
+		script.bindInt("y", tile.y);
+		script.run(rc, "postMove.lua");
+	}
 }
 
 /**

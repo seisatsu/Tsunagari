@@ -49,6 +49,9 @@ public:
 	//! Expunge old stuff from the cache.
 	void garbageCollect();
 
+	//! Returns true if the world contains a resource by that name.
+	bool resourceExists(const std::string& name);
+
 	//! Requests an image resource from cache.
 	ImageRef getImage(const std::string& name);
 

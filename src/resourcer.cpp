@@ -108,6 +108,12 @@ void Resourcer::reclaim(Map& map)
 		map.erase(name);
 }
 
+bool Resourcer::resourceExists(const std::string& name)
+{
+	struct zip_stat stat;
+	return zip_stat(z, name.c_str(), 0x0, &stat) == 0;
+}
+
 ImageRef Resourcer::getImage(const std::string& name)
 {
 	if (conf->cache_enabled) {
