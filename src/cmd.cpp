@@ -116,7 +116,9 @@ void CommandLineOptions::usageSize(size_t* optmaxlen, size_t* argmaxlen)
 
 void CommandLineOptions::usagePrintShort()
 {
-	unsigned int opt;
+	// This is semi-broken.
+	
+	/*unsigned int opt;
 	size_t usagecurrlen = 0;
 	
 	fprintf(stderr, "Usage: %s", argv[0]);
@@ -145,7 +147,9 @@ void CommandLineOptions::usagePrintShort()
 			    OptionsList[opt]->argument.c_str());
 		else
 			fprintf(stderr, "]");
-	}
+	}*/
+	
+	fprintf(stderr, "Usage: %s [OPTIONS]", argv[0]);
 }
 
 void CommandLineOptions::usagePrintLong(size_t optmaxlen, size_t argmaxlen)

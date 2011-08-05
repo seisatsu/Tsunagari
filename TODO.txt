@@ -15,11 +15,6 @@ ITEMS
 * Try moving descriptor filenames from constructors + class members to init()
   parameters.
 
-* Fix the --help option's formatting.
-
-* Tsunagari loses access to the console once the game window is opened on 
-  Windows.
-
 * Diagonal movement in all modes with correct input detection.
 
 * Entity movement speed should be declared in Entity descriptor.
