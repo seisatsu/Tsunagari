@@ -4,11 +4,9 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include "entity.h"
 #include "entity-lua.h"
-#include "script.h"
 
-int lua_Entity_gotoRandomTile(lua_State* L)
+static int lua_Entity_gotoRandomTile(lua_State* L)
 {
 	Script script(L);
 
@@ -24,5 +22,18 @@ int lua_Entity_gotoRandomTile(lua_State* L)
 				"Entity");
 	entity->gotoRandomTile();
 	return 0;
+}
+
+static const luaL_Reg funcs[] = {
+	{ "gotoRandomTile", lua_Entity_gotoRandomTile },
+	{ NULL, NULL }
+};
+
+void bindEntity(Script& script, Entity* entity, const std::string& bindTo)
+{
+	const coord_t tile = entity->getCoordsByTile();
+	script.bindObj(bindTo, ENTITY, (void*)entity, funcs);
+	script.bindObjInt(bindTo, "x", tile.x);
+	script.bindObjInt(bindTo, "y", tile.y);
 }
 

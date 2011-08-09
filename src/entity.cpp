@@ -6,6 +6,7 @@
 
 #include <math.h>
 
+#include <boost/foreach.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
@@ -197,9 +198,9 @@ void Entity::moveByTile(coord_t delta)
 	newCoord.z += delta.z;
 
 	// Can we move?
-	const Area::Tile& tile = area->getTile(newCoord);
-	if ((tile.flags       & Area::nowalk) != 0 ||
-	    (tile.type->flags & Area::nowalk) != 0) {
+	const Tile& tile = area->getTile(newCoord);
+	if ((tile.flags       & nowalk) != 0 ||
+	    (tile.type->flags & nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
@@ -238,13 +239,18 @@ void Entity::gotoRandomTile()
 {
 	coord_t map = area->getDimensions();
 	coord_t pos;
-	Area::Tile* tile;
+	Tile* tile;
 	do {
 		pos = coord(rand() % map.x, rand() % map.y, 0);
 		tile = &area->getTile(pos);
-	} while (((tile->flags & Area::nowalk) |
-	          (tile->type->flags & Area::nowalk)) != 0);
+	} while (((tile->flags & nowalk) |
+	          (tile->type->flags & nowalk)) != 0);
 	setCoordsByTile(pos);
+}
+
+Tile& Entity::getTile()
+{
+	return area->getTile(getCoordsByTile());
 }
 
 SampleRef Entity::getSound(const std::string& name)
@@ -286,26 +292,68 @@ void Entity::preMove(coord_t delta)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
+	preMoveLua();
+	movingFrom = &getTile();
+}
+
+void Entity::preMoveLua()
+{
+	if (rc->resourceExists("preMove.lua")) {
+		Script s;
+		bindEntity(s, this, "entity");
+		s.run(rc, "preMove.lua");
+	}
 }
 
 void Entity::postMove()
 {
 	if (conf->movemode != TURN)
 		setPhase(facing);
-	postMoveHook();
+
+	// Handle tile onEnter and onLeave scripts
+	Tile& entering = getTile();
+	Tile& leaving = *movingFrom;
+	bool tileLeave = (leaving.flags & hasOnLeave) != 0;
+	bool typeLeave = (leaving.type->flags & hasOnLeave) != 0;
+	bool tileEnter = (entering.flags & hasOnEnter) != 0;
+	bool typeEnter = (entering.type->flags & hasOnEnter) != 0;
+
+	if (typeLeave)
+		tileScripts(leaving, leaving.type->events, onLeave);
+	if (tileLeave)
+		tileScripts(leaving, leaving.events, onLeave);
+
+	postMoveLua();
+
+	if (tileEnter)
+		tileScripts(entering, entering.events, onEnter);
+	if (typeEnter)
+		tileScripts(entering, entering.type->events, onEnter);
 }
 
-void Entity::postMoveHook()
+void Entity::postMoveLua()
 {
 	if (rc->resourceExists("postMove.lua")) {
-		const coord_t tile = getCoordsByTile();
-		Script script;
-		script.bindEntity("entity", this);
-		script.bindObjFn("entity", "gotoRandomTile", lua_Entity_gotoRandomTile);
-		script.bindInt("x", tile.x);
-		script.bindInt("y", tile.y);
-		script.run(rc, "postMove.lua");
+		Script s;
+		bindEntity(s, this, "entity");
+		s.run(rc, "postMove.lua");
 	}
+}
+
+void Entity::tileScripts(Tile& tile, std::vector<TileEvent>& events, const TileEventTriggers trigger)
+{
+	BOOST_FOREACH(const TileEvent& e, events)
+		if (e.trigger == trigger)
+			runTileLua(tile, e.script);
+}
+
+void Entity::runTileLua(Tile&, const std::string& script)
+{
+	Script s;
+	bindEntity(s, this, "entity");
+	// TODO
+	// bindTile(script, tile, "tile");
+	s.run(rc, script);
 }
 
 /**

@@ -8,10 +8,12 @@
 #define ENTITY_H
 
 #include <string>
+#include <vector>
 
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 
+#include "area-structs.h" // for enum TileEventTriggers
 #include "common.h"
 #include "resourcer.h"
 
@@ -79,6 +81,9 @@ public:
 	void gotoRandomTile();
 	
 protected:
+	//! Get the Tile we are standing on.
+	Tile& getTile();
+
 	SampleRef getSound(const std::string& name);
 
 	//! Calculate which way to face based upon a movement delta.
@@ -86,13 +91,16 @@ protected:
 
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove(coord_t delta);
+	virtual void preMoveLua();
 
-	void runScript();
-
-	//! Called after we've arrived at another tile.
+	//! Called after we have arrived at another tile.
 	virtual void postMove();
-	virtual void postMoveHook();
+	virtual void postMoveLua();
 
+	void tileScripts(Tile& tile, std::vector<TileEvent>& events, TileEventTriggers trigger);
+	void runTileLua(Tile& tile, const std::string& script);
+
+	// XML parsing functions used in constructing an Entity
 	bool processDescriptor();
 	bool processSprite(const xmlNode* sprite);
 	bool processPhases(const xmlNode* phases);
@@ -101,8 +109,6 @@ protected:
                            const TiledImage& tiles);
 	bool processSounds(const xmlNode* sounds);
 	bool processSound(xmlNode* sound);
-
-
 
 
 	Resourcer* rc;
@@ -117,13 +123,14 @@ protected:
 	bool moving;
 	coord_t dest;
 	double speed;
+	Tile* movingFrom;
 
 	Area* area;
 	coord_t c;
 	double rx, ry, rz; // real x,y position: hold partial pixel transversal
 
 	std::string descriptor;
-	
+
 	ClientValues* conf;
 
 	//! SpriteValues XML Storage Struct

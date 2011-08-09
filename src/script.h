@@ -11,6 +11,10 @@
 
 #include <lua.hpp>
 
+enum ObjType {
+	ENTITY
+};
+
 class Entity;
 class Resourcer;
 
@@ -45,17 +49,22 @@ public:
 
 
 	//! Bind a C function to a global variable in Lua.
-	void bindGlobalFn(const char* name, lua_CFunction fn);
+	void bindGlobalFn(const std::string& name, lua_CFunction fn);
 
 	//! Bind a C function to a table index. In Lua: "table.index = fn"
-	void bindObjFn(const char* table, const char* index, lua_CFunction fn);
+	void bindObjFn(const std::string& table, const std::string& index, lua_CFunction fn);
+
+	//! Set an integer to a table index.
+	void bindObjInt(const std::string& table, const std::string& name, lua_Integer i);
 
 	//! Set a global integer variable in Lua.
-	void bindInt(const char* name, lua_Integer i);
+	void bindInt(const std::string& name, lua_Integer i);
 
 
-	//! Create a global table with specified name which represents an Entity.
-	void bindEntity(const char* name, Entity* entity);
+	//! Create a global table with the specified name which represents a
+	//C++ object.
+	void bindObj(const std::string& bindTo, ObjType type, void* obj,
+	             const luaL_Reg* funcs);
 
 	//! Get the Entity object from a table in the Lua stack at a specific
 	//position.
@@ -63,7 +72,7 @@ public:
 
 
 	//! Compile and run a script, keeping all existing bindings intact.
-	void run(Resourcer* rc, const char* fn);
+	void run(Resourcer* rc, const std::string& fn);
 
 private:
 	//! Did we create our state, or are we borrowing it from another Script

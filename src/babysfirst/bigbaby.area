@@ -961,17 +961,17 @@
   </properties>
   <object name="tile0" type="Tile" gid="14" x="704" y="320">
    <properties>
-    <property name="onEnter" value="random_warp()"/>
+    <property name="onEnter" value="random-warp.script"/>
    </properties>
   </object>
   <object name="tile1" type="Tile" gid="14" x="256" y="768">
    <properties>
-    <property name="onEnter" value="random_warp()"/>
+    <property name="onEnter" value="random-warp.script"/>
    </properties>
   </object>
   <object name="tile2" type="Tile" gid="13" x="1792" y="1856">
    <properties>
-    <property name="onEnter" value="warp(1,1,0)"/>
+    <property name="onEnter" value="random-warp.script"/>
    </properties>
   </object>
   <object name="door1" type="Tile" gid="7" x="64" y="1920">

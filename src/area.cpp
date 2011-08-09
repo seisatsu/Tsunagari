@@ -156,12 +156,12 @@ coord_t Area::getTileDimensions() const
 	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
-const Area::Tile& Area::getTile(coord_t c) const
+const Tile& Area::getTile(coord_t c) const
 {
 	return map[c.z][c.y][c.x];
 }
 
-Area::Tile& Area::getTile(coord_t c)
+Tile& Area::getTile(coord_t c)
 {
 	return map[c.z][c.y][c.x];
 }
@@ -226,7 +226,7 @@ cube_t Area::visibleTiles() const
 		return cube(0, 0, 0, dim.x, dim.y, 1);
 }
 
-bool Area::tileTypeOnScreen(const Area::TileType& search) const
+bool Area::tileTypeOnScreen(const TileType& search) const
 {
 	const cube_t tiles = visibleTiles();
 	for (long z = tiles.z1; z != tiles.z2; z++) {
@@ -358,7 +358,7 @@ bool Area::processTileSet(xmlNode* node)
 	return true;
 }
 
-Area::TileType Area::defaultTileType(TileSet& set)
+TileType Area::defaultTileType(TileSet& set)
 {
 	TileType type;
 	type.flags = 0x0;
@@ -408,10 +408,28 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 			type.flags = splitTileFlags(value.c_str());
 		}
 		else if (!name.compare("onEnter")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onEnter;
+			e.script = value;
+			type.events.push_back(e);
+			type.flags |= hasOnEnter;
 		}
 		else if (!name.compare("onLeave")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onEnter;
+			e.script = value;
+			type.events.push_back(e);
+			type.flags |= hasOnEnter;
 		}
 		else if (!name.compare("animated")) {
 			// XXX still needed?
@@ -668,10 +686,28 @@ bool Area::processObject(xmlNode* node, int zpos)
 			t.flags = splitTileFlags(value.c_str());
 		}
 		else if (!name.compare("onEnter")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onEnter;
+			e.script = value;
+			t.events.push_back(e);
+			t.flags |= hasOnEnter;
 		}
 		else if (!name.compare("onLeave")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onLeave;
+			e.script = value;
+			t.events.push_back(e);
+			t.flags |= hasOnLeave;
 		}
 		else if (!name.compare("door")) {
 			t.door.reset(parseDoor(value.c_str()));
@@ -694,7 +730,7 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 	return flags;
 }
 
-Area::Door Area::parseDoor(const std::string dest)
+Door Area::parseDoor(const std::string dest)
 {
 
 /*

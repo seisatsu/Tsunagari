@@ -7,7 +7,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "common.h"
 #include "entity.h"
+
+class Area;
+class Resourcer;
 
 class Player : public Entity
 {
