@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include <libxml/tree.h>
+
 #include "log.h"
 
 //! Ternary Data Type
@@ -68,6 +70,12 @@ std::vector<std::string> splitStr(std::string str,
 
 //! Convert an integer to a representative string.
 std::string itostr(long in);
+
+//! Get XML attribute (memory-safe).
+std::string readXmlAttribute(xmlNode* node, const std::string attr);
+
+//! Get XML element content (memory-safe).
+std::string readXmlElement(xmlNode* node);
 
 #endif
 

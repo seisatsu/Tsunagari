@@ -3,17 +3,16 @@ ITEMS
 * Add brief or brief+long Doxygen Documentation to all public and private
   classes, functions, structs, and enums.
 
-* Create our own C++ wrapper of libxml2 so we can use std::strings to avoid
-  memory leaks.
-
 * Preserve aspect ratio in fullscreen.
+
+* Set width and height of viewport (in tiles) in world.conf.
 
 * Try moving descriptor filenames from constructors + class members to init()
   parameters.
 
 * Diagonal movement in all modes with correct input detection.
 
-* Diagonal movement should not work at corners.
+* Diagonal movement should not work at corners in Yume Nikki mode.
 
 * Entity movement speed should be declared in Entity descriptor.
 

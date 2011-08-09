@@ -251,10 +251,8 @@ bool Area::processDescriptor()
 	// Iterate and process children of <map>
 	xmlNode* root = xmlDocGetRootElement(doc.get()); // <map> element
 
-	xmlChar* width = xmlGetProp(root, BAD_CAST("width"));
-	xmlChar* height = xmlGetProp(root, BAD_CAST("height"));
-	dim.x = atol((const char*)width);
-	dim.y = atol((const char*)height);
+	dim.x = atol(readXmlAttribute(root, "width").c_str());
+	dim.y = atol(readXmlAttribute(root, "height").c_str());
 
 	xmlNode* child = root->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -296,20 +294,20 @@ bool Area::processMapProperties(xmlNode* node)
 
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
-		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
-		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
-		if (!xmlStrncmp(name, BAD_CAST("author"), 7))
-			author = (const char*)value;
-		else if (!xmlStrncmp(name, BAD_CAST("name"), 5))
-			this->name = (const char*)value;
-		else if (!xmlStrncmp(name, BAD_CAST("intro_music"), 12))
-			introMusic = rc->getSample((const char*)value);
-		else if (!xmlStrncmp(name, BAD_CAST("main_music"), 11))
-			mainMusic = rc->getSample((const char*)value);
-		else if (!xmlStrncmp(name, BAD_CAST("onLoad"), 7))
-			onLoadEvents = (const char*)value;
-		else if (!xmlStrncmp(name, BAD_CAST("scripts"), 8))
-			scripts = (const char*)value; // TODO split(), load
+		std::string name = readXmlAttribute(child, "name");
+		std::string value = readXmlAttribute(child, "value");
+		if (!name.compare("author"))
+			author = value;
+		else if (!name.compare("name"))
+			this->name = value;
+		else if (!name.compare("intro_music"))
+			introMusic = rc->getSample(value);
+		else if (!name.compare("main_music"))
+			mainMusic = rc->getSample(value);
+		else if (!name.compare("onLoad"))
+			onLoadEvents = value;
+		else if (!name.compare("scripts"))
+			scripts = value; // TODO split(), load
 	}
 	return true;
 }
@@ -326,16 +324,13 @@ bool Area::processTileSet(xmlNode* node)
  </tileset>
 */
 	TileSet ts;
-	xmlChar* width = xmlGetProp(node, BAD_CAST("tilewidth"));
-	xmlChar* height = xmlGetProp(node, BAD_CAST("tileheight"));
-	long x = ts.tileDim.x = atol((const char*)width);
-	long y = ts.tileDim.y = atol((const char*)height);
+	long x = ts.tileDim.x = atol(readXmlAttribute(node, "tilewidth").c_str());
+	long y = ts.tileDim.y = atol(readXmlAttribute(node, "tileheight").c_str());
 	
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
-			xmlChar* idstr = xmlGetProp(child, BAD_CAST("id"));
-			unsigned id = (unsigned)atoi((const char*)idstr);
+			unsigned id = (unsigned)atoi(readXmlAttribute(child, "id").c_str());
 
 			// Undeclared TileTypes have default properties.
 			while (ts.tileTypes.size() != id) {
@@ -348,8 +343,7 @@ bool Area::processTileSet(xmlNode* node)
 				return false;
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("image"), 6)) {
-			const char* source = (const char*)xmlGetProp(child,
-				BAD_CAST("source"));
+			std::string source = readXmlAttribute(child, "source");
 			rc->getTiledImage(ts.tiles, source,
 				(unsigned)x, (unsigned)y, true);
 		}
@@ -396,8 +390,7 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 	// Initialize a default TileType, we'll build on that.
 	TileType type = defaultTileType(set);
 
-	xmlChar* idstr = xmlGetProp(node, BAD_CAST("id"));
-	unsigned id = (unsigned)atoi((const char*)idstr); // atoi
+	unsigned id = (unsigned)atoi(readXmlAttribute(node, "id").c_str());
 	unsigned expectedId = (unsigned)set.tileTypes.size();
 	if (id != expectedId) {
 		Log::err(descriptor, std::string("expected TileType id ") +
@@ -409,23 +402,23 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 	xmlNode* child = node->xmlChildrenNode; // <properties>
 	child = child->xmlChildrenNode; // <property>
 	for (; child != NULL; child = child->next) {
-		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
-		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
-		if (!xmlStrncmp(name, BAD_CAST("flags"), 6)) {
-			type.flags = splitTileFlags((const char*)value);
+		std::string name = readXmlAttribute(child, "name");
+		std::string value = readXmlAttribute(child, "value");
+		if (!name.compare("flags")) {
+			type.flags = splitTileFlags(value.c_str());
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
+		else if (!name.compare("onEnter")) {
 			// TODO events
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("onLeave"), 8)) {
+		else if (!name.compare("onLeave")) {
 			// TODO events
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("animated"), 9)) {
+		else if (!name.compare("animated")) {
 			// XXX still needed?
 			// type.animated = parseBool((const char*)value);
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("size"), 5)) {
-			int size = atoi((const char*)value); // atoi
+		else if (!name.compare("size")) {
+			int size = atoi(value.c_str()); // atoi
 
 			// Add size-1 more frames to our animation.
 			// We already have one from defaultTileType.
@@ -439,8 +432,8 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 				set.tiles.pop_front();
 			}
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("speed"), 6)) {
-			int len = (int)(1000.0/atof((const char*)value));
+		else if (!name.compare("speed")) {
+			int len = (int)(1000.0/atof(value.c_str()));
 			type.anim.setFrameLen(len);
 		}
 	}
@@ -469,10 +462,8 @@ bool Area::processLayer(xmlNode* node)
  </layer>
 */
 
-	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
-	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	int x = atoi((const char*)width);
-	int y = atoi((const char*)height);
+	int x = atoi(readXmlAttribute(node, "width").c_str());
+	int y = atoi(readXmlAttribute(node, "height").c_str());
 
 	if (dim.x != x || dim.y != y) {
 		Log::err(descriptor, "layer x,y size != map x,y size");
@@ -504,10 +495,10 @@ bool Area::processLayerProperties(xmlNode* node)
 
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
-		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
-		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
-		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
-			int depth = atoi((const char*)value);
+		std::string name = readXmlAttribute(child, "name");
+		std::string value = readXmlAttribute(child, "value");
+		if (!name.compare("layer")) {
+			int depth = atoi(value.c_str());
 			if (depth != dim.z) {
 				Log::err(descriptor, "invalid layer depth");
 				return false;
@@ -542,8 +533,7 @@ bool Area::processLayerData(xmlNode* node)
 	xmlNode* child = node->xmlChildrenNode;
 	for (int i = 1; child != NULL; i++, child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
-			xmlChar* gidStr = xmlGetProp(child, BAD_CAST("gid"));
-			unsigned gid = (unsigned)atoi((const char*)gidStr)-1;
+			unsigned gid = (unsigned)atoi(readXmlAttribute(child, "gid").c_str())-1;
 
 			// XXX can only access first tileset
 			TileType* type = &tilesets[0].tileTypes[gid];
@@ -585,10 +575,8 @@ bool Area::processObjectGroup(xmlNode* node)
  </objectgroup>
 */
 
-	xmlChar* width = xmlGetProp(node, BAD_CAST("width"));
-	xmlChar* height = xmlGetProp(node, BAD_CAST("height"));
-	int x = atoi((const char*)width);
-	int y = atoi((const char*)height);
+	int x = atoi(readXmlAttribute(node, "width").c_str());
+	int y = atoi(readXmlAttribute(node, "height").c_str());
 
 	int zpos = -1;
 
@@ -623,10 +611,10 @@ bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
 
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
-		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
-		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
-		if (!xmlStrncmp(name, BAD_CAST("layer"), 6)) {
-			int layer = atoi((const char*)value);
+		std::string name = readXmlAttribute(child, "name");
+		std::string value = readXmlAttribute(child, "value");
+		if (!name.compare("layer")) {
+			int layer = atoi(value.c_str());
 			if (0 < layer || layer >= (int)dim.z) {
 				Log::err(descriptor,
 					"objectgroup must correspond with layer"
@@ -653,19 +641,19 @@ bool Area::processObject(xmlNode* node, int zpos)
   </object>
 */
 
-	xmlChar* type = xmlGetProp(node, BAD_CAST("type"));
-	if (xmlStrncmp(type, BAD_CAST("Tile"), 5)) {
+	std::string type = readXmlAttribute(node, "type");
+	if (type.compare("Tile")) {
 		Log::err(descriptor, "object type must be Tile");
 		return false;
 	}
 
-	xmlChar* xStr = xmlGetProp(node, BAD_CAST("x"));
-	xmlChar* yStr = xmlGetProp(node, BAD_CAST("y"));
+	std::string xStr = readXmlAttribute(node, "x");
+	std::string yStr = readXmlAttribute(node, "y");
 	// XXX we ignore the object gid... is that okay?
 
 	// wouldn't have to access tilesets if we had tileDim ourselves
-	long x = atol((const char*)xStr) / tilesets[0].tileDim.x;
-	long y = atol((const char*)yStr) / tilesets[0].tileDim.y;
+	long x = atol(xStr.c_str()) / tilesets[0].tileDim.x;
+	long y = atol(yStr.c_str()) / tilesets[0].tileDim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay
@@ -674,19 +662,19 @@ bool Area::processObject(xmlNode* node, int zpos)
 	xmlNode* child = node->xmlChildrenNode; // <properties>
 	child = child->xmlChildrenNode; // <property>
 	for (; child != NULL; child = child->next) {
-		xmlChar* name = xmlGetProp(child, BAD_CAST("name"));
-		xmlChar* value = xmlGetProp(child, BAD_CAST("value"));
-		if (!xmlStrncmp(name, BAD_CAST("flags"), 6)) {
-			t.flags = splitTileFlags((const char*)value);
+		std::string name = readXmlAttribute(child, "name");
+		std::string value = readXmlAttribute(child, "value");
+		if (!name.compare("flags")) {
+			t.flags = splitTileFlags(value.c_str());
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("onEnter"), 8)) {
+		else if (!name.compare("onEnter")) {
 			// TODO events
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("onLeave"), 8)) {
+		else if (!name.compare("onLeave")) {
 			// TODO events
 		}
-		else if (!xmlStrncmp(name, BAD_CAST("door"), 5)) {
-			t.door.reset(parseDoor((const char*)value));
+		else if (!name.compare("door")) {
+			t.door.reset(parseDoor(value.c_str()));
 			t.flags |= npc_nowalk;
 		}
 	}

@@ -336,18 +336,14 @@ bool Entity::processDescriptor()
 
 bool Entity::processSprite(const xmlNode* sprite)
 {
-	xmlChar* str;
 	for (xmlNode* child = sprite->xmlChildrenNode; child != NULL;
 			child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("sheet"), 6)) {
-			str = xmlNodeGetContent(child);
-			xml.sheet = (char*)str;
+			xml.sheet = readXmlElement(child);
 
-			str = xmlGetProp(child, BAD_CAST("tilewidth"));
-			xml.tileSize.x = atol((char*)str); // atol
+			xml.tileSize.x = atol(readXmlAttribute(child, "tilewidth").c_str());
 
-			str = xmlGetProp(child, BAD_CAST("tileheight"));
-			xml.tileSize.y = atol((char*)str); // atol
+			xml.tileSize.y = atol(readXmlAttribute(child, "tileheight").c_str());
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("phases"), 7) &&
 				!processPhases(child))
@@ -378,33 +374,33 @@ bool Entity::processPhase(xmlNode* phase, const TiledImage& tiles)
 	 * If speed is used, we have sub-elements. We
 	 * can't have both pos and speed.
 	 */
-	const std::string name = (char*)xmlGetProp(phase, BAD_CAST("name"));
-
-	const xmlChar* posStr = xmlGetProp(phase, BAD_CAST("pos"));
-	const xmlChar* speedStr = xmlGetProp(phase, BAD_CAST("speed"));
+	const std::string name = readXmlAttribute(phase, "name");
+	
+	const std::string posStr = readXmlAttribute(phase, "pos");
+	const std::string speedStr = readXmlAttribute(phase, "speed");
 
 	// FIXME: check name + pos | speed for 0 length
 
-	if (posStr && speedStr) {
+	if (!posStr.empty() && !speedStr.empty()) {
 		Log::err(descriptor, "pos and speed attributes in "
 				"element phase are mutually exclusive");
 		return false;
 	}
-	if (!posStr && !speedStr) {
+	if (posStr.empty() && speedStr.empty()) {
 		Log::err(descriptor, "must have pos or speed attribute "
 			       "in element phase");
 		return false;
 	}
 
-	if (posStr) {
+	if (!posStr.empty()) {
 		// atoi
-		const unsigned pos = (unsigned)atoi((const char*)posStr);
+		const unsigned pos = (unsigned)atoi(posStr.c_str());
 		// FIXME: check for out of bounds
 		phases[name] = Animation(tiles[pos]);
 	}
 	else { // speedStr
 		// atoi
-		const double speed = (unsigned)atof((const char*)speedStr);
+		const double speed = (unsigned)atof(speedStr.c_str());
 		// FIXME: check for out of bounds
 
 		phases[name] = Animation();
@@ -423,8 +419,8 @@ bool Entity::processPhase(xmlNode* phase, const TiledImage& tiles)
 bool Entity::processMember(xmlNode* phase, Animation& anim,
                            const TiledImage& tiles)
 {
-	const xmlChar* posStr = xmlGetProp(phase, BAD_CAST("pos"));
-	const unsigned pos = (unsigned)atoi((const char*)posStr); // atoi
+	const std::string posStr = readXmlAttribute(phase, "pos");
+	const unsigned pos = (unsigned)atoi(posStr.c_str()); // atoi
 	// FIXME: check for out of bounds
 	anim.addFrame(tiles[pos]);
 	return true;
@@ -442,8 +438,8 @@ bool Entity::processSounds(const xmlNode* sounds)
 
 bool Entity::processSound(xmlNode* sound)
 {
-	const std::string name = (char*)xmlGetProp(sound, BAD_CAST("name"));
-	const std::string filename = (char*)xmlNodeGetContent(sound);
+	const std::string name = readXmlAttribute(sound, "name");
+	const std::string filename = readXmlElement(sound);
 	// FIXME: check name, filename for 0 length
 
 	SampleRef s = rc->getSample(filename);

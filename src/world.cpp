@@ -76,7 +76,7 @@ void World::update(unsigned long dt)
 bool World::processDescriptor()
 {
 	static const std::string descriptor = "world.conf";
-	xmlChar* str;
+	std::string str;
 	
 	XMLDocRef doc = rc->getXMLDoc(descriptor, "world.dtd");
 	if (!doc)
@@ -88,24 +88,21 @@ bool World::processDescriptor()
 	xmlNode* node = root->xmlChildrenNode; // children of <world>
 	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
-			str = xmlNodeGetContent(node);
-			xml.name = (char*)str;
+			xml.name = readXmlElement(node);
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("author"), 7)) {
-			str = xmlNodeGetContent(node);
-			xml.author = (char*)str;
+			xml.author = readXmlElement(node);
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("player"), 7)) {
-			str = xmlNodeGetContent(node);
-			xml.playerentity = (char*)str;
+			xml.playerentity = readXmlElement(node);
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("type"), 5)) {
-			str = xmlGetProp(node, BAD_CAST("locality"));
+			str = readXmlAttribute(node, "locality");
 			
-			if (!xmlStrncmp(str, BAD_CAST("local"), 6))
+			if (!str.compare("local"))
 				xml.locality = LOCAL;
 			
-			else if (!xmlStrncmp(str, BAD_CAST("network"), 8))
+			else if (!str.compare("network"))
 				xml.locality = NETWORK;
 
 			else {
@@ -113,15 +110,15 @@ bool World::processDescriptor()
 				return false;
 			}
 			
-			str = xmlGetProp(node, BAD_CAST("movement"));
+			str = readXmlAttribute(node, "movement");
 			
-			if (!xmlStrncmp(str, BAD_CAST("turn"), 5))
+			if (!str.compare("turn"))
 				conf->movemode = TURN;
 			
-			else if (!xmlStrncmp(str, BAD_CAST("tile"), 5))
+			else if (!str.compare("tile"))
 				conf->movemode = TILE;
 			
-			else if (!xmlStrncmp(str, BAD_CAST("notile"), 7))
+			else if (!str.compare("notile"))
 				conf->movemode = NOTILE;
 			
 			else {
@@ -130,24 +127,23 @@ bool World::processDescriptor()
 			}
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("entrypoint"), 11)) {
-			str = xmlGetProp(node, BAD_CAST("area"));
-			xml.entry.area = (char*)str;
+			xml.entry.area = readXmlAttribute(node, "area");
 			
-			str = xmlGetProp(node, BAD_CAST("x"));
-			xml.entry.coords.x = atol((char*)str);
+			str = readXmlAttribute(node, "x");
+			xml.entry.coords.x = atol(str.c_str());
 			
-			str = xmlGetProp(node, BAD_CAST("y"));
-			xml.entry.coords.y = atol((char*)str);
+			str = readXmlAttribute(node, "y");
+			xml.entry.coords.y = atol(str.c_str());
 			
-			str = xmlGetProp(node, BAD_CAST("z"));
-			xml.entry.coords.z = atol((char*)str);
+			str = readXmlAttribute(node, "z");
+			xml.entry.coords.z = atol(str.c_str());
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("scripts"), 13)) {
 			node = node->xmlChildrenNode; // decend
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("script"), 7)) {
-			str = xmlNodeGetContent(node);
-			xml.scripts.push_back((char*)str);
+			str = readXmlElement(node);
+			xml.scripts.push_back(str);
 		}
 	}
 	return true;
