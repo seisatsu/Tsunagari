@@ -97,21 +97,22 @@ void Area::draw()
 void Area::drawTiles()
 {
 	// Calculate frame to show for each type of tile
-	int millis = GameWindow::getWindow().time();
+	const int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(TileSet& set, tilesets)
 		BOOST_FOREACH(TileType& type, set.tileTypes)
 			type.anim.updateFrame(millis);
 
 	// Render
-	for (unsigned z = 0; z != map.size(); z++) {
+	const cube_t tiles = visibleTiles();
+	for (long z = tiles.z1; z != tiles.z2; z++) {
 		const grid_t& grid = map[z];
-		for (unsigned y = 0; y != grid.size(); y++) {
+		for (long y = tiles.y1; y != tiles.y2; y++) {
 			const row_t& row = grid[y];
-			for (unsigned x = 0; x != row.size(); x++) {
+			for (long x = tiles.x1; x != tiles.x2; x++) {
 				const Tile& tile = row[x];
 				const TileType* type = tile.type;
 				const Gosu::Image* img = type->anim.frame();
-				img->draw(x*img->width(), y*img->height(), 0);
+				img->draw((double)x*img->width(), (double)y*img->height(), 0);
 			}
 		}
 	}
@@ -128,7 +129,7 @@ bool Area::needsRedraw() const
 		return true;
 
 	// Do any onscreen tile types need to update their animations?
-	int millis = GameWindow::getWindow().time();
+	const int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(const TileSet& set, tilesets)
 		BOOST_FOREACH(const TileType& type, set.tileTypes)
 			if (type.anim.needsRedraw(millis) &&
