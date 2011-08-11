@@ -9,17 +9,12 @@
 static int lua_Entity_gotoRandomTile(lua_State* L)
 {
 	Script script(L);
-
-	int n = lua_gettop(L);
-	if (n != 1) {
-		Log::err("gotoRandomTile", "gotoRandomTile needs 1 argument");
-		return 0;
-	}
-
-	Entity* entity = script.getEntity(1);
+	if (lua_gettop(L) != 1)
+		return luaL_error(L, "gotoRandomTile needs 1 arg");
+	Entity* entity = (Entity*)script.getObj(1, ENTITY);
 	if (!entity)
-		return luaL_error(L, "gotoRandomTile: argument 1 should be an "
-				"Entity");
+		return luaL_error(L,
+			 "gotoRandomTile: arg 1 should be an Entity");
 	entity->gotoRandomTile();
 	return 0;
 }

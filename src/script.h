@@ -12,10 +12,10 @@
 #include <lua.hpp>
 
 enum ObjType {
-	ENTITY
+	ENTITY,
+	SOUND
 };
 
-class Entity;
 class Resourcer;
 
 //! Compile and execute Lua code at runtime.
@@ -37,11 +37,11 @@ class Script
 {
 public:
 	//! Create a new Lua state. The state is destroyed with the death of
-	//this object.
+	//! this object.
 	Script();
 
 	//! If we already have a Lua state, wrap around it. The state is not
-	//destroyed with the death of this object.
+	//! destroyed with the death of this object.
 	Script(lua_State* L);
 
 	//! Destroy the Lua state if we own it.
@@ -62,21 +62,24 @@ public:
 
 
 	//! Create a global table with the specified name which represents a
-	//C++ object.
+	//! C++ object.
 	void bindObj(const std::string& bindTo, ObjType type, void* obj,
 	             const luaL_Reg* funcs);
 
-	//! Get the Entity object from a table in the Lua stack at a specific
-	//position.
-	Entity* getEntity(int pos);
+	//! Get a C++ object stored in a Lua table. Requires position of table on stack.
+	void* getObj(int table, ObjType type);
 
 
 	//! Compile and run a script, keeping all existing bindings intact.
 	void run(Resourcer* rc, const std::string& fn);
 
 private:
+	//! Allocate and construct a CppObj userdata on the Lua stack.
+	void newCppObj(ObjType type, void* data);
+
+
 	//! Did we create our state, or are we borrowing it from another Script
-	//object?
+	//! object?
 	bool ownState;
 
 	//! Everything necessary to compile and run a Lua script.

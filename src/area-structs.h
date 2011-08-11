@@ -41,6 +41,7 @@ enum TileFlags {
 	npc_event     = 0x0010,
 	temp_event    = 0x0020,
 
+	// Event flags, don't parse for these. We set them ourselves.
 	hasOnEnter    = 0x0100,
 	hasOnLeave    = 0x0200
 };

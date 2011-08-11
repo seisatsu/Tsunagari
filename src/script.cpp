@@ -11,10 +11,7 @@
 
 struct CppObj {
 	ObjType type;
-	union {
-		void* data;
-		Entity* entity;
-	};
+	void* data;
 };
 
 Script::Script()
@@ -74,16 +71,12 @@ void Script::bindInt(const std::string& name, lua_Integer i)
 void Script::bindObj(const std::string& bindTo, ObjType type, void* obj,
                      const luaL_Reg* funcs)
 {
-	// Create table to hold our object and its functions/variables.
+	// Create table, store the object.
 	lua_createtable(L, 0, 3);
-
-	// Create type-aware wrapper around Entity.
-	CppObj* wrapper = (CppObj*)lua_newuserdata(L, sizeof(CppObj));
-	wrapper->type = type;
-	wrapper->data = obj;
+	newCppObj(type, obj);
 	lua_setfield(L, -2, "object");
 
-	// Add wrapper and functions.
+	// Add methods to table.
 	for (; funcs->name; funcs++) {
 		lua_pushcclosure(L, funcs->func, 0);
 		lua_setfield(L, -2, funcs->name);
@@ -93,21 +86,18 @@ void Script::bindObj(const std::string& bindTo, ObjType type, void* obj,
 	lua_setglobal(L, bindTo.c_str());
 }
 
-Entity* Script::getEntity(int pos)
+void* Script::getObj(int table, ObjType type)
 {
 	// Get table.object
-	if (!lua_istable(L, pos))
+	if (!lua_istable(L, table))
 		return NULL;
-	lua_pushstring(L, "object");
-	lua_gettable(L, pos);
+	lua_getfield(L, table, "object");
 
-	// Check if table.object is an Entity
+	// Check if table.object has the type we asked for
 	if (!lua_isuserdata(L, -1))
 		return NULL;
 	CppObj* obj = (CppObj*)lua_touserdata(L, -1);
-	if (obj->type != ENTITY)
-		return NULL;
-	return obj->entity;
+	return obj->type == type ? obj->data : NULL;
 }
 
 void Script::run(Resourcer* rc, const std::string& fn)
@@ -131,5 +121,12 @@ void Script::run(Resourcer* rc, const std::string& fn)
 				"... what did you do!?");
 		break;
 	}
+}
+
+void Script::newCppObj(ObjType type, void* data)
+{
+	CppObj* o = (CppObj*)lua_newuserdata(L, sizeof(CppObj));
+	o->data = data;
+	o->type = type;
 }
 
