@@ -23,3 +23,7 @@ ITEMS
 
   http://marcusirven.com/blog/2009/02/19/dangers-of-lua_error-when-using-c++.html
 
+* Investigate Guichan
+
+* Investigate PhysicsFS
+
