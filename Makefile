@@ -1,18 +1,12 @@
 # TLD Makefile - Aliases to src/Makefile
 
 all:
-	cd src && make all
 
-tsunagari:
-	cd src && make tsunagari
+%:
+	cd src && make $@
 
-testworld:
-	cd src && make testworld
-
+# Need to specify manually because './doc/' is a directory.
 .PHONY: doc
 doc:
 	cd src && make doc
-
-clean:
-	cd src && make clean
 
