@@ -12,7 +12,7 @@ ITEMS
 
 * Diagonal movement in all modes with correct input detection.
 
-* Diagonal movement should not work at corners in Yume Nikki mode.
+* Diagonal movement at corners should only work in Roguelike.
 
 * Entity movement speed should be declared in Entity descriptor.
 
