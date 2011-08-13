@@ -19,7 +19,6 @@ class Animation
 {
 public:
 	Animation();
-	Animation(ImageRef frame);
 	
 	void addFrame(ImageRef frame);
 	void setFrameLen(int milliseconds);
