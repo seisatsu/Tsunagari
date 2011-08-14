@@ -1,15 +1,11 @@
 # makefile for building Lua
 # see luaconf.h for further customization
 
-# == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
-
-CC= g++
-CFLAGS= -g -Wall $(MYCFLAGS) # -DLUA_USE_APICHECK
+CC= g++ # For throwing C++ exceptions on errors
+CFLAGS= -Wall $(MYCFLAGS) # -DLUA_USE_APICHECK to have Lua assert for
+                             # correct parameters
 AR= ar rcu
-RANLIB= ranlib
 RM= rm -f
-
-# == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
 
 LUA_A=	liblua.a
 CORE_O=	lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o \
@@ -21,24 +17,16 @@ LIB_O=	lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o loslib.o ltablib.o \
 ALL_O= $(CORE_O) $(LIB_O)
 ALL_A= $(LUA_A)
 
-default: $(PLAT)
-
-all:	$(LUA_A)
+all: $(LUA_A)
 
 $(LUA_A): $(ALL_O)
 	$(AR) $@ $?
-	$(RANLIB) $@
 
 clean:
-	$(RM) $(ALL_A) $(ALL_O)
+	$(RM) *.a *.o
 
 depend:
 	@$(CC) $(CFLAGS) -MM *.c
-
-# list targets that do not create files (but not all makes understand .PHONY)
-.PHONY: all clean depend
-
-# DO NOT DELETE
 
 lapi.o: lapi.c lua.h luaconf.h lapi.h lobject.h llimits.h ldebug.h \
   lstate.h ltm.h lzio.h lmem.h ldo.h lfunc.h lgc.h lstring.h ltable.h \
