@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity version="1">
-	<speed>240</speed>
+	<speed>240</speed> <!-- movement speed in pixels per second -->
 	<sprite>
 		<sheet tilewidth="64" tileheight="64">vlad.sheet</sheet>
 		<phases>
@@ -106,5 +106,10 @@
 	<sounds>
 		<sound name="step">step.sound</sound>
 	</sounds>
+
+	<scripts>
+		<script trigger="premove">premove.script</script>
+		<script trigger="postmove">postmove.script</script>
+	</scripts>
 </entity>
 

@@ -34,3 +34,5 @@ ITEMS
 * Can we create a metatable for a userdata? Is that what liolib.c does? Right
   now we use a table object with userdata set at table.object.
 
+* Unify how tile scripts and entity scripts are stored.
+

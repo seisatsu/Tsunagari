@@ -297,10 +297,11 @@ void Entity::preMove(coord_t delta)
 
 void Entity::preMoveLua()
 {
-	if (rc->resourceExists("preMove.script")) {
+	const std::string& name = scripts["premove"];
+	if (name.size() && rc->resourceExists(name)) {
 		Script s(rc);
 		bindEntity(s, this, "entity");
-		s.run(rc, "preMove.script");
+		s.run(rc, name);
 	}
 }
 
@@ -332,10 +333,11 @@ void Entity::postMove()
 
 void Entity::postMoveLua()
 {
-	if (rc->resourceExists("postMove.script")) {
+	const std::string& name = scripts["postmove"];
+	if (rc->resourceExists(name)) {
 		Script s(rc);
 		bindEntity(s, this, "entity");
-		s.run(rc, "postMove.script");
+		s.run(rc, name);
 	}
 }
 
@@ -378,6 +380,9 @@ bool Entity::processDescriptor()
 		else if (!xmlStrncmp(node->name, BAD_CAST("sounds"), 7)) {
 			if (!processSounds(node))
 				return false;
+		}
+		else if (!xmlStrncmp(node->name, BAD_CAST("scripts"), 8)) {
+			processScripts(node);
 		}
 	}
 	return true;
@@ -495,5 +500,24 @@ bool Entity::processSound(xmlNode* sound)
 		Log::err(descriptor, std::string("sound ") +
 				filename + " not found");
 	return s;
+}
+
+void Entity::processScripts(const xmlNode* scripts)
+{
+	for (xmlNode* script = scripts->xmlChildrenNode; script != NULL;
+			script = script->next)
+		if (!xmlStrncmp(script->name, BAD_CAST("script"), 7)) // needed?
+			processScript(script);
+}
+
+void Entity::processScript(xmlNode* script)
+{
+	const std::string trigger = readXmlAttribute(script, "trigger");
+	const std::string filename = readXmlElement(script);
+	// FIXME: check name, filename for 0 length
+
+	// Don't verify for script exists here. This happens when it's
+	// triggered.
+	scripts[trigger] = filename;
 }
 

@@ -1,4 +1,4 @@
-<!ELEMENT entity (speed, sprite, sounds)>
+<!ELEMENT entity (speed, sprite, sounds, scripts)>
 <!ATTLIST entity version (1) #REQUIRED>
 
 <!ELEMENT speed (#PCDATA)>
@@ -23,4 +23,9 @@
 
 <!ELEMENT sound (#PCDATA)>
 <!ATTLIST sound name CDATA #REQUIRED>
+
+<!ELEMENT scripts (script*)>
+
+<!ELEMENT script (#PCDATA)>
+<!ATTLIST script trigger CDATA #REQUIRED>
 

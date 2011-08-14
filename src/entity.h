@@ -109,6 +109,8 @@ protected:
                            const TiledImage& tiles);
 	bool processSounds(const xmlNode* sounds);
 	bool processSound(xmlNode* sound);
+	void processScripts(const xmlNode* scripts);
+	void processScript(xmlNode* script);
 
 
 	Resourcer* rc;
@@ -119,6 +121,7 @@ protected:
 	std::string facing;
 
 	boost::unordered_map<std::string, SampleRef> sounds;
+	boost::unordered_map<std::string, std::string> scripts;
 
 	bool moving;
 	coord_t dest;
