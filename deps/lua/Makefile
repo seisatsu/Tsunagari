@@ -3,7 +3,7 @@
 
 CC= g++ # For throwing C++ exceptions on errors
 CFLAGS= -Wall $(MYCFLAGS) # -DLUA_USE_APICHECK to have Lua assert for
-                             # correct parameters
+                          # correct parameters
 AR= ar rcu
 RM= rm -f
 

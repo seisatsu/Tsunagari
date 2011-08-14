@@ -147,22 +147,6 @@ static int io_tostring (lua_State *L) {
 }
 
 
-static int io_open (lua_State *L) {
-  const char *filename = luaL_checkstring(L, 1);
-  const char *mode = luaL_optstring(L, 2, "r");
-  FILE **pf = newfile(L);
-  *pf = fopen(filename, mode);
-  return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
-}
-
-
-static int io_tmpfile (lua_State *L) {
-  FILE **pf = newfile(L);
-  *pf = tmpfile();
-  return (*pf == NULL) ? pushresult(L, 0, NULL) : 1;
-}
-
-
 static FILE *getiofile (lua_State *L, int findex) {
   FILE *f;
   lua_rawgeti(L, LUA_ENVIRONINDEX, findex);
@@ -218,24 +202,6 @@ static int f_lines (lua_State *L) {
   tofile(L);  /* check that it's a valid file handle */
   aux_lines(L, 1, 0);
   return 1;
-}
-
-
-static int io_lines (lua_State *L) {
-  if (lua_isnoneornil(L, 1)) {  /* no arguments? */
-    /* will iterate over default input */
-    lua_rawgeti(L, LUA_ENVIRONINDEX, IO_INPUT);
-    return f_lines(L);
-  }
-  else {
-    const char *filename = luaL_checkstring(L, 1);
-    FILE **pf = newfile(L);
-    *pf = fopen(filename, "r");
-    if (*pf == NULL)
-      fileerror(L, 1, filename);
-    aux_lines(L, lua_gettop(L), 1);
-    return 1;
-  }
 }
 
 
@@ -454,14 +420,10 @@ static int f_flush (lua_State *L) {
 
 
 static const luaL_Reg iolib[] = {
-  {"close", io_close},
   {"flush", io_flush},
   {"input", io_input},
-  {"lines", io_lines},
-  {"open", io_open},
   {"output", io_output},
   {"read", io_read},
-  {"tmpfile", io_tmpfile},
   {"type", io_type},
   {"write", io_write},
   {NULL, NULL}
