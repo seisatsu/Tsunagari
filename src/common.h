@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "log.h"
+#include "log.h" // for message_mode_t
 
 //! Game Movement Mode
 enum movement_mode_t {
