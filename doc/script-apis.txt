@@ -1,0 +1,29 @@
+ENGINE-PROVIDED SCRIPT APIS
+
+
+All scripts have:
+
+ - Sound API
+
+
+preMove, postMove, tile onEnter, and tile onLeave scripts have:
+
+ - an Entity object
+
+
+
+OBJECTS INTERFACES
+
+
+Sound API is:
+
+ - Sound:play(string filename)
+
+
+Entity object is:
+
+ - entity.x
+ - entity.y
+ - entity:gotoRandomTile()
+
+

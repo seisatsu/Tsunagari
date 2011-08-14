@@ -256,7 +256,7 @@ Tile& Entity::getTile()
 SampleRef Entity::getSound(const std::string& name)
 {
 	boost::unordered_map<std::string, SampleRef>::iterator it;
-	
+
 	it = sounds.find(name);
 	if (it != sounds.end())
 		return it->second;
@@ -298,10 +298,10 @@ void Entity::preMove(coord_t delta)
 
 void Entity::preMoveLua()
 {
-	if (rc->resourceExists("preMove.lua")) {
-		Script s;
+	if (rc->resourceExists("preMove.script")) {
+		Script s(rc);
 		bindEntity(s, this, "entity");
-		s.run(rc, "preMove.lua");
+		s.run(rc, "preMove.script");
 	}
 }
 
@@ -333,10 +333,10 @@ void Entity::postMove()
 
 void Entity::postMoveLua()
 {
-	if (rc->resourceExists("postMove.lua")) {
-		Script s;
+	if (rc->resourceExists("postMove.script")) {
+		Script s(rc);
 		bindEntity(s, this, "entity");
-		s.run(rc, "postMove.lua");
+		s.run(rc, "postMove.script");
 	}
 }
 
@@ -349,10 +349,9 @@ void Entity::tileScripts(Tile& tile, std::vector<TileEvent>& events, const TileE
 
 void Entity::runTileLua(Tile&, const std::string& script)
 {
-	Script s;
+	Script s(rc);
 	bindEntity(s, this, "entity");
-	// TODO
-	// bindTile(script, tile, "tile");
+	// TODO bindTile(script, tile, "tile");
 	s.run(rc, script);
 }
 
@@ -444,14 +443,13 @@ bool Entity::processPhase(xmlNode* phase, const TiledImage& tiles)
 		// atoi
 		const unsigned pos = (unsigned)atoi(posStr.c_str());
 		// FIXME: check for out of bounds
-		phases[name] = Animation(tiles[pos]);
+		phases[name].addFrame(tiles[pos]);
 	}
 	else { // speedStr
 		// atoi
 		const double speed = (unsigned)atof(speedStr.c_str());
 		// FIXME: check for out of bounds
 
-		phases[name] = Animation();
 		int len = (int)(1000.0/speed);
 		phases[name].setFrameLen(len);
 		for (xmlNode* member = phase->xmlChildrenNode; member != NULL;

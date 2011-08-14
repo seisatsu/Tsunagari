@@ -81,7 +81,7 @@ void Resourcer::reclaim(Map& map)
 	std::vector<std::string> dead;
 	BOOST_FOREACH(typename Map::value_type& i, map) {
 		const std::string& name = i.first;
-		CachedItem<MapValue>& cache = i.second;
+		CacheEntry<MapValue>& cache = i.second;
 		long extUses = cache.resource.use_count() - 1;
 		if (extUses == 0) {
 			if (!cache.lastUsed) {
@@ -135,7 +135,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
 
 	if (conf->cache_enabled) {
-		CachedItem<ImageRef> data;
+		CacheEntry<ImageRef> data;
 		data.resource = result;
 		data.lastUsed = 0; 
 		images[name] = data;
@@ -170,7 +170,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 	img = *result.get();
 
 	if (conf->cache_enabled) {
-		CachedItem<boost::shared_ptr<TiledImage> > data;
+		CacheEntry<boost::shared_ptr<TiledImage> > data;
 		data.resource = result;
 		data.lastUsed = 0;
 		tiles[name] = data;
@@ -201,7 +201,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	SampleRef result(new Gosu::Sample(buffer->frontReader()));
 
 	if (conf->cache_enabled) {
-		CachedItem<SampleRef> data;
+		CacheEntry<SampleRef> data;
 		data.resource = result;
 		data.lastUsed = 0; 
 		samples[name] = data;
@@ -225,8 +225,10 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 	}
 
 	XMLDocRef result(readXMLDocFromDisk(name, dtdFile), xmlFreeDoc);
+	// XXX Do we check for NULL?
+
 	if (conf->cache_enabled) {
-		CachedItem<XMLDocRef> data;
+		CacheEntry<XMLDocRef> data;
 		data.resource = result;
 		data.lastUsed = 0; 
 		xmls[name] = data;
@@ -234,7 +236,9 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 	return result;
 }
 
-static void parseError(const std::string& name, lua_State* L)
+//! Take a Lua compiler error message and format it like one of our error
+//! messages.
+static void luaParseError(const std::string& name, lua_State* L)
 {
 	const char* err = lua_tostring(L, -1);
 	const char* afterFile = strchr(err, ':') + 1; // +1 for ':'
@@ -244,25 +248,70 @@ static void parseError(const std::string& name, lua_State* L)
 	Log::err(name + ":" + line, std::string("parsing error: ") + afterLine);
 }
 
-bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
+template <class Container>
+static bool runLuaScript(lua_State* L, const Container& c, const char* name)
 {
-	const std::string script = readStringFromDisk(name);
-	if (script.empty()) // error logged
-		return false;
-
-	int status = luaL_loadbuffer(L, script.data(), script.size(),
-			name.c_str());
-
+	int status = luaL_loadbuffer(L, c.data(), c.size(), name);
 
 	switch (status) {
 	case LUA_ERRSYNTAX:
-		parseError(name, L);
+		luaParseError(name, L);
 		return false;
 	case LUA_ERRMEM:
 		// Should we even bother with this?
 		Log::err(name, "out of memory while parsing");
 		return false;
 	}
+
+	return true;
+}
+
+bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
+{
+	if (conf->cache_enabled) {
+		LuaBytecodeMap::iterator entry = code.find(name);
+		if (entry != code.end())
+			return runLuaScript(L, entry->second, name.c_str());
+	}
+
+	std::vector<char> bytecode;
+	bool found = compileLuaFromDisk(name, L, bytecode);
+	if (!found) // error already logged
+		return false;
+
+	if (conf->cache_enabled)
+		code[name].swap(bytecode);
+
+	// lua_State* L was the object that compiled the script, so we don't
+	// have to run the bytecode again.
+	return true;
+}
+
+static int writeToVector(lua_State*, const void* data, size_t sz, void* vector)
+{
+	std::vector<char>* v = (std::vector<char>*)vector;
+	char* s = (char*)data; // GCC: can't do ++ on a const void*
+	while (sz--)
+		v->push_back(*s++);
+	return 0;
+}
+
+bool Resourcer::compileLuaFromDisk(const std::string& name, lua_State* L,
+                                   std::vector<char>& bytes)
+{
+	const std::string script = readStringFromDisk(name);
+	if (script.empty()) // error already logged
+		return false;
+
+	// Compile the Lua script.
+	bool compiled = runLuaScript(L, script, name.c_str());
+	if (!compiled) // error already logged
+		return false;
+
+	// Save the bytecode for the script to a vector.
+	int error = lua_dump(L, writeToVector, &bytes);
+	if (error)
+		return false;
 
 	return true;
 }

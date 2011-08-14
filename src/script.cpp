@@ -8,16 +8,18 @@
 #include "log.h"
 #include "resourcer.h"
 #include "script.h"
+#include "script-sound.h"
 
 struct CppObj {
 	ObjType type;
 	void* data;
 };
 
-Script::Script()
+Script::Script(Resourcer* rc)
 	: ownState(true), L(lua_open())
 {
 	luaL_openlibs(L);
+	bindSound(*this, rc);
 }
 
 Script::Script(lua_State* L)
@@ -84,6 +86,15 @@ void Script::bindObj(const std::string& bindTo, ObjType type, void* obj,
 
 	// Save table.
 	lua_setglobal(L, bindTo.c_str());
+}
+
+std::string Script::getString(int loc)
+{
+	if (!lua_isstring(L, loc))
+		return "";
+	size_t len;
+	const char* s = lua_tolstring(L, loc, &len);
+	return std::string(s, len);
 }
 
 void* Script::getObj(int table, ObjType type)

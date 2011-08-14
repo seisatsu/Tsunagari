@@ -76,10 +76,10 @@ public:
 	//
 	// Lua callback targets
 	//
-	
+
 	//! Move to the upper left corner. Sets x,y tile positions to 1,1.
 	void gotoRandomTile();
-	
+
 protected:
 	//! Get the Tile we are standing on.
 	Tile& getTile();

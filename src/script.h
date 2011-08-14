@@ -12,8 +12,9 @@
 #include <lua.hpp>
 
 enum ObjType {
+	NONE,
 	ENTITY,
-	SOUND
+	RESOURCER
 };
 
 class Resourcer;
@@ -38,7 +39,7 @@ class Script
 public:
 	//! Create a new Lua state. The state is destroyed with the death of
 	//! this object.
-	Script();
+	Script(Resourcer* rc);
 
 	//! If we already have a Lua state, wrap around it. The state is not
 	//! destroyed with the death of this object.
@@ -52,21 +53,27 @@ public:
 	void bindGlobalFn(const std::string& name, lua_CFunction fn);
 
 	//! Bind a C function to a table index. In Lua: "table.index = fn"
-	void bindObjFn(const std::string& table, const std::string& index, lua_CFunction fn);
+	void bindObjFn(const std::string& table, const std::string& index,
+		lua_CFunction fn);
 
 	//! Set an integer to a table index.
-	void bindObjInt(const std::string& table, const std::string& name, lua_Integer i);
+	void bindObjInt(const std::string& table, const std::string& name,
+		lua_Integer i);
 
 	//! Set a global integer variable in Lua.
 	void bindInt(const std::string& name, lua_Integer i);
-
 
 	//! Create a global table with the specified name which represents a
 	//! C++ object.
 	void bindObj(const std::string& bindTo, ObjType type, void* obj,
 	             const luaL_Reg* funcs);
 
-	//! Get a C++ object stored in a Lua table. Requires position of table on stack.
+
+	//! Get a string on the stack.
+	std::string getString(int loc);
+
+	//! Get a C++ object stored in a Lua table. Requires position of table
+	//! on stack.
 	void* getObj(int table, ObjType type);
 
 

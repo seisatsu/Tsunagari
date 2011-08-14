@@ -27,3 +27,5 @@ ITEMS
 
 * Investigate PhysicsFS
 
+* Resourcer returns Script rather than lua_State*
+  Move bytecode functions and stuff to Script.
