@@ -9,23 +9,13 @@
 #include "animation.h"
 
 Animation::Animation()
-	: img(NULL),
+	: frames(),
+	  img(NULL),
 	  animated(false),
 	  frameLen(0),
 	  animLen(0),
 	  frameShowing(0)
 {
-}
-
-Animation::Animation(ImageRef frame)
-	: img(NULL),
-	  animated(false),
-	  frameLen(0),
-	  animLen(0),
-	  frameShowing(0)
-{
-	Animation();
-	addFrame(frame);
 }
 
 void Animation::addFrame(ImageRef frame)

@@ -8,22 +8,18 @@
 #include "log.h"
 #include "resourcer.h"
 #include "script.h"
-
-enum ObjType {
-	ENTITY
-};
+#include "script-sound.h"
 
 struct CppObj {
 	ObjType type;
-	union {
-		Entity* entity;
-	};
+	void* data;
 };
 
-Script::Script()
+Script::Script(Resourcer* rc)
 	: ownState(true), L(lua_open())
 {
 	luaL_openlibs(L);
+	bindSound(*this, rc);
 }
 
 Script::Script(lua_State* L)
@@ -37,70 +33,87 @@ Script::~Script()
 		lua_close(L);
 }
 
-void Script::bindGlobalFn(const char* name, lua_CFunction fn)
+void Script::bindGlobalFn(const std::string& name, lua_CFunction fn)
 {
-	lua_register(L, name, fn);
+	lua_register(L, name.c_str(), fn);
 }
 
-void Script::bindObjFn(const char* table, const char* index, lua_CFunction fn)
+void Script::bindObjFn(const std::string& table, const std::string& index, lua_CFunction fn)
 {
 	// Get table.
-	lua_getglobal(L, table);
+	lua_getglobal(L, table.c_str());
 
 	// table.name = fn
-	lua_pushstring(L, index);
 	lua_pushcfunction(L, fn);
-	lua_settable(L, -3);
+	lua_setfield(L, -2, index.c_str());
 
 	// Done with table.
 	lua_remove(L, -1);
 }
 
-void Script::bindInt(const char* name, lua_Integer i)
+void Script::bindObjInt(const std::string& table, const std::string& index, lua_Integer i)
+{
+	// Get table.
+	lua_getglobal(L, table.c_str());
+
+	// table.name = fn
+	lua_pushinteger(L, i);
+	lua_setfield(L, -2, index.c_str());
+
+	// Done with table.
+	lua_remove(L, -1);
+}
+
+void Script::bindInt(const std::string& name, lua_Integer i)
 {
 	lua_pushinteger(L, i);
-	lua_setglobal(L, name);
+	lua_setglobal(L, name.c_str());
 }
 
-void Script::bindEntity(const char* name, Entity* entity)
+void Script::bindObj(const std::string& bindTo, ObjType type, void* obj,
+                     const luaL_Reg* funcs)
 {
-	// Create table to hold our object and its functions/variables.
+	// Create table, store the object.
 	lua_createtable(L, 0, 3);
+	newCppObj(type, obj);
+	lua_setfield(L, -2, "object");
 
-	lua_pushstring(L, "object");
+	// Add methods to table.
+	for (; funcs->name; funcs++) {
+		lua_pushcclosure(L, funcs->func, 0);
+		lua_setfield(L, -2, funcs->name);
+	}
 
-	// Create type-aware wrapper around Entity.
-	CppObj* obj = (CppObj*)lua_newuserdata(L, sizeof(CppObj));
-	obj->type = ENTITY;
-	obj->entity = entity;
-
-	// table.object = entity
-	lua_settable(L, -3);
-
-	// Bind table to Lua.
-	lua_setglobal(L, name);
+	// Save table.
+	lua_setglobal(L, bindTo.c_str());
 }
 
-Entity* Script::getEntity(int pos)
+std::string Script::getString(int loc)
+{
+	if (!lua_isstring(L, loc))
+		return "";
+	size_t len;
+	const char* s = lua_tolstring(L, loc, &len);
+	return std::string(s, len);
+}
+
+void* Script::getObj(int table, ObjType type)
 {
 	// Get table.object
-	if (!lua_istable(L, pos))
+	if (!lua_istable(L, table))
 		return NULL;
-	lua_pushstring(L, "object");
-	lua_gettable(L, pos);
+	lua_getfield(L, table, "object");
 
-	// Check if table.object is an Entity
+	// Check if table.object has the type we asked for
 	if (!lua_isuserdata(L, -1))
 		return NULL;
 	CppObj* obj = (CppObj*)lua_touserdata(L, -1);
-	if (obj->type != ENTITY)
-		return NULL;
-	return obj->entity;
+	return obj->type == type ? obj->data : NULL;
 }
 
-void Script::run(Resourcer* rc, const char* fn)
+void Script::run(Resourcer* rc, const std::string& fn)
 {
-	if (!rc->getLuaScript(fn, L)) // error logged
+	if (!rc->getLuaScript(fn.c_str(), L)) // TODO: error logged
 		return;
 
 	// TODO: make fourth parameter to lua_call an error handler so we can
@@ -119,5 +132,12 @@ void Script::run(Resourcer* rc, const char* fn)
 				"... what did you do!?");
 		break;
 	}
+}
+
+void Script::newCppObj(ObjType type, void* data)
+{
+	CppObj* o = (CppObj*)lua_newuserdata(L, sizeof(CppObj));
+	o->data = data;
+	o->type = type;
 }
 

@@ -13,9 +13,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
-#include <lua.hpp>
 
 #include "common.h"
+#include "lua.hpp"
 
 struct zip;
 
@@ -73,7 +73,7 @@ public:
 
 private:
 	template<class Res>
-	struct CachedItem
+	struct CacheEntry
 	{
 		Res resource;
 		int lastUsed;
@@ -81,18 +81,27 @@ private:
 	};
 
 	//! Resource maps.
-	typedef boost::unordered_map<std::string, CachedItem<ImageRef> >
+	typedef boost::unordered_map<const std::string, CacheEntry<ImageRef> >
 		ImageRefMap;
-	typedef boost::unordered_map<std::string, CachedItem<SampleRef> >
-		SampleRefMap;
-	typedef boost::unordered_map<std::string, CachedItem<XMLDocRef> >
-		XMLMap;
-	typedef boost::unordered_map<std::string, CachedItem<
+	typedef boost::unordered_map<const std::string, CacheEntry<
 		boost::shared_ptr<TiledImage> > > TiledImageMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<SampleRef> >
+		SampleRefMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<XMLDocRef> >
+		XMLMap;
+
+	// Holds compiled Lua scripts. Not garbage collected.
+	typedef boost::unordered_map<const std::string, std::vector<char> >
+		LuaBytecodeMap;
+
 
 	//! Garbage collect a map.
 	template<class Map, class MapValue>
 	void reclaim(Map& map);
+
+	//! Reads a Lua script from disk and parses it, returning the bytecode.
+	bool compileLuaFromDisk(const std::string& name, lua_State* L,
+                                std::vector<char>& bytes);
 
 	//! Reads an XML document from disk and parses it.
 	xmlDoc* readXMLDocFromDisk(const std::string& name,
@@ -111,19 +120,15 @@ private:
 	zip* z;
 	ClientValues* conf;
 
-	//! Resource Cache
-	/*!
-		The key is the cached file's name, and the value is a pair of a
-		"tally" and a pointer to the data. The "tally" is increased each
-		time something requests the resource, and decreased each time
-		something is finished with that resource. When the tally reaches
-		zero, nothing is using the resource, and it is dropped after a
-		few minutes. The cache drop timer is in a thread.
-	*/
+	// Cached resources stored in a manner usable by the game; no further
+	// processing needed. Garbage collected.
 	ImageRefMap images;
+	TiledImageMap tiles;
 	SampleRefMap samples;
 	XMLMap xmls;
-	TiledImageMap tiles;
+
+	// Not garbage collected.
+	LuaBytecodeMap code;
 };
 
 #endif

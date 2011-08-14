@@ -66,9 +66,9 @@ void Player::moveByTile(coord_t delta)
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
-	const Area::Tile& dest = area->getTile(newCoord);
-	if ((dest.flags       & Area::player_nowalk) != 0 ||
-	    (dest.type->flags & Area::player_nowalk) != 0) {
+	const Tile& dest = area->getTile(newCoord);
+	if ((dest.flags       & player_nowalk) != 0 ||
+	    (dest.type->flags & player_nowalk) != 0) {
 		// The tile we're trying to move onto is set as player_nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
@@ -94,8 +94,8 @@ void Player::postMove()
 	Entity::postMove();
 
 	const coord_t coord = getCoordsByTile();
-	const Area::Tile& dest = area->getTile(coord);
-	const boost::optional<Area::Door> door = dest.door;
+	const Tile& dest = area->getTile(coord);
+	const boost::optional<Door> door = dest.door;
 	if (door)
 		World::getWorld()->loadArea(door->area, door->coord);
 	if (conf->movemode == TILE)

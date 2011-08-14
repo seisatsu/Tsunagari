@@ -6,6 +6,7 @@
 
 #include <math.h>
 
+#include <boost/foreach.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
@@ -32,7 +33,6 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	: rc(rc),
 	  redraw(true),
 	  moving(false),
-	  speed(240.0 / 1000), // FIXME
 	  area(area),
 	  conf(conf)
 {
@@ -197,9 +197,9 @@ void Entity::moveByTile(coord_t delta)
 	newCoord.z += delta.z;
 
 	// Can we move?
-	const Area::Tile& tile = area->getTile(newCoord);
-	if ((tile.flags       & Area::nowalk) != 0 ||
-	    (tile.type->flags & Area::nowalk) != 0) {
+	const Tile& tile = area->getTile(newCoord);
+	if ((tile.flags       & nowalk) != 0 ||
+	    (tile.type->flags & nowalk) != 0) {
 		// The tile we're trying to move onto is set as nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
@@ -238,19 +238,30 @@ void Entity::gotoRandomTile()
 {
 	coord_t map = area->getDimensions();
 	coord_t pos;
-	Area::Tile* tile;
+	Tile* tile;
 	do {
 		pos = coord(rand() % map.x, rand() % map.y, 0);
 		tile = &area->getTile(pos);
-	} while (((tile->flags & Area::nowalk) |
-	          (tile->type->flags & Area::nowalk)) != 0);
+	} while (((tile->flags & nowalk) |
+	          (tile->type->flags & nowalk)) != 0);
 	setCoordsByTile(pos);
+}
+
+void Entity::setSpeed(double multiplier)
+{
+	speedMul = multiplier;
+	speed = baseSpeed * speedMul;
+}
+
+Tile& Entity::getTile()
+{
+	return area->getTile(getCoordsByTile());
 }
 
 SampleRef Entity::getSound(const std::string& name)
 {
 	boost::unordered_map<std::string, SampleRef>::iterator it;
-	
+
 	it = sounds.find(name);
 	if (it != sounds.end())
 		return it->second;
@@ -286,26 +297,69 @@ void Entity::preMove(coord_t delta)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
+	preMoveLua();
+	movingFrom = &getTile();
+}
+
+void Entity::preMoveLua()
+{
+	const std::string& name = scripts["premove"];
+	if (name.size() && rc->resourceExists(name)) {
+		Script s(rc);
+		bindEntity(s, this, "entity");
+		s.run(rc, name);
+	}
 }
 
 void Entity::postMove()
 {
 	if (conf->movemode != TURN)
 		setPhase(facing);
-	postMoveHook();
+
+	// Handle tile onEnter and onLeave scripts
+	Tile& entering = getTile();
+	Tile& leaving = *movingFrom;
+	bool tileLeave = (leaving.flags & hasOnLeave) != 0;
+	bool typeLeave = (leaving.type->flags & hasOnLeave) != 0;
+	bool tileEnter = (entering.flags & hasOnEnter) != 0;
+	bool typeEnter = (entering.type->flags & hasOnEnter) != 0;
+
+	if (typeLeave)
+		tileScripts(leaving, leaving.type->events, onLeave);
+	if (tileLeave)
+		tileScripts(leaving, leaving.events, onLeave);
+
+	postMoveLua();
+
+	if (tileEnter)
+		tileScripts(entering, entering.events, onEnter);
+	if (typeEnter)
+		tileScripts(entering, entering.type->events, onEnter);
 }
 
-void Entity::postMoveHook()
+void Entity::postMoveLua()
 {
-	if (rc->resourceExists("postMove.lua")) {
-		const coord_t tile = getCoordsByTile();
-		Script script;
-		script.bindEntity("entity", this);
-		script.bindObjFn("entity", "gotoRandomTile", lua_Entity_gotoRandomTile);
-		script.bindInt("x", tile.x);
-		script.bindInt("y", tile.y);
-		script.run(rc, "postMove.lua");
+	const std::string& name = scripts["postmove"];
+	if (rc->resourceExists(name)) {
+		Script s(rc);
+		bindEntity(s, this, "entity");
+		s.run(rc, name);
 	}
+}
+
+void Entity::tileScripts(Tile& tile, std::vector<TileEvent>& events, const TileEventTriggers trigger)
+{
+	BOOST_FOREACH(const TileEvent& e, events)
+		if (e.trigger == trigger)
+			runTileLua(tile, e.script);
+}
+
+void Entity::runTileLua(Tile&, const std::string& script)
+{
+	Script s(rc);
+	bindEntity(s, this, "entity");
+	// TODO bindTile(script, tile, "tile");
+	s.run(rc, script);
 }
 
 /**
@@ -322,13 +376,22 @@ bool Entity::processDescriptor()
 	xmlNode* node = root->xmlChildrenNode; // children of <entity>
 
 	for (; node != NULL; node = node->next) {
-		if (!xmlStrncmp(node->name, BAD_CAST("sprite"), 6)) {
+		if (!xmlStrncmp(node->name, BAD_CAST("speed"), 6)) {
+			speed = baseSpeed =
+				(double)atol(readXmlElement(node).c_str())
+				/ 1000.0;
+			speedMul = 1.0;
+		}
+		else if (!xmlStrncmp(node->name, BAD_CAST("sprite"), 7)) {
 			if (!processSprite(node))
 				return false;
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("sounds"), 7)) {
 			if (!processSounds(node))
 				return false;
+		}
+		else if (!xmlStrncmp(node->name, BAD_CAST("scripts"), 8)) {
+			processScripts(node);
 		}
 	}
 	return true;
@@ -340,9 +403,7 @@ bool Entity::processSprite(const xmlNode* sprite)
 			child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("sheet"), 6)) {
 			xml.sheet = readXmlElement(child);
-
 			xml.tileSize.x = atol(readXmlAttribute(child, "tilewidth").c_str());
-
 			xml.tileSize.y = atol(readXmlAttribute(child, "tileheight").c_str());
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("phases"), 7) &&
@@ -396,14 +457,13 @@ bool Entity::processPhase(xmlNode* phase, const TiledImage& tiles)
 		// atoi
 		const unsigned pos = (unsigned)atoi(posStr.c_str());
 		// FIXME: check for out of bounds
-		phases[name] = Animation(tiles[pos]);
+		phases[name].addFrame(tiles[pos]);
 	}
 	else { // speedStr
 		// atoi
 		const double speed = (unsigned)atof(speedStr.c_str());
 		// FIXME: check for out of bounds
 
-		phases[name] = Animation();
 		int len = (int)(1000.0/speed);
 		phases[name].setFrameLen(len);
 		for (xmlNode* member = phase->xmlChildrenNode; member != NULL;
@@ -449,5 +509,24 @@ bool Entity::processSound(xmlNode* sound)
 		Log::err(descriptor, std::string("sound ") +
 				filename + " not found");
 	return s;
+}
+
+void Entity::processScripts(const xmlNode* scripts)
+{
+	for (xmlNode* script = scripts->xmlChildrenNode; script != NULL;
+			script = script->next)
+		if (!xmlStrncmp(script->name, BAD_CAST("script"), 7)) // needed?
+			processScript(script);
+}
+
+void Entity::processScript(xmlNode* script)
+{
+	const std::string trigger = readXmlAttribute(script, "trigger");
+	const std::string filename = readXmlElement(script);
+	// FIXME: check name, filename for 0 length
+
+	// Don't verify for script exists here. This happens when it's
+	// triggered.
+	scripts[trigger] = filename;
 }
 

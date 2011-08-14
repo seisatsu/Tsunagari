@@ -4,18 +4,24 @@
 
 ### --- VARIABLES SECTION --- ###
 
+# Compiler to use. (Suggested: "g++" or "clang")
+CXX = g++
+
 # Warning flags to enable.
 WFLAGS = -Wall -Wextra -Wconversion
 
+# Internal Lua library.
+LUACFLAGS = -I../deps/lua
+LUALIB = ../deps/lua/liblua.a
+
 # Libraries to include.
-LIBS = -lgosu -lzip -lboost_program_options `xml2-config --libs` `pkg-config --libs lua5.1`
+LIBS = $(LUALIB) -lgosu -lzip -lboost_program_options \
+	$(shell xml2-config --libs)
 
 # Compiler and linker flags.
-CXXFLAGS = -g -pedantic -ansi $(WFLAGS) `xml2-config --cflags` `pkg-config --cflags lua5.1`
-LDFLAGS = -g $(LIBS)
-
-# Compiler to use. (Suggested: "g++" or "clang")
-CXX = g++
+CXXFLAGS = $(MYCFLAGS) -pedantic -ansi $(WFLAGS) \
+	$(shell xml2-config --cflags) $(LUACFLAGS)
+LDFLAGS = $(MYLDFLAGS) $(LIBS)
 
 # Name of testing world.
 TESTWORLD = babysfirst.world
@@ -24,16 +30,17 @@ TESTWORLD = babysfirst.world
 
 all: tsunagari $(TESTWORLD)
 
-tsunagari: animation.o area.o cmd.o common.o entity.o entity-lua.o log.o main.o player.o resourcer.o script.o window.o world.o
+depend:
+	@$(CXX) $(CXXFLAGS) -MM *.cpp
+
+tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
+           log.o main.o player.o resourcer.o script.o script-sound.o window.o \
+           world.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
-	cd $(basename $@) && zip -0 ../$@ *
-
-.PHONY: doc
-doc:
-	cd ../doc && doxygen
+	cd $(basename $@) && zip -r -0 ../$@ *
 
 clean:
-	$(RM) tsunagari *.o $(TESTWORLD) && $(RM) -r ../doc/html
+	$(RM) tsunagari *.o $(TESTWORLD)
 

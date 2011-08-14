@@ -97,21 +97,22 @@ void Area::draw()
 void Area::drawTiles()
 {
 	// Calculate frame to show for each type of tile
-	int millis = GameWindow::getWindow().time();
+	const int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(TileSet& set, tilesets)
 		BOOST_FOREACH(TileType& type, set.tileTypes)
 			type.anim.updateFrame(millis);
 
 	// Render
-	for (unsigned z = 0; z != map.size(); z++) {
+	const cube_t tiles = visibleTiles();
+	for (long z = tiles.z1; z != tiles.z2; z++) {
 		const grid_t& grid = map[z];
-		for (unsigned y = 0; y != grid.size(); y++) {
+		for (long y = tiles.y1; y != tiles.y2; y++) {
 			const row_t& row = grid[y];
-			for (unsigned x = 0; x != row.size(); x++) {
+			for (long x = tiles.x1; x != tiles.x2; x++) {
 				const Tile& tile = row[x];
 				const TileType* type = tile.type;
 				const Gosu::Image* img = type->anim.frame();
-				img->draw(x*img->width(), y*img->height(), 0);
+				img->draw((double)x*img->width(), (double)y*img->height(), 0);
 			}
 		}
 	}
@@ -128,7 +129,7 @@ bool Area::needsRedraw() const
 		return true;
 
 	// Do any onscreen tile types need to update their animations?
-	int millis = GameWindow::getWindow().time();
+	const int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(const TileSet& set, tilesets)
 		BOOST_FOREACH(const TileType& type, set.tileTypes)
 			if (type.anim.needsRedraw(millis) &&
@@ -156,12 +157,12 @@ coord_t Area::getTileDimensions() const
 	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
-const Area::Tile& Area::getTile(coord_t c) const
+const Tile& Area::getTile(coord_t c) const
 {
 	return map[c.z][c.y][c.x];
 }
 
-Area::Tile& Area::getTile(coord_t c)
+Tile& Area::getTile(coord_t c)
 {
 	return map[c.z][c.y][c.x];
 }
@@ -226,7 +227,7 @@ cube_t Area::visibleTiles() const
 		return cube(0, 0, 0, dim.x, dim.y, 1);
 }
 
-bool Area::tileTypeOnScreen(const Area::TileType& search) const
+bool Area::tileTypeOnScreen(const TileType& search) const
 {
 	const cube_t tiles = visibleTiles();
 	for (long z = tiles.z1; z != tiles.z2; z++) {
@@ -358,7 +359,7 @@ bool Area::processTileSet(xmlNode* node)
 	return true;
 }
 
-Area::TileType Area::defaultTileType(TileSet& set)
+TileType Area::defaultTileType(TileSet& set)
 {
 	TileType type;
 	type.flags = 0x0;
@@ -408,10 +409,28 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 			type.flags = splitTileFlags(value.c_str());
 		}
 		else if (!name.compare("onEnter")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onEnter;
+			e.script = value;
+			type.events.push_back(e);
+			type.flags |= hasOnEnter;
 		}
 		else if (!name.compare("onLeave")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onLeave;
+			e.script = value;
+			type.events.push_back(e);
+			type.flags |= hasOnLeave;
 		}
 		else if (!name.compare("animated")) {
 			// XXX still needed?
@@ -668,10 +687,28 @@ bool Area::processObject(xmlNode* node, int zpos)
 			t.flags = splitTileFlags(value.c_str());
 		}
 		else if (!name.compare("onEnter")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onEnter;
+			e.script = value;
+			t.events.push_back(e);
+			t.flags |= hasOnEnter;
 		}
 		else if (!name.compare("onLeave")) {
-			// TODO events
+			if (!rc->resourceExists(value)) {
+				Log::err("Resourcer", "script " + value +
+						" referenced but not found");
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onLeave;
+			e.script = value;
+			t.events.push_back(e);
+			t.flags |= hasOnLeave;
 		}
 		else if (!name.compare("door")) {
 			t.door.reset(parseDoor(value.c_str()));
@@ -694,7 +731,7 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 	return flags;
 }
 
-Area::Door Area::parseDoor(const std::string dest)
+Door Area::parseDoor(const std::string dest)
 {
 
 /*

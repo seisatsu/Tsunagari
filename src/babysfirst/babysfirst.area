@@ -60,13 +60,13 @@
   </properties>
   <object name="tile0" type="Tile" gid="6" x="128" y="128">
    <properties>
-    <property name="onEnter" value="speed(0.5)"/>
-    <property name="onLeave" value="undo()"/>
+    <property name="onEnter" value="tile-effects/babysfirst-grass.script"/>
+    <property name="onLeave" value="tile-effects/normal-speed.script"/>
    </properties>
   </object>
   <object name="tile1" type="Tile" gid="13" x="192" y="256">
    <properties>
-    <property name="onEnter" value="random_warp()"/>
+    <property name="onEnter" value="tile-effects/random-warp.script"/>
    </properties>
   </object>
   <object name="door1" type="Tile" gid="7" x="64" y="320">

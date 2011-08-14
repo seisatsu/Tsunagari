@@ -1,18 +1,26 @@
-# TLD Makefile - Aliases to src/Makefile
+# Top level Makefile for Tsunagari
 
-all:
-	cd src && make all
+all: debug
 
-tsunagari:
-	cd src && make tsunagari
+debug:
+	cd deps/lua && make all MYCFLAGS=-g
+	cd src && make all MYCFLAGS=-g
 
-testworld:
-	cd src && make testworld
+release:
+	cd deps/lua && make all MYCFLAGS=-O2
+	cd src && make all MYCFLAGS=-O2
 
+profile:
+	cd deps/lua && make all MYCFLAGS=-pg
+	cd src && make all MYCFLAGS=-pg MYLDFLAGS=-pg
+
+# Need to specify manually because './doc/' is a directory.
 .PHONY: doc
 doc:
-	cd src && make doc
+	cd doc && doxygen
 
 clean:
+	cd deps/lua && make clean
 	cd src && make clean
+	$(RM) -r doc/html
 

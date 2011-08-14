@@ -87,3 +87,12 @@ License:
 
 -----
 
+=== src/babysfirst/vlad.sheet ===
+
+Copyright (c) 2011:
+	Reiner “Tiles” Prokein
+
+License:
+	http://www.reinerstilesets.de/lizenz/
+
+-----
