@@ -21,7 +21,7 @@ LIBS = $(LUALIB) -lgosu -lzip -lboost_program_options \
 # Compiler and linker flags.
 CXXFLAGS = $(MYCFLAGS) -pedantic -ansi $(WFLAGS) \
 	$(shell xml2-config --cflags) $(LUACFLAGS)
-LDFLAGS = $(LIBS)
+LDFLAGS = $(MYLDFLAGS) $(LIBS)
 
 # Name of testing world.
 TESTWORLD = babysfirst.world

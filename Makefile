@@ -12,7 +12,7 @@ release:
 
 profile:
 	cd deps/lua && make all MYCFLAGS=-pg
-	cd src && make all MYCFLAGS=-pg
+	cd src && make all MYCFLAGS=-pg MYLDFLAGS=-pg
 
 # Need to specify manually because './doc/' is a directory.
 .PHONY: doc
