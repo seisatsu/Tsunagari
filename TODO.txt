@@ -36,3 +36,7 @@ ITEMS
 
 * Unify how tile scripts and entity scripts are stored.
 
+* Entity animations should respect speedMul.
+
+* On teleport and on initial placement into map, apply tile onEnter.
+
