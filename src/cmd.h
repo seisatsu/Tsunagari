@@ -17,7 +17,7 @@ public:
 	//! Initialize the parser with argc and argv.
 	CommandLineOptions(int argc, char** argv);
 	~CommandLineOptions();
-	
+
 	//! Add an option to the parser.
 	/*!
 		@param shortopt Full short option, ex. "-c", empty string if no 
@@ -29,40 +29,40 @@ public:
 	*/
 	void insert(std::string shortopt, std::string longopt, 
 		std::string argument, std::string description);
-	
+
 	//! Process the command line.
 	/*!
 		Run after all of your inserts.
 		@return true if succeeded, false if failed.
 	*/
 	bool parse();
-	
+
 	//! Check if option was used.
 	/*!
 		@return true if option was used, false otherwise.
 	*/
 	bool check(std::string longopt);
-	
+
 	//! Get the string value of an option's argument.
 	/*!
 		@return empty string if failed.
 	*/
 	std::string get(std::string longopt);
-	
+
 	//! Print a pretty usage/help message.
 	/*!
 		automatically formatted from the list of inserted options.
 	*/
 	void usage();
-	
+
 private:
-	void usageSize(size_t* optmaxlen, size_t* argmaxlen);
+	void usageSize(int* optmaxlen, int* argmaxlen);
 	void usagePrintShort();
-	void usagePrintLong(size_t optmaxlen, size_t argmaxlen);
-	
+	void usagePrintLong(int optmaxlen, int argmaxlen);
+
 	int argc;
 	char** argv;
-	
+
 	struct Option {
 		std::string shortopt;
 		std::string longopt;
@@ -71,7 +71,7 @@ private:
 		bool present;
 		std::string value;
 	};
-	
+
 	std::vector<Option*> OptionsList;
 };
 

@@ -49,7 +49,7 @@ static const luaL_Reg funcs[] = {
 
 void bindEntity(Script& script, Entity* entity, const std::string& bindTo)
 {
-	const icoord_t tile = entity->getCoordsByTile();
+	const icoord_t tile = entity->getTileCoords();
 	script.bindObj(bindTo, ENTITY, (void*)entity, funcs);
 	script.bindObjInt(bindTo, "x", tile.x);
 	script.bindObjInt(bindTo, "y", tile.y);

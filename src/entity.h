@@ -58,12 +58,13 @@ public:
 	bool setPhase(const std::string& name);
 
 	//! Retrieve position within Area.
-	icoord_t getCoordsByPixel() const;
-	icoord_t getCoordsByTile() const;
+	icoord_t getIPixel() const;
+	rcoord_t getRPixel() const;
+	icoord_t getTileCoords() const;
 
 	//! Set location within Area.
-	void setCoordsByPixel(icoord_t c);
-	void setCoordsByTile(icoord_t c);
+	void setPixelCoords(icoord_t c);
+	void setTileCoords(icoord_t c);
 
 	//! Move within Area.
 	void moveByPixel(icoord_t delta);
@@ -136,7 +137,7 @@ protected:
 
 	Area* area;
 	icoord_t c;
-	double rx, ry, rz; // real x,y position: hold partial pixel transversal
+	rcoord_t r; // real x,y position: hold partial pixel transversal
 
 	std::string descriptor;
 

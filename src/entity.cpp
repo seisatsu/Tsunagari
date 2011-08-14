@@ -37,7 +37,8 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	  area(area),
 	  conf(conf)
 {
-	c.x = c.y = c.z = 0;
+	c = icoord(0, 0, 0);
+	r = rcoord(0.0, 0.0, 0.0);
 }
 
 Entity::~Entity()
@@ -59,7 +60,7 @@ void Entity::draw()
 {
 	int millis = GameWindow::getWindow().time();
 	phase->updateFrame(millis);
-	phase->frame()->draw((double)c.x, (double)c.y, (double)0);
+	phase->frame()->draw(r.x, r.y, 0.0);
 	redraw = false;
 }
 
@@ -126,11 +127,11 @@ void Entity::update(unsigned long dt)
 				dy = 0.0;
 
 			// Save state of partial pixels traveled in double
-			rx += dx * speed * (double)dt;
-			ry += dy * speed * (double)dt;
+			r.x += dx * speed * (double)dt;
+			r.y += dy * speed * (double)dt;
 
-			c.x = (int)rx;
-			c.y = (int)ry;
+			c.x = (int)r.x;
+			c.y = (int)r.y;
 		}
 	}
 }
@@ -150,32 +151,43 @@ bool Entity::setPhase(const std::string& name)
 	return false;
 }
 
-icoord_t Entity::getCoordsByPixel() const
+icoord_t Entity::getIPixel() const
 {
 	return c;
 }
 
-icoord_t Entity::getCoordsByTile() const
+rcoord_t Entity::getRPixel() const
+{
+	return r;
+}
+
+icoord_t Entity::getTileCoords() const
 {
 	icoord_t tileDim = area->getTileDimensions();
 	// XXX: revisit when we have Z-buffers
 	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
-void Entity::setCoordsByPixel(icoord_t coords)
+void Entity::setPixelCoords(icoord_t coords)
 {
-	c = coords;
 	redraw = true;
+	c = coords;
+	r.x = c.x;
+	r.y = c.y;
+	r.z = c.z;
 }
 
-void Entity::setCoordsByTile(icoord_t coords)
+void Entity::setTileCoords(icoord_t coords)
 {
+	redraw = true;
 	icoord_t tileDim = area->getTileDimensions();
 	c = coords;
 	c.x *= tileDim.x;
 	c.y *= tileDim.y;
 	// XXX: set c.z when we have Z-buffers
-	redraw = true;
+	r.x = c.x;
+	r.y = c.y;
+	// r.z = c.z;
 }
 
 void Entity::moveByPixel(icoord_t delta)
@@ -192,7 +204,7 @@ void Entity::moveByTile(icoord_t delta)
 		// support queueing moves?
 		return;
 
-	icoord_t newCoord = getCoordsByTile();
+	icoord_t newCoord = getTileCoords();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -201,7 +213,7 @@ void Entity::moveByTile(icoord_t delta)
 	const Tile& tile = area->getTile(newCoord);
 	if ((tile.flags       & nowalk) != 0 ||
 	    (tile.type->flags & nowalk) != 0) {
-		// The tile we're trying to move onto is set as nowalk.
+		// The tile we're trc.ying to move onto is set as nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
@@ -225,8 +237,8 @@ void Entity::moveByTile(icoord_t delta)
 	}
 	else if (conf->movemode == TILE) {
 		moving = true;
-		rx = (double)c.x;
-		ry = (double)c.y;
+		r.x = (double)c.x;
+		r.y = (double)c.y;
 	}
 }
 
@@ -245,7 +257,7 @@ void Entity::gotoRandomTile()
 		tile = &area->getTile(pos);
 	} while (((tile->flags & nowalk) |
 	          (tile->type->flags & nowalk)) != 0);
-	setCoordsByTile(pos);
+	setTileCoords(pos);
 }
 
 void Entity::setSpeed(double multiplier)
@@ -256,7 +268,7 @@ void Entity::setSpeed(double multiplier)
 
 Tile& Entity::getTile()
 {
-	return area->getTile(getCoordsByTile());
+	return area->getTile(getTileCoords());
 }
 
 SampleRef Entity::getSound(const std::string& name)
@@ -404,8 +416,8 @@ bool Entity::processSprite(const xmlNode* sprite)
 			child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("sheet"), 6)) {
 			xml.sheet = readXmlElement(child);
-			xml.tileSize.x = atol(readXmlAttribute(child, "tilewidth").c_str());
-			xml.tileSize.y = atol(readXmlAttribute(child, "tileheight").c_str());
+			xml.tileSize.x = atoi(readXmlAttribute(child, "tilewidth").c_str());
+			xml.tileSize.y = atoi(readXmlAttribute(child, "tileheight").c_str());
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("phases"), 7) &&
 				!processPhases(child))

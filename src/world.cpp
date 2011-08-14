@@ -131,13 +131,13 @@ bool World::processDescriptor()
 			xml.entry.area = readXmlAttribute(node, "area");
 			
 			str = readXmlAttribute(node, "x");
-			xml.entry.coords.x = atol(str.c_str());
+			xml.entry.coords.x = atoi(str.c_str());
 			
 			str = readXmlAttribute(node, "y");
-			xml.entry.coords.y = atol(str.c_str());
+			xml.entry.coords.y = atoi(str.c_str());
 			
 			str = readXmlAttribute(node, "z");
-			xml.entry.coords.z = atol(str.c_str());
+			xml.entry.coords.z = atoi(str.c_str());
 		}
 		if (!xmlStrncmp(node->name, BAD_CAST("scripts"), 13)) {
 			node = node->xmlChildrenNode; // decend
@@ -159,7 +159,7 @@ bool World::loadArea(const std::string& areaName, icoord_t playerPos)
 	if (!area->init())
 		return false;
 	player->setArea(area);
-	player->setCoordsByTile(playerPos);
+	player->setTileCoords(playerPos);
 	return true;
 }
 

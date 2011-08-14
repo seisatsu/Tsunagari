@@ -19,28 +19,36 @@ enum movement_mode_t {
 	NOTILE
 };
 
+//! Integer vector.
 struct ivec3 {
 	int x, y, z;
 };
 
-//! Coordinate Type
+//! Real vector.
+struct rvec3 {
+	double x, y, z;
+};
+
+//! Coordinates.
 typedef ivec3 icoord_t;
+typedef rvec3 rcoord_t;
 
-//! coord_t constructor
+//! coord_t constructors.
 icoord_t icoord(int x, int y, int z);
+rcoord_t rcoord(double x, double y, double z);
 
-//! 3D Cube Type
+//! 3D cube type.
 struct icube_t {
 	int x1, x2;
 	int y1, y2;
 	int z1, z2;
 };
 
-//! cube_t constructor
+//! cube_t constructor.
 icube_t icube(int x1, int y1, int z1,
               int x2, int y2, int z2);
 
-//! Client Configuration
+//! Engine-wide user-confurable values.
 struct ClientValues {
 	std::string world;
 	movement_mode_t movemode;

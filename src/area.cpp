@@ -189,10 +189,8 @@ const icoord_t Area::viewportOffset() const
 	const double windowHeight = (double)graphics.height() / tileHeight;
 	const double gridWidth = (double)dim.x;
 	const double gridHeight = (double)dim.y;
-	const double playerX = (double)player->getCoordsByPixel().x /
-			tileWidth + 0.5;
-	const double playerY = (double)player->getCoordsByPixel().y /
-			tileHeight + 0.5;
+	const double playerX = player->getRPixel().x / tileWidth + 0.5;
+	const double playerY = player->getRPixel().y / tileHeight + 0.5;
 
 	icoord_t c;
 	c.x = (int)(center(windowWidth, gridWidth, playerX) * tileWidth);
@@ -260,8 +258,8 @@ bool Area::processDescriptor()
 	// Iterate and process children of <map>
 	xmlNode* root = xmlDocGetRootElement(doc.get()); // <map> element
 
-	dim.x = atol(readXmlAttribute(root, "width").c_str());
-	dim.y = atol(readXmlAttribute(root, "height").c_str());
+	dim.x = atoi(readXmlAttribute(root, "width").c_str());
+	dim.y = atoi(readXmlAttribute(root, "height").c_str());
 
 	xmlNode* child = root->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -333,8 +331,8 @@ bool Area::processTileSet(xmlNode* node)
  </tileset>
 */
 	TileSet ts;
-	int x = ts.tileDim.x = atol(readXmlAttribute(node, "tilewidth").c_str());
-	int y = ts.tileDim.y = atol(readXmlAttribute(node, "tileheight").c_str());
+	int x = ts.tileDim.x = atoi(readXmlAttribute(node, "tilewidth").c_str());
+	int y = ts.tileDim.y = atoi(readXmlAttribute(node, "tileheight").c_str());
 	
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -679,8 +677,8 @@ bool Area::processObject(xmlNode* node, int zpos)
 	// XXX we ignore the object gid... is that okay?
 
 	// wouldn't have to access tilesets if we had tileDim ourselves
-	int x = atol(xStr.c_str()) / tilesets[0].tileDim.x;
-	int y = atol(yStr.c_str()) / tilesets[0].tileDim.y;
+	int x = atoi(xStr.c_str()) / tilesets[0].tileDim.x;
+	int y = atoi(yStr.c_str()) / tilesets[0].tileDim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay
@@ -754,9 +752,9 @@ Door Area::parseDoor(const std::string dest)
 	// user land
 	Door door;
 	door.area = strs[0];
-	door.coord.x = atol(strs[1].c_str());
-	door.coord.y = atol(strs[2].c_str());
-	door.coord.z = atol(strs[3].c_str());
+	door.coord.x = atoi(strs[1].c_str());
+	door.coord.y = atoi(strs[2].c_str());
+	door.coord.z = atoi(strs[3].c_str());
 	return door;
 }
 

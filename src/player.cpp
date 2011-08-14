@@ -62,7 +62,7 @@ void Player::moveByTile(icoord_t delta)
 	}
 
 	// Try to actually move.
-	icoord_t newCoord = getCoordsByTile();
+	icoord_t newCoord = getTileCoords();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -93,7 +93,7 @@ void Player::postMove()
 {
 	Entity::postMove();
 
-	const icoord_t coord = getCoordsByTile();
+	const icoord_t coord = getTileCoords();
 	const Tile& dest = area->getTile(coord);
 	const boost::optional<Door> door = dest.door;
 	if (door)
