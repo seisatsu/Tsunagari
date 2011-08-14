@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include <lua.hpp>
+#include "lua.hpp"
 
 enum ObjType {
 	NONE,

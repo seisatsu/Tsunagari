@@ -13,9 +13,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
-#include <lua.hpp>
 
 #include "common.h"
+#include "lua.hpp"
 
 struct zip;
 
