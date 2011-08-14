@@ -39,7 +39,7 @@ tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
-	cd $(basename $@) && zip -0 ../$@ *
+	cd $(basename $@) && zip -r -0 ../$@ *
 
 clean:
 	$(RM) tsunagari *.o $(TESTWORLD)
