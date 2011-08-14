@@ -22,11 +22,11 @@ Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
 
 void Player::startMovement(icoord_t delta)
 {
-	if (conf->movemode == TURN) {
+	if (conf->moveMode == TURN) {
 		// TODO Move by velocity would allow true diagonal movement
 		moveByTile(delta);
 	}
-	else if (conf->movemode == TILE) {
+	else if (conf->moveMode == TILE) {
 		velocity.x += delta.x;
 		velocity.y += delta.y;
 		velocity.z += delta.z;
@@ -37,7 +37,7 @@ void Player::startMovement(icoord_t delta)
 
 void Player::stopMovement(icoord_t delta)
 {
-	if (conf->movemode == TILE) {
+	if (conf->moveMode == TILE) {
 		velocity.x -= delta.x;
 		velocity.y -= delta.y;
 		velocity.z -= delta.z;
@@ -97,8 +97,8 @@ void Player::postMove()
 	const Tile& dest = area->getTile(coord);
 	const boost::optional<Door> door = dest.door;
 	if (door)
-		World::getWorld()->loadArea(door->area, door->coord);
-	if (conf->movemode == TILE)
+		World::getWorld()->loadArea(door->area, door->tile);
+	if (conf->moveMode == TILE)
 		if (velocity.x || velocity.y || velocity.z)
 			moveByTile(velocity);
 }

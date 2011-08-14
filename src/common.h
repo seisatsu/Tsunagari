@@ -51,13 +51,13 @@ icube_t icube(int x1, int y1, int z1,
 //! Engine-wide user-confurable values.
 struct ClientValues {
 	std::string world;
-	movement_mode_t movemode;
-	icoord_t windowsize;
+	movement_mode_t moveMode;
+	icoord_t windowSize;
 	bool fullscreen;
-	bool cache_enabled;
-	int cache_ttl;
-	int cache_size;
-	message_mode_t loglevel;
+	bool cacheEnabled;
+	int cacheTTL;
+	int cacheSize;
+	message_mode_t logLevel;
 };
 
 //! Returns a bool from a "true"/"false" string.

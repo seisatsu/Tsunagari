@@ -114,16 +114,17 @@ bool World::processDescriptor()
 			str = readXmlAttribute(node, "movement");
 			
 			if (!str.compare("turn"))
-				conf->movemode = TURN;
+				conf->moveMode = TURN;
 			
 			else if (!str.compare("tile"))
-				conf->movemode = TILE;
+				conf->moveMode = TILE;
 			
 			else if (!str.compare("notile"))
-				conf->movemode = NOTILE;
+				conf->moveMode = NOTILE;
 			
 			else {
-				Log::err(descriptor, "Invalid <movement> value");
+				Log::err(descriptor,
+					"Invalid <movement> value");
 				return false;
 			}
 		}

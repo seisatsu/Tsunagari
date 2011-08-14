@@ -105,7 +105,7 @@ static double angleFromXY(long x, long y)
 
 void Entity::update(unsigned long dt)
 {
-	if (conf->movemode == TILE && moving) {
+	if (conf->moveMode == TILE && moving) {
 		redraw = true;
 
 		double destDist = Gosu::distance((double)c.x, (double)c.y,
@@ -200,7 +200,7 @@ void Entity::moveByPixel(icoord_t delta)
 
 void Entity::moveByTile(icoord_t delta)
 {
-	if (conf->movemode == TILE && moving)
+	if (conf->moveMode == TILE && moving)
 		// support queueing moves?
 		return;
 
@@ -229,13 +229,13 @@ void Entity::moveByTile(icoord_t delta)
 
 	preMove(delta);
 
-	if (conf->movemode == TURN) {
+	if (conf->moveMode == TURN) {
 		c.x = dest.x;
 		c.y = dest.y;
 		// XXX: set c.z when we have Z-buffers
 		postMove();
 	}
-	else if (conf->movemode == TILE) {
+	else if (conf->moveMode == TILE) {
 		moving = true;
 		r.x = (double)c.x;
 		r.y = (double)c.y;
@@ -306,7 +306,7 @@ void Entity::calculateFacing(icoord_t delta)
 void Entity::preMove(icoord_t delta)
 {
 	calculateFacing(delta);
-	if (conf->movemode == TURN)
+	if (conf->moveMode == TURN)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
@@ -326,7 +326,7 @@ void Entity::preMoveLua()
 
 void Entity::postMove()
 {
-	if (conf->movemode != TURN)
+	if (conf->moveMode != TURN)
 		setPhase(facing);
 
 	// Handle tile onEnter and onLeave scripts

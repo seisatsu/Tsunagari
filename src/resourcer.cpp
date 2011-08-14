@@ -92,7 +92,7 @@ void Resourcer::reclaim(Map& map)
 				// Handle time overflow
 				cache.lastUsed = now;
 			}
-			else if (now > cache.lastUsed + conf->cache_ttl*1000) {
+			else if (now > cache.lastUsed + conf->cacheTTL*1000) {
 				dead.push_back(name);
 				Log::dbg("Resourcer", "Removing " + name);
 			}
@@ -116,7 +116,7 @@ bool Resourcer::resourceExists(const std::string& name)
 
 ImageRef Resourcer::getImage(const std::string& name)
 {
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		ImageRefMap::iterator entry = images.find(name);
 		if (entry != images.end()) {
 			if (entry->second.lastUsed) {
@@ -134,7 +134,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
 
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		CacheEntry<ImageRef> data;
 		data.resource = result;
 		data.lastUsed = 0; 
@@ -146,7 +146,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		unsigned w, unsigned h, bool tileable)
 {
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		TiledImageMap::iterator entry = tiles.find(name);
 		if (entry != tiles.end()) {
 			int now = GameWindow::getWindow().time();
@@ -169,7 +169,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 			tileable, *result.get());
 	img = *result.get();
 
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		CacheEntry<boost::shared_ptr<TiledImage> > data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -184,7 +184,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
  */
 SampleRef Resourcer::getSample(const std::string& name)
 {
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		SampleRefMap::iterator entry = samples.find(name);
 		if (entry != samples.end()) {
 			if (entry->second.lastUsed) {
@@ -200,7 +200,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 		return SampleRef();
 	SampleRef result(new Gosu::Sample(buffer->frontReader()));
 
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		CacheEntry<SampleRef> data;
 		data.resource = result;
 		data.lastUsed = 0; 
@@ -212,7 +212,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 XMLDocRef Resourcer::getXMLDoc(const std::string& name,
                                const std::string& dtdFile)
 {
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		XMLMap::iterator entry = xmls.find(name);
 		if (entry != xmls.end()) {
 			int now = GameWindow::getWindow().time();
@@ -227,7 +227,7 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 	XMLDocRef result(readXMLDocFromDisk(name, dtdFile), xmlFreeDoc);
 	// XXX Do we check for NULL?
 
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		CacheEntry<XMLDocRef> data;
 		data.resource = result;
 		data.lastUsed = 0; 
@@ -268,7 +268,7 @@ static bool runLuaScript(lua_State* L, const Container& c, const char* name)
 
 bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
 {
-	if (conf->cache_enabled) {
+	if (conf->cacheEnabled) {
 		LuaBytecodeMap::iterator entry = code.find(name);
 		if (entry != code.end())
 			return runLuaScript(L, entry->second, name.c_str());
@@ -279,7 +279,7 @@ bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
 	if (!found) // error already logged
 		return false;
 
-	if (conf->cache_enabled)
+	if (conf->cacheEnabled)
 		code[name].swap(bytecode);
 
 	// lua_State* L was the object that compiled the script, so we don't

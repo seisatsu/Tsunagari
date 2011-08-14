@@ -33,3 +33,5 @@ ITEMS
 
 * On teleport and on initial placement into map, apply tile onEnter.
 
+* Unify XML element/attribute naming scheme.
+

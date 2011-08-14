@@ -752,9 +752,9 @@ Door Area::parseDoor(const std::string dest)
 	// user land
 	Door door;
 	door.area = strs[0];
-	door.coord.x = atoi(strs[1].c_str());
-	door.coord.y = atoi(strs[2].c_str());
-	door.coord.z = atoi(strs[3].c_str());
+	door.tile.x = atoi(strs[1].c_str());
+	door.tile.y = atoi(strs[2].c_str());
+	door.tile.z = atoi(strs[3].c_str());
 	return door;
 }
 
