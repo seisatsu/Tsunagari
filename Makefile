@@ -1,6 +1,8 @@
 # Top level Makefile for Tsunagari
 
-all:
+all: debug
+
+debug:
 	cd deps/lua && make all MYCFLAGS=-g
 	cd src && make all MYCFLAGS=-g
 
