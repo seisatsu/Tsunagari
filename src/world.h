@@ -54,7 +54,7 @@ public:
 	//! Gosu Callback
 	void update(unsigned long dt);
 
-	bool loadArea(const std::string& areaName, coord_t playerPos);
+	bool loadArea(const std::string& areaName, icoord_t playerPos);
 
 private:
 	bool processDescriptor();
@@ -82,7 +82,7 @@ private:
 	*/
 	struct WorldEntry {
 		std::string area;
-		coord_t coords;
+		icoord_t coords;
 	};
 
 	//! WorldValues XML Storage Struct

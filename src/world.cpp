@@ -151,7 +151,7 @@ bool World::processDescriptor()
 }
 
 
-bool World::loadArea(const std::string& areaName, coord_t playerPos)
+bool World::loadArea(const std::string& areaName, icoord_t playerPos)
 {
 	Area* newArea = new Area(rc, this, player.get(), areaName);
 	delete area;

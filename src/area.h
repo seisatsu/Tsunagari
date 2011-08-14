@@ -68,10 +68,10 @@ public:
 	//! Gosu Callback
 	void update(unsigned long dt);
 
-	coord_t getDimensions() const;
-	coord_t getTileDimensions() const;
-	const Tile& getTile(coord_t c) const;
-	Tile& getTile(coord_t c);
+	icoord_t getDimensions() const;
+	icoord_t getTileDimensions() const;
+	const Tile& getTile(icoord_t c) const;
+	Tile& getTile(icoord_t c);
 
 private:
 	//! TileSet
@@ -80,7 +80,7 @@ private:
 	*/
 	struct TileSet {
 		TiledImage tiles;
-		coord_t tileDim; // Dimensions per tile
+		icoord_t tileDim; // Dimensions per tile
 		std::vector<TileType> tileTypes; // Global tile properties
 	};
 
@@ -96,13 +96,13 @@ private:
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
 	void drawTiles() const;
-	void drawTile(const Tile& tile, long x, long y, long z) const;
+	void drawTile(const Tile& tile, int x, int y, int z) const;
 	void drawEntities();
 
-	const coord_t viewportOffset() const;
+	const icoord_t viewportOffset() const;
 	const Gosu::Transform viewportTransform() const;
 
-	cube_t visibleTiles() const;
+	icube_t visibleTiles() const;
 	bool tileTypeOnScreen(const TileType& type) const;
 
 	//! XML descriptor parsing function.
@@ -162,7 +162,7 @@ private:
 	 * any gaps.
 	 */
 	tilematrix_t map;
-	coord_t dim;
+	icoord_t dim;
 
 	std::string name;
 	std::string author;

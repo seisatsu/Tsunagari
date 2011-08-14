@@ -10,19 +10,19 @@
 
 #include "common.h"
 
-coord_t coord(long x, long y, long z)
+icoord_t icoord(int x, int y, int z)
 {
-	coord_t c;
+	icoord_t c;
 	c.x = x;
 	c.y = y;
 	c.z = z;
 	return c;
 }
 
-cube_t cube(long x1, long y1, long z1,
-            long x2, long y2, long z2)
+icube_t icube(int x1, int y1, int z1,
+              int x2, int y2, int z2)
 {
-	cube_t c;
+	icube_t c;
 	c.x1 = x1;
 	c.y1 = y1;
 	c.z1 = z1;
@@ -62,7 +62,7 @@ std::vector<std::string> splitStr(std::string str, const std::string& delimiter)
 	return strlist;
 }
 
-std::string itostr(long in)
+std::string itostr(int in)
 {
 	std::stringstream out;
 	out << in;

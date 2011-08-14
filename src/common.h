@@ -19,32 +19,32 @@ enum movement_mode_t {
 	NOTILE
 };
 
-//! Coordinate Type
-struct coord_t {
-	long x;
-	long y;
-	long z;
+struct ivec3 {
+	int x, y, z;
 };
 
+//! Coordinate Type
+typedef ivec3 icoord_t;
+
 //! coord_t constructor
-coord_t coord(long x, long y, long z);
+icoord_t icoord(int x, int y, int z);
 
 //! 3D Cube Type
-struct cube_t {
-	long x1, x2;
-	long y1, y2;
-	long z1, z2;
+struct icube_t {
+	int x1, x2;
+	int y1, y2;
+	int z1, z2;
 };
 
 //! cube_t constructor
-cube_t cube(long x1, long y1, long z1,
-            long x2, long y2, long z2);
+icube_t icube(int x1, int y1, int z1,
+              int x2, int y2, int z2);
 
 //! Client Configuration
 struct ClientValues {
 	std::string world;
 	movement_mode_t movemode;
-	coord_t windowsize;
+	icoord_t windowsize;
 	bool fullscreen;
 	bool cache_enabled;
 	int cache_ttl;
@@ -60,7 +60,7 @@ std::vector<std::string> splitStr(std::string str,
 	const std::string& delimiter);
 
 //! Convert an integer to a representative string.
-std::string itostr(long in);
+std::string itostr(int in);
 
 #endif
 

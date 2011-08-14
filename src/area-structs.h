@@ -66,7 +66,7 @@ struct TileEvent {
 */
 struct Door {
 	std::string area;
-	coord_t coord;
+	icoord_t coord;
 };
 
 //! Contains the properties shared by all tiles of a certain type.

@@ -129,8 +129,8 @@ void Entity::update(unsigned long dt)
 			rx += dx * speed * (double)dt;
 			ry += dy * speed * (double)dt;
 
-			c.x = (long)rx;
-			c.y = (long)ry;
+			c.x = (int)rx;
+			c.y = (int)ry;
 		}
 	}
 }
@@ -150,27 +150,27 @@ bool Entity::setPhase(const std::string& name)
 	return false;
 }
 
-coord_t Entity::getCoordsByPixel() const
+icoord_t Entity::getCoordsByPixel() const
 {
 	return c;
 }
 
-coord_t Entity::getCoordsByTile() const
+icoord_t Entity::getCoordsByTile() const
 {
-	coord_t tileDim = area->getTileDimensions();
+	icoord_t tileDim = area->getTileDimensions();
 	// XXX: revisit when we have Z-buffers
-	return coord(c.x / tileDim.x, c.y / tileDim.y, c.z);
+	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
-void Entity::setCoordsByPixel(coord_t coords)
+void Entity::setCoordsByPixel(icoord_t coords)
 {
 	c = coords;
 	redraw = true;
 }
 
-void Entity::setCoordsByTile(coord_t coords)
+void Entity::setCoordsByTile(icoord_t coords)
 {
-	coord_t tileDim = area->getTileDimensions();
+	icoord_t tileDim = area->getTileDimensions();
 	c = coords;
 	c.x *= tileDim.x;
 	c.y *= tileDim.y;
@@ -178,7 +178,7 @@ void Entity::setCoordsByTile(coord_t coords)
 	redraw = true;
 }
 
-void Entity::moveByPixel(coord_t delta)
+void Entity::moveByPixel(icoord_t delta)
 {
 	c.x += delta.x;
 	c.y += delta.y;
@@ -186,13 +186,13 @@ void Entity::moveByPixel(coord_t delta)
 	redraw = true;
 }
 
-void Entity::moveByTile(coord_t delta)
+void Entity::moveByTile(icoord_t delta)
 {
 	if (conf->movemode == TILE && moving)
 		// support queueing moves?
 		return;
 
-	coord_t newCoord = getCoordsByTile();
+	icoord_t newCoord = getCoordsByTile();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -209,7 +209,7 @@ void Entity::moveByTile(coord_t delta)
 	}
 
 	// Move!
-	const coord_t tileDim = area->getTileDimensions();
+	const icoord_t tileDim = area->getTileDimensions();
 	dest.x = c.x + delta.x * tileDim.x;
 	dest.y = c.y + delta.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers
@@ -237,11 +237,11 @@ void Entity::setArea(Area* a)
 
 void Entity::gotoRandomTile()
 {
-	coord_t map = area->getDimensions();
-	coord_t pos;
+	icoord_t map = area->getDimensions();
+	icoord_t pos;
 	Tile* tile;
 	do {
-		pos = coord(rand() % map.x, rand() % map.y, 0);
+		pos = icoord(rand() % map.x, rand() % map.y, 0);
 		tile = &area->getTile(pos);
 	} while (((tile->flags & nowalk) |
 	          (tile->type->flags & nowalk)) != 0);
@@ -270,7 +270,7 @@ SampleRef Entity::getSound(const std::string& name)
 		return SampleRef();
 }
 
-void Entity::calculateFacing(coord_t delta)
+void Entity::calculateFacing(icoord_t delta)
 {
 	int x, y;
 
@@ -291,7 +291,7 @@ void Entity::calculateFacing(coord_t delta)
 	facing = facings[y][x];
 }
 
-void Entity::preMove(coord_t delta)
+void Entity::preMove(icoord_t delta)
 {
 	calculateFacing(delta);
 	if (conf->movemode == TURN)

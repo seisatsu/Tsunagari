@@ -62,25 +62,25 @@ bool Area::init()
 void Area::buttonDown(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
-		player->startMovement(coord(1, 0, 0));
+		player->startMovement(icoord(1, 0, 0));
 	else if (btn == Gosu::kbLeft)
-		player->startMovement(coord(-1, 0, 0));
+		player->startMovement(icoord(-1, 0, 0));
 	else if (btn == Gosu::kbUp)
-		player->startMovement(coord(0, -1, 0));
+		player->startMovement(icoord(0, -1, 0));
 	else if (btn == Gosu::kbDown)
-		player->startMovement(coord(0, 1, 0));
+		player->startMovement(icoord(0, 1, 0));
 }
 
 void Area::buttonUp(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
-		player->stopMovement(coord(1, 0, 0));
+		player->stopMovement(icoord(1, 0, 0));
 	else if (btn == Gosu::kbLeft)
-		player->stopMovement(coord(-1, 0, 0));
+		player->stopMovement(icoord(-1, 0, 0));
 	else if (btn == Gosu::kbUp)
-		player->stopMovement(coord(0, -1, 0));
+		player->stopMovement(icoord(0, -1, 0));
 	else if (btn == Gosu::kbDown)
-		player->stopMovement(coord(0, 1, 0));
+		player->stopMovement(icoord(0, 1, 0));
 }
 
 void Area::draw()
@@ -107,19 +107,19 @@ void Area::updateTileAnimations()
 
 void Area::drawTiles() const
 {
-	const cube_t tiles = visibleTiles();
-	for (long z = tiles.z1; z != tiles.z2; z++) {
+	const icube_t tiles = visibleTiles();
+	for (int z = tiles.z1; z != tiles.z2; z++) {
 		const grid_t& grid = map[z];
-		for (long y = tiles.y1; y != tiles.y2; y++) {
+		for (int y = tiles.y1; y != tiles.y2; y++) {
 			const row_t& row = grid[y];
-			for (long x = tiles.x1; x != tiles.x2; x++) {
+			for (int x = tiles.x1; x != tiles.x2; x++) {
 				drawTile(row[x], x, y, z);
 			}
 		}
 	}
 }
 
-void Area::drawTile(const Tile& tile, long x, long y, long) const
+void Area::drawTile(const Tile& tile, int x, int y, int) const
 {
 	const TileType* type = tile.type;
 	const Gosu::Image* img = type->anim.frame();
@@ -155,22 +155,22 @@ void Area::update(unsigned long dt)
 	player->update(dt);
 }
 
-coord_t Area::getDimensions() const
+icoord_t Area::getDimensions() const
 {
 	return dim;
 }
 
-coord_t Area::getTileDimensions() const
+icoord_t Area::getTileDimensions() const
 {
 	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
-const Tile& Area::getTile(coord_t c) const
+const Tile& Area::getTile(icoord_t c) const
 {
 	return map[c.z][c.y][c.x];
 }
 
-Tile& Area::getTile(coord_t c)
+Tile& Area::getTile(icoord_t c)
 {
 	return map[c.z][c.y][c.x];
 }
@@ -180,7 +180,7 @@ static double center(double w, double g, double p)
 	return w>g ? (w-g)/2.0 : Gosu::boundBy(w/2.0-p, w-g, 0.0);
 }
 
-const coord_t Area::viewportOffset() const
+const icoord_t Area::viewportOffset() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
 	const double tileWidth = (double)tilesets[0].tileDim.x;
@@ -194,9 +194,9 @@ const coord_t Area::viewportOffset() const
 	const double playerY = (double)player->getCoordsByPixel().y /
 			tileHeight + 0.5;
 
-	coord_t c;
-	c.x = (long)(center(windowWidth, gridWidth, playerX) * tileWidth);
-	c.y = (long)(center(windowHeight, gridHeight, playerY) * tileHeight);
+	icoord_t c;
+	c.x = (int)(center(windowWidth, gridWidth, playerX) * tileWidth);
+	c.y = (int)(center(windowHeight, gridHeight, playerY) * tileHeight);
 	c.z = 0;
 
 	return c;
@@ -204,43 +204,43 @@ const coord_t Area::viewportOffset() const
 
 const Gosu::Transform Area::viewportTransform() const
 {
-	const coord_t c = viewportOffset();
+	const icoord_t c = viewportOffset();
 	return Gosu::translate((double)c.x, (double)c.y);
 }
 
-cube_t Area::visibleTiles() const
+icube_t Area::visibleTiles() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
-	const long tileWidth = tilesets[0].tileDim.x;
-	const long tileHeight = tilesets[0].tileDim.y;
+	const int tileWidth = tilesets[0].tileDim.x;
+	const int tileHeight = tilesets[0].tileDim.y;
 	const int windowWidth = graphics.width();
 	const int windowHeight = graphics.height();
-	const coord_t off = viewportOffset();
+	const icoord_t off = viewportOffset();
 
-	const long x1 = -off.x / tileWidth;
-	const long y1 = -off.y / tileHeight;
-	const long x2 = (long)ceil((double)(windowWidth - off.x) /
+	const int x1 = -off.x / tileWidth;
+	const int y1 = -off.y / tileHeight;
+	const int x2 = (int)ceil((double)(windowWidth - off.x) /
 		(double)tileWidth);
-	const long y2 = (long)ceil((double)(windowHeight - off.y) /
+	const int y2 = (int)ceil((double)(windowHeight - off.y) /
 		(double)tileHeight);
 
 	// Does the entire width or height of the map fit onscreen?
 	if (x1 >= 0 && y1 >= 0)
-		return cube(x1, y1, 0, x2, y2, 1);
+		return icube(x1, y1, 0, x2, y2, 1);
 	else if (x1 >= 0)
-		return cube(x1, 0, 0, x2, dim.y, 1);
+		return icube(x1, 0, 0, x2, dim.y, 1);
 	else if (y1 >= 0)
-		return cube(0, y1, 0, dim.x, y2, 1);
+		return icube(0, y1, 0, dim.x, y2, 1);
 	else
-		return cube(0, 0, 0, dim.x, dim.y, 1);
+		return icube(0, 0, 0, dim.x, dim.y, 1);
 }
 
 bool Area::tileTypeOnScreen(const TileType& search) const
 {
-	const cube_t tiles = visibleTiles();
-	for (long z = tiles.z1; z != tiles.z2; z++) {
-		for (long y = tiles.y1; y != tiles.y2; y++) {
-			for (long x = tiles.x1; x != tiles.x2; x++) {
+	const icube_t tiles = visibleTiles();
+	for (int z = tiles.z1; z != tiles.z2; z++) {
+		for (int y = tiles.y1; y != tiles.y2; y++) {
+			for (int x = tiles.x1; x != tiles.x2; x++) {
 				const Tile& tile = map[z][y][x];
 				const TileType* type = tile.type;
 				if (type == &search)
@@ -333,8 +333,8 @@ bool Area::processTileSet(xmlNode* node)
  </tileset>
 */
 	TileSet ts;
-	long x = ts.tileDim.x = atol(readXmlAttribute(node, "tilewidth").c_str());
-	long y = ts.tileDim.y = atol(readXmlAttribute(node, "tileheight").c_str());
+	int x = ts.tileDim.x = atol(readXmlAttribute(node, "tilewidth").c_str());
+	int y = ts.tileDim.y = atol(readXmlAttribute(node, "tileheight").c_str());
 	
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -679,8 +679,8 @@ bool Area::processObject(xmlNode* node, int zpos)
 	// XXX we ignore the object gid... is that okay?
 
 	// wouldn't have to access tilesets if we had tileDim ourselves
-	long x = atol(xStr.c_str()) / tilesets[0].tileDim.x;
-	long y = atol(yStr.c_str()) / tilesets[0].tileDim.y;
+	int x = atol(xStr.c_str()) / tilesets[0].tileDim.x;
+	int y = atol(yStr.c_str()) / tilesets[0].tileDim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
 
 	// We know which Tile is being talked about now... yay

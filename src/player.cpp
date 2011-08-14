@@ -16,11 +16,11 @@
 #include "window.h"
 
 Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
-	: Entity(rc, area, conf), velocity(coord(0, 0, 0))
+	: Entity(rc, area, conf), velocity(icoord(0, 0, 0))
 {
 }
 
-void Player::startMovement(coord_t delta)
+void Player::startMovement(icoord_t delta)
 {
 	if (conf->movemode == TURN) {
 		// TODO Move by velocity would allow true diagonal movement
@@ -35,7 +35,7 @@ void Player::startMovement(coord_t delta)
 	}
 }
 
-void Player::stopMovement(coord_t delta)
+void Player::stopMovement(icoord_t delta)
 {
 	if (conf->movemode == TILE) {
 		velocity.x -= delta.x;
@@ -47,7 +47,7 @@ void Player::stopMovement(coord_t delta)
 	}
 }
 
-void Player::moveByTile(coord_t delta)
+void Player::moveByTile(icoord_t delta)
 {
 	// You can't interrupt an in-progress movement.
 	if (moving)
@@ -62,7 +62,7 @@ void Player::moveByTile(coord_t delta)
 	}
 
 	// Try to actually move.
-	coord_t newCoord = getCoordsByTile();
+	icoord_t newCoord = getCoordsByTile();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -79,7 +79,7 @@ void Player::moveByTile(coord_t delta)
 	Entity::moveByTile(delta);
 }
 
-void Player::preMove(coord_t delta)
+void Player::preMove(icoord_t delta)
 {
 	Entity::preMove(delta);
 
@@ -93,7 +93,7 @@ void Player::postMove()
 {
 	Entity::postMove();
 
-	const coord_t coord = getCoordsByTile();
+	const icoord_t coord = getCoordsByTile();
 	const Tile& dest = area->getTile(coord);
 	const boost::optional<Door> door = dest.door;
 	if (door)
@@ -105,8 +105,8 @@ void Player::postMove()
 
 void Player::normalizeVelocity()
 {
-	velocity.x = Gosu::boundBy(velocity.x, -1L, 1L);
-	velocity.y = Gosu::boundBy(velocity.y, -1L, 1L);
-	velocity.z = Gosu::boundBy(velocity.z, -1L, 1L);
+	velocity.x = Gosu::boundBy(velocity.x, -1, 1);
+	velocity.y = Gosu::boundBy(velocity.y, -1, 1);
+	velocity.z = Gosu::boundBy(velocity.z, -1, 1);
 }
 
