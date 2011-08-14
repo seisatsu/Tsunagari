@@ -14,8 +14,6 @@ ITEMS
 
 * Diagonal movement at corners should only work in Roguelike.
 
-* Entity movement speed should be declared in Entity descriptor.
-
 * Package our own Lua so that it can be built as C++ with g++ (and whatever on
   Windows). Being built as C causes lua_error() to use longjmp which doesn't
   play well with C++ deconstructors, leading to memory leaks on Lua errors if

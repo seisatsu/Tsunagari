@@ -33,7 +33,6 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	: rc(rc),
 	  redraw(true),
 	  moving(false),
-	  speed(240.0 / 1000), // FIXME
 	  area(area),
 	  conf(conf)
 {
@@ -369,7 +368,10 @@ bool Entity::processDescriptor()
 	xmlNode* node = root->xmlChildrenNode; // children of <entity>
 
 	for (; node != NULL; node = node->next) {
-		if (!xmlStrncmp(node->name, BAD_CAST("sprite"), 6)) {
+		if (!xmlStrncmp(node->name, BAD_CAST("speed"), 6)) {
+			speed = (double)atol(readXmlElement(node).c_str()) / 1000.0;
+		}
+		else if (!xmlStrncmp(node->name, BAD_CAST("sprite"), 7)) {
 			if (!processSprite(node))
 				return false;
 		}
@@ -387,9 +389,7 @@ bool Entity::processSprite(const xmlNode* sprite)
 			child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("sheet"), 6)) {
 			xml.sheet = readXmlElement(child);
-
 			xml.tileSize.x = atol(readXmlAttribute(child, "tilewidth").c_str());
-
 			xml.tileSize.y = atol(readXmlAttribute(child, "tileheight").c_str());
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("phases"), 7) &&

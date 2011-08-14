@@ -1,5 +1,7 @@
-<!ELEMENT entity (sprite, sounds)>
+<!ELEMENT entity (speed, sprite, sounds)>
 <!ATTLIST entity version (1) #REQUIRED>
+
+<!ELEMENT speed (#PCDATA)>
 
 <!ELEMENT sprite (sheet, phases)>
 
