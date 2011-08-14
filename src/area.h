@@ -93,7 +93,10 @@ private:
 		std::string filename;
 	};
 
-	void drawTiles();
+	//! Calculate frame to show for each type of tile
+	void updateTileAnimations();
+	void drawTiles() const;
+	void drawTile(const Tile& tile, long x, long y, long z) const;
 	void drawEntities();
 
 	const coord_t viewportOffset() const;

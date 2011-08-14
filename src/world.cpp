@@ -14,6 +14,7 @@
 #include "resourcer.h"
 #include "window.h"
 #include "world.h"
+#include "xml.h"
 
 static World* globalWorld = NULL;
 

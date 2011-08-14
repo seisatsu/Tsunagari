@@ -21,6 +21,7 @@
 #include "resourcer.h"
 #include "script.h"
 #include "window.h"
+#include "xml.h"
 
 static std::string facings[][3] = {
 	{"up-left",   "up",   "up-right"},

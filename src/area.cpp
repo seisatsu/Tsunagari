@@ -20,6 +20,7 @@
 #include "resourcer.h"
 #include "window.h"
 #include "world.h"
+#include "xml.h"
 
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
@@ -88,34 +89,41 @@ void Area::draw()
 	const Gosu::Transform trans = viewportTransform();
 	graphics.pushTransform(trans);
 
+	updateTileAnimations();
 	drawTiles();
 	drawEntities();
 
 	graphics.popTransform();
 }
 
-void Area::drawTiles()
+void Area::updateTileAnimations()
 {
-	// Calculate frame to show for each type of tile
 	const int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(TileSet& set, tilesets)
 		BOOST_FOREACH(TileType& type, set.tileTypes)
 			type.anim.updateFrame(millis);
 
-	// Render
+}
+
+void Area::drawTiles() const
+{
 	const cube_t tiles = visibleTiles();
 	for (long z = tiles.z1; z != tiles.z2; z++) {
 		const grid_t& grid = map[z];
 		for (long y = tiles.y1; y != tiles.y2; y++) {
 			const row_t& row = grid[y];
 			for (long x = tiles.x1; x != tiles.x2; x++) {
-				const Tile& tile = row[x];
-				const TileType* type = tile.type;
-				const Gosu::Image* img = type->anim.frame();
-				img->draw((double)x*img->width(), (double)y*img->height(), 0);
+				drawTile(row[x], x, y, z);
 			}
 		}
 	}
+}
+
+void Area::drawTile(const Tile& tile, long x, long y, long) const
+{
+	const TileType* type = tile.type;
+	const Gosu::Image* img = type->anim.frame();
+	img->draw((double)x*img->width(), (double)y*img->height(), 0);
 }
 
 void Area::drawEntities()

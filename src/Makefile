@@ -35,7 +35,7 @@ depend:
 
 tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
            log.o main.o player.o resourcer.o script.o script-sound.o window.o \
-           world.o
+           world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
