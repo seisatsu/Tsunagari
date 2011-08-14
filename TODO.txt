@@ -29,3 +29,7 @@ ITEMS
 
 * Resourcer returns Script rather than lua_State*
   Move bytecode functions and stuff to Script.
+
+* Stream music rather than loading it all at once. This will massively reduce
+  loading time.
+
