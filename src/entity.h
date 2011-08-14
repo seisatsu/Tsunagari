@@ -80,6 +80,9 @@ public:
 	//! Move to the upper left corner. Sets x,y tile positions to 1,1.
 	void gotoRandomTile();
 
+	//! Sets speed multiplier.
+	void setSpeed(double multiplier);
+
 protected:
 	//! Get the Tile we are standing on.
 	Tile& getTile();
@@ -123,9 +126,12 @@ protected:
 	boost::unordered_map<std::string, SampleRef> sounds;
 	boost::unordered_map<std::string, std::string> scripts;
 
+	double baseSpeed; //! Original speed, specified in descriptor
+	double speedMul;  //! Speed multiplier
+	double speed;     //! Effective speed = original speed * multiplier
+
 	bool moving;
 	coord_t dest;
-	double speed;
 	Tile* movingFrom;
 
 	Area* area;

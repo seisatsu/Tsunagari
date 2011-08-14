@@ -427,10 +427,10 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 				continue;
 			}
 			TileEvent e;
-			e.trigger = onEnter;
+			e.trigger = onLeave;
 			e.script = value;
 			type.events.push_back(e);
-			type.flags |= hasOnEnter;
+			type.flags |= hasOnLeave;
 		}
 		else if (!name.compare("animated")) {
 			// XXX still needed?

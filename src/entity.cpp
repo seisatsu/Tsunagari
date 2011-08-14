@@ -247,6 +247,12 @@ void Entity::gotoRandomTile()
 	setCoordsByTile(pos);
 }
 
+void Entity::setSpeed(double multiplier)
+{
+	speedMul = multiplier;
+	speed = baseSpeed * speedMul;
+}
+
 Tile& Entity::getTile()
 {
 	return area->getTile(getCoordsByTile());
@@ -371,7 +377,10 @@ bool Entity::processDescriptor()
 
 	for (; node != NULL; node = node->next) {
 		if (!xmlStrncmp(node->name, BAD_CAST("speed"), 6)) {
-			speed = (double)atol(readXmlElement(node).c_str()) / 1000.0;
+			speed = baseSpeed =
+				(double)atol(readXmlElement(node).c_str())
+				/ 1000.0;
+			speedMul = 1.0;
 		}
 		else if (!xmlStrncmp(node->name, BAD_CAST("sprite"), 7)) {
 			if (!processSprite(node))
