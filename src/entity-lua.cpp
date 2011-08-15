@@ -6,6 +6,33 @@
 
 #include "entity-lua.h"
 
+static int lua_Entity_setTileCoords(lua_State* L)
+{
+	Script script(L);
+	if (lua_gettop(L) != 4)
+		return luaL_error(L, "setTileCoords needs 4 arg");
+	Entity* entity = (Entity*)script.getObj(1, ENTITY);
+	if (!entity)
+		return luaL_error(L,
+			 "setTileCoords: arg 1 should be an Entity");
+	if (!lua_isnumber(L, 2))
+		return luaL_error(L,
+			"setTileCoords: arg 2 should be a number");
+	int x = lua_tointeger(L, 2);
+	if (!lua_isnumber(L, 3))
+		return luaL_error(L,
+			"setTileCoords: arg 3 should be a number");
+	int y = lua_tointeger(L, 3);
+	if (!lua_isnumber(L, 3))
+		return luaL_error(L,
+			"setTileCoords: arg 3 should be a number");
+	int z = lua_tointeger(L, 4);
+	icoord_t coords = icoord(x, y, z);
+	// FIXME: bounds check on map
+	entity->setTileCoords(coords);
+	return 0;
+}
+
 static int lua_Entity_gotoRandomTile(lua_State* L)
 {
 	Script script(L);
@@ -42,6 +69,7 @@ static int lua_Entity_setSpeed(lua_State* L)
 }
 
 static const luaL_Reg funcs[] = {
+	{ "setTileCoords", lua_Entity_setTileCoords },
 	{ "gotoRandomTile", lua_Entity_gotoRandomTile },
 	{ "setSpeed", lua_Entity_setSpeed },
 	{ NULL, NULL }

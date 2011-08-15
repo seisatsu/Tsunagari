@@ -971,7 +971,7 @@
   </object>
   <object name="tile2" type="Tile" gid="13" x="1792" y="1856">
    <properties>
-    <property name="onEnter" value="tile-effects/random-warp.script"/>
+    <property name="onEnter" value="tile-effects/blue-warp.script"/>
    </properties>
   </object>
   <object name="door1" type="Tile" gid="7" x="64" y="1920">
