@@ -10,16 +10,7 @@
 #include <string>
 #include <vector>
 
-#include <libxml/tree.h>
-
-#include "log.h"
-
-//! Ternary Data Type
-enum tern {
-	T_True = true,
-	T_False = false,
-	T_None
-};
+#include "log.h" // for message_mode_t
 
 //! Game Movement Mode
 enum movement_mode_t {
@@ -28,37 +19,45 @@ enum movement_mode_t {
 	NOTILE
 };
 
-//! Coordinate Type
-struct coord_t {
-	long x;
-	long y;
-	long z;
+//! Integer vector.
+struct ivec3 {
+	int x, y, z;
 };
 
-//! coord_t constructor
-coord_t coord(long x, long y, long z);
-
-//! 3D Cube Type
-struct cube_t {
-	long x1, x2;
-	long y1, y2;
-	long z1, z2;
+//! Real vector.
+struct rvec3 {
+	double x, y, z;
 };
 
-//! cube_t constructor
-cube_t cube(long x1, long y1, long z1,
-            long x2, long y2, long z2);
+//! Coordinates.
+typedef ivec3 icoord_t;
+typedef rvec3 rcoord_t;
 
-//! Client Configuration
+//! coord_t constructors.
+icoord_t icoord(int x, int y, int z);
+rcoord_t rcoord(double x, double y, double z);
+
+//! 3D cube type.
+struct icube_t {
+	int x1, x2;
+	int y1, y2;
+	int z1, z2;
+};
+
+//! cube_t constructor.
+icube_t icube(int x1, int y1, int z1,
+              int x2, int y2, int z2);
+
+//! Engine-wide user-confurable values.
 struct ClientValues {
 	std::string world;
-	movement_mode_t movemode;
-	coord_t windowsize;
+	movement_mode_t moveMode;
+	icoord_t windowSize;
 	bool fullscreen;
-	bool cache_enabled;
-	int cache_ttl;
-	int cache_size;
-	message_mode_t loglevel;
+	bool cacheEnabled;
+	int cacheTTL;
+	int cacheSize;
+	message_mode_t logLevel;
 };
 
 //! Returns a bool from a "true"/"false" string.
@@ -69,13 +68,7 @@ std::vector<std::string> splitStr(std::string str,
 	const std::string& delimiter);
 
 //! Convert an integer to a representative string.
-std::string itostr(long in);
-
-//! Get XML attribute (memory-safe).
-std::string readXmlAttribute(xmlNode* node, const std::string attr);
-
-//! Get XML element content (memory-safe).
-std::string readXmlElement(xmlNode* node);
+std::string itostr(int in);
 
 #endif
 

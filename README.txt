@@ -29,13 +29,10 @@ engine source code. Game design will require manual file editing during the
 Alpha and Beta phases, but a game editor suite will be shipped with the first
 major release.
 
-Note: Tsunagari will only compile with Gosu's GIT development branch.
-
 Requirements:
 NAME		LICENSE	  LINK
 libboost        (BOOST) - http://www.boost.org/
-libgosu         (MIT)   - http://www.libgosu.org/
-liblua5.1       (MIT)   - http://www.lua.org/
+libgosu         (MIT)   - http://www.libgosu.org/     version 0.7.35 or higher
 libxml2         (MIT)   - http://xmlsoft.org/
 libzip          (BSD)   - http://www.nih.at/libzip/
 

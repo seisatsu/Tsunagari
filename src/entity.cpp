@@ -21,6 +21,7 @@
 #include "resourcer.h"
 #include "script.h"
 #include "window.h"
+#include "xml.h"
 
 static std::string facings[][3] = {
 	{"up-left",   "up",   "up-right"},
@@ -36,7 +37,8 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	  area(area),
 	  conf(conf)
 {
-	c.x = c.y = c.z = 0;
+	c = icoord(0, 0, 0);
+	r = rcoord(0.0, 0.0, 0.0);
 }
 
 Entity::~Entity()
@@ -58,7 +60,7 @@ void Entity::draw()
 {
 	int millis = GameWindow::getWindow().time();
 	phase->updateFrame(millis);
-	phase->frame()->draw((double)c.x, (double)c.y, (double)0);
+	phase->frame()->draw(r.x, r.y, 0.0);
 	redraw = false;
 }
 
@@ -103,7 +105,7 @@ static double angleFromXY(long x, long y)
 
 void Entity::update(unsigned long dt)
 {
-	if (conf->movemode == TILE && moving) {
+	if (conf->moveMode == TILE && moving) {
 		redraw = true;
 
 		double destDist = Gosu::distance((double)c.x, (double)c.y,
@@ -125,11 +127,11 @@ void Entity::update(unsigned long dt)
 				dy = 0.0;
 
 			// Save state of partial pixels traveled in double
-			rx += dx * speed * (double)dt;
-			ry += dy * speed * (double)dt;
+			r.x += dx * speed * (double)dt;
+			r.y += dy * speed * (double)dt;
 
-			c.x = (long)rx;
-			c.y = (long)ry;
+			c.x = (int)r.x;
+			c.y = (int)r.y;
 		}
 	}
 }
@@ -149,35 +151,46 @@ bool Entity::setPhase(const std::string& name)
 	return false;
 }
 
-coord_t Entity::getCoordsByPixel() const
+icoord_t Entity::getIPixel() const
 {
 	return c;
 }
 
-coord_t Entity::getCoordsByTile() const
+rcoord_t Entity::getRPixel() const
 {
-	coord_t tileDim = area->getTileDimensions();
+	return r;
+}
+
+icoord_t Entity::getTileCoords() const
+{
+	icoord_t tileDim = area->getTileDimensions();
 	// XXX: revisit when we have Z-buffers
-	return coord(c.x / tileDim.x, c.y / tileDim.y, c.z);
+	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
-void Entity::setCoordsByPixel(coord_t coords)
+void Entity::setPixelCoords(icoord_t coords)
 {
-	c = coords;
 	redraw = true;
+	c = coords;
+	r.x = c.x;
+	r.y = c.y;
+	r.z = c.z;
 }
 
-void Entity::setCoordsByTile(coord_t coords)
+void Entity::setTileCoords(icoord_t coords)
 {
-	coord_t tileDim = area->getTileDimensions();
+	redraw = true;
+	icoord_t tileDim = area->getTileDimensions();
 	c = coords;
 	c.x *= tileDim.x;
 	c.y *= tileDim.y;
 	// XXX: set c.z when we have Z-buffers
-	redraw = true;
+	r.x = c.x;
+	r.y = c.y;
+	// r.z = c.z;
 }
 
-void Entity::moveByPixel(coord_t delta)
+void Entity::moveByPixel(icoord_t delta)
 {
 	c.x += delta.x;
 	c.y += delta.y;
@@ -185,13 +198,13 @@ void Entity::moveByPixel(coord_t delta)
 	redraw = true;
 }
 
-void Entity::moveByTile(coord_t delta)
+void Entity::moveByTile(icoord_t delta)
 {
-	if (conf->movemode == TILE && moving)
+	if (conf->moveMode == TILE && moving)
 		// support queueing moves?
 		return;
 
-	coord_t newCoord = getCoordsByTile();
+	icoord_t newCoord = getTileCoords();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -200,7 +213,7 @@ void Entity::moveByTile(coord_t delta)
 	const Tile& tile = area->getTile(newCoord);
 	if ((tile.flags       & nowalk) != 0 ||
 	    (tile.type->flags & nowalk) != 0) {
-		// The tile we're trying to move onto is set as nowalk.
+		// The tile we're trc.ying to move onto is set as nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
@@ -208,7 +221,7 @@ void Entity::moveByTile(coord_t delta)
 	}
 
 	// Move!
-	const coord_t tileDim = area->getTileDimensions();
+	const icoord_t tileDim = area->getTileDimensions();
 	dest.x = c.x + delta.x * tileDim.x;
 	dest.y = c.y + delta.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers
@@ -216,16 +229,16 @@ void Entity::moveByTile(coord_t delta)
 
 	preMove(delta);
 
-	if (conf->movemode == TURN) {
+	if (conf->moveMode == TURN) {
 		c.x = dest.x;
 		c.y = dest.y;
 		// XXX: set c.z when we have Z-buffers
 		postMove();
 	}
-	else if (conf->movemode == TILE) {
+	else if (conf->moveMode == TILE) {
 		moving = true;
-		rx = (double)c.x;
-		ry = (double)c.y;
+		r.x = (double)c.x;
+		r.y = (double)c.y;
 	}
 }
 
@@ -236,15 +249,15 @@ void Entity::setArea(Area* a)
 
 void Entity::gotoRandomTile()
 {
-	coord_t map = area->getDimensions();
-	coord_t pos;
+	icoord_t map = area->getDimensions();
+	icoord_t pos;
 	Tile* tile;
 	do {
-		pos = coord(rand() % map.x, rand() % map.y, 0);
+		pos = icoord(rand() % map.x, rand() % map.y, 0);
 		tile = &area->getTile(pos);
 	} while (((tile->flags & nowalk) |
 	          (tile->type->flags & nowalk)) != 0);
-	setCoordsByTile(pos);
+	setTileCoords(pos);
 }
 
 void Entity::setSpeed(double multiplier)
@@ -255,7 +268,7 @@ void Entity::setSpeed(double multiplier)
 
 Tile& Entity::getTile()
 {
-	return area->getTile(getCoordsByTile());
+	return area->getTile(getTileCoords());
 }
 
 SampleRef Entity::getSound(const std::string& name)
@@ -269,7 +282,7 @@ SampleRef Entity::getSound(const std::string& name)
 		return SampleRef();
 }
 
-void Entity::calculateFacing(coord_t delta)
+void Entity::calculateFacing(icoord_t delta)
 {
 	int x, y;
 
@@ -290,10 +303,10 @@ void Entity::calculateFacing(coord_t delta)
 	facing = facings[y][x];
 }
 
-void Entity::preMove(coord_t delta)
+void Entity::preMove(icoord_t delta)
 {
 	calculateFacing(delta);
-	if (conf->movemode == TURN)
+	if (conf->moveMode == TURN)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
@@ -313,7 +326,7 @@ void Entity::preMoveLua()
 
 void Entity::postMove()
 {
-	if (conf->movemode != TURN)
+	if (conf->moveMode != TURN)
 		setPhase(facing);
 
 	// Handle tile onEnter and onLeave scripts
@@ -403,8 +416,8 @@ bool Entity::processSprite(const xmlNode* sprite)
 			child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("sheet"), 6)) {
 			xml.sheet = readXmlElement(child);
-			xml.tileSize.x = atol(readXmlAttribute(child, "tilewidth").c_str());
-			xml.tileSize.y = atol(readXmlAttribute(child, "tileheight").c_str());
+			xml.tileSize.x = atoi(readXmlAttribute(child, "tilewidth").c_str());
+			xml.tileSize.y = atoi(readXmlAttribute(child, "tileheight").c_str());
 		}
 		else if (!xmlStrncmp(child->name, BAD_CAST("phases"), 7) &&
 				!processPhases(child))

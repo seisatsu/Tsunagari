@@ -26,14 +26,14 @@ enum TileEventTriggers {
 	door
 };
 
-// when changing TileFlags, be sure to make updates to
-// Area::splitTileFlags()
 //! List of possible flags that can be attached to a tile.
 /*!
 	Flags are attached to tiles, and denote special behavior for 
 	the tile they are bound to.
 */
 enum TileFlags {
+	// when changing TileFlags, be sure to make updates to
+	// Area::splitTileFlags()
 	nowalk        = 0x0001,
 	player_nowalk = 0x0002,
 	npc_nowalk    = 0x0004,
@@ -66,7 +66,7 @@ struct TileEvent {
 */
 struct Door {
 	std::string area;
-	coord_t coord;
+	icoord_t tile;
 };
 
 //! Contains the properties shared by all tiles of a certain type.

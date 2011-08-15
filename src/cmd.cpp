@@ -92,25 +92,25 @@ std::string CommandLineOptions::get(std::string longopt)
 
 void CommandLineOptions::usage()
 {
-	size_t optmaxlen = 0;
-	size_t argmaxlen = 0;
+	int optmaxlen = 0;
+	int argmaxlen = 0;
 	
 	usageSize(&optmaxlen, &argmaxlen);
 	usagePrintShort();
 	usagePrintLong(optmaxlen, argmaxlen);
 }
 
-void CommandLineOptions::usageSize(size_t* optmaxlen, size_t* argmaxlen)
+void CommandLineOptions::usageSize(int* optmaxlen, int* argmaxlen)
 {
 	unsigned int opt;
 	
 	for (opt = 0; opt < OptionsList.size(); opt++) {
 		if (OptionsList[opt]->shortopt.size() + 
-		    OptionsList[opt]->longopt.size() > *optmaxlen)
-			*optmaxlen = OptionsList[opt]->shortopt.size() + 
-			    OptionsList[opt]->longopt.size() + 1;
-		if (OptionsList[opt]->argument.size() > *argmaxlen)
-			*argmaxlen = OptionsList[opt]->argument.size();
+		    OptionsList[opt]->longopt.size() > (unsigned)*optmaxlen)
+			*optmaxlen = (int)OptionsList[opt]->shortopt.size() + 
+			    (int)OptionsList[opt]->longopt.size() + 1;
+		if ((int)OptionsList[opt]->argument.size() > *argmaxlen)
+			*argmaxlen = (int)OptionsList[opt]->argument.size();
 	}
 }
 
@@ -152,7 +152,7 @@ void CommandLineOptions::usagePrintShort()
 	fprintf(stderr, "Usage: %s [OPTIONS]", argv[0]);
 }
 
-void CommandLineOptions::usagePrintLong(size_t optmaxlen, size_t argmaxlen)
+void CommandLineOptions::usagePrintLong(int optmaxlen, int argmaxlen)
 {
 	unsigned int opt;
 	

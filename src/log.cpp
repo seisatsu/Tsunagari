@@ -7,16 +7,10 @@
 #include "config.h"
 #include "log.h"
 
-/**
- * Singleton enforcement.
- */
+//! Singleton enforcement.
 Log* Log::instance()
 {
-	static Log* inst = NULL;
-	if (!inst) {
-		inst = new Log;
-	}
-
+	static Log* inst = new Log;
 	return inst;
 }
 
@@ -25,16 +19,14 @@ Log::Log()
 	mode = MESSAGE_MODE;
 }
 
-/**
- * Specify mode setting.
- */
+//! Specify mode setting.
 void Log::setMode(message_mode_t mode)
 {
 	Log* l = instance();
 	l->mode = mode;
 }
 
-/**
+/*
  * Give output to the "write" function if it is allowed to be sent in
  * the current mode.
  */

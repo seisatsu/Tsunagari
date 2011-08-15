@@ -21,8 +21,8 @@ GameWindow& GameWindow::getWindow()
 }
 
 GameWindow::GameWindow(ClientValues* conf)
-	: Gosu::Window((unsigned)conf->windowsize.x, 
-	  (unsigned)conf->windowsize.y, conf->fullscreen),
+	: Gosu::Window((unsigned)conf->windowSize.x, 
+	  (unsigned)conf->windowSize.y, conf->fullscreen),
 	  lastTime((int)Gosu::milliseconds()),
 	  now(lastTime),
 	  currentSecond(now/1000),
@@ -81,7 +81,7 @@ bool GameWindow::needsRedraw() const
 void GameWindow::update()
 {
 	calculateDt();
-	if (conf->movemode == TURN)
+	if (conf->moveMode == TURN)
 		handleKeyboardInput();
 	world->update(dt);
 

@@ -14,13 +14,6 @@ ITEMS
 
 * Diagonal movement at corners should only work in Roguelike.
 
-* Package our own Lua so that it can be built as C++ with g++ (and whatever on
-  Windows). Being built as C causes lua_error() to use longjmp which doesn't
-  play well with C++ deconstructors, leading to memory leaks on Lua errors if
-  a C++ callback is in the callstack.
-
-  http://marcusirven.com/blog/2009/02/19/dangers-of-lua_error-when-using-c++.html
-
 * Investigate Guichan
 
 * Investigate PhysicsFS
@@ -35,4 +28,14 @@ ITEMS
   now we use a table object with userdata set at table.object.
 
 * Unify how tile scripts and entity scripts are stored.
+
+* Entity animations should respect speedMul.
+
+* On teleport and on initial placement into map, apply tile onEnter.
+
+* Unify XML element/attribute naming scheme.
+
+* Support TMX zlib data.
+
+* Investigate using Gosu::Song with OpenAL, then with OpenAL+zip.
 
