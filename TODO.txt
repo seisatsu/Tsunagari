@@ -35,3 +35,7 @@ ITEMS
 
 * Unify XML element/attribute naming scheme.
 
+* Support TMX zlib data.
+
+* Investigate using Gosu::Song with OpenAL, then with OpenAL+zip.
+
