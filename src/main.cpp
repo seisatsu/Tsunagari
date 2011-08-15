@@ -125,7 +125,7 @@ static ClientValues* parseConfig(const char* filename)
 	else {
 		if (atoi(parameters["cache.ttl"].c_str()) == 0)
 			conf->cacheEnabled = 0;
-		conf->cacheEnabled = atoi(parameters["cache.ttl"].c_str());
+		conf->cacheTTL = atoi(parameters["cache.ttl"].c_str());
 	}
 
 	if (parameters["cache.size"].empty())

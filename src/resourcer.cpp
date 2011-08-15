@@ -68,7 +68,6 @@ bool Resourcer::init()
 void Resourcer::garbageCollect()
 {
 	reclaim<ImageRefMap, ImageRef>(images);
-	// FIXME: TiledImages aren't held on to while in map
 	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
 	reclaim<SampleRefMap, SampleRef>(samples);
 	reclaim<XMLMap, XMLDocRef>(xmls);
