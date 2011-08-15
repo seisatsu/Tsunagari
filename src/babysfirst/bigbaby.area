@@ -3,8 +3,8 @@
  <properties>
   <property name="areaspec" value="1"/>
   <property name="author" value="Michael D. Reiley"/>
-  <property name="intro_music" value="music/intro"/>
-  <property name="main_music" value="music/wind"/>
+  <property name="intro_music" value="music/intro.music"/>
+  <property name="main_music" value="music/wind.music"/>
   <property name="name" value="Big Baby Test Area"/>
   <property name="onload" value="bigbaby_init()"/>
   <property name="scripts" value="areainits.event,test.event"/>

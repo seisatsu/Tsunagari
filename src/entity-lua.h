@@ -8,7 +8,6 @@
 #define ENTITY_LUA_H
 
 #include "entity.h"
-#include "lua.hpp"
 #include "script.h"
 
 //! Bind an Entity to a Lua table.

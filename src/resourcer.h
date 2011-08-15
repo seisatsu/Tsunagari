@@ -14,8 +14,11 @@
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+
 #include "common.h"
-#include "lua.hpp"
 
 struct zip;
 

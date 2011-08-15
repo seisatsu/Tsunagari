@@ -54,48 +54,48 @@ clean:
 # to change. ;)
 # TODO: Write a script that automatically removes references to libxml2.
 
-animation.o: animation.cpp animation.h resourcer.h common.h log.h lua.hpp \
+animation.o: animation.cpp animation.h resourcer.h common.h log.h \
  ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h \
  ../deps/lua/lua.h ../deps/lua/lauxlib.h
 area.o: area.cpp area.h \
- area-structs.h animation.h resourcer.h common.h log.h lua.hpp \
+ area-structs.h animation.h resourcer.h common.h log.h \
  ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h \
  ../deps/lua/lua.h ../deps/lua/lauxlib.h player.h entity.h window.h \
  world.h xml.h
 cmd.o: cmd.cpp cmd.h common.h log.h
 common.o: common.cpp common.h log.h
 entity-lua.o: entity-lua.cpp entity-lua.h entity.h area-structs.h animation.h \
- resourcer.h common.h log.h lua.hpp ../deps/lua/lua.h \
+ resourcer.h common.h log.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h ../deps/lua/lua.h \
  ../deps/lua/lauxlib.h script.h
 entity.o: entity.cpp area.h area-structs.h animation.h \
- resourcer.h common.h log.h lua.hpp ../deps/lua/lua.h \
+ resourcer.h common.h log.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h ../deps/lua/lua.h \
  ../deps/lua/lauxlib.h player.h entity.h config.h entity-lua.h script.h \
  window.h xml.h
 log.o: log.cpp config.h log.h
 main.o: main.cpp common.h log.h config.h cmd.h window.h
 player.o: player.cpp area.h \
- area-structs.h animation.h resourcer.h common.h log.h lua.hpp \
+ area-structs.h animation.h resourcer.h common.h log.h \
  ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h \
  ../deps/lua/lua.h ../deps/lua/lauxlib.h player.h entity.h config.h \
  world.h window.h
 resourcer.o: resourcer.cpp common.h log.h config.h resourcer.h \
- lua.hpp ../deps/lua/lua.h \
+  ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h ../deps/lua/lua.h \
  ../deps/lua/lauxlib.h window.h
-script-sound.o: script-sound.cpp lua.hpp ../deps/lua/lua.h \
+script-sound.o: script-sound.cpp ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h ../deps/lua/lua.h \
  ../deps/lua/lauxlib.h resourcer.h common.h log.h script-sound.h \
  script.h
-script.o: script.cpp common.h log.h resourcer.h lua.hpp ../deps/lua/lua.h \
+script.o: script.cpp common.h log.h resourcer.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h ../deps/lua/lua.h \
  ../deps/lua/lauxlib.h script.h script-sound.h
-window.o: window.cpp config.h resourcer.h common.h log.h lua.hpp \
+window.o: window.cpp config.h resourcer.h common.h log.h \
  ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h \
  ../deps/lua/lua.h ../deps/lua/lauxlib.h world.h window.h
 world.o: world.cpp \
- area.h area-structs.h animation.h resourcer.h common.h log.h lua.hpp \
+ area.h area-structs.h animation.h resourcer.h common.h log.h \
  ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h \
  ../deps/lua/lua.h ../deps/lua/lauxlib.h player.h entity.h window.h \
  world.h xml.h

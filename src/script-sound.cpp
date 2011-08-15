@@ -6,7 +6,10 @@
 
 #include <Gosu/Audio.hpp>
 
-#include "lua.hpp"
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+
 #include "resourcer.h"
 #include "script-sound.h"
 
