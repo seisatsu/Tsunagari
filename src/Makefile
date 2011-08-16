@@ -36,7 +36,7 @@ depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp
 
 gen-depend:
-	@./gen-depend.pl
+	@perl gen-depend.pl
 
 tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
            log.o main.o player.o resourcer.o script.o script-sound.o window.o \

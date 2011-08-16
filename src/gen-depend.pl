@@ -61,7 +61,8 @@ sub get_target {
 # Call 'make depend' and filter its output.
 sub gen_deps {
 	my @targets;
-	open(IN, "-|", "make depend") or die "cannot run 'make depend': $!";
+	open(IN, "-|", "make --no-print-directory depend")
+		or die "cannot run 'make depend': $!";
 	push(@targets, proper_deps(get_target(*IN))) until (eof(IN));
 	close(IN);
 	return @targets;
