@@ -15,10 +15,10 @@
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <libxml/tree.h>
 
-#include "area-structs.h"
 #include "common.h"
 #include "player.h"
 #include "resourcer.h"
+#include "tile.h"
 
 namespace Gosu {
 	class Bitmap;
@@ -51,7 +51,7 @@ public:
 
 	//! Area Destructor
 	~Area();
-	
+
 	//! Function that must be called after the constructor.
 	bool init();
 
@@ -72,18 +72,9 @@ public:
 	icoord_t getTileDimensions() const;
 	const Tile& getTile(icoord_t c) const;
 	Tile& getTile(icoord_t c);
+	icube_t visibleTiles() const;
 
 private:
-	//! TileSet
-	/*!
-		Stores info for a tileset, and global settings for tiles.
-	*/
-	struct TileSet {
-		TiledImage tiles;
-		icoord_t tileDim; // Dimensions per tile
-		std::vector<TileType> tileTypes; // Global tile properties
-	};
-
 	//! Music
 	/*!
 		Stores info for the intro or main music files.
@@ -101,9 +92,6 @@ private:
 
 	const icoord_t viewportOffset() const;
 	const Gosu::Transform viewportTransform() const;
-
-	icube_t visibleTiles() const;
-	bool tileTypeOnScreen(const TileType& type) const;
 
 	//! XML descriptor parsing function.
 	bool processDescriptor();

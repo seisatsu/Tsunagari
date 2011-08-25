@@ -137,11 +137,9 @@ bool Area::needsRedraw() const
 		return true;
 
 	// Do any onscreen tile types need to update their animations?
-	const int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(const TileSet& set, tilesets)
 		BOOST_FOREACH(const TileType& type, set.tileTypes)
-			if (type.anim.needsRedraw(millis) &&
-					tileTypeOnScreen(type))
+			if (type.needsRedraw(*this))
 				return true;
 	return false;
 }
@@ -180,6 +178,7 @@ static double center(double w, double g, double p)
 	return w>g ? (w-g)/2.0 : Gosu::boundBy(w/2.0-p, w-g, 0.0);
 }
 
+// FIXME: should return an rcoord
 const icoord_t Area::viewportOffset() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
@@ -187,14 +186,14 @@ const icoord_t Area::viewportOffset() const
 	const double tileHeight = (double)tilesets[0].tileDim.y;
 	const double windowWidth = (double)graphics.width() / tileWidth;
 	const double windowHeight = (double)graphics.height() / tileHeight;
-	const double gridWidth = (double)dim.x;
-	const double gridHeight = (double)dim.y;
+	const double mapWidth = (double)dim.x;
+	const double mapHeight = (double)dim.y;
 	const double playerX = player->getRPixel().x / tileWidth + 0.5;
 	const double playerY = player->getRPixel().y / tileHeight + 0.5;
 
 	icoord_t c;
-	c.x = (int)(center(windowWidth, gridWidth, playerX) * tileWidth);
-	c.y = (int)(center(windowHeight, gridHeight, playerY) * tileHeight);
+	c.x = (int)(center(windowWidth, mapWidth, playerX) * tileWidth);
+	c.y = (int)(center(windowHeight, mapHeight, playerY) * tileHeight);
 	c.z = 0;
 
 	return c;
@@ -233,22 +232,6 @@ icube_t Area::visibleTiles() const
 		return icube(0, 0, 0, dim.x, dim.y, 1);
 }
 
-bool Area::tileTypeOnScreen(const TileType& search) const
-{
-	const icube_t tiles = visibleTiles();
-	for (int z = tiles.z1; z != tiles.z2; z++) {
-		for (int y = tiles.y1; y != tiles.y2; y++) {
-			for (int x = tiles.x1; x != tiles.x2; x++) {
-				const Tile& tile = map[z][y][x];
-				const TileType* type = tile.type;
-				if (type == &search)
-					return true;
-			}
-		}
-	}
-	return false;
-}
-
 bool Area::processDescriptor()
 {
 	XMLDocRef doc = rc->getXMLDoc(descriptor, "area.dtd");
@@ -260,6 +243,7 @@ bool Area::processDescriptor()
 
 	dim.x = atoi(readXmlAttribute(root, "width").c_str());
 	dim.y = atoi(readXmlAttribute(root, "height").c_str());
+	dim.z = 1;
 
 	xmlNode* child = root->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -322,7 +306,7 @@ bool Area::processMapProperties(xmlNode* node)
 bool Area::processTileSet(xmlNode* node)
 {
 
-/*	
+/*
  <tileset firstgid="1" name="tiles.sheet" tilewidth="64" tileheight="64">
   <image source="tiles.sheet" width="256" height="256"/>
   <tile id="14">
@@ -330,10 +314,12 @@ bool Area::processTileSet(xmlNode* node)
   </tile>
  </tileset>
 */
+
 	TileSet ts;
 	int x = ts.tileDim.x = atoi(readXmlAttribute(node, "tilewidth").c_str());
 	int y = ts.tileDim.y = atoi(readXmlAttribute(node, "tileheight").c_str());
-	
+	ts.tileDim.z = 1;
+
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
 		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
@@ -341,7 +327,7 @@ bool Area::processTileSet(xmlNode* node)
 
 			// Undeclared TileTypes have default properties.
 			while (ts.tileTypes.size() != id) {
-				TileType tt = defaultTileType(ts);
+				TileType tt(ts);
 				ts.tileTypes.push_back(tt);
 			}
 
@@ -357,21 +343,12 @@ bool Area::processTileSet(xmlNode* node)
 	}
 
 	while (ts.tiles.size()) {
-		TileType tt = defaultTileType(ts);
+		TileType tt(ts);
 		ts.tileTypes.push_back(tt);
 	}
 
 	tilesets.push_back(ts);
 	return true;
-}
-
-TileType Area::defaultTileType(TileSet& set)
-{
-	TileType type;
-	type.flags = 0x0;
-	type.anim.addFrame(set.tiles.front());
-	set.tiles.pop_front();
-	return type;
 }
 
 bool Area::processTileType(xmlNode* node, TileSet& set)
@@ -395,7 +372,7 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 */
 
 	// Initialize a default TileType, we'll build on that.
-	TileType type = defaultTileType(set);
+	TileType type(set);
 
 	unsigned id = (unsigned)atoi(readXmlAttribute(node, "id").c_str());
 	unsigned expectedId = (unsigned)set.tileTypes.size();
@@ -446,7 +423,7 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 			int size = atoi(value.c_str()); // atoi
 
 			// Add size-1 more frames to our animation.
-			// We already have one from defaultTileType.
+			// We already have one from TileType's constructor.
 			for (int i = 1; i < size; i++) {
 				if (set.tiles.empty()) {
 					Log::err(descriptor, "ran out of tiles"
@@ -524,7 +501,7 @@ bool Area::processLayerProperties(xmlNode* node)
 		std::string value = readXmlAttribute(child, "value");
 		if (!name.compare("layer")) {
 			int depth = atoi(value.c_str());
-			if (depth != dim.z) {
+			if (depth != dim.z - 1) {
 				Log::err(descriptor, "invalid layer depth");
 				return false;
 			}

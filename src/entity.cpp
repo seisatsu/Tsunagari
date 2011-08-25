@@ -317,62 +317,36 @@ void Entity::preMove(icoord_t delta)
 void Entity::preMoveLua()
 {
 	const std::string& name = scripts["premove"];
-	if (name.size() && rc->resourceExists(name)) {
-		Script s(rc);
-		bindEntity(s, this, "entity");
-		s.run(rc, name);
-	}
+	Script s(rc);
+	bindEntity(&s, this, "entity");
+	s.run(rc, name);
+}
+
+void Entity::postMoveLua()
+{
+	const std::string& name = scripts["postmove"];
+	Script s(rc);
+	bindEntity(&s, this, "entity");
+	s.run(rc, name);
 }
 
 void Entity::postMove()
 {
 	if (conf->moveMode != TURN)
 		setPhase(facing);
-
-	// Handle tile onEnter and onLeave scripts
-	Tile& entering = getTile();
-	Tile& leaving = *movingFrom;
-	bool tileLeave = (leaving.flags & hasOnLeave) != 0;
-	bool typeLeave = (leaving.type->flags & hasOnLeave) != 0;
-	bool tileEnter = (entering.flags & hasOnEnter) != 0;
-	bool typeEnter = (entering.type->flags & hasOnEnter) != 0;
-
-	if (typeLeave)
-		tileScripts(leaving, leaving.type->events, onLeave);
-	if (tileLeave)
-		tileScripts(leaving, leaving.events, onLeave);
-
+	movingFrom->onLeaveScripts(rc, this);
 	postMoveLua();
+	getTile().onEnterScripts(rc, this);
 
-	if (tileEnter)
-		tileScripts(entering, entering.events, onEnter);
-	if (typeEnter)
-		tileScripts(entering, entering.type->events, onEnter);
-}
-
-void Entity::postMoveLua()
-{
-	const std::string& name = scripts["postmove"];
-	if (rc->resourceExists(name)) {
-		Script s(rc);
-		bindEntity(s, this, "entity");
-		s.run(rc, name);
-	}
-}
-
-void Entity::tileScripts(Tile& tile, std::vector<TileEvent>& events, const TileEventTriggers trigger)
-{
-	BOOST_FOREACH(const TileEvent& e, events)
-		if (e.trigger == trigger)
-			runTileLua(tile, e.script);
-}
-
-void Entity::runTileLua(Tile&, const std::string& script)
-{
-	Script s(rc);
-	bindEntity(s, this, "entity");
-	// TODO bindTile(script, tile, "tile");
-	s.run(rc, script);
+	// TODO: move teleportation here
+	/*
+	 * if (onDoor()) {
+	 * 	leaveTile();
+	 * 	moveArea(getDoor());
+	 * 	postMoveLua();
+	 * 	enterTile();
+	 * }
+	 */
 }
 
 /**

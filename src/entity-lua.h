@@ -17,7 +17,7 @@
 	semi-private member. Adds Lua methods that access the Entity and
 	binds some variables from the Entity to the Lua table.
 */
-void bindEntity(Script& script, Entity* entity, const std::string& bindTo);
+void bindEntity(Script* script, Entity* entity, const std::string& bindTo);
 
 #endif
 

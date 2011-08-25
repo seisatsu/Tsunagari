@@ -18,15 +18,15 @@ static int lua_Entity_setTileCoords(lua_State* L)
 	if (!lua_isnumber(L, 2))
 		return luaL_error(L,
 			"setTileCoords: arg 2 should be a number");
-	int x = lua_tointeger(L, 2);
+	int x = (int)lua_tointeger(L, 2);
 	if (!lua_isnumber(L, 3))
 		return luaL_error(L,
 			"setTileCoords: arg 3 should be a number");
-	int y = lua_tointeger(L, 3);
+	int y = (int)lua_tointeger(L, 3);
 	if (!lua_isnumber(L, 3))
 		return luaL_error(L,
 			"setTileCoords: arg 3 should be a number");
-	int z = lua_tointeger(L, 4);
+	int z = (int)lua_tointeger(L, 4);
 	icoord_t coords = icoord(x, y, z);
 	// FIXME: bounds check on map
 	entity->setTileCoords(coords);
@@ -75,11 +75,11 @@ static const luaL_Reg funcs[] = {
 	{ NULL, NULL }
 };
 
-void bindEntity(Script& script, Entity* entity, const std::string& bindTo)
+void bindEntity(Script* script, Entity* entity, const std::string& bindTo)
 {
 	const icoord_t tile = entity->getTileCoords();
-	script.bindObj(bindTo, ENTITY, (void*)entity, funcs);
-	script.bindObjInt(bindTo, "x", tile.x);
-	script.bindObjInt(bindTo, "y", tile.y);
+	script->bindObj(bindTo, ENTITY, (void*)entity, funcs);
+	script->bindObjInt(bindTo, "x", tile.x);
+	script->bindObjInt(bindTo, "y", tile.y);
 }
 
