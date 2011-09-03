@@ -59,7 +59,7 @@ void Resourcer::garbageCollect()
 	reclaim<ImageRefMap, ImageRef>(images);
 	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
 	reclaim<SampleRefMap, SampleRef>(samples);
-	reclaim<XMLMap, XMLDocRef>(xmls);
+	reclaim<XMLMap, XMLDoc>(xmls);
 }
 
 template<class Map, class MapValue>
@@ -197,8 +197,8 @@ SampleRef Resourcer::getSample(const std::string& name)
 	return result;
 }
 
-XMLDocRef Resourcer::getXMLDoc(const std::string& name,
-                               const std::string& dtdFile)
+XMLDoc Resourcer::getXMLDoc(const std::string& name,
+                            const std::string& dtdFile)
 {
 	if (conf->cacheEnabled) {
 		XMLMap::iterator entry = xmls.find(name);
@@ -212,11 +212,10 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 		}
 	}
 
-	XMLDocRef result(readXMLDocFromDisk(name, dtdFile), xmlFreeDoc);
-	// XXX Do we check for NULL?
+	XMLDoc result = readXMLDocFromDisk(name, dtdFile);
 
 	if (conf->cacheEnabled) {
-		CacheEntry<XMLDocRef> data;
+		CacheEntry<XMLDoc> data;
 		data.resource = result;
 		data.lastUsed = 0; 
 		xmls[name] = data;
@@ -306,19 +305,18 @@ bool Resourcer::compileLuaFromDisk(const std::string& name, lua_State* L,
 
 // use RAII to ensure doc is freed
 // boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
-                                      const std::string& dtdFile)
+XMLDoc Resourcer::readXMLDocFromDisk(const std::string& name,
+                                     const std::string& dtdFile)
 {
-	const std::string docStr = readStringFromDisk(name);
-	if (docStr.empty())
-		return NULL;
-	const std::string pathname = path(name);
-	XMLDocument doc;
-	std::string dtdPath = std::string(DTD_DIRECTORY) + "/" + dtdFile;
-	if (doc.init(pathname, docStr, dtdPath))
-		return doc.temporaryGetDoc();
-	else
-		return NULL;
+	XMLDoc doc;
+	const std::string data = readStringFromDisk(name);
+	if (data.size()) {
+		const std::string p = path(name);
+		const std::string dtdPath = std::string(DTD_DIRECTORY) +
+			"/" + dtdFile;
+		doc.init(p, data, dtdPath); // Ignore return value?
+	}
+	return doc;
 }
 
 std::string Resourcer::readStringFromDisk(const std::string& name)

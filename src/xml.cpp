@@ -1,7 +1,6 @@
 #include "log.h"
 #include "xml.h"
 
-
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
 	const std::string* filename = (const std::string*)pstrFilename;
@@ -14,18 +13,18 @@ static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 	va_end(ap);
 }
 
-bool XMLDocument::init(const std::string& path,
-                       const std::string& data,
-                       const std::string& dtdFile)
+bool XMLDoc::init(const std::string& path,
+                  const std::string& data,
+                  const std::string& dtdPath)
 {
 	xmlParserCtxt* pc = xmlNewParserCtxt();
 	pc->vctxt.userData = (void*)&path;
 	pc->vctxt.error = xmlErrorCb;
 
 	// Parse the XML. Hand over our error callback fn.
-	doc = xmlCtxtReadMemory(pc, data.c_str(),
+	doc.reset(xmlCtxtReadMemory(pc, data.c_str(),
 		(int)data.size(), NULL, NULL,
-		XML_PARSE_NOBLANKS | XML_PARSE_NONET);
+		XML_PARSE_NOBLANKS | XML_PARSE_NONET), xmlFreeDoc);
 	xmlFreeParserCtxt(pc);
 	if (!doc) {
 		Log::err(path, "Could not parse file");
@@ -33,21 +32,21 @@ bool XMLDocument::init(const std::string& path,
 	}
 
 	// Load up a Document Type Definition for validating the document.
-	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdFile.c_str());
+	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
 	if (!dtd) {
-		xmlFreeDoc(doc);
-		Log::err(dtdFile, "file not found");
+		doc.reset();
+		Log::err(dtdPath, "file not found");
 		return false;
 	}
 
 	// Assert the document is sane.
 	xmlValidCtxt* vc = xmlNewValidCtxt();
-	int valid = xmlValidateDtd(vc, doc, dtd);
+	int valid = xmlValidateDtd(vc, doc.get(), dtd);
 	xmlFreeValidCtxt(vc);
 	xmlFreeDtd(dtd);
 
 	if (!valid) {
-		xmlFreeDoc(doc);
+		doc.reset();
 		Log::err(path, "XML document does not follow DTD");
 		return false;
 	}
@@ -55,9 +54,19 @@ bool XMLDocument::init(const std::string& path,
 	return true;
 }
 
-xmlDoc* XMLDocument::temporaryGetDoc() const
+xmlNode* XMLDoc::temporaryGetRoot() const
+{
+	return xmlDocGetRootElement(doc.get());
+}
+
+XMLDoc::operator bool() const
 {
 	return doc;
+}
+
+long XMLDoc::use_count() const
+{
+	return doc.use_count();
 }
 
 std::string readXmlAttribute(xmlNode* node, const std::string& attr)

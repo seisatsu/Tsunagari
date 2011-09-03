@@ -9,18 +9,26 @@
 
 #include <string>
 
+#include <boost/shared_ptr.hpp>
 #include <libxml/tree.h>
 
-class XMLDocument {
+class XMLDoc {
 public:
 	bool init(const std::string& path,
 	          const std::string& data,
 	          const std::string& dtdFile);
 
-	xmlDoc* temporaryGetDoc() const;
+	xmlNode* temporaryGetRoot() const;
+
+	//! Equivalent to doc::use_count().
+	long use_count() const;
+
+	//! Signifies whether document is has been initialized, parsed
+	//! correctly, and is valid.
+	operator bool() const;
 
 private:
-	xmlDoc* doc;
+	boost::shared_ptr<xmlDoc> doc;
 };
 
 //! Get XML attribute (memory-safe).

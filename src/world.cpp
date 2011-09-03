@@ -79,10 +79,10 @@ bool World::processDescriptor()
 	static const std::string descriptor = "world.conf";
 	std::string str;
 	
-	XMLDocRef doc = rc->getXMLDoc(descriptor, "world.dtd");
+	XMLDoc doc = rc->getXMLDoc(descriptor, "world.dtd");
 	if (!doc)
 		return false;
-	const xmlNode* root = xmlDocGetRootElement(doc.get()); // <world>
+	const xmlNode* root = doc.temporaryGetRoot(); // <world>
 	if (!root)
 		return false;
 

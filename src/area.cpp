@@ -234,12 +234,12 @@ icube_t Area::visibleTiles() const
 
 bool Area::processDescriptor()
 {
-	XMLDocRef doc = rc->getXMLDoc(descriptor, "area.dtd");
+	XMLDoc doc = rc->getXMLDoc(descriptor, "area.dtd");
 	if (!doc)
 		return false;
 
 	// Iterate and process children of <map>
-	xmlNode* root = xmlDocGetRootElement(doc.get()); // <map> element
+	xmlNode* root = doc.temporaryGetRoot(); // <map> element
 
 	dim.x = atoi(readXmlAttribute(root, "width").c_str());
 	dim.y = atoi(readXmlAttribute(root, "height").c_str());
