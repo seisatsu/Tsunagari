@@ -45,6 +45,17 @@ bool XMLNode::intContent(int* i) const
 	return true;
 }
 
+bool XMLNode::doubleContent(double *d) const
+{
+	std::string s = content();
+	if (!isDecimal(s)) {
+		Log::err(doc->path(), "expected decimal");
+		return false;
+	}
+	*d = atof(s.c_str());
+	return true;
+}
+
 std::string XMLNode::attr(const std::string& name) const
 {
 	xmlChar* content = xmlGetProp(node, BAD_CAST(name.c_str()));
@@ -61,6 +72,17 @@ bool XMLNode::intAttr(const std::string& name, int* i) const
 		return false;
 	}
 	*i = atoi(s.c_str());
+	return true;
+}
+
+bool XMLNode::doubleAttr(const std::string& name, double* d) const
+{
+	std::string s = attr(name);
+	if (!isDecimal(s)) {
+		Log::err(doc->path(), "expected decimal");
+		return false;
+	}
+	*d = atoi(s.c_str());
 	return true;
 }
 

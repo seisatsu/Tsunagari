@@ -25,9 +25,11 @@ public:
 
 	std::string content() const;
 	bool intContent(int* i) const;
+	bool doubleContent(double* d) const;
 
 	std::string attr(const std::string& name) const;
 	bool intAttr(const std::string& name, int* i) const;
+	bool doubleAttr(const std::string& name, double* d) const;
 
 	//! Whether this is a valid node (non-NULL).
 	operator bool() const;

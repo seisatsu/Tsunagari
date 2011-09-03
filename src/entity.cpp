@@ -33,12 +33,13 @@ static std::string facings[][3] = {
 Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	: rc(rc),
 	  redraw(true),
+	  speedMul(1.0),
 	  moving(false),
 	  area(area),
+	  c(icoord(0, 0, 0)),
+	  r(rcoord(0.0, 0.0, 0.0)),
 	  conf(conf)
 {
-	c = icoord(0, 0, 0);
-	r = rcoord(0.0, 0.0, 0.0);
 }
 
 Entity::~Entity()
@@ -357,163 +358,184 @@ bool Entity::processDescriptor()
 	XMLDoc doc = rc->getXMLDoc(descriptor, "entity.dtd");
 	if (!doc)
 		return false;
-	const xmlNode* root = doc.temporaryGetRoot(); // <entity>
+	const XMLNode root = doc.root(); // <entity>
 	if (!root)
 		return false;
-	xmlNode* node = root->xmlChildrenNode; // children of <entity>
 
-	for (; node != NULL; node = node->next) {
-		if (!xmlStrncmp(node->name, BAD_CAST("speed"), 6)) {
-			speed = baseSpeed =
-				(double)atol(readXmlElement(node).c_str())
-				/ 1000.0;
-			speedMul = 1.0;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("sprite"), 7)) {
-			if (!processSprite(node))
+	for (XMLNode node = root.childrenNode(); node; node = node.next()) {
+		if (node.is("speed")) {
+			if (!node.doubleContent(&baseSpeed))
 				return false;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("sounds"), 7)) {
-			if (!processSounds(node))
+			speed = baseSpeed /= 1000.0;
+		} else if (node.is("sprite")) {
+			if (!processSprite(node.childrenNode()))
 				return false;
-		}
-		else if (!xmlStrncmp(node->name, BAD_CAST("scripts"), 8)) {
-			processScripts(node);
+		} else if (node.is("sounds")) {
+			if (!processSounds(node.childrenNode()))
+				return false;
+		} else if (node.is("scripts")) {
+			if (!processScripts(node.childrenNode()))
+				return false;
 		}
 	}
 	return true;
 }
 
-bool Entity::processSprite(const xmlNode* sprite)
+bool Entity::processSprite(XMLNode node)
 {
-	for (xmlNode* child = sprite->xmlChildrenNode; child != NULL;
-			child = child->next) {
-		if (!xmlStrncmp(child->name, BAD_CAST("sheet"), 6)) {
-			xml.sheet = readXmlElement(child);
-			xml.tileSize.x = atoi(readXmlAttribute(child, "tilewidth").c_str());
-			xml.tileSize.y = atoi(readXmlAttribute(child, "tileheight").c_str());
+	for (; node; node = node.next()) {
+		if (node.is("sheet")) {
+			xml.sheet = node.content();
+			if (!node.intAttr("tilewidth",  &xml.tileSize.x) ||
+			    !node.intAttr("tileheight", &xml.tileSize.y))
+				return false;
+		} else if (node.is("phases")) {
+			if (!processPhases(node.childrenNode()))
+				return false;
 		}
-		else if (!xmlStrncmp(child->name, BAD_CAST("phases"), 7) &&
-				!processPhases(child))
-			return false;
 	}
 	return true;
 }
 
-bool Entity::processPhases(const xmlNode* phases)
+bool Entity::processPhases(XMLNode node)
 {
 	TiledImage tiles;
 	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)xml.tileSize.x,
 			(unsigned)xml.tileSize.y, false))
 		return false;
-
-	for (xmlNode* phase = phases->xmlChildrenNode; phase != NULL;
-			phase = phase->next)
-		if (!xmlStrncmp(phase->name, BAD_CAST("phase"), 6)) // needed?
-			if (!processPhase(phase, tiles))
+	for (; node; node = node.next())
+		if (node.is("phase"))
+			if (!processPhase(node, tiles))
 				return false;
 	return true;
 }
 
-bool Entity::processPhase(xmlNode* phase, const TiledImage& tiles)
+bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 {
 	/* Each phase requires a 'name'. Additionally,
 	 * one of either 'pos' or 'speed' is needed.
 	 * If speed is used, we have sub-elements. We
 	 * can't have both pos and speed.
 	 */
-	const std::string name = readXmlAttribute(phase, "name");
-	
-	const std::string posStr = readXmlAttribute(phase, "pos");
-	const std::string speedStr = readXmlAttribute(phase, "speed");
+	const std::string name = node.attr("name");
+	if (name.empty()) {
+		Log::err(descriptor, "<phase> name attribute is empty");
+		return false;
+	}
 
-	// FIXME: check name + pos | speed for 0 length
+	const std::string posStr = node.attr("pos");
+	const std::string speedStr = node.attr("speed");
 
-	if (!posStr.empty() && !speedStr.empty()) {
+	if (posStr.size() && speedStr.size()) {
 		Log::err(descriptor, "pos and speed attributes in "
-				"element phase are mutually exclusive");
+				"phase element are mutually exclusive");
 		return false;
-	}
-	if (posStr.empty() && speedStr.empty()) {
+	} else if (posStr.empty() && speedStr.empty()) {
 		Log::err(descriptor, "must have pos or speed attribute "
-			       "in element phase");
+			       "in phase element");
 		return false;
 	}
 
-	if (!posStr.empty()) {
-		// atoi
-		const unsigned pos = (unsigned)atoi(posStr.c_str());
-		// FIXME: check for out of bounds
+	if (posStr.size()) {
+		int pos;
+		if (!node.intAttr("pos", &pos))
+			return false;
+		if (pos < 0 || (int)tiles.size() < pos) {
+			Log::err(descriptor,
+				"<phase></phase> index out of bounds");
+			return false;
+		}
 		phases[name].addFrame(tiles[pos]);
 	}
-	else { // speedStr
-		// atoi
-		const double speed = (unsigned)atof(speedStr.c_str());
-		// FIXME: check for out of bounds
+	else {
+		int speed;
+		if (!node.intAttr("speed", &speed))
+			return false;
 
 		int len = (int)(1000.0/speed);
 		phases[name].setFrameLen(len);
-		for (xmlNode* member = phase->xmlChildrenNode; member != NULL;
-				member = member->next)
-			if (!xmlStrncmp(member->name, BAD_CAST("member"), 7)) // needed?
-				if (!processMember(member, phases[name], tiles))
-					return false;
+		if (!processMembers(node.childrenNode(), phases[name], tiles))
+			return false;
 	}
 
 	return true;
 }
 
-bool Entity::processMember(xmlNode* phase, Animation& anim,
-                           const TiledImage& tiles)
+bool Entity::processMembers(XMLNode node, Animation& anim,
+                            const TiledImage& tiles)
 {
-	const std::string posStr = readXmlAttribute(phase, "pos");
-	const unsigned pos = (unsigned)atoi(posStr.c_str()); // atoi
-	// FIXME: check for out of bounds
-	anim.addFrame(tiles[pos]);
-	return true;
-}
-
-bool Entity::processSounds(const xmlNode* sounds)
-{
-	for (xmlNode* sound = sounds->xmlChildrenNode; sound != NULL;
-			sound = sound->next)
-		if (!xmlStrncmp(sound->name, BAD_CAST("sound"), 6)) // needed?
-			if (!processSound(sound))
+	for (; node; node = node.next())
+		if (node.is("member"))
+			if (!processMember(node, anim, tiles))
 				return false;
 	return true;
 }
 
-bool Entity::processSound(xmlNode* sound)
+bool Entity::processMember(const XMLNode node, Animation& anim,
+                           const TiledImage& tiles)
 {
-	const std::string name = readXmlAttribute(sound, "name");
-	const std::string filename = readXmlElement(sound);
-	// FIXME: check name, filename for 0 length
+	int pos;
+	if (!node.intAttr("pos", &pos))
+		return false;
+	if (pos < 0 || (int)tiles.size() < pos) {
+		Log::err(descriptor, "<member></member> index out of bounds");
+		return false;
+	}
+	anim.addFrame(tiles[pos]);
+	return true;
+}
+
+bool Entity::processSounds(XMLNode node)
+{
+	for (; node; node = node.next())
+		if (node.is("sound"))
+			if (!processSound(node))
+				return false;
+	return true;
+}
+
+bool Entity::processSound(const XMLNode node)
+{
+	const std::string name = node.attr("name");
+	const std::string filename = node.content();
+	if (name.empty()) {
+		Log::err(descriptor, "<sound> name attribute is empty");
+		return false;
+	} else if (filename.empty()) {
+		Log::err(descriptor, "<sound></sound> is empty");
+		return false;
+	}
 
 	SampleRef s = rc->getSample(filename);
 	if (s)
 		sounds[name] = s;
-	else
-		Log::err(descriptor, std::string("sound ") +
-				filename + " not found");
 	return s;
 }
 
-void Entity::processScripts(const xmlNode* scripts)
+bool Entity::processScripts(XMLNode node)
 {
-	for (xmlNode* script = scripts->xmlChildrenNode; script != NULL;
-			script = script->next)
-		if (!xmlStrncmp(script->name, BAD_CAST("script"), 7)) // needed?
-			processScript(script);
+	for (; node; node = node.next())
+		if (node.is("script"))
+			if (!processScript(node))
+				return false;
+	return true;
 }
 
-void Entity::processScript(xmlNode* script)
+bool Entity::processScript(const XMLNode node)
 {
-	const std::string trigger = readXmlAttribute(script, "trigger");
-	const std::string filename = readXmlElement(script);
-	// FIXME: check name, filename for 0 length
+	const std::string trigger = node.attr("trigger");
+	const std::string filename = node.content();
+	if (trigger.empty()) {
+		Log::err(descriptor, "<script> trigger attribute is empty");
+		return false;
+	} else if (filename.empty()) {
+		Log::err(descriptor, "<script></script> is empty");
+		return false;
+	}
 
 	// Don't verify for script exists here. This happens when it's
 	// triggered.
 	scripts[trigger] = filename;
+	return true;
 }
 
