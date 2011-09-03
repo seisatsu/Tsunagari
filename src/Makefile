@@ -33,7 +33,7 @@ TESTWORLD = babysfirst.world
 all: tsunagari $(TESTWORLD)
 
 depend:
-	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl filter-depend.pl
+	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
 tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
            log.o main.o player.o resourcer.o script.o script-sound.o tile.o \
