@@ -20,6 +20,9 @@ public:
 
 	xmlNode* temporaryGetRoot() const;
 
+	//! Equivalent to doc::unique();
+	bool unique() const;
+
 	//! Equivalent to doc::use_count().
 	long use_count() const;
 

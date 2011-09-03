@@ -64,6 +64,11 @@ XMLDoc::operator bool() const
 	return doc;
 }
 
+bool XMLDoc::unique() const
+{
+	return doc.unique();
+}
+
 long XMLDoc::use_count() const
 {
 	return doc.use_count();

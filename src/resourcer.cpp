@@ -70,8 +70,8 @@ void Resourcer::reclaim(Map& map)
 	BOOST_FOREACH(typename Map::value_type& i, map) {
 		const std::string& name = i.first;
 		CacheEntry<MapValue>& cache = i.second;
-		long extUses = cache.resource.use_count() - 1;
-		if (extUses == 0) {
+		bool unused = !cache.resource || cache.resource.unique();
+		if (unused) {
 			if (!cache.lastUsed) {
 				cache.lastUsed = now;
 				Log::dbg("Resourcer", name + " unused");
