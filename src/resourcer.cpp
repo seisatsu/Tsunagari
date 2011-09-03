@@ -21,24 +21,13 @@
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
+#include "xml.h"
 
 #ifndef LIBXML_TREE_ENABLED
 	#error Tree must be enabled in libxml2
 #endif
 
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
-
-static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
-{
-	const std::string* filename = (const std::string*)pstrFilename;
-	char buf[512];
-	va_list ap;
-
-	va_start(ap, msg);
-	snprintf(buf, sizeof(buf)-1, msg, va_arg(ap, char*));
-	Log::err(*filename, buf);
-	va_end(ap);
-}
 
 Resourcer::Resourcer(GameWindow* window, ClientValues* conf)
 	: window(window), z(NULL), conf(conf)
@@ -323,44 +312,13 @@ xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
 	const std::string docStr = readStringFromDisk(name);
 	if (docStr.empty())
 		return NULL;
-
-	xmlParserCtxt* pc = xmlNewParserCtxt();
 	const std::string pathname = path(name);
-	pc->vctxt.userData = (void*)&pathname;
-	pc->vctxt.error = xmlErrorCb;
-
-	// Parse the XML. Hand over our error callback fn.
-	xmlDoc* doc = xmlCtxtReadMemory(pc, docStr.c_str(),
-			(int)docStr.size(), NULL, NULL,
-			XML_PARSE_NOBLANKS |
-			XML_PARSE_NONET);
-	xmlFreeParserCtxt(pc);
-	if (!doc) {
-		Log::err(pathname, "Could not parse file");
-		return NULL;
-	}
-
-	// Load up a Document Type Definition for validating the document.
+	XMLDocument doc;
 	std::string dtdPath = std::string(DTD_DIRECTORY) + "/" + dtdFile;
-	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
-	if (!dtd) {
-		Log::err(dtdPath, "file not found");
+	if (doc.init(pathname, docStr, dtdPath))
+		return doc.temporaryGetDoc();
+	else
 		return NULL;
-	}
-
-	// Assert the document is sane here and now so we don't have to have a
-	// billion if-else statements while traversing the document tree.
-	xmlValidCtxt* vc = xmlNewValidCtxt();
-	int valid = xmlValidateDtd(vc, doc, dtd);
-	xmlFreeValidCtxt(vc);
-	xmlFreeDtd(dtd);
-
-	if (!valid) {
-		Log::err(pathname, "XML document does not follow DTD");
-		return NULL;
-	}
-
-	return doc;
 }
 
 std::string Resourcer::readStringFromDisk(const std::string& name)

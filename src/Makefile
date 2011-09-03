@@ -57,10 +57,6 @@ clean:
 animation.o: animation.cpp animation.h common.h log.h resourcer.h \
  ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
-area-lua.o: animation.h area-lua.cpp area-lua.h area.h common.h entity.h \
- log.h player.h resourcer.h script.h tile.h ../deps/lua/lauxlib.h \
- ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
- ../deps/lua/lualib.h
 area.o: animation.h area.cpp area.h common.h entity.h log.h player.h \
  resourcer.h tile.h window.h world.h xml.h ../deps/lua/lauxlib.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
@@ -81,7 +77,7 @@ player.o: animation.h area.h common.h config.h entity.h log.h player.cpp \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
  ../deps/lua/lualib.h
 resourcer.o: common.h config.h log.h resourcer.cpp resourcer.h window.h \
- ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
+ xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
 script-sound.o: common.h log.h resourcer.h script-sound.cpp script-sound.h \
  script.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
@@ -100,5 +96,5 @@ world.o: animation.h area.h common.h entity.h log.h player.h resourcer.h \
  tile.h window.h world.cpp world.h xml.h ../deps/lua/lauxlib.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
  ../deps/lua/lualib.h
-xml.o: xml.cpp xml.h
+xml.o: log.h xml.cpp xml.h
 

@@ -11,6 +11,18 @@
 
 #include <libxml/tree.h>
 
+class XMLDocument {
+public:
+	bool init(const std::string& path,
+	          const std::string& data,
+	          const std::string& dtdFile);
+
+	xmlDoc* temporaryGetDoc() const;
+
+private:
+	xmlDoc* doc;
+};
+
 //! Get XML attribute (memory-safe).
 std::string readXmlAttribute(xmlNode* node, const std::string& attr);
 
