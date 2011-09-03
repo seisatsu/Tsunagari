@@ -35,7 +35,7 @@ bool XMLDocument::init(const std::string& path,
 	// Load up a Document Type Definition for validating the document.
 	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdFile.c_str());
 	if (!dtd) {
-		// MEMORY LEAK
+		xmlFreeDoc(doc);
 		Log::err(dtdFile, "file not found");
 		return false;
 	}
@@ -47,7 +47,7 @@ bool XMLDocument::init(const std::string& path,
 	xmlFreeDtd(dtd);
 
 	if (!valid) {
-		// MEMORY LEAK
+		xmlFreeDoc(doc);
 		Log::err(path, "XML document does not follow DTD");
 		return false;
 	}
