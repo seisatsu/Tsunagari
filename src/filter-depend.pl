@@ -34,7 +34,7 @@ sub whitelisted {
 	return grep { $s =~ m/$_/ } @whitelist;
 }
 
-# Given a list of tokens, remove tokens that aren't whitelisted.
+# Given a list of tokens, return only those that are whitelisted.
 sub filter {
 	return grep { whitelisted($_) } @_;
 }
