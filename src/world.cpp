@@ -76,81 +76,53 @@ void World::update(unsigned long dt)
 
 bool World::processDescriptor()
 {
-	static const std::string descriptor = "world.conf";
-	std::string str;
-	
-	XMLDoc doc = rc->getXMLDoc(descriptor, "world.dtd");
+	const XMLDoc doc = rc->getXMLDoc("world.conf", "world.dtd");
 	if (!doc)
 		return false;
-	const xmlNode* root = doc.temporaryGetRoot(); // <world>
+	const XMLNode root = doc.root(); // <world>
 	if (!root)
 		return false;
 
-	xmlNode* node = root->xmlChildrenNode; // children of <world>
-	for (; node != NULL; node = node->next) {
-		if (!xmlStrncmp(node->name, BAD_CAST("name"), 5)) {
-			xml.name = readXmlElement(node);
-		}
-		if (!xmlStrncmp(node->name, BAD_CAST("author"), 7)) {
-			xml.author = readXmlElement(node);
-		}
-		if (!xmlStrncmp(node->name, BAD_CAST("player"), 7)) {
-			xml.playerentity = readXmlElement(node);
-		}
-		if (!xmlStrncmp(node->name, BAD_CAST("type"), 5)) {
-			str = readXmlAttribute(node, "locality");
-			
-			if (!str.compare("local"))
+	for (XMLNode node = root.childrenNode(); node; node = node.next()) {
+		if (node.is("name")) {
+			xml.name = node.content();
+		} else if (node.is("author")) {
+			xml.author = node.content();
+		} else if (node.is("player")) {
+			xml.playerentity = node.content();
+		} else if (node.is("type")) {
+			std::string str = node.attr("locality");
+			if (str == "local")
 				xml.locality = LOCAL;
-			
-			else if (!str.compare("network"))
+			else if (str == "network")
 				xml.locality = NETWORK;
 
-			else {
-				Log::err(descriptor, "Invalid <locality> value");
-				return false;
-			}
-			
-			str = readXmlAttribute(node, "movement");
-			
-			if (!str.compare("turn"))
+			str = node.attr("movement");
+			if (str == "turn")
 				conf->moveMode = TURN;
-			
-			else if (!str.compare("tile"))
+			else if (str == "tile")
 				conf->moveMode = TILE;
-			
-			else if (!str.compare("notile"))
+			else if (str == "notile")
 				conf->moveMode = NOTILE;
-			
-			else {
-				Log::err(descriptor,
-					"Invalid <movement> value");
+		} else if (node.is("entrypoint")) {
+			xml.entry.area = node.attr("area");
+			if (!node.intAttr("x", &xml.entry.coords.x) ||
+			    !node.intAttr("y", &xml.entry.coords.y) ||
+			    !node.intAttr("z", &xml.entry.coords.z))
 				return false;
-			}
-		}
-		if (!xmlStrncmp(node->name, BAD_CAST("entrypoint"), 11)) {
-			xml.entry.area = readXmlAttribute(node, "area");
-			
-			str = readXmlAttribute(node, "x");
-			xml.entry.coords.x = atoi(str.c_str());
-			
-			str = readXmlAttribute(node, "y");
-			xml.entry.coords.y = atoi(str.c_str());
-			
-			str = readXmlAttribute(node, "z");
-			xml.entry.coords.z = atoi(str.c_str());
-		}
-		if (!xmlStrncmp(node->name, BAD_CAST("scripts"), 13)) {
-			node = node->xmlChildrenNode; // decend
-		}
-		if (!xmlStrncmp(node->name, BAD_CAST("script"), 7)) {
-			str = readXmlElement(node);
-			xml.scripts.push_back(str);
+		} else if (node.is("scripts")) {
+			processScripts(node.childrenNode());
 		}
 	}
 	return true;
 }
 
+void World::processScripts(XMLNode node)
+{
+	for (; node; node = node.next())
+		if (node.is("script"))
+			xml.scripts.push_back(node.content());
+}
 
 bool World::loadArea(const std::string& areaName, icoord_t playerPos)
 {

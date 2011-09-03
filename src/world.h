@@ -34,23 +34,23 @@ public:
 
 	//! World Constructor
 	World(GameWindow* wnd, Resourcer* rc, ClientValues* conf);
-	
+
 	//! World Destructor
 	~World();
 
 	//! World Initializer
 	bool init();
-	
+
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
 	void buttonUp(const Gosu::Button btn);
-	
+
 	//! Gosu Callback
 	void draw();
-	
+
 	//! Gosu Callback
 	bool needsRedraw() const;
-	
+
 	//! Gosu Callback
 	void update(unsigned long dt);
 
@@ -58,6 +58,7 @@ public:
 
 private:
 	bool processDescriptor();
+	void processScripts(XMLNode node);
 
 	Resourcer* rc;
 	GameWindow* wnd;
@@ -67,14 +68,14 @@ private:
 
 	//! WorldTypeLocality XML Storage Enum
 	/*!
-	  Stores the World locality type. Options are "local" (singleplayer),  
+	  Stores the World locality type. Options are "local" (singleplayer),
 	  or "network" (multiplayer).
 	*/
 	enum WorldTypeLocality {
 		LOCAL,
 		NETWORK
 	};
-	
+
 	//! WorldEntry XML Storage Struct
 	/*!
 	  Stores the World's entry point data. Includes the start

@@ -45,7 +45,7 @@ bool XMLNode::intContent(int* i) const
 	return true;
 }
 
-std::string XMLNode::readAttr(const std::string& name) const
+std::string XMLNode::attr(const std::string& name) const
 {
 	xmlChar* content = xmlGetProp(node, BAD_CAST(name.c_str()));
 	std::string s = content ? (const char*)content : "";
@@ -53,15 +53,20 @@ std::string XMLNode::readAttr(const std::string& name) const
 	return s;
 }
 
-bool XMLNode::readIntAttr(const std::string& name, int* i) const
+bool XMLNode::intAttr(const std::string& name, int* i) const
 {
-	std::string s = readAttr(name);
+	std::string s = attr(name);
 	if (!isInteger(s)) {
 		Log::err(doc->path(), "expected integer");
 		return false;
 	}
 	*i = atoi(s.c_str());
 	return true;
+}
+
+XMLNode::operator bool() const
+{
+	return node != NULL;
 }
 
 

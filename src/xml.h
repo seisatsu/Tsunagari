@@ -26,8 +26,11 @@ public:
 	std::string content() const;
 	bool intContent(int* i) const;
 
-	std::string readAttr(const std::string& name) const;
-	bool readIntAttr(const std::string& name, int* i) const;
+	std::string attr(const std::string& name) const;
+	bool intAttr(const std::string& name, int* i) const;
+
+	//! Whether this is a valid node (non-NULL).
+	operator bool() const;
 
 private:
 	const XMLDoc* doc;
