@@ -1,8 +1,73 @@
+#include <stdlib.h>
+#include <string.h>
+
+#include "common.h"
 #include "log.h"
 #include "xml.h"
 
+
+XMLNode::XMLNode(const XMLDoc* doc, xmlNode* node)
+	: doc(doc), node(node)
+{
+}
+
+XMLNode XMLNode::childrenNode() const
+{
+	return XMLNode(doc, node->xmlChildrenNode);
+}
+
+XMLNode XMLNode::next() const
+{
+	return XMLNode(doc, node->next);
+}
+
+bool XMLNode::is(const char* name) const
+{
+	return !xmlStrncmp(node->name, BAD_CAST(name), (int)strlen(name)+1);
+}
+
+std::string XMLNode::content() const
+{
+	xmlChar* content = xmlNodeGetContent(node);
+	std::string s = content ? (const char*)content : "";
+	xmlFree(content);
+	return s;
+}
+
+bool XMLNode::intContent(int* i) const
+{
+	std::string s = content();
+	if (!isInteger(s)) {
+		Log::err(doc->path(), "expected integer");
+		return false;
+	}
+	*i = atoi(s.c_str());
+	return true;
+}
+
+std::string XMLNode::readAttr(const std::string& name) const
+{
+	xmlChar* content = xmlGetProp(node, BAD_CAST(name.c_str()));
+	std::string s = content ? (const char*)content : "";
+	xmlFree(content);
+	return s;
+}
+
+bool XMLNode::readIntAttr(const std::string& name, int* i) const
+{
+	std::string s = readAttr(name);
+	if (!isInteger(s)) {
+		Log::err(doc->path(), "expected integer");
+		return false;
+	}
+	*i = atoi(s.c_str());
+	return true;
+}
+
+
 static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 {
+
 	const std::string* filename = (const std::string*)pstrFilename;
 	char buf[512];
 	va_list ap;
@@ -13,10 +78,16 @@ static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
 	va_end(ap);
 }
 
+XMLDoc::XMLDoc()
+{
+}
+
 bool XMLDoc::init(const std::string& path,
                   const std::string& data,
                   const std::string& dtdPath)
 {
+	this->path_ = path;
+
 	xmlParserCtxt* pc = xmlNewParserCtxt();
 	pc->vctxt.userData = (void*)&path;
 	pc->vctxt.error = xmlErrorCb;
@@ -27,7 +98,7 @@ bool XMLDoc::init(const std::string& path,
 		XML_PARSE_NOBLANKS | XML_PARSE_NONET), xmlFreeDoc);
 	xmlFreeParserCtxt(pc);
 	if (!doc) {
-		Log::err(path, "Could not parse file");
+		Log::err(path, "could not parse file");
 		return false;
 	}
 
@@ -54,9 +125,19 @@ bool XMLDoc::init(const std::string& path,
 	return true;
 }
 
+XMLNode XMLDoc::root() const
+{
+	return XMLNode(this, xmlDocGetRootElement(doc.get()));
+}
+
 xmlNode* XMLDoc::temporaryGetRoot() const
 {
 	return xmlDocGetRootElement(doc.get());
+}
+
+const std::string& XMLDoc::path() const
+{
+	return path_;
 }
 
 XMLDoc::operator bool() const

@@ -303,8 +303,6 @@ bool Resourcer::compileLuaFromDisk(const std::string& name, lua_State* L,
 	return true;
 }
 
-// use RAII to ensure doc is freed
-// boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
 XMLDoc Resourcer::readXMLDocFromDisk(const std::string& name,
                                      const std::string& dtdFile)
 {
