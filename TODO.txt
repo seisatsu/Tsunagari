@@ -44,3 +44,5 @@ ITEMS
 
 * Move some flags into unsigned:1
 
+* Investigate LÖVE @ http://love2d.org/
+
