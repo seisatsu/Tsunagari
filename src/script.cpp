@@ -19,7 +19,7 @@ Script::Script(Resourcer* rc)
 	: ownState(true), L(lua_open())
 {
 	luaL_openlibs(L);
-	bindSound(*this, rc);
+	bindSound(this, rc);
 }
 
 Script::Script(lua_State* L)
@@ -38,7 +38,8 @@ void Script::bindGlobalFn(const std::string& name, lua_CFunction fn)
 	lua_register(L, name.c_str(), fn);
 }
 
-void Script::bindObjFn(const std::string& table, const std::string& index, lua_CFunction fn)
+void Script::bindObjFn(const std::string& table, const std::string& index,
+                       lua_CFunction fn)
 {
 	// Get table.
 	lua_getglobal(L, table.c_str());
@@ -51,7 +52,8 @@ void Script::bindObjFn(const std::string& table, const std::string& index, lua_C
 	lua_remove(L, -1);
 }
 
-void Script::bindObjInt(const std::string& table, const std::string& index, lua_Integer i)
+void Script::bindObjInt(const std::string& table, const std::string& index,
+                        lua_Integer i)
 {
 	// Get table.
 	lua_getglobal(L, table.c_str());

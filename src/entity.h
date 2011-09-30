@@ -13,7 +13,7 @@
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 
-#include "area-structs.h" // for enum TileEventTriggers
+#include "tile.h" // for enum TileEventTrigger
 #include "common.h"
 #include "resourcer.h"
 
@@ -97,11 +97,16 @@ protected:
 	virtual void preMove(icoord_t delta);
 	virtual void preMoveLua();
 
+	void leaveTile();
+	void enterTile();
+	void postMoveScript();
+
 	//! Called after we have arrived at another tile.
 	virtual void postMove();
 	virtual void postMoveLua();
 
-	void tileScripts(Tile& tile, std::vector<TileEvent>& events, TileEventTriggers trigger);
+	void tileScripts(Tile& tile, std::vector<TileEvent>& events,
+	                 TileEventTrigger trigger);
 	void runTileLua(Tile& tile, const std::string& script);
 
 	// XML parsing functions used in constructing an Entity

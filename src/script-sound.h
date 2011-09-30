@@ -12,7 +12,7 @@
 class Resourcer;
 
 //! Give a script a 'Sound' object that can play sounds.
-void bindSound(Script& script, Resourcer* rc);
+void bindSound(Script* script, Resourcer* rc);
 
 #endif
 

@@ -40,8 +40,8 @@ static const luaL_Reg funcs[] = {
 	{ NULL, NULL }
 };
 
-void bindSound(Script& script, Resourcer* rc)
+void bindSound(Script* script, Resourcer* rc)
 {
-	script.bindObj("Sound", RESOURCER, rc, funcs);
+	script->bindObj("Sound", RESOURCER, rc, funcs);
 }
 

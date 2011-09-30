@@ -41,3 +41,8 @@ ITEMS
 
 * Investigate using Gosu::Song with OpenAL, then with OpenAL+zip.
 
+* Separate Resourcer from file. Resourcer should be able to access multiple
+  file sources.
+
+* Move some flags into unsigned:1
+
