@@ -16,7 +16,9 @@ ITEMS
 
 * Investigate Guichan
 
-* Investigate PhysicsFS
+* Investigate PhysicsFS for world file access and event script jailing.
+
+* The player's speed should actually change as they start to enter a speed modified tile. We may need to rethink event timing.
 
 * Resourcer returns Script rather than lua_State*
   Move bytecode functions and stuff to Script.
