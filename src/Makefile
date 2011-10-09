@@ -36,8 +36,8 @@ depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl filter-depend.pl
 
 tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
-           log.o main.o player.o resourcer.o script.o script-sound.o tile.o \
-           window.o world.o xml.o
+           log.o main.o music.o player.o resourcer.o script.o script-sound.o \
+           tile.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
@@ -61,7 +61,7 @@ area-lua.o: animation.h area-lua.cpp area-lua.h area.h common.h entity.h \
  log.h player.h resourcer.h script.h tile.h ../deps/lua/lauxlib.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
  ../deps/lua/lualib.h
-area.o: animation.h area.cpp area.h common.h entity.h log.h player.h \
+area.o: animation.h area.cpp area.h common.h entity.h log.h music.h player.h \
  resourcer.h tile.h window.h world.h xml.h ../deps/lua/lauxlib.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
  ../deps/lua/lualib.h
@@ -76,6 +76,7 @@ entity.o: animation.h area.h common.h config.h entity-lua.h entity.cpp \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
 log.o: config.h log.cpp log.h
 main.o: cmd.h common.h config.h log.h main.cpp window.h
+music.o: music.cpp music.h resourcer.h
 player.o: animation.h area.h common.h config.h entity.h log.h player.cpp \
  player.h resourcer.h tile.h window.h world.h ../deps/lua/lauxlib.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
@@ -96,8 +97,8 @@ tile.o: animation.h area.h common.h entity-lua.h entity.h log.h player.h \
 window.o: common.h config.h log.h resourcer.h window.cpp window.h world.h \
  ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
-world.o: animation.h area.h common.h entity.h log.h player.h resourcer.h \
- tile.h window.h world.cpp world.h xml.h ../deps/lua/lauxlib.h \
+world.o: animation.h area.h common.h entity.h log.h music.h player.h \
+ resourcer.h tile.h window.h world.cpp world.h xml.h ../deps/lua/lauxlib.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
  ../deps/lua/lualib.h
 xml.o: xml.cpp xml.h

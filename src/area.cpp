@@ -31,31 +31,22 @@
 Area::Area(Resourcer* rc,
            World* world,
            Player* player,
+           Music* music,
            const std::string& descriptor)
-	: rc(rc), world(world), player(player), descriptor(descriptor),
-	  onIntro(false)
+	: rc(rc), world(world), player(player), music(music),
+	  descriptor(descriptor)
 {
 	dim.x = dim.y = dim.z = 0;
 }
 
 Area::~Area()
 {
-	if (musicInst && musicInst->playing())
-		musicInst->stop();
 }
 
 bool Area::init()
 {
 	if (!processDescriptor())
 		return false;
-
-	if (introMusic) {
-		musicInst.reset(introMusic->play(1, 1, false));
-		onIntro = true;
-	}
-	else if (mainMusic) {
-		musicInst.reset(mainMusic->play(1, 1, true));
-	}
 	return true;
 }
 
@@ -146,10 +137,7 @@ bool Area::needsRedraw() const
 
 void Area::update(unsigned long dt)
 {
-	if (onIntro && !musicInst->playing()) {
-		onIntro = false;
-		musicInst.reset(mainMusic->play(1, 1, true));
-	}
+	music->update();
 	player->update(dt);
 }
 
@@ -282,6 +270,8 @@ bool Area::processMapProperties(xmlNode* node)
   <property name="scripts" value="areainits.event,test.event"/>
  </properties>
 */
+	bool introSet = false;
+	bool mainSet = false;
 
 	xmlNode* child = node->xmlChildrenNode;
 	for (; child != NULL; child = child->next) {
@@ -291,15 +281,24 @@ bool Area::processMapProperties(xmlNode* node)
 			author = value;
 		else if (!name.compare("name"))
 			this->name = value;
-		else if (!name.compare("intro_music"))
-			introMusic = rc->getSample(value);
-		else if (!name.compare("main_music"))
-			mainMusic = rc->getSample(value);
+		else if (!name.compare("intro_music")) {
+			music->setIntro(value);
+			introSet = true;
+		}
+		else if (!name.compare("main_music")) {
+			music->setMain(value);
+			mainSet = true;
+		}
 		else if (!name.compare("onLoad"))
 			onLoadEvents = value;
 		else if (!name.compare("scripts"))
 			scripts = value; // TODO split(), load
 	}
+	
+	if (!introSet)
+		music->setIntro("");
+	if (!mainSet)
+		music->setMain("");
 	return true;
 }
 

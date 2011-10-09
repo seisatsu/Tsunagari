@@ -39,6 +39,8 @@ bool World::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 
+	music = new Music(rc);
+
 	// FIXME The player entity doesn't have a descriptor yet.
 	player.reset(new Player(rc, NULL, conf));
 	if (!player->init(xml.playerentity))
@@ -154,7 +156,7 @@ bool World::processDescriptor()
 
 bool World::loadArea(const std::string& areaName, icoord_t playerPos)
 {
-	Area* newArea = new Area(rc, this, player.get(), areaName);
+	Area* newArea = new Area(rc, this, player.get(), music, areaName);
 	delete area;
 	area = newArea;
 	if (!area->init())

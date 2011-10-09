@@ -11,11 +11,11 @@
 #include <vector>
 
 #include <boost/scoped_ptr.hpp>
-#include <Gosu/Audio.hpp> // for Gosu::SampleInstance
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <libxml/tree.h>
 
 #include "common.h"
+#include "music.h"
 #include "player.h"
 #include "resourcer.h"
 #include "tile.h"
@@ -24,17 +24,14 @@ namespace Gosu {
 	class Bitmap;
 	class Button;
 	class Image;
-	class Sample;
-	class SampleInstance;
 }
 
 class Entity;
 class GameWindow;
+class Music;
 class Resourcer;
 class Sprite;
 class World;
-
-
 
 //! This class is responsible for each map, or area in a Tsunagari World.
 /*!
@@ -46,7 +43,7 @@ class Area
 {
 public:
 	//! Area Constructor
-	Area(Resourcer* rc, World* world, Player* player,
+	Area(Resourcer* rc, World* world, Player* player, Music* music,
 			const std::string& filename);
 
 	//! Area Destructor
@@ -75,15 +72,6 @@ public:
 	icube_t visibleTiles() const;
 
 private:
-	//! Music
-	/*!
-		Stores info for the intro or main music files.
-	*/
-	struct Music {
-		bool loop;
-		std::string filename;
-	};
-
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
 	void drawTiles() const;
@@ -132,15 +120,11 @@ private:
 	//! Process a door convenience trigger.
 	Door parseDoor(const std::string dest);
 
-
 	Resourcer* rc;
 	World* world;
 	Player* player;
+	Music* music;
 	const std::string descriptor;
-
-	bool onIntro;
-	SampleRef introMusic, mainMusic;
-	boost::optional<Gosu::SampleInstance> musicInst;
 
 	typedef std::vector<Tile> row_t;
 	typedef std::vector<row_t> grid_t;

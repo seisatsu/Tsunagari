@@ -19,6 +19,7 @@ namespace Gosu {
 }
 
 class Area;
+class Music;
 class Player;
 class Resourcer;
 class GameWindow;
@@ -63,6 +64,7 @@ private:
 	GameWindow* wnd;
 	ClientValues* conf;
 	Area* area;
+	Music* music;
 	boost::scoped_ptr<Player> player;
 
 	//! WorldTypeLocality XML Storage Enum
