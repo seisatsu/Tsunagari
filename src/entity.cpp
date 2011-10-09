@@ -177,24 +177,24 @@ bool Entity::setPhase(const std::string& name)
 	return false;
 }
 
-icoord_t Entity::getIPixel() const
+icoord Entity::getIPixel() const
 {
 	return c;
 }
 
-rcoord_t Entity::getRPixel() const
+rcoord Entity::getRPixel() const
 {
 	return r;
 }
 
-icoord_t Entity::getTileCoords() const
+icoord Entity::getTileCoords() const
 {
-	icoord_t tileDim = area->getTileDimensions();
+	icoord tileDim = area->getTileDimensions();
 	// XXX: revisit when we have Z-buffers
 	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
-void Entity::setPixelCoords(icoord_t coords)
+void Entity::setPixelCoords(icoord coords)
 {
 	redraw = true;
 	c = coords;
@@ -203,10 +203,10 @@ void Entity::setPixelCoords(icoord_t coords)
 	r.z = c.z;
 }
 
-void Entity::setTileCoords(icoord_t coords)
+void Entity::setTileCoords(icoord coords)
 {
 	redraw = true;
-	icoord_t tileDim = area->getTileDimensions();
+	icoord tileDim = area->getTileDimensions();
 	c = coords;
 	c.x *= tileDim.x;
 	c.y *= tileDim.y;
@@ -216,7 +216,7 @@ void Entity::setTileCoords(icoord_t coords)
 	// r.z = c.z;
 }
 
-void Entity::moveByPixel(icoord_t delta)
+void Entity::moveByPixel(icoord delta)
 {
 	c.x += delta.x;
 	c.y += delta.y;
@@ -224,13 +224,13 @@ void Entity::moveByPixel(icoord_t delta)
 	redraw = true;
 }
 
-void Entity::moveByTile(icoord_t delta)
+void Entity::moveByTile(icoord delta)
 {
 	if (conf->moveMode == TILE && moving)
 		// support queueing moves?
 		return;
 
-	icoord_t newCoord = getTileCoords();
+	icoord newCoord = getTileCoords();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -247,7 +247,7 @@ void Entity::moveByTile(icoord_t delta)
 	}
 
 	// Move!
-	const icoord_t tileDim = area->getTileDimensions();
+	const icoord tileDim = area->getTileDimensions();
 	dest.x = c.x + delta.x * tileDim.x;
 	dest.y = c.y + delta.y * tileDim.y;
 	dest.z = 0; // XXX: set dest.z when we have Z-buffers
@@ -275,8 +275,8 @@ void Entity::setArea(Area* a)
 
 void Entity::gotoRandomTile()
 {
-	icoord_t map = area->getDimensions();
-	icoord_t pos;
+	icoord map = area->getDimensions();
+	icoord pos;
 	Tile* tile;
 	do {
 		pos = icoord(rand() % map.x, rand() % map.y, 0);
@@ -308,7 +308,7 @@ SampleRef Entity::getSound(const std::string& name)
 		return SampleRef();
 }
 
-void Entity::calculateFacing(icoord_t delta)
+void Entity::calculateFacing(icoord delta)
 {
 	int x, y;
 
@@ -329,7 +329,7 @@ void Entity::calculateFacing(icoord_t delta)
 	facing = facings[y][x];
 }
 
-void Entity::preMove(icoord_t delta)
+void Entity::preMove(icoord delta)
 {
 	calculateFacing(delta);
 	if (conf->moveMode == TURN)

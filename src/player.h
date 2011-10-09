@@ -19,22 +19,22 @@ public:
 	Player(Resourcer* rc, Area* area, ClientValues* conf);
 
 	//! Smooth continuous movement.
-	void startMovement(icoord_t delta);
-	void stopMovement(icoord_t delta);
+	void startMovement(icoord delta);
+	void stopMovement(icoord delta);
 
 	//! Move the player by dx, dy. Not guaranteed to be smooth if called
 	//  on each update().
-	void moveByTile(icoord_t delta);
+	void moveByTile(icoord delta);
 
 protected:
-	void preMove(icoord_t delta);
+	void preMove(icoord delta);
 	void postMove();
 
 private:
 	void normalizeVelocity();
 
 	//! Stores intent to move continuously in some direction.
-	icoord_t velocity;
+	icoord velocity;
 };
 
 #endif

@@ -10,23 +10,6 @@
 
 #include "common.h"
 
-icoord_t icoord(int x, int y, int z)
-{
-	icoord_t c;
-	c.x = x;
-	c.y = y;
-	c.z = z;
-	return c;
-}
-
-rcoord_t rcoord(double x, double y, double z)
-{
-	rcoord_t c;
-	c.x = x;
-	c.y = y;
-	c.z = z;
-	return c;
-}
 
 icube_t icube(int x1, int y1, int z1,
               int x2, int y2, int z2)

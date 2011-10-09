@@ -141,22 +141,22 @@ void Area::update(unsigned long dt)
 	player->update(dt);
 }
 
-icoord_t Area::getDimensions() const
+icoord Area::getDimensions() const
 {
 	return dim;
 }
 
-icoord_t Area::getTileDimensions() const
+icoord Area::getTileDimensions() const
 {
 	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
-const Tile& Area::getTile(icoord_t c) const
+const Tile& Area::getTile(icoord c) const
 {
 	return map[c.z][c.y][c.x];
 }
 
-Tile& Area::getTile(icoord_t c)
+Tile& Area::getTile(icoord c)
 {
 	return map[c.z][c.y][c.x];
 }
@@ -167,7 +167,7 @@ static double center(double w, double g, double p)
 }
 
 // FIXME: should return an rcoord
-const icoord_t Area::viewportOffset() const
+const icoord Area::viewportOffset() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
 	const double tileWidth = (double)tilesets[0].tileDim.x;
@@ -179,7 +179,7 @@ const icoord_t Area::viewportOffset() const
 	const double playerX = player->getRPixel().x / tileWidth + 0.5;
 	const double playerY = player->getRPixel().y / tileHeight + 0.5;
 
-	icoord_t c;
+	icoord c;
 	c.x = (int)(center(windowWidth, mapWidth, playerX) * tileWidth);
 	c.y = (int)(center(windowHeight, mapHeight, playerY) * tileHeight);
 	c.z = 0;
@@ -189,7 +189,7 @@ const icoord_t Area::viewportOffset() const
 
 const Gosu::Transform Area::viewportTransform() const
 {
-	const icoord_t c = viewportOffset();
+	const icoord c = viewportOffset();
 	return Gosu::translate((double)c.x, (double)c.y);
 }
 
@@ -200,7 +200,7 @@ icube_t Area::visibleTiles() const
 	const int tileHeight = tilesets[0].tileDim.y;
 	const int windowWidth = graphics.width();
 	const int windowHeight = graphics.height();
-	const icoord_t off = viewportOffset();
+	const icoord off = viewportOffset();
 
 	const int x1 = -off.x / tileWidth;
 	const int y1 = -off.y / tileHeight;

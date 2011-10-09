@@ -20,7 +20,7 @@ Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
 {
 }
 
-void Player::startMovement(icoord_t delta)
+void Player::startMovement(icoord delta)
 {
 	if (conf->moveMode == TURN) {
 		// TODO Move by velocity would allow true diagonal movement
@@ -35,7 +35,7 @@ void Player::startMovement(icoord_t delta)
 	}
 }
 
-void Player::stopMovement(icoord_t delta)
+void Player::stopMovement(icoord delta)
 {
 	if (conf->moveMode == TILE) {
 		velocity.x -= delta.x;
@@ -47,7 +47,7 @@ void Player::stopMovement(icoord_t delta)
 	}
 }
 
-void Player::moveByTile(icoord_t delta)
+void Player::moveByTile(icoord delta)
 {
 	// You can't interrupt an in-progress movement.
 	if (moving)
@@ -62,7 +62,7 @@ void Player::moveByTile(icoord_t delta)
 	}
 
 	// Try to actually move.
-	icoord_t newCoord = getTileCoords();
+	icoord newCoord = getTileCoords();
 	newCoord.x += delta.x;
 	newCoord.y += delta.y;
 	newCoord.z += delta.z;
@@ -79,7 +79,7 @@ void Player::moveByTile(icoord_t delta)
 	Entity::moveByTile(delta);
 }
 
-void Player::preMove(icoord_t delta)
+void Player::preMove(icoord delta)
 {
 	Entity::preMove(delta);
 
@@ -93,7 +93,7 @@ void Player::postMove()
 {
 	Entity::postMove();
 
-	const icoord_t coord = getTileCoords();
+	const icoord coord = getTileCoords();
 	const Tile& dest = area->getTile(coord);
 	const boost::optional<Door> door = dest.door;
 	if (door)

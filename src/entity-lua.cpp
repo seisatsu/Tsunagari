@@ -27,7 +27,7 @@ static int lua_Entity_setTileCoords(lua_State* L)
 		return luaL_error(L,
 			"setTileCoords: arg 3 should be a number");
 	int z = (int)lua_tointeger(L, 4);
-	icoord_t coords = icoord(x, y, z);
+	icoord coords = icoord(x, y, z);
 	// FIXME: bounds check on map
 	entity->setTileCoords(coords);
 	return 0;
@@ -77,7 +77,7 @@ static const luaL_Reg funcs[] = {
 
 void bindEntity(Script* script, Entity* entity, const std::string& bindTo)
 {
-	const icoord_t tile = entity->getTileCoords();
+	const icoord tile = entity->getTileCoords();
 	script->bindObj(bindTo, ENTITY, (void*)entity, funcs);
 	script->bindObjInt(bindTo, "x", tile.x);
 	script->bindObjInt(bindTo, "y", tile.y);

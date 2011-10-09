@@ -76,7 +76,7 @@ struct TileEvent {
 */
 struct Door {
 	std::string area;
-	icoord_t tile;
+	icoord tile;
 };
 
 //! Contains properties unique to this tile.
@@ -138,7 +138,7 @@ private:
 */
 struct TileSet {
 	TiledImage tiles;
-	icoord_t tileDim; // Dimensions per tile
+	icoord tileDim; // Dimensions per tile
 	std::vector<TileType> tileTypes; // Global tile properties
 };
 

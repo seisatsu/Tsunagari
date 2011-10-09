@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "log.h" // for message_mode_t
+#include "math.h" // for icoord
 
 //! Game Movement Mode
 enum movement_mode_t {
@@ -18,27 +19,6 @@ enum movement_mode_t {
 	TILE,
 	NOTILE
 };
-
-template<class T>
-class vec3
-{
-public:
-	T x, y, z;
-};
-
-//! Integer vector.
-typedef vec3<int> ivec3;
-
-//! Real vector.
-typedef vec3<double> rvec3;
-
-//! Coordinates.
-typedef ivec3 icoord_t;
-typedef rvec3 rcoord_t;
-
-//! coord_t constructors.
-icoord_t icoord(int x, int y, int z);
-rcoord_t rcoord(double x, double y, double z);
 
 //! 3D cube type.
 struct icube_t {
@@ -55,7 +35,7 @@ icube_t icube(int x1, int y1, int z1,
 struct ClientValues {
 	std::string world;
 	movement_mode_t moveMode;
-	icoord_t windowSize;
+	icoord windowSize;
 	bool fullscreen;
 	bool cacheEnabled;
 	int cacheTTL;

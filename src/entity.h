@@ -61,17 +61,17 @@ public:
 	bool setPhase(const std::string& name);
 
 	//! Retrieve position within Area.
-	icoord_t getIPixel() const;
-	rcoord_t getRPixel() const;
-	icoord_t getTileCoords() const;
+	icoord getIPixel() const;
+	rcoord getRPixel() const;
+	icoord getTileCoords() const;
 
 	//! Set location within Area.
-	void setPixelCoords(icoord_t c);
-	void setTileCoords(icoord_t c);
+	void setPixelCoords(icoord c);
+	void setTileCoords(icoord c);
 
 	//! Move within Area.
-	void moveByPixel(icoord_t delta);
-	void moveByTile(icoord_t delta);
+	void moveByPixel(icoord delta);
+	void moveByTile(icoord delta);
 
 	//! Sets the Area object this entity will ask when looking for
 	//  nearby Tiles. Doesn't change x,y,z position.
@@ -94,10 +94,10 @@ protected:
 	SampleRef getSound(const std::string& name);
 
 	//! Calculate which way to face based upon a movement delta.
-	void calculateFacing(icoord_t delta);
+	void calculateFacing(icoord delta);
 
 	//! Called right before starting to moving onto another tile.
-	virtual void preMove(icoord_t delta);
+	virtual void preMove(icoord delta);
 	virtual void preMoveLua();
 
 	void leaveTile();
@@ -140,12 +140,12 @@ protected:
 	double speed;     //! Effective speed = original speed * multiplier
 
 	bool moving;
-	icoord_t dest;
+	icoord dest;
 	Tile* movingFrom;
 
 	Area* area;
-	icoord_t c;
-	rcoord_t r; // real x,y position: hold partial pixel transversal
+	icoord c;
+	rcoord r; // real x,y position: hold partial pixel transversal
 
 	std::string descriptor;
 
@@ -157,7 +157,7 @@ protected:
 	*/
 	struct SpriteValues {
 		std::string sheet;
-		icoord_t tileSize;
+		icoord tileSize;
 		boost::unordered_map<std::string, unsigned> phases;
 	} xml;
 };

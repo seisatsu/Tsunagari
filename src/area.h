@@ -65,10 +65,10 @@ public:
 	//! Gosu Callback
 	void update(unsigned long dt);
 
-	icoord_t getDimensions() const;
-	icoord_t getTileDimensions() const;
-	const Tile& getTile(icoord_t c) const;
-	Tile& getTile(icoord_t c);
+	icoord getDimensions() const;
+	icoord getTileDimensions() const;
+	const Tile& getTile(icoord c) const;
+	Tile& getTile(icoord c);
 	icube_t visibleTiles() const;
 
 private:
@@ -78,7 +78,7 @@ private:
 	void drawTile(const Tile& tile, int x, int y, int z) const;
 	void drawEntities();
 
-	const icoord_t viewportOffset() const;
+	const icoord viewportOffset() const;
 	const Gosu::Transform viewportTransform() const;
 
 	//! XML descriptor parsing function.
@@ -134,7 +134,7 @@ private:
 	 * any gaps.
 	 */
 	tilematrix_t map;
-	icoord_t dim;
+	icoord dim;
 
 	std::string name;
 	std::string author;
