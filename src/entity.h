@@ -52,6 +52,9 @@ public:
 	bool needsRedraw() const;
 
 	void update(unsigned long dt);
+	void updateTurn(unsigned long dt);
+	void updateTile(unsigned long dt);
+	void updateNoTile(unsigned long dt);
 
 	//! Change the graphic. Returns true if it was changed to something
 	//  different.

@@ -71,7 +71,7 @@ bool Entity::needsRedraw() const
 }
 
 
-static double angleFromXY(long x, long y)
+static double angleFromXY(int x, int y)
 {
 	double angle = 0.0;
 
@@ -105,35 +105,61 @@ static double angleFromXY(long x, long y)
 
 void Entity::update(unsigned long dt)
 {
-	if (conf->moveMode == TILE && moving) {
-		redraw = true;
-
-		double destDist = Gosu::distance((double)c.x, (double)c.y,
-				(double)dest.x, (double)dest.y); 
-		if (destDist < speed * (double)dt) {
-			c = dest;
-			moving = false;
-			postMove();
-		}
-		else {
-			double angle = angleFromXY(c.x - dest.x, dest.y - c.y);
-			double dx = cos(angle);
-			double dy = -sin(angle);
-
-			// Fix inaccurate trig functions
-			if (-1e-10 < dx && dx < 1e-10)
-				dx = 0.0;
-			if (-1e-10 < dy && dy < 1e-10)
-				dy = 0.0;
-
-			// Save state of partial pixels traveled in double
-			r.x += dx * speed * (double)dt;
-			r.y += dy * speed * (double)dt;
-
-			c.x = (int)r.x;
-			c.y = (int)r.y;
-		}
+	switch (conf->moveMode) {
+	case TURN:
+		updateTurn(dt);
+		break;
+	case TILE:
+		updateTile(dt);
+		break;
+	case NOTILE:
+		updateNoTile(dt);
+		break;
 	}
+}
+
+void Entity::updateTurn(unsigned long)
+{
+	// Entities don't do anything in TILE mode.
+}
+
+void Entity::updateTile(unsigned long dt)
+{
+	if (!moving)
+		return;
+
+	redraw = true;
+	double traveled = speed * (double)dt;
+	double destDist = Gosu::distance((double)c.x, (double)c.y,
+			(double)dest.x, (double)dest.y); 
+	if (destDist < traveled) {
+		c = dest;
+		moving = false;
+		postMove();
+	}
+	else {
+		double angle = angleFromXY(c.x - dest.x, dest.y - c.y);
+		double dx = cos(angle);
+		double dy = -sin(angle);
+
+		// Fix inaccurate trig functions. (Why do I have to do this!??)
+		if (-1e-10 < dx && dx < 1e-10)
+			dx = 0.0;
+		if (-1e-10 < dy && dy < 1e-10)
+			dy = 0.0;
+
+		// Save state of partial pixel travel in double.
+		r.x += dx * speed * (double)dt;
+		r.y += dy * speed * (double)dt;
+
+		c.x = (int)r.x;
+		c.y = (int)r.y;
+	}
+}
+
+void Entity::updateNoTile(unsigned long)
+{
+	// TODO
 }
 
 bool Entity::setPhase(const std::string& name)
