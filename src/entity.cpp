@@ -35,10 +35,10 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	  redraw(true),
 	  moving(false),
 	  area(area),
+	  c(0, 0, 0),
+	  r(0.0, 0.0, 0.0),
 	  conf(conf)
 {
-	c = icoord(0, 0, 0);
-	r = rcoord(0.0, 0.0, 0.0);
 }
 
 Entity::~Entity()
@@ -149,8 +149,8 @@ void Entity::updateTile(unsigned long dt)
 			dy = 0.0;
 
 		// Save state of partial pixel travel in double.
-		r.x += dx * speed * (double)dt;
-		r.y += dy * speed * (double)dt;
+		r.x += dx * traveled;
+		r.y += dy * traveled;
 
 		c.x = (int)r.x;
 		c.y = (int)r.y;
@@ -206,10 +206,9 @@ void Entity::setPixelCoords(icoord coords)
 void Entity::setTileCoords(icoord coords)
 {
 	redraw = true;
-	icoord tileDim = area->getTileDimensions();
+	const icoord tileDim = area->getTileDimensions();
 	c = coords;
-	c.x *= tileDim.x;
-	c.y *= tileDim.y;
+	c *= tileDim;
 	// XXX: set c.z when we have Z-buffers
 	r.x = c.x;
 	r.y = c.y;
@@ -221,6 +220,7 @@ void Entity::moveByPixel(icoord delta)
 	c.x += delta.x;
 	c.y += delta.y;
 	c.z += delta.z;
+	// FIXME: missing r =
 	redraw = true;
 }
 
@@ -231,9 +231,7 @@ void Entity::moveByTile(icoord delta)
 		return;
 
 	icoord newCoord = getTileCoords();
-	newCoord.x += delta.x;
-	newCoord.y += delta.y;
-	newCoord.z += delta.z;
+	newCoord += delta;
 
 	// Can we move?
 	const Tile& tile = area->getTile(newCoord);
@@ -248,23 +246,19 @@ void Entity::moveByTile(icoord delta)
 
 	// Move!
 	const icoord tileDim = area->getTileDimensions();
-	dest.x = c.x + delta.x * tileDim.x;
-	dest.y = c.y + delta.y * tileDim.y;
-	dest.z = 0; // XXX: set dest.z when we have Z-buffers
+	dest = c;
+	dest += delta;
+	dest *= tileDim;
 	redraw = true;
 
 	preMove(delta);
 
 	if (conf->moveMode == TURN) {
-		c.x = dest.x;
-		c.y = dest.y;
-		// XXX: set c.z when we have Z-buffers
+		c = dest;
 		postMove();
 	}
 	else if (conf->moveMode == TILE) {
 		moving = true;
-		r.x = (double)c.x;
-		r.y = (double)c.y;
 	}
 }
 

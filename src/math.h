@@ -12,10 +12,14 @@ class vec3
 {
 public:
 	vec3();
+	vec3(const vec3<T>& other);
 	vec3(T x, T y, T z);
+
 	vec3& operator +=(const vec3<T>& other);
 	vec3& operator -=(const vec3<T>& other);
+	vec3& operator *=(const vec3<T>& other);
 	vec3& operator *=(T coefficient);
+
 	T x, y, z;
 };
 
