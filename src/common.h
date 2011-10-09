@@ -19,15 +19,18 @@ enum movement_mode_t {
 	NOTILE
 };
 
-//! Integer vector.
-struct ivec3 {
-	int x, y, z;
+template<class T>
+class vec3
+{
+public:
+	T x, y, z;
 };
 
+//! Integer vector.
+typedef vec3<int> ivec3;
+
 //! Real vector.
-struct rvec3 {
-	double x, y, z;
-};
+typedef vec3<double> rvec3;
 
 //! Coordinates.
 typedef ivec3 icoord_t;
