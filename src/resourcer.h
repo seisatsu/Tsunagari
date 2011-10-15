@@ -14,11 +14,11 @@
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 
+#include "common.h"
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
-
-#include "common.h"
+#include "xml.h"
 
 struct zip;
 
@@ -35,8 +35,6 @@ class GameWindow;
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Gosu::Sample> SampleRef;
 typedef std::deque<ImageRef> TiledImage;
-// libxml2 resources
-typedef boost::shared_ptr<xmlDoc> XMLDocRef;
 
 //! Resourcer Class
 /*!
@@ -68,7 +66,7 @@ public:
 	SampleRef getSample(const std::string& name);
 
 	//! Requests an XML resource from cache.
-	XMLDocRef getXMLDoc(const std::string& name,
+	XMLDoc getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
 
 	//! Requests a Lua script from cache. Lua state L will parse the script.
@@ -90,7 +88,7 @@ private:
 		boost::shared_ptr<TiledImage> > > TiledImageMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<SampleRef> >
 		SampleRefMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<XMLDocRef> >
+	typedef boost::unordered_map<const std::string, CacheEntry<XMLDoc> >
 		XMLMap;
 
 	// Holds compiled Lua scripts. Not garbage collected.
@@ -107,7 +105,7 @@ private:
                                 std::vector<char>& bytes);
 
 	//! Reads an XML document from disk and parses it.
-	xmlDoc* readXMLDocFromDisk(const std::string& name,
+	XMLDoc readXMLDocFromDisk(const std::string& name,
 		const std::string& dtdFile);
 
 	//! Read a string resource from disk.

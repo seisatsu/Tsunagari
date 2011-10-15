@@ -114,15 +114,17 @@ protected:
 
 	// XML parsing functions used in constructing an Entity
 	bool processDescriptor();
-	bool processSprite(const xmlNode* sprite);
-	bool processPhases(const xmlNode* phases);
-	bool processPhase(xmlNode* phase, const TiledImage& tiles);
-	bool processMember(xmlNode* phase, Animation& anim,
+	bool processSprite(XMLNode node);
+	bool processPhases(XMLNode node);
+	bool processPhase(const XMLNode node, const TiledImage& tiles);
+	bool processMembers(XMLNode node, Animation& anim,
+                            const TiledImage& tiles);
+	bool processMember(const XMLNode node, Animation& anim,
                            const TiledImage& tiles);
-	bool processSounds(const xmlNode* sounds);
-	bool processSound(xmlNode* sound);
-	void processScripts(const xmlNode* scripts);
-	void processScript(xmlNode* script);
+	bool processSounds(XMLNode node);
+	bool processSound(const XMLNode node);
+	bool processScripts(XMLNode node);
+	bool processScript(const XMLNode node);
 
 
 	Resourcer* rc;

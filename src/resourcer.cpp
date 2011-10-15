@@ -21,24 +21,13 @@
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
+#include "xml.h"
 
 #ifndef LIBXML_TREE_ENABLED
 	#error Tree must be enabled in libxml2
 #endif
 
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
-
-static void xmlErrorCb(void* pstrFilename, const char* msg, ...)
-{
-	const std::string* filename = (const std::string*)pstrFilename;
-	char buf[512];
-	va_list ap;
-
-	va_start(ap, msg);
-	snprintf(buf, sizeof(buf)-1, msg, va_arg(ap, char*));
-	Log::err(*filename, buf);
-	va_end(ap);
-}
 
 Resourcer::Resourcer(GameWindow* window, ClientValues* conf)
 	: window(window), z(NULL), conf(conf)
@@ -70,7 +59,7 @@ void Resourcer::garbageCollect()
 	reclaim<ImageRefMap, ImageRef>(images);
 	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
 	reclaim<SampleRefMap, SampleRef>(samples);
-	reclaim<XMLMap, XMLDocRef>(xmls);
+	reclaim<XMLMap, XMLDoc>(xmls);
 }
 
 template<class Map, class MapValue>
@@ -81,8 +70,8 @@ void Resourcer::reclaim(Map& map)
 	BOOST_FOREACH(typename Map::value_type& i, map) {
 		const std::string& name = i.first;
 		CacheEntry<MapValue>& cache = i.second;
-		long extUses = cache.resource.use_count() - 1;
-		if (extUses == 0) {
+		bool unused = !cache.resource || cache.resource.unique();
+		if (unused) {
 			if (!cache.lastUsed) {
 				cache.lastUsed = now;
 				Log::dbg("Resourcer", name + " unused");
@@ -208,8 +197,8 @@ SampleRef Resourcer::getSample(const std::string& name)
 	return result;
 }
 
-XMLDocRef Resourcer::getXMLDoc(const std::string& name,
-                               const std::string& dtdFile)
+XMLDoc Resourcer::getXMLDoc(const std::string& name,
+                            const std::string& dtdFile)
 {
 	if (conf->cacheEnabled) {
 		XMLMap::iterator entry = xmls.find(name);
@@ -223,11 +212,10 @@ XMLDocRef Resourcer::getXMLDoc(const std::string& name,
 		}
 	}
 
-	XMLDocRef result(readXMLDocFromDisk(name, dtdFile), xmlFreeDoc);
-	// XXX Do we check for NULL?
+	XMLDoc result = readXMLDocFromDisk(name, dtdFile);
 
 	if (conf->cacheEnabled) {
-		CacheEntry<XMLDocRef> data;
+		CacheEntry<XMLDoc> data;
 		data.resource = result;
 		data.lastUsed = 0; 
 		xmls[name] = data;
@@ -315,51 +303,17 @@ bool Resourcer::compileLuaFromDisk(const std::string& name, lua_State* L,
 	return true;
 }
 
-// use RAII to ensure doc is freed
-// boost::shared_ptr<void> alwaysFreeTheDoc(doc, xmlFreeDoc);
-xmlDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
-                                      const std::string& dtdFile)
+XMLDoc Resourcer::readXMLDocFromDisk(const std::string& name,
+                                     const std::string& dtdFile)
 {
-	const std::string docStr = readStringFromDisk(name);
-	if (docStr.empty())
-		return NULL;
-
-	xmlParserCtxt* pc = xmlNewParserCtxt();
-	const std::string pathname = path(name);
-	pc->vctxt.userData = (void*)&pathname;
-	pc->vctxt.error = xmlErrorCb;
-
-	// Parse the XML. Hand over our error callback fn.
-	xmlDoc* doc = xmlCtxtReadMemory(pc, docStr.c_str(),
-			(int)docStr.size(), NULL, NULL,
-			XML_PARSE_NOBLANKS |
-			XML_PARSE_NONET);
-	xmlFreeParserCtxt(pc);
-	if (!doc) {
-		Log::err(pathname, "Could not parse file");
-		return NULL;
+	XMLDoc doc;
+	const std::string data = readStringFromDisk(name);
+	if (data.size()) {
+		const std::string p = path(name);
+		const std::string dtdPath = std::string(DTD_DIRECTORY) +
+			"/" + dtdFile;
+		doc.init(p, data, dtdPath); // Ignore return value?
 	}
-
-	// Load up a Document Type Definition for validating the document.
-	std::string dtdPath = std::string(DTD_DIRECTORY) + "/" + dtdFile;
-	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
-	if (!dtd) {
-		Log::err(dtdPath, "file not found");
-		return NULL;
-	}
-
-	// Assert the document is sane here and now so we don't have to have a
-	// billion if-else statements while traversing the document tree.
-	xmlValidCtxt* vc = xmlNewValidCtxt();
-	int valid = xmlValidateDtd(vc, doc, dtd);
-	xmlFreeValidCtxt(vc);
-	xmlFreeDtd(dtd);
-
-	if (!valid) {
-		Log::err(pathname, "XML document does not follow DTD");
-		return NULL;
-	}
-
 	return doc;
 }
 

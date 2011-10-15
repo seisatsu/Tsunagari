@@ -53,5 +53,12 @@ std::vector<std::string> splitStr(std::string str,
 //! Convert an integer to a representative string.
 std::string itostr(int in);
 
+//! Returns true if the string contains only digits, whitespace, and minus.
+bool isInteger(const std::string& s);
+
+//! Returns true if the string contains only digits, whitespace, minus, and
+//! period.
+bool isDecimal(const std::string& s);
+
 #endif
 

@@ -22,6 +22,8 @@
 #include "world.h"
 #include "xml.h"
 
+#define ASSERT(x)  if (!(x)) return false
+
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
          can't imagine why the author did this, but we have to take it into
@@ -222,34 +224,28 @@ icube_t Area::visibleTiles() const
 
 bool Area::processDescriptor()
 {
-	XMLDocRef doc = rc->getXMLDoc(descriptor, "area.dtd");
-	if (!doc)
-		return false;
+	XMLDoc doc;
+	const XMLNode root;
 
-	// Iterate and process children of <map>
-	xmlNode* root = xmlDocGetRootElement(doc.get()); // <map> element
+	ASSERT(doc = rc->getXMLDoc(descriptor, "area.dtd"));
+	ASSERT(root = doc.root()); // <map>
 
-	dim.x = atoi(readXmlAttribute(root, "width").c_str());
-	dim.y = atoi(readXmlAttribute(root, "height").c_str());
+	ASSERT(root.intAttr("width", &dim.x));
+	ASSERT(root.intAttr("height", &dim.y));
 	dim.z = 1;
 
-	xmlNode* child = root->xmlChildrenNode;
-	for (; child != NULL; child = child->next) {
-		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
-			if (!processMapProperties(child))
-				return false;
+	for (XMLNode child = root.childrenNode(); child; child = child.next()) {
+		if (child.is("properties")) {
+			ASSERT(processMapProperties(child));
 		}
-		else if (!xmlStrncmp(child->name, BAD_CAST("tileset"), 8)) {
-			if (!processTileSet(child))
-				return false;
+		else if (child.is("tileset")) {
+			ASSERT(processTileSet(child));
 		}
-		else if (!xmlStrncmp(child->name, BAD_CAST("layer"), 6)) {
-			if (!processLayer(child))
-				return false;
+		else if (child.is("layer")) {
+			ASSERT(processLayer(child));
 		}
-		else if (!xmlStrncmp(child->name, BAD_CAST("objectgroup"), 12)) {
-			if (!processObjectGroup(child))
-				return false;
+		else if (child.is("objectgroup")) {
+			ASSERT(processObjectGroup(child));
 		}
 	}
 
@@ -273,25 +269,24 @@ bool Area::processMapProperties(xmlNode* node)
 	bool introSet = false;
 	bool mainSet = false;
 
-	xmlNode* child = node->xmlChildrenNode;
-	for (; child != NULL; child = child->next) {
-		std::string name = readXmlAttribute(child, "name");
-		std::string value = readXmlAttribute(child, "value");
-		if (!name.compare("author"))
+	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
+		std::string name = child.attr("name");
+		std::string value = child.attr("value");
+		if (name == "author")
 			author = value;
-		else if (!name.compare("name"))
+		else if (name == "name")
 			this->name = value;
-		else if (!name.compare("intro_music")) {
+		else if (name == "intro_music") {
 			music->setIntro(value);
 			introSet = true;
 		}
-		else if (!name.compare("main_music")) {
+		else if (name == "main_music") {
 			music->setMain(value);
 			mainSet = true;
 		}
-		else if (!name.compare("onLoad"))
+		else if (name == "onLoad")
 			onLoadEvents = value;
-		else if (!name.compare("scripts"))
+		else if (name == "scripts")
 			scripts = value; // TODO split(), load
 	}
 	
@@ -314,15 +309,19 @@ bool Area::processTileSet(xmlNode* node)
  </tileset>
 */
 
-	TileSet ts;
-	int x = ts.tileDim.x = atoi(readXmlAttribute(node, "tilewidth").c_str());
-	int y = ts.tileDim.y = atoi(readXmlAttribute(node, "tileheight").c_str());
-	ts.tileDim.z = 1;
+	int x, y, z;
 
-	xmlNode* child = node->xmlChildrenNode;
-	for (; child != NULL; child = child->next) {
-		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
-			unsigned id = (unsigned)atoi(readXmlAttribute(child, "id").c_str());
+	ASSERT(node.intAttr("tilewidth", &x));
+	ASSERT(node.intAttr("tileheight", &y));
+	z = 1;
+
+	TileSet ts;
+	ts.tileDim = icoord(x, y, z);
+
+	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
+		if (child.is("tile")) {
+			unsigned id;
+			ASSERT(child.intAttr("id", &id));
 
 			// Undeclared TileTypes have default properties.
 			while (ts.tileTypes.size() != id) {
@@ -331,11 +330,10 @@ bool Area::processTileSet(xmlNode* node)
 			}
 
 			// Handle explicit TileType
-			if (!processTileType(child, ts))
-				return false;
+			ASSERT(processTileType(child, ts));
 		}
-		else if (!xmlStrncmp(child->name, BAD_CAST("image"), 6)) {
-			std::string source = readXmlAttribute(child, "source");
+		else if (child.is("image")) {
+			std::string source = child.attr("source");
 			rc->getTiledImage(ts.tiles, source,
 				(unsigned)x, (unsigned)y, true);
 		}
@@ -373,8 +371,9 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 	// Initialize a default TileType, we'll build on that.
 	TileType type(set);
 
-	unsigned id = (unsigned)atoi(readXmlAttribute(node, "id").c_str());
 	unsigned expectedId = (unsigned)set.tileTypes.size();
+	unsigned id;
+	ASSERT(child.intAttr("id", &id));
 	if (id != expectedId) {
 		Log::err(descriptor, std::string("expected TileType id ") +
 		         itostr(expectedId) + ", but got " +
@@ -382,15 +381,15 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 		return false;
 	}
 
-	xmlNode* child = node->xmlChildrenNode; // <properties>
-	child = child->xmlChildrenNode; // <property>
-	for (; child != NULL; child = child->next) {
-		std::string name = readXmlAttribute(child, "name");
-		std::string value = readXmlAttribute(child, "value");
-		if (!name.compare("flags")) {
-			type.flags = splitTileFlags(value.c_str());
+	XMLNode child = node.childrenNode(); // <properties>
+	for (child = child.childrenNode(); child; child = child.next()) {
+		// Each <property>...
+		std::string name = child.attr("name");
+		std::string value = child.attr("value");
+		if (name == "flags") {
+			type.flags = splitTileFlags(value);
 		}
-		else if (!name.compare("onEnter")) {
+		else if (name == "onEnter") {
 			if (!rc->resourceExists(value)) {
 				Log::err("Resourcer", "script " + value +
 						" referenced but not found");
@@ -402,7 +401,7 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 			type.events.push_back(e);
 			type.flags |= hasOnEnter;
 		}
-		else if (!name.compare("onLeave")) {
+		else if (name == "onLeave") {
 			if (!rc->resourceExists(value)) {
 				Log::err("Resourcer", "script " + value +
 						" referenced but not found");
@@ -414,12 +413,13 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 			type.events.push_back(e);
 			type.flags |= hasOnLeave;
 		}
-		else if (!name.compare("animated")) {
+		else if (name == "animated") {
 			// XXX still needed?
 			// type.animated = parseBool((const char*)value);
 		}
-		else if (!name.compare("size")) {
-			int size = atoi(value.c_str()); // atoi
+		else if (name == "size") {
+			int size;
+			ASSERT(child.intAttr("value", &size));
 
 			// Add size-1 more frames to our animation.
 			// We already have one from TileType's constructor.
@@ -433,8 +433,10 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 				set.tiles.pop_front();
 			}
 		}
-		else if (!name.compare("speed")) {
-			int len = (int)(1000.0/atof(value.c_str()));
+		else if (name == "speed") {
+			double hertz;
+			ASSERT(child.doubleAttr("value", &hertz));
+			int len = (int)(1000.0/hertz);
 			type.anim.setFrameLen(len);
 		}
 	}
@@ -463,23 +465,21 @@ bool Area::processLayer(xmlNode* node)
  </layer>
 */
 
-	int x = atoi(readXmlAttribute(node, "width").c_str());
-	int y = atoi(readXmlAttribute(node, "height").c_str());
+	int x, y;
+	ASSERT(node.intAttr("width", &x));
+	ASSERT(node.intAttr("height", &h));
 
 	if (dim.x != x || dim.y != y) {
 		Log::err(descriptor, "layer x,y size != map x,y size");
 		return false;
 	}
 
-	xmlNode* child = node->xmlChildrenNode;
-	for (; child != NULL; child = child->next) {
-		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
-			if (!processLayerProperties(child))
-				return false;
+	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
+		if (child.is("properties")) {
+			ASSERT(processLayerProperties(child));
 		}
-		else if (!xmlStrncmp(child->name, BAD_CAST("data"), 5)) {
-			if (!processLayerData(child))
-				return false;
+		else if (child.is("data")) {
+			ASSERT(processLayerData(child));
 		}
 	}
 	return true;
@@ -494,12 +494,12 @@ bool Area::processLayerProperties(xmlNode* node)
   </properties>
 */
 
-	xmlNode* child = node->xmlChildrenNode;
-	for (; child != NULL; child = child->next) {
-		std::string name = readXmlAttribute(child, "name");
-		std::string value = readXmlAttribute(child, "value");
-		if (!name.compare("layer")) {
-			int depth = atoi(value.c_str());
+	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
+		std::string name  = child.attr("name");
+		std::string value = child.attr("value");
+		if (name == "layer") {
+			int depth;
+			ASSERT(child.intAttr("value", &depth));
 			if (depth != dim.z - 1) {
 				Log::err(descriptor, "invalid layer depth");
 				return false;
@@ -531,16 +531,18 @@ bool Area::processLayerData(xmlNode* node)
 	row.reserve(dim.x);
 	grid.reserve(dim.y);
 
-	xmlNode* child = node->xmlChildrenNode;
-	for (int i = 1; child != NULL; i++, child = child->next) {
-		if (!xmlStrncmp(child->name, BAD_CAST("tile"), 5)) {
-			unsigned gid = (unsigned)atoi(readXmlAttribute(child, "gid").c_str())-1;
+	std::vector<TileType>& tileTypes = tilesets[0].tileTypes;
 
-			// XXX can only access first tileset
-			TileType* type = &tilesets[0].tileTypes[gid];
+	for (int i = 1, XMLNode child = node.childrenNode(); child; i++, child = child.next()) {
+		if (child.is("tile")) {
+			int gid;
+			ASSERT(child.intAttr("gid", &gid));
+			gid -= 1;
+
+			ASSERT(0 <= gid && gid < tileTypes.size());
 
 			Tile t;
-			t.type = type;
+			t.type = &tileTypes[gid]; // XXX can only access first tileset
 			t.flags = 0x0;
 			type->allOfType.push_back(&t);
 			row.push_back(t);
@@ -576,8 +578,9 @@ bool Area::processObjectGroup(xmlNode* node)
  </objectgroup>
 */
 
-	int x = atoi(readXmlAttribute(node, "width").c_str());
-	int y = atoi(readXmlAttribute(node, "height").c_str());
+	int x, y;
+	ASSERT(node.intAttr("width", &x));
+	ASSERT(node.intAttr("height", &y));
 
 	int zpos = -1;
 
@@ -586,15 +589,12 @@ bool Area::processObjectGroup(xmlNode* node)
 		return false;
 	}
 
-	xmlNode* child = node->xmlChildrenNode;
-	for (; child != NULL; child = child->next) {
-		if (!xmlStrncmp(child->name, BAD_CAST("properties"), 11)) {
-			if (!processObjectGroupProperties(child, &zpos))
-				return false;
+	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
+		if (child.is("properties")) {
+			ASSERT(processObjectGroupProperties(child, &zpos));
 		}
-		else if (!xmlStrncmp(child->name, BAD_CAST("object"), 7)) {
-			if (zpos == -1 || !processObject(child, zpos))
-				return false;
+		else if (child.is("object")) {
+			ASSERT(zpos != -1 && processObject(child, zpos));
 		}
 	}
 
@@ -610,13 +610,13 @@ bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
   </properties>
 */
 
-	xmlNode* child = node->xmlChildrenNode;
-	for (; child != NULL; child = child->next) {
-		std::string name = readXmlAttribute(child, "name");
-		std::string value = readXmlAttribute(child, "value");
-		if (!name.compare("layer")) {
-			int layer = atoi(value.c_str());
-			if (0 < layer || layer >= (int)dim.z) {
+	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
+		std::string name = child.attr("name");
+		std::string value = child.attr("value");
+		if (name == "layer") {
+			int layer;
+			ASSERT(child.intAttr("value", &layer));
+			if (layer < 0 || (int)dim.z <= layer) {
 				Log::err(descriptor,
 					"objectgroup must correspond with layer"
 				);
@@ -642,33 +642,35 @@ bool Area::processObject(xmlNode* node, int zpos)
   </object>
 */
 
-	std::string type = readXmlAttribute(node, "type");
-	if (type.compare("Tile")) {
+	std::string type = node.attr("type");
+	if (type != "Tile") {
 		Log::err(descriptor, "object type must be Tile");
 		return false;
 	}
 
-	std::string xStr = readXmlAttribute(node, "x");
-	std::string yStr = readXmlAttribute(node, "y");
-	// XXX we ignore the object gid... is that okay?
 
 	// wouldn't have to access tilesets if we had tileDim ourselves
-	int x = atoi(xStr.c_str()) / tilesets[0].tileDim.x;
-	int y = atoi(yStr.c_str()) / tilesets[0].tileDim.y;
+	icoord& tileDim = tilesets[0].tileDim;
+	int x, y;
+	ASSERT(node.intAttr("x", &x));
+	ASSERT(node.intAttr("y", &y));
+	x /= tileDim.x;
+	y /= tileDim.y;
 	y = y - 1; // bug in tiled? y is 1 too high
+	// XXX we ignore the object gid... is that okay?
 
 	// We know which Tile is being talked about now... yay
 	Tile& t = map[zpos][y][x];
 
-	xmlNode* child = node->xmlChildrenNode; // <properties>
-	child = child->xmlChildrenNode; // <property>
-	for (; child != NULL; child = child->next) {
-		std::string name = readXmlAttribute(child, "name");
-		std::string value = readXmlAttribute(child, "value");
-		if (!name.compare("flags")) {
-			t.flags = splitTileFlags(value.c_str());
+	XMLNode child = node.childrenNode(); // <properties>
+	for (child = child.childrenNode(); child; child = child.next()) {
+		// Each <property>...
+		std::string name = child.attr("name");
+		std::string value = child.attr("value");
+		if (name == "flags") {
+			t.flags = splitTileFlags(value);
 		}
-		else if (!name.compare("onEnter")) {
+		else if (name == "onEnter") {
 			if (!rc->resourceExists(value)) {
 				Log::err("Resourcer", "script " + value +
 						" referenced but not found");
@@ -680,7 +682,7 @@ bool Area::processObject(xmlNode* node, int zpos)
 			t.events.push_back(e);
 			t.flags |= hasOnEnter;
 		}
-		else if (!name.compare("onLeave")) {
+		else if (name == "onLeave") {
 			if (!rc->resourceExists(value)) {
 				Log::err("Resourcer", "script " + value +
 						" referenced but not found");
@@ -692,14 +694,15 @@ bool Area::processObject(xmlNode* node, int zpos)
 			t.events.push_back(e);
 			t.flags |= hasOnLeave;
 		}
-		else if (!name.compare("door")) {
-			t.door.reset(parseDoor(value.c_str()));
+		else if (name == "door") {
+			t.door.reset(parseDoor(value));
 			t.flags |= npc_nowalk;
 		}
 	}
 	return true;
 }
 
+// FIXME: It can fail, should return bool.
 unsigned Area::splitTileFlags(const std::string strOfFlags)
 {
 	std::vector<std::string> strs;
@@ -713,6 +716,7 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 	return flags;
 }
 
+// FIXME: It can fail, should return bool.
 Door Area::parseDoor(const std::string dest)
 {
 

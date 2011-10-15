@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <ctype.h>
 #include <sstream>
 
 #include <boost/algorithm/string.hpp> // for iequals
@@ -59,5 +60,34 @@ std::string itostr(int in)
 	std::stringstream out;
 	out << in;
 	return out.str();
+}
+
+// FIXME: "1 2", " ", and "" are considered valid, " -3" not valid
+bool isInteger(const std::string& s)
+{
+	for (unsigned i = 0; i < s.size(); i++) {
+		char c = s[i];
+		if (isdigit(c) || isspace(c) || (c == '-' && i == 0))
+			continue;
+		return false;
+	}
+	return true;
+}
+
+// FIXME: "1 2", " ", and "" are considered valid, " -3" not valid
+bool isDecimal(const std::string& s)
+{
+	bool seenDot = false;
+	for (unsigned i = 0; i < s.size(); i++) {
+		char c = s[i];
+		if (c == '.' && !seenDot) {
+			seenDot = true;
+			continue;
+		}
+		if (isdigit(c) || isspace(c) || (c == '-' && i == 0))
+			continue;
+		return false;
+	}
+	return true;
 }
 
