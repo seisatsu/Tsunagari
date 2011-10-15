@@ -10,8 +10,6 @@
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 
 #include "area.h"
 #include "config.h"

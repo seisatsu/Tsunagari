@@ -5,7 +5,6 @@
 ******************************/
 
 #include <Gosu/Utility.hpp>
-#include <libxml/tree.h>
 
 #include "area.h"
 #include "common.h"
