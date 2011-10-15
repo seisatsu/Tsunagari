@@ -16,7 +16,8 @@ class XMLDoc;
 
 class XMLNode {
 public:
-	XMLNode(const XMLDoc* doc, xmlNode* node);
+	XMLNode();
+	XMLNode(XMLDoc* doc, xmlNode* node);
 
 	XMLNode childrenNode() const;
 	XMLNode next() const;
@@ -35,7 +36,7 @@ public:
 	operator bool() const;
 
 private:
-	const XMLDoc* doc;
+	XMLDoc* doc;
 	xmlNode* node;
 };
 
@@ -46,7 +47,7 @@ public:
 	          const std::string& data,
 	          const std::string& dtdFile);
 
-	XMLNode root() const;
+	XMLNode root();
 	xmlNode* temporaryGetRoot() const;
 	const std::string& path() const;
 

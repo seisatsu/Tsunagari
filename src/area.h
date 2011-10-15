@@ -12,13 +12,13 @@
 
 #include <boost/scoped_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
-#include <libxml/tree.h>
 
 #include "common.h"
 #include "music.h"
 #include "player.h"
 #include "resourcer.h"
 #include "tile.h"
+#include "xml.h"
 
 namespace Gosu {
 	class Bitmap;
@@ -85,34 +85,34 @@ private:
 	bool processDescriptor();
 
 	//! XML descriptor parsing function.
-	bool processMapProperties(xmlNode* node);
+	bool processMapProperties(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processTileSet(xmlNode* node);
+	bool processTileSet(XMLNode node);
 
 	//! Constructs a tile of default type.
 	TileType defaultTileType(TileSet& set);
 
 	//! XML descriptor parsing function.
-	bool processTileType(xmlNode* node, TileSet& ts);
+	bool processTileType(XMLNode node, TileSet& ts);
 
 	//! XML descriptor parsing function.
-	bool processLayer(xmlNode* node);
+	bool processLayer(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processLayerProperties(xmlNode* node);
+	bool processLayerProperties(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processLayerData(xmlNode* node);
+	bool processLayerData(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processObjectGroup(xmlNode* node);
+	bool processObjectGroup(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processObjectGroupProperties(xmlNode* node, int* zpos);
+	bool processObjectGroupProperties(XMLNode node, int* zpos);
 
 	//! XML descriptor parsing function.
-	bool processObject(xmlNode* node, int zpos);
+	bool processObject(XMLNode node, int zpos);
 
 	//! Split a tile's flags into individuals.
 	unsigned splitTileFlags(const std::string strOfFlags);

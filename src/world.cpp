@@ -77,7 +77,7 @@ void World::update(unsigned long dt)
 
 bool World::processDescriptor()
 {
-	const XMLDoc doc = rc->getXMLDoc("world.conf", "world.dtd");
+	XMLDoc doc = rc->getXMLDoc("world.conf", "world.dtd");
 	if (!doc)
 		return false;
 	const XMLNode root = doc.root(); // <world>

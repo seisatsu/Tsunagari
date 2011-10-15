@@ -14,13 +14,11 @@
 #include <Gosu/Timing.hpp>
 
 #include "area.h"
-#include "common.h"
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
 #include "world.h"
-#include "xml.h"
 
 #define ASSERT(x)  if (!(x)) return false
 
@@ -225,7 +223,7 @@ icube_t Area::visibleTiles() const
 bool Area::processDescriptor()
 {
 	XMLDoc doc;
-	const XMLNode root;
+	XMLNode root;
 
 	ASSERT(doc = rc->getXMLDoc(descriptor, "area.dtd"));
 	ASSERT(root = doc.root()); // <map>
@@ -252,7 +250,7 @@ bool Area::processDescriptor()
 	return true;
 }
 
-bool Area::processMapProperties(xmlNode* node)
+bool Area::processMapProperties(XMLNode node)
 {
 
 /*
@@ -297,7 +295,7 @@ bool Area::processMapProperties(xmlNode* node)
 	return true;
 }
 
-bool Area::processTileSet(xmlNode* node)
+bool Area::processTileSet(XMLNode node)
 {
 
 /*
@@ -320,11 +318,13 @@ bool Area::processTileSet(xmlNode* node)
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("tile")) {
-			unsigned id;
+			int id;
 			ASSERT(child.intAttr("id", &id));
 
+			// XXX SECURITY: Check id for sane values.
+
 			// Undeclared TileTypes have default properties.
-			while (ts.tileTypes.size() != id) {
+			while (ts.tileTypes.size() != (unsigned)id) {
 				TileType tt(ts);
 				ts.tileTypes.push_back(tt);
 			}
@@ -348,7 +348,7 @@ bool Area::processTileSet(xmlNode* node)
 	return true;
 }
 
-bool Area::processTileType(xmlNode* node, TileSet& set)
+bool Area::processTileType(XMLNode node, TileSet& set)
 {
 
 /*
@@ -371,9 +371,9 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 	// Initialize a default TileType, we'll build on that.
 	TileType type(set);
 
-	unsigned expectedId = (unsigned)set.tileTypes.size();
-	unsigned id;
-	ASSERT(child.intAttr("id", &id));
+	int expectedId = (int)set.tileTypes.size();
+	int id;
+	ASSERT(node.intAttr("id", &id));
 	if (id != expectedId) {
 		Log::err(descriptor, std::string("expected TileType id ") +
 		         itostr(expectedId) + ", but got " +
@@ -445,7 +445,7 @@ bool Area::processTileType(xmlNode* node, TileSet& set)
 	return true;
 }
 
-bool Area::processLayer(xmlNode* node)
+bool Area::processLayer(XMLNode node)
 {
 
 /*
@@ -467,7 +467,7 @@ bool Area::processLayer(xmlNode* node)
 
 	int x, y;
 	ASSERT(node.intAttr("width", &x));
-	ASSERT(node.intAttr("height", &h));
+	ASSERT(node.intAttr("height", &y));
 
 	if (dim.x != x || dim.y != y) {
 		Log::err(descriptor, "layer x,y size != map x,y size");
@@ -485,7 +485,7 @@ bool Area::processLayer(xmlNode* node)
 	return true;
 }
 
-bool Area::processLayerProperties(xmlNode* node)
+bool Area::processLayerProperties(XMLNode node)
 {
 
 /*
@@ -510,7 +510,7 @@ bool Area::processLayerProperties(xmlNode* node)
 	return true;
 }
 
-bool Area::processLayerData(xmlNode* node)
+bool Area::processLayerData(XMLNode node)
 {
 
 /*
@@ -533,18 +533,19 @@ bool Area::processLayerData(xmlNode* node)
 
 	std::vector<TileType>& tileTypes = tilesets[0].tileTypes;
 
-	for (int i = 1, XMLNode child = node.childrenNode(); child; i++, child = child.next()) {
+	int i = 1;
+	for (XMLNode child = node.childrenNode(); child; i++, child = child.next()) {
 		if (child.is("tile")) {
 			int gid;
 			ASSERT(child.intAttr("gid", &gid));
 			gid -= 1;
 
-			ASSERT(0 <= gid && gid < tileTypes.size());
+			ASSERT(0 <= gid && gid < (int)tileTypes.size());
 
 			Tile t;
 			t.type = &tileTypes[gid]; // XXX can only access first tileset
+			t.type->allOfType.push_back(&t);
 			t.flags = 0x0;
-			type->allOfType.push_back(&t);
 			row.push_back(t);
 			if (row.size() % dim.x == 0) {
 				grid.push_back(row);
@@ -559,7 +560,7 @@ bool Area::processLayerData(xmlNode* node)
 	return true;
 }
 
-bool Area::processObjectGroup(xmlNode* node)
+bool Area::processObjectGroup(XMLNode node)
 {
 
 /*
@@ -601,7 +602,7 @@ bool Area::processObjectGroup(xmlNode* node)
 	return true;
 }
 
-bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
+bool Area::processObjectGroupProperties(XMLNode node, int* zpos)
 {
 
 /*
@@ -628,7 +629,7 @@ bool Area::processObjectGroupProperties(xmlNode* node, int* zpos)
 	return true;
 }
 
-bool Area::processObject(xmlNode* node, int zpos)
+bool Area::processObject(XMLNode node, int zpos)
 {
 
 /*

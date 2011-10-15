@@ -104,6 +104,7 @@ void Music::playMain()
 	setState(PLAYING_MAIN);
 }
 
+/*
 static const char* stateStr(MUSIC_STATE state)
 {
 	switch (state) {
@@ -121,10 +122,11 @@ static const char* stateStr(MUSIC_STATE state)
 		return "";
 	}
 }
+*/
 
 void Music::setState(MUSIC_STATE state)
 {
-	//printf("State changed from %s to %s.\n", stateStr(this->state), stateStr(state));
+	// printf("State changed from %s to %s.\n", stateStr(this->state), stateStr(state));
 	this->state = state;
 }
 

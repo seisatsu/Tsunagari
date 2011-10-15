@@ -12,7 +12,11 @@
 #include "xml.h"
 
 
-XMLNode::XMLNode(const XMLDoc* doc, xmlNode* node)
+XMLNode::XMLNode()
+{
+}
+
+XMLNode::XMLNode(XMLDoc* doc, xmlNode* node)
 	: doc(doc), node(node)
 {
 }
@@ -158,7 +162,7 @@ bool XMLDoc::init(const std::string& path,
 	return true;
 }
 
-XMLNode XMLDoc::root() const
+XMLNode XMLDoc::root()
 {
 	return XMLNode(this, xmlDocGetRootElement(doc.get()));
 }
