@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** tile.cpp                  **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include <boost/foreach.hpp>
 
 #include "area.h"

@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** xml.cpp                   **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include <stdlib.h>
 #include <string.h>
 
