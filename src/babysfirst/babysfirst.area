@@ -36,7 +36,7 @@
    <tile gid="3"/>
    <tile gid="6"/>
    <tile gid="3"/>
-   <tile gid="9"/>
+   <tile gid="7"/>
    <tile gid="9"/>
    <tile gid="3"/>
    <tile gid="15"/>
@@ -77,6 +77,11 @@
   <object name="door2" type="Tile" gid="7" x="64" y="64">
    <properties>
     <property name="door" value="bigbaby.area,1,1,0"/>
+   </properties>
+  </object>
+  <object name="door3" type="Tile" gid="7" x="256" y="128">
+   <properties>
+    <property name="door" value="looptest.area,5,3,0"/>
    </properties>
   </object>
  </objectgroup>

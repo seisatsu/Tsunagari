@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="64" tileheight="64">
+ <properties>
+  <property name="areaspec" value="1"/>
+  <property name="author" value="Michael D. Reiley"/>
+  <property name="loop" value="xy"/>
+  <property name="name" value="Loop Test Area"/>
+  <property name="onLoad" value="looptest_init()"/>
+  <property name="scripts" value="areainits.event,test.event"/>
+ </properties>
+ <tileset firstgid="1" name="tiles.sheet" tilewidth="64" tileheight="64">
+  <image source="tiles.sheet" width="256" height="256"/>
+ </tileset>
+ <layer name="Tiles0" width="10" height="10">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+  <data>
+   <tile gid="5"/>
+   <tile gid="5"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="5"/>
+   <tile gid="5"/>
+   <tile gid="5"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="5"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="7"/>
+   <tile gid="9"/>
+   <tile gid="6"/>
+   <tile gid="6"/>
+   <tile gid="9"/>
+   <tile gid="7"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="6"/>
+   <tile gid="9"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="9"/>
+   <tile gid="6"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="6"/>
+   <tile gid="9"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="9"/>
+   <tile gid="6"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="7"/>
+   <tile gid="9"/>
+   <tile gid="6"/>
+   <tile gid="6"/>
+   <tile gid="9"/>
+   <tile gid="7"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="5"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="5"/>
+   <tile gid="5"/>
+   <tile gid="5"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="5"/>
+   <tile gid="5"/>
+  </data>
+ </layer>
+ <objectgroup name="Prop0" width="10" height="10">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+ </objectgroup>
+</map>

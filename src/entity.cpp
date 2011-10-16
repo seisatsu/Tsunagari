@@ -246,6 +246,7 @@ void Entity::moveByTile(icoord delta)
 	// Move!
 	const icoord tileDim = area->getTileDimensions();
 	dest = c;
+	dest /= tileDim;
 	dest += delta;
 	dest *= tileDim;
 	redraw = true;

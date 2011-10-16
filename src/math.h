@@ -19,6 +19,8 @@ public:
 	vec3& operator -=(const vec3<T>& other);
 	vec3& operator *=(const vec3<T>& other);
 	vec3& operator *=(T coefficient);
+	vec3& operator /=(const vec3<T>& other);
+	vec3& operator /=(T coefficient);
 
 	T x, y, z;
 };

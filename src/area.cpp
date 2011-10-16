@@ -22,6 +22,14 @@
 
 #define ASSERT(x)  if (!(x)) return false
 
+template<class T>
+T wrap(T min, T value, T max)
+{
+	while (value < min)
+		value += max;
+	return value % max;
+}
+
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
          can't imagine why the author did this, but we have to take it into
@@ -34,9 +42,8 @@ Area::Area(Resourcer* rc,
            Music* music,
            const std::string& descriptor)
 	: rc(rc), world(world), player(player), music(music),
-	  descriptor(descriptor)
+	  descriptor(descriptor), dim(0, 0, 0), loopX(false), loopY(false)
 {
-	dim.x = dim.y = dim.z = 0;
 }
 
 Area::~Area()
@@ -100,14 +107,25 @@ void Area::drawTiles() const
 {
 	const icube_t tiles = visibleTiles();
 	for (int z = tiles.z1; z != tiles.z2; z++) {
-		const grid_t& grid = map[z];
 		for (int y = tiles.y1; y != tiles.y2; y++) {
-			const row_t& row = grid[y];
 			for (int x = tiles.x1; x != tiles.x2; x++) {
-				drawTile(row[x], x, y, z);
+				int tx = x, ty = y, tz = z;
+				if (loopX)
+					tx = wrap(0, tx, dim.x);
+				if (loopY)
+					ty = wrap(0, ty, dim.y);
+				if (inBounds(tx, ty, tz))
+					drawTile(map[tz][ty][tx], x, y, z);
 			}
 		}
 	}
+}
+
+bool Area::inBounds(int x, int y, int z) const
+{
+	return (0 <= x && x < dim.x &&
+		0 <= y && y < dim.y &&
+		0 <= z && z < dim.z);
 }
 
 void Area::drawTile(const Tile& tile, int x, int y, int) const
@@ -151,37 +169,42 @@ icoord Area::getTileDimensions() const
 	return tilesets[0].tileDim; // XXX only considers first tileset
 }
 
+bool Area::tileVisible(icoord c) const
+{
+	return inBounds(c.x, c.y, c.z);
+}
+
 const Tile& Area::getTile(icoord c) const
 {
+	if (loopX)
+		c.x = wrap(0, c.x, dim.x);
+	if (loopY)
+		c.y = wrap(0, c.y, dim.y);
 	return map[c.z][c.y][c.x];
 }
 
 Tile& Area::getTile(icoord c)
 {
+	if (loopX)
+		c.x = wrap(0, c.x, dim.x);
+	if (loopY)
+		c.y = wrap(0, c.y, dim.y);
 	return map[c.z][c.y][c.x];
 }
 
-static double center(double w, double g, double p)
-{
-	return w>g ? (w-g)/2.0 : Gosu::boundBy(w/2.0-p, w-g, 0.0);
-}
-
-// FIXME: should return an rcoord
-const icoord Area::viewportOffset() const
+const rcoord Area::viewportOffset() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
 	const double tileWidth = (double)tilesets[0].tileDim.x;
 	const double tileHeight = (double)tilesets[0].tileDim.y;
 	const double windowWidth = (double)graphics.width() / tileWidth;
 	const double windowHeight = (double)graphics.height() / tileHeight;
-	const double mapWidth = (double)dim.x;
-	const double mapHeight = (double)dim.y;
 	const double playerX = player->getRPixel().x / tileWidth + 0.5;
 	const double playerY = player->getRPixel().y / tileHeight + 0.5;
 
-	icoord c;
-	c.x = (int)(center(windowWidth, mapWidth, playerX) * tileWidth);
-	c.y = (int)(center(windowHeight, mapHeight, playerY) * tileHeight);
+	rcoord c;
+	c.x = (windowWidth/2.0 - playerX) * tileWidth;
+	c.y = (windowHeight/2.0 - playerY) * tileHeight;
 	c.z = 0;
 
 	return c;
@@ -189,8 +212,8 @@ const icoord Area::viewportOffset() const
 
 const Gosu::Transform Area::viewportTransform() const
 {
-	const icoord c = viewportOffset();
-	return Gosu::translate((double)c.x, (double)c.y);
+	const rcoord c = viewportOffset();
+	return Gosu::translate(c.x, c.y);
 }
 
 icube_t Area::visibleTiles() const
@@ -200,14 +223,16 @@ icube_t Area::visibleTiles() const
 	const int tileHeight = tilesets[0].tileDim.y;
 	const int windowWidth = graphics.width();
 	const int windowHeight = graphics.height();
-	const icoord off = viewportOffset();
+	const rcoord off = viewportOffset();
 
-	const int x1 = -off.x / tileWidth;
-	const int y1 = -off.y / tileHeight;
+	const int x1 = (int)floor(-off.x / tileWidth);
+	const int y1 = (int)floor(-off.y / tileHeight);
 	const int x2 = (int)ceil((double)(windowWidth - off.x) /
 		(double)tileWidth);
 	const int y2 = (int)ceil((double)(windowHeight - off.y) /
 		(double)tileHeight);
+		
+	return icube(x1, y1, 0, x2, y2, 1);
 
 	// Does the entire width or height of the map fit onscreen?
 	if (x1 >= 0 && y1 >= 0)
@@ -262,6 +287,7 @@ bool Area::processMapProperties(XMLNode node)
   <property name="main_music" value="wind.music"/>
   <property name="onLoad" value="babysfirst_init()"/>
   <property name="scripts" value="areainits.event,test.event"/>
+  <property name="loop" value="xy"/>
  </properties>
 */
 	bool introSet = false;
@@ -286,6 +312,10 @@ bool Area::processMapProperties(XMLNode node)
 			onLoadEvents = value;
 		else if (name == "scripts")
 			scripts = value; // TODO split(), load
+		else if (name == "loop") {
+			loopX = value.find('x') != std::string::npos;
+			loopY = value.find('y') != std::string::npos;
+		}
 	}
 	
 	if (!introSet)

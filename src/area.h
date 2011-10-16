@@ -69,16 +69,18 @@ public:
 	icoord getTileDimensions() const;
 	const Tile& getTile(icoord c) const;
 	Tile& getTile(icoord c);
+	bool tileVisible(icoord c) const;
 	icube_t visibleTiles() const;
 
 private:
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
 	void drawTiles() const;
+	bool inBounds(int x, int y, int z) const;
 	void drawTile(const Tile& tile, int x, int y, int z) const;
 	void drawEntities();
 
-	const icoord viewportOffset() const;
+	const rcoord viewportOffset() const;
 	const Gosu::Transform viewportTransform() const;
 
 	//! XML descriptor parsing function.
@@ -135,6 +137,8 @@ private:
 	 */
 	tilematrix_t map;
 	icoord dim;
+	
+	bool loopX, loopY;
 
 	std::string name;
 	std::string author;
