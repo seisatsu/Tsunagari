@@ -26,13 +26,13 @@ class Music
 public:
 	//! Music Constructor
 	Music(Resourcer* rc);
-	
+
 	//! Music Destructor
 	~Music();
-	
-	void setIntro(std::string name);
-	void setMain(std::string name);
-	
+
+	void setIntro(const std::string& filename);
+	void setMain(const std::string& filename);
+
 	void update();
 
 private:
@@ -41,12 +41,12 @@ private:
 	void setState(MUSIC_STATE state);
 
 	Resourcer* rc;
-	
+
 	boost::optional<Gosu::SampleInstance> musicInst;
 	SampleRef introMusic, mainMusic;
-	
+
 	MUSIC_STATE state;
-	
+
 	std::string newIntro;
 	std::string newMain;
 	std::string curIntro;

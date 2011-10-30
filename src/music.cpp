@@ -14,37 +14,39 @@ Music::~Music()
 {
 }
 
-void Music::setIntro(std::string name)
+void Music::setIntro(const std::string& filename)
 {
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
 	case PLAYING_MAIN:
-		if (newIntro != name)
+		if (newIntro != filename)
 			setState(CHANGED_INTRO);
 	default:
 		break;
 	}
-	if (newIntro != name) {
-		newIntro = name;
-		introMusic = name.size() ? rc->getSample(name) : SampleRef();
+	if (newIntro != filename) {
+		newIntro = filename;
+		introMusic = filename.size() ?
+			rc->getSample(filename) : SampleRef();
 	}
 }
 
-void Music::setMain(std::string name)
+void Music::setMain(const std::string& filename)
 {
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
 	case PLAYING_MAIN:
-		if (newMain != name)
+		if (newMain != filename)
 			setState(CHANGED_MAIN);
 	default:
 		break;
 	}
-	if (newMain != name) {
-		newMain = name;
-		mainMusic = name.size() ? rc->getSample(name) : SampleRef();
+	if (newMain != filename) {
+		newMain = filename;
+		mainMusic = filename.size() ?
+			rc->getSample(filename) : SampleRef();
 	}
 }
 
