@@ -3,7 +3,6 @@
  <properties>
   <property name="areaspec" value="1"/>
   <property name="author" value="Paul Merrill"/>
-  <property name="intro_music" value="music/intro.music"/>
   <property name="main_music" value="music/wind.music"/>
   <property name="name" value="Big Baby Multiple Tileset Test"/>
  </properties>
