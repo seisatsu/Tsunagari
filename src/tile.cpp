@@ -51,11 +51,11 @@ TileType::TileType()
 {
 }
 
-TileType::TileType(TileSet& set)
+TileType::TileType(TiledImage& img)
 	: flags(0x0)
 {
-	anim.addFrame(set.tiles.front());
-	set.tiles.pop_front();
+	anim.addFrame(img.front());
+	img.pop_front();
 }
 
 bool TileType::needsRedraw(const Area& area) const
