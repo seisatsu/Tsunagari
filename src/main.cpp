@@ -177,6 +177,7 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	cmd.insert("-s", "--size", "<WxH>", "Window dimensions");
 	cmd.insert("-f", "--fullscreen", "", "Run in fullscreen mode");
 	cmd.insert("-w", "--window", "", "Run in windowed mode");
+	cmd.insert("", "--no-audio", "", "Disable audio");
 	cmd.insert("-q", "--query", "", "Query compiled-in engine defaults");
 	cmd.insert("", "--version", "", "Print the engine version string");
 
@@ -226,9 +227,8 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 		}
 	}
 
-	if (cmd.check("--no-sound") || cmd.check("--no-audio")) {
+	if (cmd.check("--no-audio"))
 		conf->audioEnabled = false;
-	}
 
 	if (cmd.check("--cache-ttl")) {
 		conf->cacheTTL = atoi(cmd.get("--cache-ttl").c_str());

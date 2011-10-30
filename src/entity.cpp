@@ -528,7 +528,7 @@ bool Entity::processSound(const XMLNode node)
 	SampleRef s = rc->getSample(filename);
 	if (s)
 		sounds[name] = s;
-	return s;
+	return true;
 }
 
 bool Entity::processScripts(XMLNode node)

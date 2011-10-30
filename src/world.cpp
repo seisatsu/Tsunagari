@@ -39,7 +39,7 @@ bool World::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 
-	music = new Music(rc, conf->audioEnabled);
+	music = new Music(rc);
 
 	// FIXME The player entity doesn't have a descriptor yet.
 	player.reset(new Player(rc, NULL, conf));

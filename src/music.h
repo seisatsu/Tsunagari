@@ -25,7 +25,7 @@ class Music
 {
 public:
 	//! Music Constructor
-	Music(Resourcer* rc, bool enabled);
+	Music(Resourcer* rc);
 
 	//! Music Destructor
 	~Music();
@@ -39,8 +39,6 @@ private:
 	void playIntro();
 	void playMain();
 	void setState(MUSIC_STATE state);
-
-	bool enabled;
 
 	Resourcer* rc;
 

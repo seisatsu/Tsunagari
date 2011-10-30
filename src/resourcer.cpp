@@ -172,6 +172,9 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
  */
 SampleRef Resourcer::getSample(const std::string& name)
 {
+	if (!conf->audioEnabled)
+		return SampleRef();
+
 	if (conf->cacheEnabled) {
 		SampleRefMap::iterator entry = samples.find(name);
 		if (entry != samples.end()) {
@@ -191,7 +194,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	if (conf->cacheEnabled) {
 		CacheEntry<SampleRef> data;
 		data.resource = result;
-		data.lastUsed = 0; 
+		data.lastUsed = 0;
 		samples[name] = data;
 	}
 	return result;

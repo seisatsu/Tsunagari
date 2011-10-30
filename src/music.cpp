@@ -6,9 +6,8 @@
 
 #include "music.h"
 
-Music::Music(Resourcer* rc, bool enabled)
-	: enabled(enabled),
-	  rc(rc),
+Music::Music(Resourcer* rc)
+	: rc(rc),
 	  state(NOT_PLAYING)
 {
 }
@@ -30,8 +29,7 @@ void Music::setIntro(const std::string& filename)
 	}
 	if (newIntro != filename) {
 		newIntro = filename;
-		introMusic = enabled && filename.size() ?
-			rc->getSample(filename) : SampleRef();
+		introMusic = filename.size() ? rc->getSample(filename) : SampleRef();
 	}
 }
 
@@ -48,23 +46,20 @@ void Music::setMain(const std::string& filename)
 	}
 	if (newMain != filename) {
 		newMain = filename;
-		mainMusic = enabled && filename.size() ?
-			rc->getSample(filename) : SampleRef();
+		mainMusic = filename.size() ? rc->getSample(filename) : SampleRef();
 	}
 }
 
 void Music::update()
 {
-	if (!enabled)
-		return;
 	switch (state) {
 	case NOT_PLAYING:
-		if (musicInst->playing())
+		if (musicInst && musicInst->playing())
 			musicInst->stop();
 		break;
 	case PLAYING_INTRO:
 		if (!musicInst->playing()) {
-			if (newMain.size())
+			if (newMain.size() && mainMusic)
 				playMain();
 			else
 				setState(NOT_PLAYING);
@@ -73,7 +68,7 @@ void Music::update()
 	case PLAYING_MAIN:
 		break;
 	case CHANGED_INTRO:
-		if (newIntro.size())
+		if (newIntro.size() && introMusic)
 			playIntro();
 		else if (newMain.size() && newMain != curMain)
 			setState(CHANGED_MAIN);
@@ -83,9 +78,9 @@ void Music::update()
 			setState(NOT_PLAYING);
 		break;
 	case CHANGED_MAIN:
-		if (newIntro.size())
+		if (newIntro.size() && mainMusic)
 			playIntro();
-		else if (newMain.size())
+		else if (newMain.size() && mainMusic)
 			playMain();
 		else
 			setState(NOT_PLAYING);
