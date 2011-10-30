@@ -31,6 +31,7 @@ World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
 World::~World()
 {
 	delete area;
+	delete music;
 }
 
 bool World::init()
