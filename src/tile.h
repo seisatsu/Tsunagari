@@ -21,7 +21,6 @@ struct Door;
 class Entity;
 class Tile;
 struct TileEvent;
-struct TileSet;
 class TileType;
 
 //! List of possible triggers for tile events.
@@ -114,7 +113,7 @@ class TileType
 {
 public:
 	TileType();
-	TileType(TileSet& set);
+	TileType(TiledImage& img);
 
 	//! Returns true if onscreen and we need to update our animation.
 	bool needsRedraw(const Area& area) const;
@@ -126,20 +125,9 @@ public:
 	// boost::scoped_ptr<Door> door ?
 
 private:
-
-	//! Returns true if any of area's tiles within the specified range are
-	//! of this type.
+	//! Returns true if any of the area's tiles within the specified range
+	//! are of this type.
 	bool visibleIn(const Area& area, const icube_t& tiles) const;
-};
-
-//! TileSet
-/*!
-	Stores info for a tileset, and global settings for tiles.
-*/
-struct TileSet {
-	TiledImage tiles;
-	icoord tileDim; // Dimensions per tile
-	std::vector<TileType> tileTypes; // Global tile properties
 };
 
 #endif

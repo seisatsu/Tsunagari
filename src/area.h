@@ -75,8 +75,8 @@ public:
 private:
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
-	void drawTiles() const;
 	bool inBounds(int x, int y, int z) const;
+	void drawTiles() const;
 	void drawTile(const Tile& tile, int x, int y, int z) const;
 	void drawEntities();
 
@@ -92,11 +92,8 @@ private:
 	//! XML descriptor parsing function.
 	bool processTileSet(XMLNode node);
 
-	//! Constructs a tile of default type.
-	TileType defaultTileType(TileSet& set);
-
 	//! XML descriptor parsing function.
-	bool processTileType(XMLNode node, TileSet& ts);
+	bool processTileType(XMLNode node, TiledImage& img);
 
 	//! XML descriptor parsing function.
 	bool processLayer(XMLNode node);
@@ -132,17 +129,19 @@ private:
 	typedef std::vector<row_t> grid_t;
 	typedef std::vector<grid_t> tilematrix_t;
 
-	/* All layers in the map must be in the range of [0, n]. There cannot be
-	 * any gaps.
-	 */
-	tilematrix_t map;
-	icoord dim;
-	
+	// All layers in the map must be in the range of [0, n]. There cannot
+	// be any gaps.
+	tilematrix_t map; // 3-dimensional array of tiles.
+	icoord dim; // 3-dimensional length of map.
+	icoord tileDim; // Pixel size for each tile in area.
+
+	//! Properties shared by all tiles of a type.
+	std::vector<TileType> tileTypes;
+
 	bool loopX, loopY;
 
 	std::string name;
 	std::string author;
-	std::vector<TileSet> tilesets;
 	std::string scripts;
 	std::string onLoadEvents;
 };

@@ -38,7 +38,7 @@ typedef std::deque<ImageRef> TiledImage;
 
 //! Resourcer Class
 /*!
-	This class provides the engine's global resource handling and caching.
+	This class provides the engine's resource handling and caching.
 */
 class Resourcer
 {

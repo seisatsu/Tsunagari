@@ -97,10 +97,15 @@ void Area::draw()
 void Area::updateTileAnimations()
 {
 	const int millis = GameWindow::getWindow().time();
-	BOOST_FOREACH(TileSet& set, tilesets)
-		BOOST_FOREACH(TileType& type, set.tileTypes)
-			type.anim.updateFrame(millis);
+	BOOST_FOREACH(TileType& type, tileTypes)
+		type.anim.updateFrame(millis);
+}
 
+bool Area::inBounds(int x, int y, int z) const
+{
+	return (0 <= x && x < dim.x &&
+		0 <= y && y < dim.y &&
+		0 <= z && z < dim.z);
 }
 
 void Area::drawTiles() const
@@ -121,13 +126,6 @@ void Area::drawTiles() const
 	}
 }
 
-bool Area::inBounds(int x, int y, int z) const
-{
-	return (0 <= x && x < dim.x &&
-		0 <= y && y < dim.y &&
-		0 <= z && z < dim.z);
-}
-
 void Area::drawTile(const Tile& tile, int x, int y, int) const
 {
 	const TileType* type = tile.type;
@@ -146,10 +144,9 @@ bool Area::needsRedraw() const
 		return true;
 
 	// Do any onscreen tile types need to update their animations?
-	BOOST_FOREACH(const TileSet& set, tilesets)
-		BOOST_FOREACH(const TileType& type, set.tileTypes)
-			if (type.needsRedraw(*this))
-				return true;
+	BOOST_FOREACH(const TileType& type, tileTypes)
+		if (type.needsRedraw(*this))
+			return true;
 	return false;
 }
 
@@ -166,7 +163,7 @@ icoord Area::getDimensions() const
 
 icoord Area::getTileDimensions() const
 {
-	return tilesets[0].tileDim; // XXX only considers first tileset
+	return tileDim;
 }
 
 bool Area::tileVisible(icoord c) const
@@ -195,8 +192,8 @@ Tile& Area::getTile(icoord c)
 const rcoord Area::viewportOffset() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
-	const double tileWidth = (double)tilesets[0].tileDim.x;
-	const double tileHeight = (double)tilesets[0].tileDim.y;
+	const double tileWidth = (double)tileDim.x;
+	const double tileHeight = (double)tileDim.y;
 	const double windowWidth = (double)graphics.width() / tileWidth;
 	const double windowHeight = (double)graphics.height() / tileHeight;
 	const double playerX = player->getRPixel().x / tileWidth + 0.5;
@@ -219,8 +216,8 @@ const Gosu::Transform Area::viewportTransform() const
 icube_t Area::visibleTiles() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
-	const int tileWidth = tilesets[0].tileDim.x;
-	const int tileHeight = tilesets[0].tileDim.y;
+	const int tileWidth = tileDim.x;
+	const int tileHeight = tileDim.y;
 	const int windowWidth = graphics.width();
 	const int windowHeight = graphics.height();
 	const rcoord off = viewportOffset();
@@ -343,42 +340,44 @@ bool Area::processTileSet(XMLNode node)
 	ASSERT(node.intAttr("tileheight", &y));
 	z = 1;
 
-	TileSet ts;
-	ts.tileDim = icoord(x, y, z);
+	TiledImage img;
+	tileDim = icoord(x, y, z);
+	// FIXME: compare with existing tileDim
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("tile")) {
+			// FIXME: Ensure img
+			if (img.empty()) {
+				Log::err(descriptor,
+				  "Tile processed before tileset image loaded");
+				return false;
+			}
+
 			int id;
 			ASSERT(child.intAttr("id", &id));
-
 			// XXX SECURITY: Check id for sane values.
 
 			// Undeclared TileTypes have default properties.
-			while (ts.tileTypes.size() != (unsigned)id) {
-				TileType tt(ts);
-				ts.tileTypes.push_back(tt);
-			}
+			while (tileTypes.size() != (unsigned)id)
+				tileTypes.push_back(TileType(img));
 
-			// Handle explicit TileType
-			ASSERT(processTileType(child, ts));
+			// Handle explicit TileType.
+			ASSERT(processTileType(child, img));
 		}
 		else if (child.is("image")) {
 			std::string source = child.attr("source");
-			rc->getTiledImage(ts.tiles, source,
+			rc->getTiledImage(img, source,
 				(unsigned)x, (unsigned)y, true);
 		}
 	}
 
-	while (ts.tiles.size()) {
-		TileType tt(ts);
-		ts.tileTypes.push_back(tt);
-	}
-
-	tilesets.push_back(ts);
+	// Handle remaining anonymous items.
+	while (img.size())
+		tileTypes.push_back(TileType(img));
 	return true;
 }
 
-bool Area::processTileType(XMLNode node, TileSet& set)
+bool Area::processTileType(XMLNode node, TiledImage& img)
 {
 
 /*
@@ -399,9 +398,9 @@ bool Area::processTileType(XMLNode node, TileSet& set)
 */
 
 	// Initialize a default TileType, we'll build on that.
-	TileType type(set);
+	TileType type(img);
 
-	int expectedId = (int)set.tileTypes.size();
+	int expectedId = (int)tileTypes.size();
 	int id;
 	ASSERT(node.intAttr("id", &id));
 	if (id != expectedId) {
@@ -454,13 +453,13 @@ bool Area::processTileType(XMLNode node, TileSet& set)
 			// Add size-1 more frames to our animation.
 			// We already have one from TileType's constructor.
 			for (int i = 1; i < size; i++) {
-				if (set.tiles.empty()) {
+				if (img.empty()) {
 					Log::err(descriptor, "ran out of tiles"
 						"/frames for animated tile");
 					return false;
 				}
-				type.anim.addFrame(set.tiles.front());
-				set.tiles.pop_front();
+				type.anim.addFrame(img.front());
+				img.pop_front();
 			}
 		}
 		else if (name == "speed") {
@@ -471,7 +470,7 @@ bool Area::processTileType(XMLNode node, TileSet& set)
 		}
 	}
 
-	set.tileTypes.push_back(type);
+	tileTypes.push_back(type);
 	return true;
 }
 
@@ -561,19 +560,17 @@ bool Area::processLayerData(XMLNode node)
 	row.reserve(dim.x);
 	grid.reserve(dim.y);
 
-	std::vector<TileType>& tileTypes = tilesets[0].tileTypes;
-
 	int i = 1;
 	for (XMLNode child = node.childrenNode(); child; i++, child = child.next()) {
 		if (child.is("tile")) {
 			int gid;
 			ASSERT(child.intAttr("gid", &gid));
-			gid -= 1;
+			gid -= 1; // Bug in tiled. Off by one.
 
 			ASSERT(0 <= gid && gid < (int)tileTypes.size());
 
 			Tile t;
-			t.type = &tileTypes[gid]; // XXX can only access first tileset
+			t.type = &tileTypes[gid];
 			t.type->allOfType.push_back(&t);
 			t.flags = 0x0;
 			row.push_back(t);
@@ -680,15 +677,16 @@ bool Area::processObject(XMLNode node, int zpos)
 	}
 
 
-	// wouldn't have to access tilesets if we had tileDim ourselves
-	icoord& tileDim = tilesets[0].tileDim;
 	int x, y;
 	ASSERT(node.intAttr("x", &x));
 	ASSERT(node.intAttr("y", &y));
 	x /= tileDim.x;
 	y /= tileDim.y;
-	y = y - 1; // bug in tiled? y is 1 too high
-	// XXX we ignore the object gid... is that okay?
+	y = y - 1; // Bug in tiled. The y is off by one.
+
+	// We ignore the object gid. This is supposed to indicate which tile
+	// our object is rendered as, but for Tsunagari, tile objects are
+	// always transparent and releveal the tile below.
 
 	// We know which Tile is being talked about now... yay
 	Tile& t = map[zpos][y][x];
