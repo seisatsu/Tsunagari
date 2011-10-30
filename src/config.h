@@ -12,7 +12,7 @@
 // === Default Configuration Settings ===
 	/* Tsunagari config file. */
 	#define CLIENT_CONF_FILE "./client.ini"
-	
+
 	/* Tsunagari XML DTD directory. */
 	#define DTD_DIRECTORY "./dtd/"
 

@@ -6,7 +6,10 @@
 
 #include "music.h"
 
-Music::Music(Resourcer* rc) : rc(rc), state(NOT_PLAYING)
+Music::Music(Resourcer* rc, bool enabled)
+	: enabled(enabled),
+	  rc(rc),
+	  state(NOT_PLAYING)
 {
 }
 
@@ -27,7 +30,7 @@ void Music::setIntro(const std::string& filename)
 	}
 	if (newIntro != filename) {
 		newIntro = filename;
-		introMusic = filename.size() ?
+		introMusic = enabled && filename.size() ?
 			rc->getSample(filename) : SampleRef();
 	}
 }
@@ -45,13 +48,15 @@ void Music::setMain(const std::string& filename)
 	}
 	if (newMain != filename) {
 		newMain = filename;
-		mainMusic = filename.size() ?
+		mainMusic = enabled && filename.size() ?
 			rc->getSample(filename) : SampleRef();
 	}
 }
 
 void Music::update()
 {
+	if (!enabled)
+		return;
 	switch (state) {
 	case NOT_PLAYING:
 		if (musicInst->playing())

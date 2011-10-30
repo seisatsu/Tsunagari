@@ -228,7 +228,7 @@ icube_t Area::visibleTiles() const
 		(double)tileWidth);
 	const int y2 = (int)ceil((double)(windowHeight - off.y) /
 		(double)tileHeight);
-		
+
 	return icube(x1, y1, 0, x2, y2, 1);
 
 	// Does the entire width or height of the map fit onscreen?
@@ -314,7 +314,7 @@ bool Area::processMapProperties(XMLNode node)
 			loopY = value.find('y') != std::string::npos;
 		}
 	}
-	
+
 	if (!introSet)
 		music->setIntro("");
 	if (!mainSet)

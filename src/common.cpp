@@ -27,6 +27,7 @@ icube_t icube(int x1, int y1, int z1,
 
 bool parseBool(const std::string& s)
 {
+	// boost::equals is case-insensative
 	return boost::iequals(s, "true") ||
 	       boost::iequals(s, "yes") ||
 	       boost::iequals(s, "on") ||
