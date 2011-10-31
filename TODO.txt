@@ -49,3 +49,7 @@ ITEMS
 
 * Investigate LÖVE @ http://love2d.org/
 
+* If the game is started while holding an arrow key down, that keyboard state
+  is normalized to not moving, which will cause your character to move when you
+  let go.
+
