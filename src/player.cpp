@@ -97,6 +97,7 @@ void Player::postMove()
 	const Tile& dest = area->getTile(coord);
 	const boost::optional<Door> door = dest.door;
 	if (door)
+		// FIXME: loadArea can FAIL
 		World::getWorld()->loadArea(door->area, door->tile);
 	if (conf->moveMode == TILE)
 		if (velocity.x || velocity.y || velocity.z)
