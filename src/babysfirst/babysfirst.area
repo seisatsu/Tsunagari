@@ -86,7 +86,7 @@
   </object>
   <object name="door4" type="Tile" gid="7" x="0" y="128">
    <properties>
-    <property name="door" value="multile.area,3,1,0"/>
+    <property name="door" value="polytileset.area,3,1,0"/>
    </properties>
   </object>
  </objectgroup>
