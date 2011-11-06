@@ -42,7 +42,7 @@
    <tile gid="15"/>
    <tile gid="3"/>
    <tile gid="9"/>
-   <tile gid="9"/>
+   <tile gid="7"/>
    <tile gid="3"/>
    <tile gid="3"/>
    <tile gid="13"/>
@@ -87,6 +87,11 @@
   <object name="door4" type="Tile" gid="7" x="0" y="128">
    <properties>
     <property name="door" value="polytileset.area,3,1,0"/>
+   </properties>
+  </object>
+  <object name="door5" type="Tile" gid="7" x="0" y="256">
+   <properties>
+    <property name="door" value="polylayer.area,3,1,0"/>
    </properties>
   </object>
  </objectgroup>
