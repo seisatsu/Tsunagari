@@ -557,7 +557,10 @@ bool Area::processLayerData(XMLNode node)
 			ASSERT(child.intAttr("gid", &gid));
 			gid -= 1; // Bug in tiled. Off by one.
 
-			ASSERT(0 <= gid && gid < (int)tileTypes.size());
+			if (gid < 0 || (int)tileTypes.size() <= gid) {
+				Log::err(descriptor, "invalid tile gid");
+				return false;
+			}
 
 			Tile t;
 			t.type = &tileTypes[gid];

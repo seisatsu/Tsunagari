@@ -103,7 +103,7 @@ void Player::postMove()
 			r.x = c.x;
 			r.y = c.y;
 			r.z = c.z;
-			Log::err("Area", door->area + ": failed to load properly");
+			Log::err("Door", door->area + ": failed to load properly");
 		}
 	}
 	if (conf->moveMode == TILE)
