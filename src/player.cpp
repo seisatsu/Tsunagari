@@ -96,9 +96,16 @@ void Player::postMove()
 	const icoord coord = getTileCoords();
 	const Tile& dest = area->getTile(coord);
 	const boost::optional<Door> door = dest.door;
-	if (door)
-		// FIXME: loadArea can FAIL
-		World::getWorld()->loadArea(door->area, door->tile);
+	if (door) {
+		if (!World::getWorld()->loadArea(door->area, door->tile)) {
+			// Roll back movement if door failed to open.
+			c = fromCoord;
+			r.x = c.x;
+			r.y = c.y;
+			r.z = c.z;
+			Log::err("Area", door->area + ": failed to load properly");
+		}
+	}
 	if (conf->moveMode == TILE)
 		if (velocity.x || velocity.y || velocity.z)
 			moveByTile(velocity);

@@ -142,8 +142,10 @@ protected:
 	double speed;     //! Effective speed = original speed * multiplier
 
 	bool moving;
-	icoord dest;
-	Tile* movingFrom;
+	icoord fromCoord;
+	Tile* fromTile;
+	icoord destCoord;
+	Tile* destTile;
 
 	Area* area;
 	icoord c;

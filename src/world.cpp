@@ -128,13 +128,19 @@ void World::processScripts(XMLNode node)
 
 bool World::loadArea(const std::string& areaName, icoord playerPos)
 {
+	Area* oldArea = area;
 	Area* newArea = new Area(rc, this, player.get(), music, areaName);
-	delete area;
-	area = newArea;
-	if (!area->init())
+	if (!newArea->init())
 		return false;
+	setArea(newArea, playerPos);
+	delete oldArea;
+	return true;
+}
+
+void World::setArea(Area* area, icoord playerPos)
+{
+	this->area = area;
 	player->setArea(area);
 	player->setTileCoords(playerPos);
-	return true;
 }
 

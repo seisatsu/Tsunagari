@@ -111,9 +111,9 @@ bool Area::inBounds(int x, int y, int z) const
 void Area::drawTiles() const
 {
 	const icube_t tiles = visibleTiles();
-	for (int z = tiles.z1; z != tiles.z2; z++) {
-		for (int y = tiles.y1; y != tiles.y2; y++) {
-			for (int x = tiles.x1; x != tiles.x2; x++) {
+	for (int z = tiles.z1; z < tiles.z2; z++) {
+		for (int y = tiles.y1; y < tiles.y2; y++) {
+			for (int x = tiles.x1; x < tiles.x2; x++) {
 				int tx = x, ty = y, tz = z;
 				if (loopX)
 					tx = wrap(0, tx, dim.x);
@@ -229,17 +229,7 @@ icube_t Area::visibleTiles() const
 	const int y2 = (int)ceil((double)(windowHeight - off.y) /
 		(double)tileHeight);
 
-	return icube(x1, y1, 0, x2, y2, 1);
-
-	// Does the entire width or height of the map fit onscreen?
-	if (x1 >= 0 && y1 >= 0)
-		return icube(x1, y1, 0, x2, y2, 1);
-	else if (x1 >= 0)
-		return icube(x1, 0, 0, x2, dim.y, 1);
-	else if (y1 >= 0)
-		return icube(0, y1, 0, dim.x, y2, 1);
-	else
-		return icube(0, 0, 0, dim.x, dim.y, 1);
+	return icube(x1, y1, 0, x2, y2, dim.z);
 }
 
 bool Area::processDescriptor()
@@ -252,7 +242,6 @@ bool Area::processDescriptor()
 
 	ASSERT(root.intAttr("width", &dim.x));
 	ASSERT(root.intAttr("height", &dim.y));
-	dim.z = 1;
 
 	for (XMLNode child = root.childrenNode(); child; child = child.next()) {
 		if (child.is("properties")) {
@@ -523,13 +512,14 @@ bool Area::processLayerProperties(XMLNode node)
   </properties>
 */
 
+	// FIXME: REQUIRE layer key.
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name  = child.attr("name");
 		std::string value = child.attr("value");
 		if (name == "layer") {
 			int depth;
 			ASSERT(child.intAttr("value", &depth));
-			if (depth != dim.z - 1) {
+			if (depth != dim.z) {
 				Log::err(descriptor, "invalid layer depth");
 				return false;
 			}

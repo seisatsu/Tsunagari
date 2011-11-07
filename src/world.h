@@ -56,6 +56,7 @@ public:
 	void update(unsigned long dt);
 
 	bool loadArea(const std::string& areaName, icoord playerPos);
+	void setArea(Area* area, icoord playerPos);
 
 private:
 	bool processDescriptor();

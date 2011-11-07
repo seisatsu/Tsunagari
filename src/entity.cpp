@@ -130,14 +130,14 @@ void Entity::updateTile(unsigned long dt)
 	redraw = true;
 	double traveled = speed * (double)dt;
 	double destDist = Gosu::distance((double)c.x, (double)c.y,
-			(double)dest.x, (double)dest.y); 
+			(double)destCoord.x, (double)destCoord.y);
 	if (destDist < traveled) {
-		c = dest;
+		c = destCoord;
 		moving = false;
 		postMove();
 	}
 	else {
-		double angle = angleFromXY(c.x - dest.x, dest.y - c.y);
+		double angle = angleFromXY(c.x - destCoord.x, destCoord.y - c.y);
 		double dx = cos(angle);
 		double dy = -sin(angle);
 
@@ -244,17 +244,21 @@ void Entity::moveByTile(icoord delta)
 	}
 
 	// Move!
+	fromCoord = c;
+	fromTile = &getTile();
 	const icoord tileDim = area->getTileDimensions();
-	dest = c;
-	dest /= tileDim;
-	dest += delta;
-	dest *= tileDim;
+	destCoord = fromCoord;
+	destCoord /= tileDim;
+	destCoord += delta;
+	destCoord *= tileDim;
+	destTile = &area->getTile(newCoord);
+
 	redraw = true;
 
 	preMove(delta);
 
 	if (conf->moveMode == TURN) {
-		c = dest;
+		c = destCoord;
 		postMove();
 	}
 	else if (conf->moveMode == TILE) {
@@ -331,7 +335,6 @@ void Entity::preMove(icoord delta)
 	else
 		setPhase("moving " + facing);
 	preMoveLua();
-	movingFrom = &getTile();
 }
 
 void Entity::preMoveLua()
@@ -354,9 +357,9 @@ void Entity::postMove()
 {
 	if (conf->moveMode != TURN)
 		setPhase(facing);
-	movingFrom->onLeaveScripts(rc, this);
+	fromTile->onLeaveScripts(rc, this);
 	postMoveLua();
-	getTile().onEnterScripts(rc, this);
+	destTile->onEnterScripts(rc, this);
 
 	// TODO: move teleportation here
 	/*
