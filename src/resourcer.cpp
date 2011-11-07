@@ -37,8 +37,8 @@ Resourcer::Resourcer(GameWindow* window, ClientValues* conf)
 Resourcer::~Resourcer()
 {
 	if (z && zip_close(z))
-		Log::err(conf->world,
-		         std::string("closing : ") + zip_strerror(z));
+		Log::err("Resourcer", conf->world +
+			": I/O error on closing: " + zip_strerror(z));
 }
 
 bool Resourcer::init()
@@ -74,7 +74,7 @@ void Resourcer::reclaim(Map& map)
 		if (unused) {
 			if (!cache.lastUsed) {
 				cache.lastUsed = now;
-				Log::dbg("Resourcer", name + " unused");
+				Log::dbg("Resourcer", name + ": unused");
 			}
 			else if (now < cache.lastUsed) {
 				// Handle time overflow
@@ -82,14 +82,14 @@ void Resourcer::reclaim(Map& map)
 			}
 			else if (now > cache.lastUsed + conf->cacheTTL*1000) {
 				dead.push_back(name);
-				Log::dbg("Resourcer", "Removing " + name);
+				Log::dbg("Resourcer", name + ": purged from cache");
 			}
 		}
 		// XXX: Redundant? We're working around this because it won't
 		// catch XML documents.
 		else if (cache.lastUsed) {
 			cache.lastUsed = 0;
-			Log::dbg("Resourcer", name + " used again");
+			Log::dbg("Resourcer", name + ": requested (cached)");
 		}
 	}
 	BOOST_FOREACH(std::string& name, dead)
@@ -108,7 +108,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 		ImageRefMap::iterator entry = images.find(name);
 		if (entry != images.end()) {
 			if (entry->second.lastUsed) {
-				Log::dbg("Resourcer", name + " used again");
+				Log::dbg("Resourcer", name + ": requested (cached)");
 				entry->second.lastUsed = 0;
 			}
 			return entry->second.resource;
@@ -128,6 +128,8 @@ ImageRef Resourcer::getImage(const std::string& name)
 		data.lastUsed = 0; 
 		images[name] = data;
 	}
+
+	Log::dbg("Resourcer", name + ": requested");
 	return result;
 }
 
@@ -138,7 +140,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		TiledImageMap::iterator entry = tiles.find(name);
 		if (entry != tiles.end()) {
 			int now = GameWindow::getWindow().time();
-			Log::dbg("Resourcer", name + " used again");
+			Log::dbg("Resourcer", name + ": requested (cached)");
 			// We set lastUsed to now because it won't be used by
 			// the time reclaim() gets to it.
 			entry->second.lastUsed = now;
@@ -163,6 +165,8 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		data.lastUsed = 0;
 		tiles[name] = data;
 	}
+
+	Log::dbg("Resourcer", name + ": requested");
 	return true;
 }
 
@@ -179,7 +183,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 		SampleRefMap::iterator entry = samples.find(name);
 		if (entry != samples.end()) {
 			if (entry->second.lastUsed) {
-				Log::dbg("Resourcer", name + " used again");
+				Log::dbg("Resourcer", name + ": requested (cached)");
 				entry->second.lastUsed = 0;
 			}
 			return entry->second.resource;
@@ -197,6 +201,8 @@ SampleRef Resourcer::getSample(const std::string& name)
 		data.lastUsed = 0;
 		samples[name] = data;
 	}
+
+	Log::dbg("Resourcer", name + ": requested");
 	return result;
 }
 
@@ -207,7 +213,7 @@ XMLDoc Resourcer::getXMLDoc(const std::string& name,
 		XMLMap::iterator entry = xmls.find(name);
 		if (entry != xmls.end()) {
 			int now = GameWindow::getWindow().time();
-			Log::dbg("Resourcer", name + " used again");
+			Log::dbg("Resourcer", name + ": requested (cached)");
 			// We set lastUsed to now because it won't be used by
 			// the time reclaim() gets to it.
 			entry->second.lastUsed = now;
@@ -223,6 +229,8 @@ XMLDoc Resourcer::getXMLDoc(const std::string& name,
 		data.lastUsed = 0; 
 		xmls[name] = data;
 	}
+
+	Log::dbg("Resourcer", name + ": requested");
 	return result;
 }
 
@@ -260,8 +268,10 @@ bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
 {
 	if (conf->cacheEnabled) {
 		LuaBytecodeMap::iterator entry = code.find(name);
-		if (entry != code.end())
+		if (entry != code.end()) {
+			Log::dbg("Resourcer", name + ": requested (cached)");
 			return runLuaScript(L, entry->second, name.c_str());
+		}
 	}
 
 	std::vector<char> bytecode;
@@ -274,6 +284,8 @@ bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
 
 	// lua_State* L was the object that compiled the script, so we don't
 	// have to run the bytecode again.
+
+	Log::dbg("Resourcer", name + ": requested");
 	return true;
 }
 
@@ -329,7 +341,7 @@ std::string Resourcer::readStringFromDisk(const std::string& name)
 	std::string str;
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		Log::err(path(name), "file missing");
+		Log::err("Resourcer", path(name) + ": file missing");
 		return "";
 	}
 
@@ -339,13 +351,14 @@ std::string Resourcer::readStringFromDisk(const std::string& name)
 
 	zf = zip_fopen(z, name.c_str(), 0x0);
 	if (!zf) {
-		Log::err(path(name),
-		         std::string("opening : ") + zip_strerror(z));
+		Log::err("Resourcer", path(name) + ": error opening: " +
+			zip_strerror(z));
 		return "";
 	}
 
 	if (zip_fread(zf, buf, size) != size) {
-		Log::err(path(name), "reading didn't complete");
+		Log::err("Resourcer", path(name) + ": general I/O error"
+			" during loading");
 		zip_fclose(zf);
 		return "";
 	}
@@ -364,22 +377,23 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 	int size;
 
 	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
-		Log::err(path(name), "file missing");
+		Log::err("Resourcer", path(name) + ": file missing");
 		return NULL;
 	}
 
 	size = (int)stat.size;
 
 	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
-		Log::err(path(name),
-		         std::string("opening : ") + zip_strerror(z));
+		Log::err("Resourcer", path(name) + ": error opening: " +
+			zip_strerror(z));
 		return NULL;
 	}
 
 	Gosu::Buffer* buffer = new Gosu::Buffer;
 	buffer->resize(size);
 	if (zip_fread(zf, buffer->data(), size) != size) {
-		Log::err(path(name), "reading didn't complete");
+		Log::err("Resourcer", path(name) + ": general I/O error"
+			" during loading");
 		zip_fclose(zf);
 		delete buffer;
 		return NULL;
