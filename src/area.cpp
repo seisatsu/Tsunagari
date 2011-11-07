@@ -126,11 +126,12 @@ void Area::drawTiles() const
 	}
 }
 
-void Area::drawTile(const Tile& tile, int x, int y, int) const
+void Area::drawTile(const Tile& tile, int x, int y, int z) const
 {
 	const TileType* type = tile.type;
 	const Gosu::Image* img = type->anim.frame();
-	img->draw((double)x*img->width(), (double)y*img->height(), 0);
+	if (img)
+		img->draw((double)x*img->width(), (double)y*img->height(), z);
 }
 
 void Area::drawEntities()
@@ -333,8 +334,21 @@ bool Area::processTileSet(XMLNode node)
 	tileDim = icoord(x, y, z);
 	// FIXME: compare with existing tileDim
 
+	if (tileTypes.empty()) {
+		// Add TileType #0, a transparent tile type that is fills map squares
+		// for sections of the map that don't exist.
+		TileType zero;
+		zero.flags = nowalk;
+		tileTypes.push_back(zero);
+	}
+
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
-		if (child.is("tile")) {
+		if (child.is("image")) {
+			std::string source = child.attr("source");
+			rc->getTiledImage(img, source,
+				(unsigned)x, (unsigned)y, true);
+		}
+		else if (child.is("tile")) {
 			// FIXME: Ensure img
 			if (img.empty()) {
 				Log::err(descriptor,
@@ -344,19 +358,31 @@ bool Area::processTileSet(XMLNode node)
 
 			int id;
 			ASSERT(child.intAttr("id", &id));
-			// XXX SECURITY: Check id for sane values.
 
-			// Undeclared TileTypes have default properties.
-			while (tileTypes.size() != (unsigned)id)
+			if (id < 0 || (int)tileTypes.size() +
+			              (int)img.size() <= id) {
+				Log::err(descriptor, "tile type id is invalid");
+				return false;
+			}
+
+			// Type ids are given with offset given in terms of
+			// tile from the image rather than in terms of the gid
+			// number, which has an extra type, #0, pushing back
+			// all other types by one.
+			int gid = id + 1; 
+
+			if ((int)tileTypes.size() > gid) {
+				Log::err(descriptor,
+					"tile types must be sorted by id");
+				return false;
+			}
+
+			// Undeclared types have default properties.
+			while ((int)tileTypes.size() < gid)
 				tileTypes.push_back(TileType(img));
 
-			// Handle explicit TileType.
+			// Handle this (explicitly declared) type.
 			ASSERT(processTileType(child, img));
-		}
-		else if (child.is("image")) {
-			std::string source = child.attr("source");
-			rc->getTiledImage(img, source,
-				(unsigned)x, (unsigned)y, true);
 		}
 	}
 
@@ -386,18 +412,11 @@ bool Area::processTileType(XMLNode node, TiledImage& img)
   </tile>
 */
 
+	// The id has already been handled by processTileSet, so we don't have
+	// to worry about it.
+
 	// Initialize a default TileType, we'll build on that.
 	TileType type(img);
-
-	int expectedId = (int)tileTypes.size();
-	int id;
-	ASSERT(node.intAttr("id", &id));
-	if (id != expectedId) {
-		Log::err(descriptor, std::string("expected TileType id ") +
-		         itostr(expectedId) + ", but got " +
-			 itostr(id));
-		return false;
-	}
 
 	XMLNode child = node.childrenNode(); // <properties>
 	for (child = child.childrenNode(); child; child = child.next()) {
@@ -555,7 +574,6 @@ bool Area::processLayerData(XMLNode node)
 		if (child.is("tile")) {
 			int gid;
 			ASSERT(child.intAttr("gid", &gid));
-			gid -= 1; // Bug in tiled. Off by one.
 
 			if (gid < 0 || (int)tileTypes.size() <= gid) {
 				Log::err(descriptor, "invalid tile gid");
