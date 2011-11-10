@@ -30,7 +30,7 @@
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
 Resourcer::Resourcer(GameWindow* window, ClientValues* conf)
-	: window(window), z(NULL), conf(conf)
+	: window(window), conf(conf)
 {
 }
 
