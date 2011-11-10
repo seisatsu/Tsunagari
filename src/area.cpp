@@ -679,6 +679,9 @@ bool Area::processObject(XMLNode node, int zpos)
     <property name="flags" value="npc_nowalk"/>
    </properties>
   </object>
+  <object name="foo" type="Tile" x="0" y="0" width="64" height="64">
+   ...
+  </object>
 */
 
 	std::string type = node.attr("type");
@@ -687,20 +690,10 @@ bool Area::processObject(XMLNode node, int zpos)
 		return false;
 	}
 
-
-	int x, y;
-	ASSERT(node.intAttr("x", &x));
-	ASSERT(node.intAttr("y", &y));
-	x /= tileDim.x;
-	y /= tileDim.y;
-	y = y - 1; // Bug in tiled. The y is off by one.
-
-	// We ignore the object gid. This is supposed to indicate which tile
-	// our object is rendered as, but for Tsunagari, tile objects are
-	// always transparent and releveal the tile below.
-
-	// We know which Tile is being talked about now... yay
-	Tile& t = map[zpos][y][x];
+	// Gather object properties, we'll assign them to tiles later.
+	std::vector<TileEvent> events;
+	boost::optional<Door> door;
+	unsigned flags;
 
 	XMLNode child = node.childrenNode(); // <properties>
 	for (child = child.childrenNode(); child; child = child.next()) {
@@ -708,7 +701,7 @@ bool Area::processObject(XMLNode node, int zpos)
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
 		if (name == "flags") {
-			t.flags = splitTileFlags(value);
+			flags = splitTileFlags(value);
 		}
 		else if (name == "onEnter") {
 			if (!rc->resourceExists(value)) {
@@ -719,8 +712,8 @@ bool Area::processObject(XMLNode node, int zpos)
 			TileEvent e;
 			e.trigger = onEnter;
 			e.script = value;
-			t.events.push_back(e);
-			t.flags |= hasOnEnter;
+			events.push_back(e);
+			flags |= hasOnEnter;
 		}
 		else if (name == "onLeave") {
 			if (!rc->resourceExists(value)) {
@@ -731,14 +724,56 @@ bool Area::processObject(XMLNode node, int zpos)
 			TileEvent e;
 			e.trigger = onLeave;
 			e.script = value;
-			t.events.push_back(e);
-			t.flags |= hasOnLeave;
+			events.push_back(e);
+			flags |= hasOnLeave;
 		}
 		else if (name == "door") {
-			t.door.reset(parseDoor(value));
-			t.flags |= npc_nowalk;
+			door.reset(parseDoor(value));
+			flags |= npc_nowalk;
 		}
 	}
+
+	// Apply these properties directly to one or more tiles in a rectangle
+	// of the map. We don't keep an intermediary "object" object lying
+	// around.
+	int x, y, w, h;
+	ASSERT(node.intAttr("x", &x));
+	ASSERT(node.intAttr("y", &y));
+	x /= tileDim.x;
+	y /= tileDim.y;
+
+	if (node.hasAttr("gid")) {
+		// This is one of Tiled's Tile Objects. It is one tile wide and
+		// high.
+		y = y - 1; // Bug in tiled. The y is off by one.
+		w = 1;
+		h = 1;
+	}
+	else {
+		// This is one of Tiled's Objects. It has a width and height.
+		ASSERT(node.intAttr("width", &w));
+		ASSERT(node.intAttr("height", &h));
+		w /= tileDim.x;
+		h /= tileDim.y;
+	}
+
+	// We ignore the object gid. This is supposed to indicate which tile
+	// our object is rendered as, but, for Tsunagari, tile objects are
+	// always transparent and releveal the tile below.
+
+	// We know which Tiles are being talked about now... yay
+	for (int Y = y; Y < y + h; Y++) {
+		for (int X = x; X < x + w; X++) {
+			Tile& t = map[zpos][Y][X];
+
+			t.flags |= flags;
+			if (door)
+				t.door = door;
+			BOOST_FOREACH(TileEvent& e, events)
+				t.events.push_back(e);
+		}
+	}
+
 	return true;
 }
 

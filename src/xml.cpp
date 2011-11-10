@@ -66,6 +66,11 @@ bool XMLNode::doubleContent(double *d) const
 	return true;
 }
 
+bool XMLNode::hasAttr(const std::string& name) const
+{
+	return xmlHasProp(node, BAD_CAST(name.c_str()));
+}
+
 std::string XMLNode::attr(const std::string& name) const
 {
 	xmlChar* content = xmlGetProp(node, BAD_CAST(name.c_str()));

@@ -28,6 +28,7 @@ public:
 	bool intContent(int* i) const;
 	bool doubleContent(double* d) const;
 
+	bool hasAttr(const std::string& name) const;
 	std::string attr(const std::string& name) const;
 	bool intAttr(const std::string& name, int* i) const;
 	bool doubleAttr(const std::string& name, double* d) const;
