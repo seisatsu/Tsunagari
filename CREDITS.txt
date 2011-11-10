@@ -41,6 +41,18 @@ License:
 
 -----
 
+=== LibPhysFS ===
+
+Copyright (c) 2001-2011:
+	Ryan C. Gordon
+	All Contributors.
+
+License:
+	ZLIB License
+	<http://hg.icculus.org/icculus/physfs/raw-file/tip/LICENSE.txt>
+
+-----
+
 === LibXML2 ===
 
 Copyright (c) 1998-2003:
@@ -49,18 +61,6 @@ Copyright (c) 1998-2003:
 License:
 	MIT License
 	<http://www.opensource.org/licenses/mit-license.php>
-
------
-
-=== LibZIP ===
-
-Copyright (c) 1999-2008:
-	Dieter Baron
-	Thomas Klausner
-
-License:
-	BSD License (3 Clause)
-	<http://www.opensource.org/licenses/bsd-license.php>
 
 -----
 

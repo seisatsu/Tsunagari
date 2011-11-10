@@ -33,6 +33,6 @@ Requirements:
 NAME		LICENSE	  LINK
 libboost        (BOOST) - http://www.boost.org/
 libgosu         (MIT)   - http://www.libgosu.org/     version 0.7.35 or higher
+libphysfs       (ZLIB)  - http://icculus.org/physfs/
 libxml2         (MIT)   - http://xmlsoft.org/
-libzip          (BSD)   - http://www.nih.at/libzip/
 
