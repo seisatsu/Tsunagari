@@ -40,7 +40,7 @@ public:
 	virtual ~GameWindow();
 
 	//! GameWindow Initializer
-	bool init();
+	bool init(char** argv);
 
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);

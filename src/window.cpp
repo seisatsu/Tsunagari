@@ -35,11 +35,11 @@ GameWindow::~GameWindow()
 {
 }
 
-bool GameWindow::init()
+bool GameWindow::init(char** argv)
 {
 	rc.reset(new Resourcer(this, conf));
 	world.reset(new World(this, rc.get(), conf));
-	return rc->init() && world->init();
+	return rc->init(argv) && world->init();
 }
 
 void GameWindow::buttonDown(const Gosu::Button btn)

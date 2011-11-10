@@ -16,7 +16,7 @@ LUACFLAGS = -I../deps/lua
 LUALIB = ../deps/lua/liblua.a
 
 # Libraries to include.
-LIBS = $(LUALIB) -lgosu -lzip -lboost_program_options \
+LIBS = $(LUALIB) -lgosu -lphysfs -lboost_program_options \
 	$(shell xml2-config --libs)
 
 # Compiler and linker flags.

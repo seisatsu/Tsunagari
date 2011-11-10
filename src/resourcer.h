@@ -20,8 +20,6 @@
 #include "lauxlib.h"
 #include "xml.h"
 
-struct zip;
-
 namespace Gosu {
 	class Bitmap;
 	class Buffer;
@@ -45,7 +43,7 @@ class Resourcer
 public:
 	Resourcer(GameWindow* window, ClientValues* conf);
 	~Resourcer();
-	bool init();
+	bool init(char** argv);
 
 	//! Expunge old stuff from the cache.
 	void garbageCollect();
@@ -118,7 +116,6 @@ private:
 	std::string path(const std::string& entryName) const;
 
 	GameWindow* window;
-	zip* z;
 	ClientValues* conf;
 
 	// Cached resources stored in a manner usable by the game; no further

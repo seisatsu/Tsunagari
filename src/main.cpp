@@ -319,7 +319,7 @@ int main(int argc, char** argv)
 	}
 
 	GameWindow window(conf);
-	if (window.init())
+	if (window.init(argv))
 		window.show();
 
 	delete conf;

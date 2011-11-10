@@ -14,7 +14,7 @@
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
-#include <zip.h>
+#include <physfs.h>
 
 #include "common.h"
 #include "config.h"
@@ -36,22 +36,23 @@ Resourcer::Resourcer(GameWindow* window, ClientValues* conf)
 
 Resourcer::~Resourcer()
 {
-	if (z && zip_close(z))
-		Log::err("Resourcer", conf->world +
-			": I/O error on closing: " + zip_strerror(z));
+	PHYSFS_deinit();
 }
 
-bool Resourcer::init()
+bool Resourcer::init(char** argv)
 {
 	int err;
-	z = zip_open(conf->world.c_str(), 0x0, &err);
-	if (!z) {
-		char buf[512];
-		zip_error_to_str(buf, sizeof(buf), err, errno);
-		Log::err(conf->world, buf);
+	err = PHYSFS_init(argv[0]);
+	if (!err)
+		return false;
+	
+	err = PHYSFS_mount(conf->world.c_str(), NULL, 0);
+	if (!err) {
+		Log::err("Resourcer", conf->world + ": could not open world");
+		return false;
 	}
-
-	return z;
+	
+	return true;
 }
 
 void Resourcer::garbageCollect()
@@ -98,8 +99,9 @@ void Resourcer::reclaim(Map& map)
 
 bool Resourcer::resourceExists(const std::string& name)
 {
-	struct zip_stat stat;
-	return zip_stat(z, name.c_str(), 0x0, &stat) == 0;
+	if (!PHYSFS_exists(name.c_str()))
+		return false;
+	return true;
 }
 
 ImageRef Resourcer::getImage(const std::string& name)
@@ -334,72 +336,71 @@ XMLDoc Resourcer::readXMLDocFromDisk(const std::string& name,
 
 std::string Resourcer::readStringFromDisk(const std::string& name)
 {
-	struct zip_stat stat;
-	zip_file* zf;
-	int size;
+	unsigned long size;
 	char* buf;
 	std::string str;
+	PHYSFS_File* zf;
 
-	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
+	if (!PHYSFS_exists(name.c_str())) {
 		Log::err("Resourcer", path(name) + ": file missing");
 		return "";
 	}
-
-	size = (int)stat.size;
-	buf = new char[size + 1];
-	buf[size] = '\0';
-
-	zf = zip_fopen(z, name.c_str(), 0x0);
+	
+	zf = PHYSFS_openRead(name.c_str());
 	if (!zf) {
-		Log::err("Resourcer", path(name) + ": error opening: " +
-			zip_strerror(z));
+		Log::err("Resourcer", path(name) + ": error opening file");
 		return "";
 	}
-
-	if (zip_fread(zf, buf, size) != size) {
+	
+	size = (unsigned long)PHYSFS_fileLength(zf);
+	buf = new char[size + 1];
+	buf[size] = '\0';
+	
+	if (PHYSFS_read(zf, buf, 1, 
+	   (PHYSFS_uint32)PHYSFS_fileLength(zf)) == -1) {
 		Log::err("Resourcer", path(name) + ": general I/O error"
 			" during loading");
-		zip_fclose(zf);
+		PHYSFS_close(zf);
 		return "";
 	}
 
 	str = buf;
 	delete[] buf;
 
-	zip_fclose(zf);
+	PHYSFS_close(zf);
 	return str;
 }
 
 Gosu::Buffer* Resourcer::read(const std::string& name)
 {
-	struct zip_stat stat;
-	zip_file* zf;
-	int size;
+	unsigned long size;
+	PHYSFS_File* zf;
 
-	if (zip_stat(z, name.c_str(), 0x0, &stat)) {
+	if (!PHYSFS_exists(name.c_str())) {
 		Log::err("Resourcer", path(name) + ": file missing");
 		return NULL;
 	}
 
-	size = (int)stat.size;
-
-	if (!(zf = zip_fopen(z, name.c_str(), 0x0))) {
-		Log::err("Resourcer", path(name) + ": error opening: " +
-			zip_strerror(z));
+	zf = PHYSFS_openRead(name.c_str());
+	if (!zf) {
+		Log::err("Resourcer", path(name) + ": error opening file");
 		return NULL;
 	}
+	
+	size = (unsigned long)PHYSFS_fileLength(zf);
 
 	Gosu::Buffer* buffer = new Gosu::Buffer;
 	buffer->resize(size);
-	if (zip_fread(zf, buffer->data(), size) != size) {
+	if (PHYSFS_read(zf, buffer->data(), 1, 
+	   (PHYSFS_uint32)PHYSFS_fileLength(zf)) == -1) {
 		Log::err("Resourcer", path(name) + ": general I/O error"
 			" during loading");
-		zip_fclose(zf);
+		PHYSFS_close(zf);
 		delete buffer;
 		return NULL;
 	}
 
-	zip_fclose(zf);
+	PHYSFS_close(zf);
 	return buffer;
 }
 
