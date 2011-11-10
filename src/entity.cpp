@@ -340,17 +340,21 @@ void Entity::preMove(icoord delta)
 void Entity::preMoveLua()
 {
 	const std::string& name = scripts["premove"];
-	Script s(rc);
-	bindEntity(&s, this, "entity");
-	s.run(rc, name);
+	if (name.size()) {
+		Script s(rc);
+		bindEntity(&s, this, "entity");
+		s.run(rc, name);
+	}
 }
 
 void Entity::postMoveLua()
 {
 	const std::string& name = scripts["postmove"];
-	Script s(rc);
-	bindEntity(&s, this, "entity");
-	s.run(rc, name);
+	if (name.size()) {
+		Script s(rc);
+		bindEntity(&s, this, "entity");
+		s.run(rc, name);
+	}
 }
 
 void Entity::postMove()
