@@ -88,6 +88,9 @@ public:
 	void setSpeed(double multiplier);
 
 protected:
+	//! Calculate what doff should be and save it in doff.
+	void calcDoff();
+
 	//! Get the Tile we are standing on.
 	Tile& getTile();
 
@@ -129,6 +132,7 @@ protected:
 
 	Resourcer* rc;
 
+	int imgw, imgh;
 	boost::unordered_map<std::string, Animation> phases;
 	Animation* phase;
 	bool redraw;
@@ -150,6 +154,7 @@ protected:
 	Area* area;
 	icoord c;
 	rcoord r; // real x,y position: hold partial pixel transversal
+	icoord doff; // Drawing offset to center entity on tile.
 
 	std::string descriptor;
 
@@ -161,7 +166,6 @@ protected:
 	*/
 	struct SpriteValues {
 		std::string sheet;
-		icoord tileSize;
 		boost::unordered_map<std::string, unsigned> phases;
 	} xml;
 };

@@ -33,11 +33,12 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	  redraw(true),
 	  speedMul(1.0),
 	  moving(false),
-	  area(area),
 	  c(0, 0, 0),
 	  r(0.0, 0.0, 0.0),
 	  conf(conf)
 {
+	if (area)
+		setArea(area);
 }
 
 Entity::~Entity()
@@ -59,7 +60,7 @@ void Entity::draw()
 {
 	int millis = GameWindow::getWindow().time();
 	phase->updateFrame(millis);
-	phase->frame()->draw(r.x, r.y, 0.0);
+	phase->frame()->draw(doff.x + r.x, doff.y + r.y, 0.0);
 	redraw = false;
 }
 
@@ -269,6 +270,7 @@ void Entity::moveByTile(icoord delta)
 void Entity::setArea(Area* a)
 {
 	area = a;
+	calcDoff();
 }
 
 void Entity::gotoRandomTile()
@@ -288,6 +290,14 @@ void Entity::setSpeed(double multiplier)
 {
 	speedMul = multiplier;
 	speed = baseSpeed * speedMul;
+}
+
+void Entity::calcDoff()
+{
+	// X-axis is centered with tile.
+	doff.x = (area->getTileDimensions().x - imgw) / 2;
+	// Y-axis is aligned with bottom of tile.
+	doff.y = area->getTileDimensions().y - imgh;
 }
 
 Tile& Entity::getTile()
@@ -412,8 +422,8 @@ bool Entity::processSprite(XMLNode node)
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
 			xml.sheet = node.content();
-			if (!node.intAttr("tilewidth",  &xml.tileSize.x) ||
-			    !node.intAttr("tileheight", &xml.tileSize.y))
+			if (!node.intAttr("tilewidth",  &imgw) ||
+			    !node.intAttr("tileheight", &imgh))
 				return false;
 		} else if (node.is("phases")) {
 			if (!processPhases(node.childrenNode()))
@@ -426,8 +436,8 @@ bool Entity::processSprite(XMLNode node)
 bool Entity::processPhases(XMLNode node)
 {
 	TiledImage tiles;
-	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)xml.tileSize.x,
-			(unsigned)xml.tileSize.y, false))
+	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)imgw,
+			(unsigned)imgh, false))
 		return false;
 	for (; node; node = node.next())
 		if (node.is("phase"))
