@@ -33,6 +33,7 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	  redraw(true),
 	  speedMul(1.0),
 	  moving(false),
+	  area(NULL),
 	  c(0, 0, 0),
 	  r(0.0, 0.0, 0.0),
 	  conf(conf)
@@ -271,6 +272,7 @@ void Entity::setArea(Area* a)
 {
 	area = a;
 	calcDoff();
+	setSpeed(speedMul); // Calculate new speed based on tile size.
 }
 
 void Entity::gotoRandomTile()
@@ -289,7 +291,10 @@ void Entity::gotoRandomTile()
 void Entity::setSpeed(double multiplier)
 {
 	speedMul = multiplier;
-	speed = baseSpeed * speedMul;
+	if (area)
+		// baseSpeed * speedMul = # of tiles crossed per second
+		speed = area->getTileDimensions().x *
+		        baseSpeed * speedMul / 1000.0;
 }
 
 void Entity::calcDoff()
@@ -402,7 +407,7 @@ bool Entity::processDescriptor()
 		if (node.is("speed")) {
 			if (!node.doubleContent(&baseSpeed))
 				return false;
-			speed = baseSpeed /= 1000.0;
+			setSpeed(1.0); // Calculate speed from tile size.
 		} else if (node.is("sprite")) {
 			if (!processSprite(node.childrenNode()))
 				return false;
