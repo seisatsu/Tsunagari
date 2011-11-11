@@ -61,5 +61,13 @@ bool isInteger(const std::string& s);
 //! period.
 bool isDecimal(const std::string& s);
 
+template<class T>
+T wrap(T min, T value, T max)
+{
+	while (value < min)
+		value += max;
+	return value % max;
+}
+
 #endif
 

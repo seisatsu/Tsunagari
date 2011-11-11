@@ -14,6 +14,7 @@
 #include <Gosu/Timing.hpp>
 
 #include "area.h"
+#include "common.h"
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
@@ -21,14 +22,6 @@
 #include "world.h"
 
 #define ASSERT(x)  if (!(x)) return false
-
-template<class T>
-T wrap(T min, T value, T max)
-{
-	while (value < min)
-		value += max;
-	return value % max;
-}
 
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
