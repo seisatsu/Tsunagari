@@ -72,8 +72,7 @@ void Player::moveByTile(icoord delta)
 	destTile = &area->getTile(newCoord);
 
 	// Is anything player-specific preventing us from moving?
-	if ((destTile->flags       & player_nowalk) ||
-	    (destTile->type->flags & player_nowalk)) {
+	if (destTile->hasFlag(player_nowalk)) {
 		// The tile we're trying to move onto is set as player_nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);

@@ -121,10 +121,12 @@ void Area::drawTiles() const
 
 void Area::drawTile(const Tile& tile, int x, int y, int z) const
 {
-	const TileType* type = tile.type;
-	const Gosu::Image* img = type->anim.frame();
-	if (img)
-		img->draw((double)x*img->width(), (double)y*img->height(), z);
+	BOOST_FOREACH(const TileType* type, tile.types) {
+		const Gosu::Image* img = type->anim.frame();
+		if (img)
+			img->draw((double)x*img->width(),
+			          (double)y*img->height(), z);
+	}
 }
 
 void Area::drawEntities()
@@ -573,8 +575,9 @@ bool Area::processLayerData(XMLNode node)
 			}
 
 			Tile t;
-			t.type = &tileTypes[gid];
-			t.type->allOfType.push_back(&t);
+			TileType* type = &tileTypes[gid];
+			type->allOfType.push_back(&t);
+			t.types.push_back(type);
 			t.flags = 0x0;
 			row.push_back(t);
 			if (row.size() % dim.x == 0) {

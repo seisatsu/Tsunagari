@@ -13,19 +13,31 @@
 #include "window.h"
 
 
+bool Tile::hasFlag(unsigned flag) const
+{
+	if (flags & flag)
+		return true;
+	BOOST_FOREACH(const TileType* type, types)
+		if (type->flags & flag)
+			return true;
+	return false;
+}
+
 void Tile::onEnterScripts(Resourcer* rc, Entity* triggeredBy)
 {
-	if (flags * hasOnEnter)
+	if (flags & hasOnEnter)
 		runScripts(rc, triggeredBy, onEnter, events);
-	if (type->flags * hasOnEnter)
-		runScripts(rc, triggeredBy, onEnter, type->events);
+	BOOST_FOREACH(const TileType* type, types)
+		if (type->flags & hasOnEnter)
+			runScripts(rc, triggeredBy, onEnter, type->events);
 }
 
 void Tile::onLeaveScripts(Resourcer* rc, Entity* triggeredBy)
 {
-	if (type->flags * hasOnLeave)
-		runScripts(rc, triggeredBy, onLeave, type->events);
-	if (flags * hasOnLeave)
+	BOOST_FOREACH(const TileType* type, types)
+		if (type->flags & hasOnLeave)
+			runScripts(rc, triggeredBy, onLeave, type->events);
+	if (flags & hasOnLeave)
 		runScripts(rc, triggeredBy, onLeave, events);
 }
 
@@ -74,8 +86,9 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 				// Do this check before passing _tiles_ to fn.
 				if (area.tileExists(pos)) {
 					const Tile& tile = area.getTile(pos);
-					if (tile.type == this)
-						return true;
+					BOOST_FOREACH(const TileType* type, tile.types)
+						if (type == this)
+							return true;
 				}
 			}
 		}

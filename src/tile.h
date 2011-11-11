@@ -41,8 +41,8 @@ enum TileEventTrigger {
 	the tile they are bound to.
 */
 enum TileFlags {
-	// when changing TileFlags, be sure to make updates to
-	// Area::splitTileFlags()
+	// When changing TileFlags, be sure to make updates to
+	// Area::splitTileFlags().
 	nowalk        = 0x0001,
 	player_nowalk = 0x0002,
 	npc_nowalk    = 0x0004,
@@ -64,7 +64,7 @@ enum TileFlags {
 */
 struct TileEvent {
 	TileEventTrigger trigger;
-	std::string script; // Script file.
+	std::string script; // Filename.
 };
 
 //! Convenience trigger for inter-area teleportation.
@@ -88,10 +88,14 @@ struct Door {
 class Tile
 {
 public:
-	TileType* type;
+	std::vector<TileType*> types;
 	std::vector<TileEvent> events;
-	unsigned flags; //! bitflags for each option in TileFlags enum
 	boost::optional<Door> door;
+	unsigned flags; //! Flags for each option in TileFlags enum.
+
+	//! Determines whether this tile or one of its parent types embodies a
+	//! flag.
+	bool hasFlag(unsigned flag) const;
 
 	void onEnterScripts(Resourcer* rc, Entity* triggeredBy);
 	void onLeaveScripts(Resourcer* rc, Entity* triggeredBy);
@@ -121,8 +125,7 @@ public:
 	Animation anim; //! Graphics for tiles of this type.
 	std::vector<TileEvent> events;
 	std::vector<Tile*> allOfType;
-	unsigned flags; //! bitflags for each option in TileFlags enum
-	// boost::scoped_ptr<Door> door ?
+	unsigned flags; //! Flags for each option in TileFlags enum.
 
 private:
 	//! Returns true if any of the area's tiles within the specified range

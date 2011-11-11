@@ -28,6 +28,9 @@ static std::string facings[][3] = {
 };
 
 
+// TODO: Variable holds all nowalk flags relevent to entity. Fn checks for them
+// all.
+
 Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	: rc(rc),
 	  redraw(true),
@@ -257,8 +260,7 @@ void Entity::moveByTile(icoord delta)
 	destTile = &area->getTile(newCoord);
 
 	// Can we move?
-	if ((destTile->flags       & nowalk) ||
-	    (destTile->type->flags & nowalk)) {
+	if (destTile->hasFlag(nowalk)) {
 		// The tile we're trying to move onto is set as nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
@@ -293,8 +295,7 @@ void Entity::gotoRandomTile()
 	do {
 		pos = icoord(rand() % map.x, rand() % map.y, 0);
 		tile = &area->getTile(pos);
-	} while (((tile->flags & nowalk) |
-	          (tile->type->flags & nowalk)) != 0);
+	} while (tile->hasFlag(nowalk));
 	setTileCoords(pos);
 }
 
