@@ -460,14 +460,13 @@ bool Area::processTileType(XMLNode node, TiledImage& img)
 
 			// Add size-1 more frames to our animation.
 			// We already have one from TileType's constructor.
-			for (int i = 1; i < size; i++) {
+			for (int i = 0; i < size - 1; i++) {
 				if (img.empty()) {
 					Log::err(descriptor, "ran out of tiles"
 						"/frames for animated tile");
 					return false;
 				}
-				type.anim.addFrame(img.front());
-				img.pop_front();
+				type.anim.addFrame(img[i]);
 			}
 		}
 		else if (name == "speed") {
