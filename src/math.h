@@ -8,6 +8,25 @@
 #define MATH_H
 
 template<class T>
+class vec2
+{
+public:
+	vec2();
+	vec2(const vec2<T>& other);
+	vec2(T x, T y);
+
+	vec2& operator +=(const vec2<T>& other);
+	vec2& operator -=(const vec2<T>& other);
+	vec2& operator *=(const vec2<T>& other);
+	vec2& operator *=(T coefficient);
+	vec2& operator /=(const vec2<T>& other);
+	vec2& operator /=(T coefficient);
+
+	T x, y;
+};
+
+
+template<class T>
 class vec3
 {
 public:
@@ -26,9 +45,11 @@ public:
 };
 
 //! Integer vector.
+typedef vec2<int> ivec2;
 typedef vec3<int> ivec3;
 
 //! Real vector.
+typedef vec2<double> rvec2;
 typedef vec3<double> rvec3;
 
 //! Coordinates.
