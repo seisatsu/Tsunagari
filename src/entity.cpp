@@ -191,12 +191,12 @@ rcoord Entity::getRPixel() const
 icoord Entity::getTileCoords() const
 {
 	icoord tileDim = area->getTileDimensions();
-	// XXX: revisit when we have Z-buffers
 	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
 void Entity::setPixelCoords(icoord coords)
 {
+	// FIXME: security: bounds check
 	redraw = true;
 	c = coords;
 	r.x = c.x;
@@ -206,6 +206,7 @@ void Entity::setPixelCoords(icoord coords)
 
 void Entity::setTileCoords(icoord coords)
 {
+	// FIXME: security: bounds check
 	redraw = true;
 	const icoord tileDim = area->getTileDimensions();
 	c = coords;
@@ -218,6 +219,7 @@ void Entity::setTileCoords(icoord coords)
 
 void Entity::moveByPixel(icoord delta)
 {
+	// FIXME: security: bounds check
 	c.x += delta.x;
 	c.y += delta.y;
 	c.z += delta.z;
@@ -233,6 +235,8 @@ void Entity::moveByTile(icoord delta)
 
 	icoord newCoord = getTileCoords();
 	newCoord += delta;
+
+	// FIXME: bounds check
 
 	// Can we move?
 	const Tile& tile = area->getTile(newCoord);

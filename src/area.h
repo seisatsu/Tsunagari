@@ -69,7 +69,7 @@ public:
 	icoord getTileDimensions() const;
 	const Tile& getTile(icoord c) const;
 	Tile& getTile(icoord c);
-	bool tileVisible(icoord c) const;
+	bool tileExists(icoord c) const;
 	icube_t visibleTiles() const;
 
 private:

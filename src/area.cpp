@@ -167,7 +167,7 @@ icoord Area::getTileDimensions() const
 	return tileDim;
 }
 
-bool Area::tileVisible(icoord c) const
+bool Area::tileExists(icoord c) const
 {
 	return inBounds(c.x, c.y, c.z);
 }
