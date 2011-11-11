@@ -1,4 +1,4 @@
-<!ELEMENT world (name, author, player, type, entrypoint, scripts*)>
+<!ELEMENT world (name, author, player, type, entrypoint, initscript?)>
 <!ATTLIST world version (1) #REQUIRED>
 
 <!ELEMENT name (#PCDATA)>
@@ -17,7 +17,5 @@
                      y    CDATA #REQUIRED
                      z    CDATA #REQUIRED>
 
-<!ELEMENT scripts (script+)>
-
-<!ELEMENT script (#PCDATA)>
+<!ELEMENT initscript (#PCDATA)>
 

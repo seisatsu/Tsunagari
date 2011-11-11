@@ -1,4 +1,0 @@
--- The portals teleport us! *gasp* Excitement!
-print("Lua says: Teleported!")
-entity:gotoRandomTile()
-

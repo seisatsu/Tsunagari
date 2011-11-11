@@ -1,5 +1,0 @@
--- We *could* play sounds here, but it's already handled by the engine.
---
--- Sound:play("step.sound")
---
-

@@ -112,18 +112,11 @@ bool World::processDescriptor()
 			    !node.intAttr("y", &xml.entry.coords.y) ||
 			    !node.intAttr("z", &xml.entry.coords.z))
 				return false;
-		} else if (node.is("scripts")) {
-			processScripts(node.childrenNode());
+		} else if (node.is("initscript")) {
+			xml.initscript = node.content();
 		}
 	}
 	return true;
-}
-
-void World::processScripts(XMLNode node)
-{
-	for (; node; node = node.next())
-		if (node.is("script"))
-			xml.scripts.push_back(node.content());
 }
 
 bool World::loadArea(const std::string& areaName, icoord playerPos)

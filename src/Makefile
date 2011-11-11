@@ -25,7 +25,7 @@ CXXFLAGS = $(MYCFLAGS) -pedantic -ansi $(WFLAGS) \
 LDFLAGS = $(MYLDFLAGS) $(LIBS)
 
 # Name of testing world.
-TESTWORLD = babysfirst.world
+TESTWORLD = testing.world
 
 
 ### --- MAIN SECTION --- ###

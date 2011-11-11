@@ -60,7 +60,6 @@ public:
 
 private:
 	bool processDescriptor();
-	void processScripts(XMLNode node);
 
 	Resourcer* rc;
 	GameWindow* wnd;
@@ -99,7 +98,7 @@ private:
 		std::string playerentity;
 		WorldTypeLocality locality;
 		WorldEntry entry;
-		std::vector<std::string> scripts;
+		std::string initscript;
 	} xml;
 };
 
