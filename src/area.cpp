@@ -606,7 +606,7 @@ bool Area::processObjectGroup(XMLNode node)
   <properties>
    <property name="layer" value="0"/>
   </properties>
-  <object name="tile2" type="Tile" gid="7" x="64" y="320">
+  <object name="tile2" gid="7" x="64" y="320">
    <properties>
     <property name="onEnter" value="speed(0.5)"/>
     <property name="onLeave" value="undo()"/>
@@ -671,7 +671,7 @@ bool Area::processObject(XMLNode node, int zpos)
 {
 
 /*
-  <object name="tile2" type="Tile" gid="7" x="64" y="320">
+  <object name="tile2" gid="7" x="64" y="320">
    <properties>
     <property name="onEnter" value="speed(0.5)"/>
     <property name="onLeave" value="undo()"/>
@@ -679,16 +679,10 @@ bool Area::processObject(XMLNode node, int zpos)
     <property name="flags" value="npc_nowalk"/>
    </properties>
   </object>
-  <object name="foo" type="Tile" x="0" y="0" width="64" height="64">
+  <object name="foo" x="0" y="0" width="64" height="64">
    ...
   </object>
 */
-
-	std::string type = node.attr("type");
-	if (type != "Tile") {
-		Log::err(descriptor, "object type must be Tile");
-		return false;
-	}
 
 	// Gather object properties, we'll assign them to tiles later.
 	std::vector<TileEvent> events;
