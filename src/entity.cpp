@@ -233,16 +233,33 @@ void Entity::moveByTile(icoord delta)
 		// support queueing moves?
 		return;
 
+	// Everything past here will warrant a redraw.
+	redraw = true;
+
 	icoord newCoord = getTileCoords();
 	newCoord += delta;
 
-	// FIXME: bounds check
+	// The tile is off the map. Turn to face the direction, but don't move.
+	if (!area->tileExists(newCoord)) {
+		calculateFacing(delta);
+		setPhase(facing);
+		return;
+	}
+
+	const icoord tileDim = area->getTileDimensions();
+	fromCoord = c;
+	destCoord = fromCoord;
+	destCoord /= tileDim;
+	destCoord += delta;
+	destCoord *= tileDim;
+
+	fromTile = &getTile();
+	destTile = &area->getTile(newCoord);
 
 	// Can we move?
-	const Tile& tile = area->getTile(newCoord);
-	if ((tile.flags       & nowalk) != 0 ||
-	    (tile.type->flags & nowalk) != 0) {
-		// The tile we're trc.ying to move onto is set as nowalk.
+	if ((destTile->flags       & nowalk) ||
+	    (destTile->type->flags & nowalk)) {
+		// The tile we're trying to move onto is set as nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
@@ -250,17 +267,6 @@ void Entity::moveByTile(icoord delta)
 	}
 
 	// Move!
-	fromCoord = c;
-	fromTile = &getTile();
-	const icoord tileDim = area->getTileDimensions();
-	destCoord = fromCoord;
-	destCoord /= tileDim;
-	destCoord += delta;
-	destCoord *= tileDim;
-	destTile = &area->getTile(newCoord);
-
-	redraw = true;
-
 	preMove(delta);
 
 	if (conf->moveMode == TURN) {

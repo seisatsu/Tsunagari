@@ -49,30 +49,36 @@ void Player::stopMovement(icoord delta)
 
 void Player::moveByTile(icoord delta)
 {
-	// You can't interrupt an in-progress movement.
-	if (moving)
-		return;
-
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
 	if (window.input().down(Gosu::kbLeftControl)) {
 		calculateFacing(delta);
 		setPhase(facing);
+		redraw = true;
 		return;
 	}
 
-	// Try to actually move.
 	icoord newCoord = getTileCoords();
-	newCoord.x += delta.x;
-	newCoord.y += delta.y;
-	newCoord.z += delta.z;
-	const Tile& dest = area->getTile(newCoord);
-	if ((dest.flags       & player_nowalk) != 0 ||
-	    (dest.type->flags & player_nowalk) != 0) {
+	newCoord += delta;
+
+	// The tile is off the map. Turn to face the direction, but don't move.
+	if (!area->tileExists(newCoord)) {
+		calculateFacing(delta);
+		setPhase(facing);
+		redraw = true;
+		return;
+	}
+
+	destTile = &area->getTile(newCoord);
+
+	// Is anything player-specific preventing us from moving?
+	if ((destTile->flags       & player_nowalk) ||
+	    (destTile->type->flags & player_nowalk)) {
 		// The tile we're trying to move onto is set as player_nowalk.
 		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
+		redraw = true;
 		return;
 	}
 
