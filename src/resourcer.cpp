@@ -60,6 +60,7 @@ void Resourcer::garbageCollect()
 	reclaim<ImageRefMap, ImageRef>(images);
 	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
 	reclaim<SampleRefMap, SampleRef>(samples);
+	reclaim<SongRefMap, SongRef>(songs);
 	reclaim<XMLMap, XMLDoc>(xmls);
 }
 
@@ -172,10 +173,6 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 	return true;
 }
 
-/* FIXME
- * We use Gosu::Sample for music because Gosu::Song's SDL implementation
- * doesn't support loading from a memory buffer at the moment.
- */
 SampleRef Resourcer::getSample(const std::string& name)
 {
 	if (!conf->audioEnabled)
@@ -202,6 +199,38 @@ SampleRef Resourcer::getSample(const std::string& name)
 		data.resource = result;
 		data.lastUsed = 0;
 		samples[name] = data;
+	}
+
+	Log::dbg("Resourcer", name + ": requested");
+	return result;
+}
+
+SongRef Resourcer::getSong(const std::string& name)
+{
+	if (!conf->audioEnabled)
+		return SongRef();
+
+	if (conf->cacheEnabled) {
+		SongRefMap::iterator entry = songs.find(name);
+		if (entry != songs.end()) {
+			if (entry->second.lastUsed) {
+				Log::dbg("Resourcer", name + ": requested (cached)");
+				entry->second.lastUsed = 0;
+			}
+			return entry->second.resource;
+		}
+	}
+
+	BufferPtr buffer(read(name));
+	if (!buffer)
+		return SongRef();
+	SongRef result(new Gosu::Song(buffer->frontReader()));
+
+	if (conf->cacheEnabled) {
+		CacheEntry<SongRef> data;
+		data.resource = result;
+		data.lastUsed = 0;
+		songs[name] = data;
 	}
 
 	Log::dbg("Resourcer", name + ": requested");

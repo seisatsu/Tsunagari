@@ -25,6 +25,7 @@ namespace Gosu {
 	class Buffer;
 	class Image;
 	class Sample;
+	class Song;
 }
 
 class GameWindow;
@@ -32,6 +33,7 @@ class GameWindow;
 // We hand out and manage Gosu resources in these forms:
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Gosu::Sample> SampleRef;
+typedef boost::shared_ptr<Gosu::Song> SongRef;
 typedef std::deque<ImageRef> TiledImage;
 
 //! Resourcer Class
@@ -60,8 +62,11 @@ public:
 	bool getTiledImage(TiledImage& img, const std::string& name,
 		unsigned w, unsigned h, bool tileable);
 
-	//! Returns a music stream from disk or cache.
+	//! Returns a sound stream from disk or cache.
 	SampleRef getSample(const std::string& name);
+	
+	//! Returns a music stream from disk or cache.
+	SongRef getSong(const std::string& name);
 
 	//! Requests an XML resource from cache.
 	XMLDoc getXMLDoc(const std::string& name,
@@ -86,8 +91,11 @@ private:
 		boost::shared_ptr<TiledImage> > > TiledImageMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<SampleRef> >
 		SampleRefMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<SongRef> >
+		SongRefMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<XMLDoc> >
 		XMLMap;
+	
 
 	// Holds compiled Lua scripts. Not garbage collected.
 	typedef boost::unordered_map<const std::string, std::vector<char> >
@@ -123,6 +131,7 @@ private:
 	ImageRefMap images;
 	TiledImageMap tiles;
 	SampleRefMap samples;
+	SongRefMap songs;
 	XMLMap xmls;
 
 	// Not garbage collected.

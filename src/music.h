@@ -42,8 +42,7 @@ private:
 
 	Resourcer* rc;
 
-	boost::optional<Gosu::SampleInstance> musicInst;
-	SampleRef introMusic, mainMusic;
+	SongRef musicInst, introMusic, mainMusic;
 
 	MUSIC_STATE state;
 

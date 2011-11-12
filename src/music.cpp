@@ -29,7 +29,7 @@ void Music::setIntro(const std::string& filename)
 	}
 	if (newIntro != filename) {
 		newIntro = filename;
-		introMusic = filename.size() ? rc->getSample(filename) : SampleRef();
+		introMusic = filename.size() ? rc->getSong(filename) : SongRef();
 	}
 }
 
@@ -46,7 +46,7 @@ void Music::setMain(const std::string& filename)
 	}
 	if (newMain != filename) {
 		newMain = filename;
-		mainMusic = filename.size() ? rc->getSample(filename) : SampleRef();
+		mainMusic = filename.size() ? rc->getSong(filename) : SongRef();
 	}
 }
 
@@ -93,7 +93,8 @@ void Music::playIntro()
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
 	curIntro = newIntro;
-	musicInst.reset(introMusic->play(1, 1, false));
+	introMusic->play(false);
+	musicInst = introMusic;
 	setState(PLAYING_INTRO);
 }
 
@@ -102,7 +103,8 @@ void Music::playMain()
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
 	curMain = newMain;
-	musicInst.reset(mainMusic->play(1, 1, true));
+	mainMusic->play(true);
+	musicInst = mainMusic;
 	setState(PLAYING_MAIN);
 }
 
