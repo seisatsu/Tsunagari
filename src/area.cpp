@@ -96,8 +96,8 @@ void Area::updateTileAnimations()
 
 bool Area::inBounds(int x, int y, int z) const
 {
-	return ((loopX || 0 <= x && x < dim.x) &&
-		(loopY || 0 <= y && y < dim.y) &&
+	return ((loopX || (0 <= x && x < dim.x)) &&
+		(loopY || (0 <= y && y < dim.y)) &&
 		          0 <= z && z < dim.z);
 }
 
