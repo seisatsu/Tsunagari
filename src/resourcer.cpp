@@ -23,10 +23,6 @@
 #include "window.h"
 #include "xml.h"
 
-#ifndef LIBXML_TREE_ENABLED
-	#error Tree must be enabled in libxml2
-#endif
-
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
 Resourcer::Resourcer(GameWindow* window, ClientValues* conf)

@@ -12,6 +12,10 @@
 #include <boost/shared_ptr.hpp>
 #include <libxml/tree.h>
 
+#ifndef LIBXML_TREE_ENABLED
+	#error Tree must be enabled in libxml2
+#endif
+
 class XMLDoc;
 
 class XMLNode {
