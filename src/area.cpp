@@ -228,11 +228,11 @@ icube_t Area::visibleTiles() const
 
 bool Area::processDescriptor()
 {
-	XMLDoc doc;
+	XMLRef doc;
 	XMLNode root;
 
 	ASSERT(doc = rc->getXMLDoc(descriptor, "area.dtd"));
-	ASSERT(root = doc.root()); // <map>
+	ASSERT(root = doc->root()); // <map>
 
 	ASSERT(root.intAttr("width", &dim.x));
 	ASSERT(root.intAttr("height", &dim.y));

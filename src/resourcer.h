@@ -34,6 +34,7 @@ class GameWindow;
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Gosu::Sample> SampleRef;
 typedef boost::shared_ptr<Gosu::Song> SongRef;
+typedef boost::shared_ptr<XMLDoc> XMLRef;
 typedef std::deque<ImageRef> TiledImage;
 
 //! Resourcer Class
@@ -66,7 +67,7 @@ public:
 	SongRef getSong(const std::string& name);
 
 	//! Requests an XML resource from disk or cache.
-	XMLDoc getXMLDoc(const std::string& name,
+	XMLRef getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
 
 	//! Requests a Lua script from disk or cache. Lua state L will parse
@@ -95,8 +96,8 @@ private:
 		SampleRefMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<SongRef> >
 		SongRefMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<XMLDoc> >
-		XMLMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<XMLRef> >
+		XMLRefMap;
 
 	// Holds compiled Lua scripts. Not garbage collected.
 	typedef boost::unordered_map<const std::string, std::vector<char> >
@@ -133,7 +134,7 @@ private:
 	TiledImageMap tiles;
 	SampleRefMap samples;
 	SongRefMap songs;
-	XMLMap xmls;
+	XMLRefMap xmls;
 
 	// Not garbage collected.
 	LuaBytecodeMap code;

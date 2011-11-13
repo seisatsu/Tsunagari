@@ -229,11 +229,11 @@ SongRef Resourcer::getSong(const std::string& name)
 	return result;
 }
 
-XMLDoc Resourcer::getXMLDoc(const std::string& name,
+XMLRef Resourcer::getXMLDoc(const std::string& name,
                             const std::string& dtdFile)
 {
 	if (conf->cacheEnabled) {
-		XMLMap::iterator entry = xmls.find(name);
+		XMLRefMap::iterator entry = xmls.find(name);
 		if (entry != xmls.end()) {
 			int now = GameWindow::getWindow().time();
 			Log::dbg("Resourcer", name + ": requested (cached)");
@@ -244,10 +244,10 @@ XMLDoc Resourcer::getXMLDoc(const std::string& name,
 		}
 	}
 
-	XMLDoc result = readXMLDocFromDisk(name, dtdFile);
+	XMLRef result(readXMLDocFromDisk(name, dtdFile));
 
 	if (conf->cacheEnabled) {
-		CacheEntry<XMLDoc> data;
+		CacheEntry<XMLRef> data;
 		data.resource = result;
 		data.lastUsed = 0;
 		xmls[name] = data;

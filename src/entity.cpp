@@ -406,10 +406,10 @@ void Entity::postMove()
  */
 bool Entity::processDescriptor()
 {
-	XMLDoc doc = rc->getXMLDoc(descriptor, "entity.dtd");
+	XMLRef doc = rc->getXMLDoc(descriptor, "entity.dtd");
 	if (!doc)
 		return false;
-	const XMLNode root = doc.root(); // <entity>
+	const XMLNode root = doc->root(); // <entity>
 	if (!root)
 		return false;
 
