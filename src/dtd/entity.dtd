@@ -1,5 +1,4 @@
 <!ELEMENT entity (speed, sprite, sounds, scripts)>
-<!ATTLIST entity version (1) #REQUIRED>
 
 <!ELEMENT speed (#PCDATA)>
 

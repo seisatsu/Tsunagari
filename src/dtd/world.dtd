@@ -1,9 +1,10 @@
-<!ELEMENT world (name, author, player, type, entrypoint, initscript?)>
-<!ATTLIST world version (1) #REQUIRED>
+<!ELEMENT world (name, author, version, player, type, entrypoint, viewport, initscript?)>
 
 <!ELEMENT name (#PCDATA)>
 
 <!ELEMENT author (#PCDATA)>
+
+<!ELEMENT version (#PCDATA)>
 
 <!ELEMENT player (#PCDATA)>
 
@@ -12,10 +13,14 @@
                movement (turn | tile | notile) #REQUIRED>
 
 <!ELEMENT entrypoint EMPTY>
-<!ATTLIST entrypoint area CDATA #REQUIRED
-                     x    CDATA #REQUIRED
-                     y    CDATA #REQUIRED
-                     z    CDATA #REQUIRED>
+<!ATTLIST entrypoint area  CDATA #REQUIRED
+                     x     CDATA #REQUIRED
+                     y     CDATA #REQUIRED
+                     layer CDATA #REQUIRED>
+
+<!ELEMENT viewport EMPTY>
+<!ATTLIST viewport height CDATA #REQUIRED
+                   width  CDATA #REQUIRED>
 
 <!ELEMENT initscript (#PCDATA)>
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!-- definition of simple elements -->
+<xs:element name="name" type="xs:string"/>
+<xs:element name="author" type="xs:string"/>
+<xs:element name="version" type="xs:decimal"/>
+<xs:element name="player" type="xs:string"/>
+<xs:element name="initscript" type="xs:string"/>
+
+<!-- definition of attributes -->
+<xs:attribute name="locality" type="xs:string"/>
+<xs:attribute name="movement" type="xs:string"/>
+<xs:attribute name="area" type="xs:string"/>
+<xs:attribute name="x" type="xs:integer"/>
+<xs:attribute name="y" type="xs:integer"/>
+<xs:attribute name="layer" type="xs:integer"/>
+<xs:attribute name="width" type="xs:integer"/>
+<xs:attribute name="height" type="xs:integer"/>
+
+<!-- definition of complex elements -->
+<xs:element name="world" minOccurs="1" maxOccurs="1"/>
+	<xs:complexType>
+		<xs:all>
+			<xs:element ref="name" minOccurs="1"/>
+			<xs:element ref="author" minOccurs="1"/>
+			<xs:element ref="version" minOccurs="1"/>
+			<xs:element ref="player" minOccurs="1"/>
+			<xs:element ref="type" minOccurs="1"/>
+			<xs:element ref="name" minOccurs="1"/>
+			<xs:element ref="entrypoint" minOccurs="1"/>
+			<xs:element ref="viewport" minOccurs="1"/>
+			<xs:element ref="initscript" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+</xs:element>
+
+<xs:element name="type"/>
+	<xs:complexType>
+		<xs:attribute ref="locality" use="required"/>
+		<xs:attribute ref="movement" use="required"/>
+	</xs:complexType>
+</xs:element>
+
+<xs:element name="entrypoint"/>
+	<xs:complexType>
+		<xs:attribute ref="area" use="required"/>
+		<xs:attribute ref="x" use="required"/>
+		<xs:attribute ref="y" use="required"/>
+		<xs:attribute ref="layer" use="required"/>
+	</xs:complexType>
+</xs:element>
+
+<xs:element name="viewport"/>
+	<xs:complexType>
+		<xs:attribute ref="width" use="required"/>
+		<xs:attribute ref="height" use="required"/>
+	</xs:complexType>
+</xs:element>
+
+</xs:schema>
+
