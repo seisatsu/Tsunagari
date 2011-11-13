@@ -20,14 +20,14 @@ public:
 
 	//! Add an option to the parser.
 	/*!
-		@param shortopt Full short option, ex. "-c", empty string if no 
+		@param shortopt Full short option, ex. "-c", empty string if no
 		short option.
 		@param longopt Full long option, ex. "--config", required.
-		@param argument A short description of the argument expected to 
+		@param argument A short description of the argument expected to
 		the option, an empty string if no argument.
 		@param description A description of the argument, required.
 	*/
-	void insert(std::string shortopt, std::string longopt, 
+	void insert(std::string shortopt, std::string longopt,
 		std::string argument, std::string description);
 
 	//! Process the command line.

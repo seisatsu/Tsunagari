@@ -45,13 +45,13 @@ bool Resourcer::init(char** argv)
 	err = PHYSFS_init(argv[0]);
 	if (!err)
 		return false;
-	
+
 	err = PHYSFS_mount(conf->world.c_str(), NULL, 0);
 	if (!err) {
 		Log::err("Resourcer", conf->world + ": could not open world");
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -128,7 +128,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	if (conf->cacheEnabled) {
 		CacheEntry<ImageRef> data;
 		data.resource = result;
-		data.lastUsed = 0; 
+		data.lastUsed = 0;
 		images[name] = data;
 	}
 
@@ -257,7 +257,7 @@ XMLDoc Resourcer::getXMLDoc(const std::string& name,
 	if (conf->cacheEnabled) {
 		CacheEntry<XMLDoc> data;
 		data.resource = result;
-		data.lastUsed = 0; 
+		data.lastUsed = 0;
 		xmls[name] = data;
 	}
 
@@ -374,18 +374,18 @@ std::string Resourcer::readStringFromDisk(const std::string& name)
 		Log::err("Resourcer", path(name) + ": file missing");
 		return "";
 	}
-	
+
 	zf = PHYSFS_openRead(name.c_str());
 	if (!zf) {
 		Log::err("Resourcer", path(name) + ": error opening file");
 		return "";
 	}
-	
+
 	size = (unsigned long)PHYSFS_fileLength(zf);
 	buf = new char[size + 1];
 	buf[size] = '\0';
-	
-	if (PHYSFS_read(zf, buf, 1, 
+
+	if (PHYSFS_read(zf, buf, 1,
 	   (PHYSFS_uint32)PHYSFS_fileLength(zf)) == -1) {
 		Log::err("Resourcer", path(name) + ": general I/O error"
 			" during loading");
@@ -415,12 +415,12 @@ Gosu::Buffer* Resourcer::read(const std::string& name)
 		Log::err("Resourcer", path(name) + ": error opening file");
 		return NULL;
 	}
-	
+
 	size = (unsigned long)PHYSFS_fileLength(zf);
 
 	Gosu::Buffer* buffer = new Gosu::Buffer;
 	buffer->resize(size);
-	if (PHYSFS_read(zf, buffer->data(), 1, 
+	if (PHYSFS_read(zf, buffer->data(), 1,
 	   (PHYSFS_uint32)PHYSFS_fileLength(zf)) == -1) {
 		Log::err("Resourcer", path(name) + ": general I/O error"
 			" during loading");

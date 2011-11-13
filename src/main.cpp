@@ -31,9 +31,9 @@
 /* Output compiled-in engine defaults. */
 static void defaultsQuery()
 {
-	std::cerr << "CLIENT_CONF_FILE:                       " 
+	std::cerr << "CLIENT_CONF_FILE:                       "
 		<< CLIENT_CONF_FILE << std::endl;
-	std::cerr << "DTD_DIRECTORY:                          " 
+	std::cerr << "DTD_DIRECTORY:                          "
 		<< DTD_DIRECTORY << std::endl;
 	std::cerr << "MESSAGE_MODE:                           ";
 	if (MESSAGE_MODE == MM_DEBUG)
@@ -42,13 +42,13 @@ static void defaultsQuery()
 		std::cerr << "MM_DEVELOPER" << std::endl;
 	else
 		std::cerr << "MM_ERROR" << std::endl;
-	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           " 
+	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           "
 		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
-	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    " 
+	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    "
 		<< ROGUELIKE_PERSIST_DELAY_CONSECUTIVE << std::endl;
-	std::cerr << "CACHE_EMPTY_TTL:                        " 
+	std::cerr << "CACHE_EMPTY_TTL:                        "
 		<< CACHE_EMPTY_TTL << std::endl;
-	std::cerr << "CACHE_MAX_SIZE:                         " 
+	std::cerr << "CACHE_MAX_SIZE:                         "
 		<< CACHE_MAX_SIZE << std::endl;
 }
 

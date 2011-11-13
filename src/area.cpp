@@ -362,7 +362,7 @@ bool Area::processTileSet(XMLNode node)
 			// tile from the image rather than in terms of the gid
 			// number, which has an extra type, #0, pushing back
 			// all other types by one.
-			int gid = id + 1; 
+			int gid = id + 1;
 
 			if ((int)tileTypes.size() > gid) {
 				Log::err(descriptor,

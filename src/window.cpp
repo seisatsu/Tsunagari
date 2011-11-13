@@ -21,7 +21,7 @@ GameWindow& GameWindow::getWindow()
 }
 
 GameWindow::GameWindow(ClientValues* conf)
-	: Gosu::Window((unsigned)conf->windowSize.x, 
+	: Gosu::Window((unsigned)conf->windowSize.x,
 	  (unsigned)conf->windowSize.y, conf->fullscreen),
 	  lastTime((int)Gosu::milliseconds()),
 	  now(lastTime),

@@ -35,8 +35,8 @@ class World;
 
 //! This class is responsible for each map, or area in a Tsunagari World.
 /*!
-	The Area class handles the parsing of TMX-format Area descriptor files, 
-	the initialization, placement, and drawing of tiles, and various 
+	The Area class handles the parsing of TMX-format Area descriptor files,
+	the initialization, placement, and drawing of tiles, and various
 	Area-related functionality.
 */
 class Area

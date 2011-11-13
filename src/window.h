@@ -81,7 +81,7 @@ private:
 
 	//! Call the garbage colelctor once a second.
 	int currentSecond;
-	
+
 	ClientValues* conf;
 
 	struct keystate {

@@ -57,14 +57,14 @@ public:
 	ImageRef getImage(const std::string& name);
 
 	//! Requests an image resource from cache and splits it into a number
-	//  of tiles each with width and height w by x. Returns false if the 
+	//  of tiles each with width and height w by x. Returns false if the
 	//  source image wasn't found.
 	bool getTiledImage(TiledImage& img, const std::string& name,
 		unsigned w, unsigned h, bool tileable);
 
 	//! Returns a sound stream from disk or cache.
 	SampleRef getSample(const std::string& name);
-	
+
 	//! Returns a music stream from disk or cache.
 	SongRef getSong(const std::string& name);
 
@@ -95,7 +95,7 @@ private:
 		SongRefMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<XMLDoc> >
 		XMLMap;
-	
+
 
 	// Holds compiled Lua scripts. Not garbage collected.
 	typedef boost::unordered_map<const std::string, std::vector<char> >
@@ -120,7 +120,7 @@ private:
 	//! Read a generic resource from disk.
 	Gosu::Buffer* read(const std::string& name);
 
-	//! Helper function 
+	//! Helper function
 	std::string path(const std::string& entryName) const;
 
 	GameWindow* window;
