@@ -43,37 +43,38 @@ typedef std::deque<ImageRef> TiledImage;
 class Resourcer
 {
 public:
-	Resourcer(GameWindow* window, ClientValues* conf);
+	Resourcer(GameWindow* window, const ClientValues* conf);
 	~Resourcer();
 	bool init(char** argv);
 
-	//! Expunge old stuff from the cache.
-	void garbageCollect();
-
 	//! Returns true if the world contains a resource by that name.
-	bool resourceExists(const std::string& name);
+	bool resourceExists(const std::string& name) const;
 
-	//! Requests an image resource from cache.
+	//! Requests an image resource from disk or cache.
 	ImageRef getImage(const std::string& name);
 
-	//! Requests an image resource from cache and splits it into a number
-	//  of tiles each with width and height w by x. Returns false if the
-	//  source image wasn't found.
+	//! Requests an image resource from the cache and splits it into a
+	//! number of tiles each with width and height w by h. Returns false if
+	//! the source image wasn't found.
 	bool getTiledImage(TiledImage& img, const std::string& name,
 		unsigned w, unsigned h, bool tileable);
 
-	//! Returns a sound stream from disk or cache.
+	//! Returns a sound object from disk or cache.
 	SampleRef getSample(const std::string& name);
 
 	//! Returns a music stream from disk or cache.
 	SongRef getSong(const std::string& name);
 
-	//! Requests an XML resource from cache.
+	//! Requests an XML resource from disk or cache.
 	XMLDoc getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
 
-	//! Requests a Lua script from cache. Lua state L will parse the script.
+	//! Requests a Lua script from disk or cache. Lua state L will parse
+	//! the script.
 	bool getLuaScript(const std::string& name, lua_State* L);
+
+	//! Expunge old stuff from the cache.
+	void garbageCollect();
 
 private:
 	template<class Res>
@@ -84,7 +85,8 @@ private:
 		int memoryUsed;
 	};
 
-	//! Resource maps.
+
+	// Resource maps.
 	typedef boost::unordered_map<const std::string, CacheEntry<ImageRef> >
 		ImageRefMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<
@@ -96,7 +98,6 @@ private:
 	typedef boost::unordered_map<const std::string, CacheEntry<XMLDoc> >
 		XMLMap;
 
-
 	// Holds compiled Lua scripts. Not garbage collected.
 	typedef boost::unordered_map<const std::string, std::vector<char> >
 		LuaBytecodeMap;
@@ -106,28 +107,28 @@ private:
 	template<class Map, class MapValue>
 	void reclaim(Map& map);
 
+	//! Reads an XML document from disk and parses it.
+	XMLDoc* readXMLDocFromDisk(const std::string& name,
+		const std::string& dtdFile) const;
+
 	//! Reads a Lua script from disk and parses it, returning the bytecode.
 	bool compileLuaFromDisk(const std::string& name, lua_State* L,
-                                std::vector<char>& bytes);
-
-	//! Reads an XML document from disk and parses it.
-	XMLDoc readXMLDocFromDisk(const std::string& name,
-		const std::string& dtdFile);
+                                std::vector<char>& bytes) const;
 
 	//! Read a string resource from disk.
-	std::string readStringFromDisk(const std::string& name);
+	std::string readStringFromDisk(const std::string& name) const;
 
 	//! Read a generic resource from disk.
-	Gosu::Buffer* read(const std::string& name);
+	Gosu::Buffer* read(const std::string& name) const;
 
 	//! Helper function
 	std::string path(const std::string& entryName) const;
 
-	GameWindow* window;
-	ClientValues* conf;
 
-	// Cached resources stored in a manner usable by the game; no further
-	// processing needed. Garbage collected.
+	GameWindow* window;
+	const ClientValues* conf;
+
+	// Caches that store processed, game-ready objects. Garbage collected.
 	ImageRefMap images;
 	TiledImageMap tiles;
 	SampleRefMap samples;

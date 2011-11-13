@@ -25,7 +25,48 @@
 
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
-Resourcer::Resourcer(GameWindow* window, ClientValues* conf)
+
+//! Take a Lua compiler error message and format it like one of our error
+//! messages.
+static void luaParseError(const std::string& name, lua_State* L)
+{
+	const char* err = lua_tostring(L, -1);
+	const char* afterFile = strchr(err, ':') + 1; // +1 for ':'
+	const char* afterLine = strchr(afterFile, ':') + 2; // +2 for ': '
+	char line[512];
+	memcpy(line, afterFile, afterLine - afterFile - 2);
+	Log::err(name + ":" + line, std::string("parsing error: ") + afterLine);
+}
+
+template <class Container>
+static bool runLuaScript(lua_State* L, const Container& c, const char* name)
+{
+	int status = luaL_loadbuffer(L, c.data(), c.size(), name);
+
+	switch (status) {
+	case LUA_ERRSYNTAX:
+		luaParseError(name, L);
+		return false;
+	case LUA_ERRMEM:
+		// Should we even bother with this?
+		Log::err(name, "out of memory while parsing");
+		return false;
+	}
+
+	return true;
+}
+
+static int writeToVector(lua_State*, const void* data, size_t sz, void* vector)
+{
+	std::vector<char>* v = (std::vector<char>*)vector;
+	char* s = (char*)data; // GCC: can't do ++ on a const void*
+	while (sz--)
+		v->push_back(*s++);
+	return 0;
+}
+
+
+Resourcer::Resourcer(GameWindow* window, const ClientValues* conf)
 	: window(window), conf(conf)
 {
 }
@@ -51,54 +92,9 @@ bool Resourcer::init(char** argv)
 	return true;
 }
 
-void Resourcer::garbageCollect()
+bool Resourcer::resourceExists(const std::string& name) const
 {
-	reclaim<ImageRefMap, ImageRef>(images);
-	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
-	reclaim<SampleRefMap, SampleRef>(samples);
-	reclaim<SongRefMap, SongRef>(songs);
-	reclaim<XMLMap, XMLDoc>(xmls);
-}
-
-template<class Map, class MapValue>
-void Resourcer::reclaim(Map& map)
-{
-	int now = GameWindow::getWindow().time();
-	std::vector<std::string> dead;
-	BOOST_FOREACH(typename Map::value_type& i, map) {
-		const std::string& name = i.first;
-		CacheEntry<MapValue>& cache = i.second;
-		bool unused = !cache.resource || cache.resource.unique();
-		if (unused) {
-			if (!cache.lastUsed) {
-				cache.lastUsed = now;
-				Log::dbg("Resourcer", name + ": unused");
-			}
-			else if (now < cache.lastUsed) {
-				// Handle time overflow
-				cache.lastUsed = now;
-			}
-			else if (now > cache.lastUsed + conf->cacheTTL*1000) {
-				dead.push_back(name);
-				Log::dbg("Resourcer", name + ": purged from cache");
-			}
-		}
-		// XXX: Redundant? We're working around this because it won't
-		// catch XML documents.
-		else if (cache.lastUsed) {
-			cache.lastUsed = 0;
-			Log::dbg("Resourcer", name + ": requested (cached)");
-		}
-	}
-	BOOST_FOREACH(std::string& name, dead)
-		map.erase(name);
-}
-
-bool Resourcer::resourceExists(const std::string& name)
-{
-	if (!PHYSFS_exists(name.c_str()))
-		return false;
-	return true;
+	return PHYSFS_exists(name.c_str());
 }
 
 ImageRef Resourcer::getImage(const std::string& name)
@@ -261,36 +257,6 @@ XMLDoc Resourcer::getXMLDoc(const std::string& name,
 	return result;
 }
 
-//! Take a Lua compiler error message and format it like one of our error
-//! messages.
-static void luaParseError(const std::string& name, lua_State* L)
-{
-	const char* err = lua_tostring(L, -1);
-	const char* afterFile = strchr(err, ':') + 1; // +1 for ':'
-	const char* afterLine = strchr(afterFile, ':') + 2; // +2 for ': '
-	char line[512];
-	memcpy(line, afterFile, afterLine - afterFile - 2);
-	Log::err(name + ":" + line, std::string("parsing error: ") + afterLine);
-}
-
-template <class Container>
-static bool runLuaScript(lua_State* L, const Container& c, const char* name)
-{
-	int status = luaL_loadbuffer(L, c.data(), c.size(), name);
-
-	switch (status) {
-	case LUA_ERRSYNTAX:
-		luaParseError(name, L);
-		return false;
-	case LUA_ERRMEM:
-		// Should we even bother with this?
-		Log::err(name, "out of memory while parsing");
-		return false;
-	}
-
-	return true;
-}
-
 bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
 {
 	if (conf->cacheEnabled) {
@@ -316,17 +282,65 @@ bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
 	return true;
 }
 
-static int writeToVector(lua_State*, const void* data, size_t sz, void* vector)
+void Resourcer::garbageCollect()
 {
-	std::vector<char>* v = (std::vector<char>*)vector;
-	char* s = (char*)data; // GCC: can't do ++ on a const void*
-	while (sz--)
-		v->push_back(*s++);
-	return 0;
+	reclaim<ImageRefMap, ImageRef>(images);
+	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
+	reclaim<SampleRefMap, SampleRef>(samples);
+	reclaim<SongRefMap, SongRef>(songs);
+	reclaim<XMLRefMap, XMLRef>(xmls);
+}
+
+template<class Map, class MapValue>
+void Resourcer::reclaim(Map& map)
+{
+	int now = GameWindow::getWindow().time();
+	std::vector<std::string> dead;
+	BOOST_FOREACH(typename Map::value_type& i, map) {
+		const std::string& name = i.first;
+		CacheEntry<MapValue>& cache = i.second;
+		bool unused = !cache.resource || cache.resource.unique();
+		if (unused) {
+			if (!cache.lastUsed) {
+				cache.lastUsed = now;
+				Log::dbg("Resourcer", name + ": unused");
+			}
+			else if (now < cache.lastUsed) {
+				// Handle time overflow
+				cache.lastUsed = now;
+			}
+			else if (now > cache.lastUsed + conf->cacheTTL*1000) {
+				dead.push_back(name);
+				Log::dbg("Resourcer", name + ": purged from cache");
+			}
+		}
+		// XXX: Redundant? We're working around this because it won't
+		// catch XML documents.
+		else if (cache.lastUsed) {
+			cache.lastUsed = 0;
+			Log::dbg("Resourcer", name + ": requested (cached)");
+		}
+	}
+	BOOST_FOREACH(std::string& name, dead)
+		map.erase(name);
+}
+
+XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
+                                     const std::string& dtdFile) const
+{
+	XMLDoc* doc = new XMLDoc;
+	const std::string data = readStringFromDisk(name);
+	if (data.size()) {
+		const std::string p = path(name);
+		const std::string dtdPath = std::string(DTD_DIRECTORY) +
+			"/" + dtdFile;
+		doc->init(p, data, dtdPath); // Ignore return value?
+	}
+	return doc;
 }
 
 bool Resourcer::compileLuaFromDisk(const std::string& name, lua_State* L,
-                                   std::vector<char>& bytes)
+                                   std::vector<char>& bytes) const
 {
 	const std::string script = readStringFromDisk(name);
 	if (script.empty()) // error already logged
@@ -345,21 +359,7 @@ bool Resourcer::compileLuaFromDisk(const std::string& name, lua_State* L,
 	return true;
 }
 
-XMLDoc Resourcer::readXMLDocFromDisk(const std::string& name,
-                                     const std::string& dtdFile)
-{
-	XMLDoc doc;
-	const std::string data = readStringFromDisk(name);
-	if (data.size()) {
-		const std::string p = path(name);
-		const std::string dtdPath = std::string(DTD_DIRECTORY) +
-			"/" + dtdFile;
-		doc.init(p, data, dtdPath); // Ignore return value?
-	}
-	return doc;
-}
-
-std::string Resourcer::readStringFromDisk(const std::string& name)
+std::string Resourcer::readStringFromDisk(const std::string& name) const
 {
 	unsigned long size;
 	char* buf;
@@ -396,7 +396,7 @@ std::string Resourcer::readStringFromDisk(const std::string& name)
 	return str;
 }
 
-Gosu::Buffer* Resourcer::read(const std::string& name)
+Gosu::Buffer* Resourcer::read(const std::string& name) const
 {
 	unsigned long size;
 	PHYSFS_File* zf;
