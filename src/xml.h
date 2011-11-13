@@ -71,11 +71,5 @@ private:
 	std::string path_;
 };
 
-//! Get XML attribute (memory-safe).
-std::string readXmlAttribute(xmlNode* node, const std::string& attr);
-
-//! Get XML element content (memory-safe).
-std::string readXmlElement(xmlNode* node);
-
 #endif
 
