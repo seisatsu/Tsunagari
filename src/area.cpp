@@ -696,7 +696,7 @@ bool Area::processObject(XMLNode node, int zpos)
   </object>
 */
 
-	// Gather object properties, we'll assign them to tiles later.
+	// Gather object properties now. Assign them to tiles later.
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
 	unsigned flags;
@@ -749,23 +749,23 @@ bool Area::processObject(XMLNode node, int zpos)
 	y /= tileDim.y;
 
 	if (node.hasAttr("gid")) {
-		// This is one of Tiled's Tile Objects. It is one tile wide and
-		// high.
+		// This is one of Tiled's "Tile Objects". It is one tile wide
+		// and high.
 		y = y - 1; // Bug in tiled. The y is off by one.
 		w = 1;
 		h = 1;
+
+		// We don't actually use the object gid. It is supposed to indicate
+		// which tile our object is rendered as, but, for Tsunagari, tile
+		// objects are always transparent and reveal the tile below.
 	}
 	else {
-		// This is one of Tiled's Objects. It has a width and height.
+		// This is one of Tiled's "Objects". It has a width and height.
 		ASSERT(node.intAttr("width", &w));
 		ASSERT(node.intAttr("height", &h));
 		w /= tileDim.x;
 		h /= tileDim.y;
 	}
-
-	// We ignore the object gid. This is supposed to indicate which tile
-	// our object is rendered as, but, for Tsunagari, tile objects are
-	// always transparent and releveal the tile below.
 
 	// We know which Tiles are being talked about now... yay
 	for (int Y = y; Y < y + h; Y++) {
