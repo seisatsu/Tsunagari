@@ -13,6 +13,11 @@
 #include "window.h"
 
 
+Tile::Tile()
+	: flags(0x0)
+{
+}
+
 bool Tile::hasFlag(unsigned flag) const
 {
 	if (flags & flag)

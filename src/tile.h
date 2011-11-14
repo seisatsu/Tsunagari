@@ -88,6 +88,8 @@ struct Door {
 class Tile
 {
 public:
+	Tile();
+
 	std::vector<TileType*> types;
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;

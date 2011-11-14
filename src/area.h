@@ -86,6 +86,9 @@ private:
 	//! XML descriptor parsing function.
 	bool processDescriptor();
 
+	//! Allocate all Tile objects in map based on dim.
+	void allocateMap();
+
 	//! XML descriptor parsing function.
 	bool processMapProperties(XMLNode node);
 

@@ -23,6 +23,9 @@
 
 #define ASSERT(x)  if (!(x)) return false
 
+// Rename Tile => Square
+// Introduce new Tile
+
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
          can't imagine why the author did this, but we have to take it into
@@ -195,12 +198,11 @@ const rcoord Area::viewportOffset() const
 	const double playerX = player->getRPixel().x / tileWidth + 0.5;
 	const double playerY = player->getRPixel().y / tileHeight + 0.5;
 
-	rcoord c;
-	c.x = (windowWidth/2.0 - playerX) * tileWidth;
-	c.y = (windowHeight/2.0 - playerY) * tileHeight;
-	c.z = 0;
-
-	return c;
+	return rcoord(
+		(windowWidth/2.0 - playerX) * tileWidth,
+		(windowHeight/2.0 - playerY) * tileHeight,
+		0
+	);
 }
 
 const Gosu::Transform Area::viewportTransform() const
@@ -238,6 +240,9 @@ bool Area::processDescriptor()
 
 	ASSERT(root.intAttr("width", &dim.x));
 	ASSERT(root.intAttr("height", &dim.y));
+	dim.z = 1;
+
+	allocateMap();
 
 	for (XMLNode child = root.childrenNode(); child; child = child.next()) {
 		if (child.is("properties")) {
@@ -255,6 +260,24 @@ bool Area::processDescriptor()
 	}
 
 	return true;
+}
+
+void Area::allocateMap()
+{
+	grid_t grid;
+	row_t row;
+
+	grid.reserve(dim.y);
+	for (int y = 0; y < dim.y; y++) {
+		row.reserve(dim.x);
+		for (int x = 0; x < dim.x; x++) {
+			Tile t;
+			row.push_back(t);
+		}
+		grid.push_back(row);
+		row.clear();
+	}
+	map.push_back(grid);
 }
 
 bool Area::processMapProperties(XMLNode node)
@@ -333,7 +356,7 @@ bool Area::processTileSet(XMLNode node)
 		// Add TileType #0, a transparent tile type that is fills map squares
 		// for sections of the map that don't exist.
 		TileType zero;
-		zero.flags = nowalk;
+//		zero.flags = nowalk;
 		tileTypes.push_back(zero);
 	}
 
@@ -532,10 +555,10 @@ bool Area::processLayerProperties(XMLNode node)
 		if (name == "layer") {
 			int depth;
 			ASSERT(child.intAttr("value", &depth));
-			if (depth != dim.z) {
-				Log::err(descriptor, "invalid layer depth");
-				return false;
-			}
+//			if (depth != dim.z) {
+//				Log::err(descriptor, "invalid layer depth");
+//				return false;
+//			}
 		}
 	}
 
@@ -557,14 +580,9 @@ bool Area::processLayerData(XMLNode node)
   </data>
 */
 
-	row_t row;
-	grid_t grid;
+	int x = 0, y = 0;
 
-	row.reserve(dim.x);
-	grid.reserve(dim.y);
-
-	int i = 1;
-	for (XMLNode child = node.childrenNode(); child; i++, child = child.next()) {
+	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("tile")) {
 			int gid;
 			ASSERT(child.intAttr("gid", &gid));
@@ -574,22 +592,24 @@ bool Area::processLayerData(XMLNode node)
 				return false;
 			}
 
-			Tile t;
-			TileType* type = &tileTypes[gid];
-			type->allOfType.push_back(&t);
-			t.types.push_back(type);
-			t.flags = 0x0;
-			row.push_back(t);
-			if (row.size() % dim.x == 0) {
-				grid.push_back(row);
-				row.clear();
-				row.reserve(dim.x);
+			// A gid of zero means there is no tile at this
+			// position on this layer.
+			if (gid > 0) {
+				TileType& type = tileTypes[gid];
+				Tile& tile = map[0][y][x];
+				type.allOfType.push_back(&tile);
+				tile.types.push_back(&type);
+			}
+
+			// FIXME: security: squares might have no tiles
+
+			if (++x == dim.x) {
+				x = 0;
+				y++;
 			}
 		}
 	}
 
-	map.push_back(grid);
-	dim.z++;
 	return true;
 }
 
@@ -650,12 +670,12 @@ bool Area::processObjectGroupProperties(XMLNode node, int* zpos)
 		if (name == "layer") {
 			int layer;
 			ASSERT(child.intAttr("value", &layer));
-			if (layer < 0 || (int)dim.z <= layer) {
-				Log::err(descriptor,
-					"objectgroup must correspond with layer"
-				);
-				return false;
-			}
+//			if (layer < 0 || (int)dim.z <= layer) {
+//				Log::err(descriptor,
+//					"objectgroup must correspond with layer"
+//				);
+//				return false;
+//			}
 			*zpos = layer;
 		}
 	}
