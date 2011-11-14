@@ -102,10 +102,10 @@ private:
 	bool processLayer(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processLayerProperties(XMLNode node);
+	bool processLayerProperties(XMLNode node, double* depth);
 
 	//! XML descriptor parsing function.
-	bool processLayerData(XMLNode node);
+	bool processLayerData(XMLNode node, double depth);
 
 	//! XML descriptor parsing function.
 	bool processObjectGroup(XMLNode node);

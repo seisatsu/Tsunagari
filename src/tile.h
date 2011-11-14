@@ -17,6 +17,7 @@
 #include "resourcer.h" // for TiledImage
 
 class Area;
+struct Block;
 struct Door;
 class Entity;
 class Tile;
@@ -78,6 +79,15 @@ struct Door {
 	icoord tile;
 };
 
+//! An instance of a TileType hovering at a certain depth on a Tile.
+struct Block
+{
+	Block(double depth, TileType* type);
+
+	double depth;
+	TileType* type;
+};
+
 //! Contains properties unique to this tile.
 /*!
 	This struct contains local tile properties for a single tile in
@@ -90,7 +100,7 @@ class Tile
 public:
 	Tile();
 
-	std::vector<TileType*> types;
+	std::vector<Block> blocks;
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
 	unsigned flags; //! Flags for each option in TileFlags enum.
