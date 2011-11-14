@@ -226,14 +226,14 @@ void Entity::moveByPixel(icoord delta)
 	c.x += delta.x;
 	c.y += delta.y;
 	c.z += delta.z;
-	// FIXME: missing r =
+	// XXX: missing r =
 	redraw = true;
 }
 
 void Entity::moveByTile(icoord delta)
 {
 	if (conf->moveMode == TILE && moving)
-		// support queueing moves?
+		// Support queueing moves?
 		return;
 
 	// Everything past here will warrant a redraw.
@@ -272,11 +272,9 @@ void Entity::moveByTile(icoord delta)
 	preMove(delta);
 
 	if (conf->moveMode == TURN) {
+		// Movement is instantaneous.
 		c = destCoord;
 		postMove();
-	}
-	else if (conf->moveMode == TILE) {
-		moving = true;
 	}
 }
 
@@ -289,7 +287,7 @@ void Entity::setArea(Area* a)
 
 void Entity::gotoRandomTile()
 {
-	icoord map = area->getDimensions();
+	const icoord map = area->getDimensions();
 	icoord pos;
 	Tile* tile;
 	do {
@@ -301,11 +299,10 @@ void Entity::gotoRandomTile()
 
 void Entity::setSpeed(double multiplier)
 {
+	const float tilesPerSecond = area->getTileDimensions().x / 1000.0;
 	speedMul = multiplier;
 	if (area)
-		// baseSpeed * speedMul = # of tiles crossed per second
-		speed = area->getTileDimensions().x *
-		        baseSpeed * speedMul / 1000.0;
+		speed = baseSpeed * speedMul * tilesPerSecond;
 }
 
 void Entity::calcDoff()
@@ -355,11 +352,16 @@ void Entity::calculateFacing(icoord delta)
 
 void Entity::preMove(icoord delta)
 {
+	moving = true;
+
+	// Start moving animation.
 	calculateFacing(delta);
 	if (conf->moveMode == TURN)
 		setPhase(facing);
 	else
 		setPhase("moving " + facing);
+
+	// Process triggers.
 	preMoveLua();
 }
 
@@ -385,8 +387,13 @@ void Entity::postMoveLua()
 
 void Entity::postMove()
 {
+	moving = false;
+
+	// Stop moving animation.
 	if (conf->moveMode != TURN)
 		setPhase(facing);
+
+	// Process triggers.
 	fromTile->onLeaveScripts(rc, this);
 	postMoveLua();
 	destTile->onEnterScripts(rc, this);
@@ -418,7 +425,7 @@ bool Entity::processDescriptor()
 		if (node.is("speed")) {
 			if (!node.doubleContent(&baseSpeed))
 				return false;
-			setSpeed(1.0); // Calculate speed from tile size.
+			setSpeed(speedMul); // Calculate speed from tile size.
 		} else if (node.is("sprite")) {
 			if (!processSprite(node.childrenNode()))
 				return false;
