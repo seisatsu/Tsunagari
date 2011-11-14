@@ -259,10 +259,10 @@ void Entity::moveByTile(icoord delta)
 	fromTile = &getTile();
 	destTile = &area->getTile(newCoord);
 
-	// Can we move?
-	if (destTile->hasFlag(nowalk)) {
-		// The tile we're trying to move onto is set as nowalk.
-		// Turn to face the direction, but don't move.
+	// Are we allowed to move?
+	if (!destTile->hasType() || destTile->hasFlag(nowalk)) {
+		// The tile we're trying to move onto is either blank or set as
+		// nowalk. Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
 		return;

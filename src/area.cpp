@@ -48,9 +48,7 @@ Area::~Area()
 
 bool Area::init()
 {
-	if (!processDescriptor())
-		return false;
-	return true;
+	return processDescriptor();
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -356,8 +354,9 @@ bool Area::processTileSet(XMLNode node)
 		// Add TileType #0, a transparent tile type that is fills map squares
 		// for sections of the map that don't exist.
 		TileType zero;
-//		zero.flags = nowalk;
+		zero.flags = nowalk;
 		tileTypes.push_back(zero);
+		// XXX: This tiletype isn't directly used anymore.
 	}
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
@@ -600,8 +599,6 @@ bool Area::processLayerData(XMLNode node)
 				type.allOfType.push_back(&tile);
 				tile.types.push_back(&type);
 			}
-
-			// FIXME: security: squares might have no tiles
 
 			if (++x == dim.x) {
 				x = 0;

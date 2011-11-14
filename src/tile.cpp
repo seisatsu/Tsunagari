@@ -18,6 +18,11 @@ Tile::Tile()
 {
 }
 
+bool Tile::hasType() const
+{
+	return types.size();
+}
+
 bool Tile::hasFlag(unsigned flag) const
 {
 	if (flags & flag)
