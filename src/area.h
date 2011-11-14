@@ -86,6 +86,9 @@ private:
 	//! XML descriptor parsing function.
 	bool processDescriptor();
 
+	//! Allocate all Tile objects in map based on dim.
+	void allocateMap();
+
 	//! XML descriptor parsing function.
 	bool processMapProperties(XMLNode node);
 
@@ -99,10 +102,10 @@ private:
 	bool processLayer(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processLayerProperties(XMLNode node);
+	bool processLayerProperties(XMLNode node, double* depth);
 
 	//! XML descriptor parsing function.
-	bool processLayerData(XMLNode node);
+	bool processLayerData(XMLNode node, double depth);
 
 	//! XML descriptor parsing function.
 	bool processObjectGroup(XMLNode node);
