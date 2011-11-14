@@ -21,6 +21,8 @@
 #include "window.h"
 #include "xml.h"
 
+#define ASSERT(x)  if (!(x)) return false
+
 static std::string facings[][3] = {
 	{"up-left",   "up",   "up-right"},
 	{"left",      "",     "right"},
@@ -55,7 +57,7 @@ bool Entity::init(const std::string& descriptor)
 	if (!processDescriptor())
 		return false;
 
-	// Set an initial phase
+	// Set an initial phase.
 	phase = &phases.begin()->second;
 	return true;
 }
@@ -299,10 +301,11 @@ void Entity::gotoRandomTile()
 
 void Entity::setSpeed(double multiplier)
 {
-	const float tilesPerSecond = area->getTileDimensions().x / 1000.0;
 	speedMul = multiplier;
-	if (area)
+	if (area) {
+		double tilesPerSecond = area->getTileDimensions().x / 1000.0;
 		speed = baseSpeed * speedMul * tilesPerSecond;
+	}
 }
 
 void Entity::calcDoff()
@@ -423,18 +426,14 @@ bool Entity::processDescriptor()
 
 	for (XMLNode node = root.childrenNode(); node; node = node.next()) {
 		if (node.is("speed")) {
-			if (!node.doubleContent(&baseSpeed))
-				return false;
+			ASSERT(node.doubleContent(&baseSpeed));
 			setSpeed(speedMul); // Calculate speed from tile size.
 		} else if (node.is("sprite")) {
-			if (!processSprite(node.childrenNode()))
-				return false;
+			ASSERT(processSprite(node.childrenNode()));
 		} else if (node.is("sounds")) {
-			if (!processSounds(node.childrenNode()))
-				return false;
+			ASSERT(processSounds(node.childrenNode()));
 		} else if (node.is("scripts")) {
-			if (!processScripts(node.childrenNode()))
-				return false;
+			ASSERT(processScripts(node.childrenNode()));
 		}
 	}
 	return true;
@@ -445,12 +444,10 @@ bool Entity::processSprite(XMLNode node)
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
 			xml.sheet = node.content();
-			if (!node.intAttr("tilewidth",  &imgw) ||
-			    !node.intAttr("tileheight", &imgh))
-				return false;
+			ASSERT(node.intAttr("tilewidth",  &imgw) &&
+			       node.intAttr("tileheight", &imgh));
 		} else if (node.is("phases")) {
-			if (!processPhases(node.childrenNode()))
-				return false;
+			ASSERT(processPhases(node.childrenNode()));
 		}
 	}
 	return true;
@@ -459,13 +456,11 @@ bool Entity::processSprite(XMLNode node)
 bool Entity::processPhases(XMLNode node)
 {
 	TiledImage tiles;
-	if (!rc->getTiledImage(tiles, xml.sheet, (unsigned)imgw,
-			(unsigned)imgh, false))
-		return false;
+	ASSERT(rc->getTiledImage(tiles, xml.sheet, (unsigned)imgw,
+			(unsigned)imgh, false));
 	for (; node; node = node.next())
 		if (node.is("phase"))
-			if (!processPhase(node, tiles))
-				return false;
+			ASSERT(processPhase(node, tiles));
 	return true;
 }
 
@@ -497,8 +492,7 @@ bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 
 	if (posStr.size()) {
 		int pos;
-		if (!node.intAttr("pos", &pos))
-			return false;
+		ASSERT(node.intAttr("pos", &pos));
 		if (pos < 0 || (int)tiles.size() < pos) {
 			Log::err(descriptor,
 				"<phase></phase> index out of bounds");
@@ -508,13 +502,12 @@ bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 	}
 	else {
 		int speed;
-		if (!node.intAttr("speed", &speed))
-			return false;
+		ASSERT(node.intAttr("speed", &speed));
 
 		int len = (int)(1000.0/speed);
 		phases[name].setFrameLen(len);
-		if (!processMembers(node.childrenNode(), phases[name], tiles))
-			return false;
+		ASSERT(processMembers(node.childrenNode(),
+		                      phases[name], tiles));
 	}
 
 	return true;
@@ -525,8 +518,7 @@ bool Entity::processMembers(XMLNode node, Animation& anim,
 {
 	for (; node; node = node.next())
 		if (node.is("member"))
-			if (!processMember(node, anim, tiles))
-				return false;
+			ASSERT(processMember(node, anim, tiles));
 	return true;
 }
 
@@ -534,8 +526,7 @@ bool Entity::processMember(const XMLNode node, Animation& anim,
                            const TiledImage& tiles)
 {
 	int pos;
-	if (!node.intAttr("pos", &pos))
-		return false;
+	ASSERT(node.intAttr("pos", &pos));
 	if (pos < 0 || (int)tiles.size() < pos) {
 		Log::err(descriptor, "<member></member> index out of bounds");
 		return false;
@@ -548,8 +539,7 @@ bool Entity::processSounds(XMLNode node)
 {
 	for (; node; node = node.next())
 		if (node.is("sound"))
-			if (!processSound(node))
-				return false;
+			ASSERT(processSound(node));
 	return true;
 }
 
@@ -575,8 +565,7 @@ bool Entity::processScripts(XMLNode node)
 {
 	for (; node; node = node.next())
 		if (node.is("script"))
-			if (!processScript(node))
-				return false;
+			ASSERT(processScript(node));
 	return true;
 }
 
