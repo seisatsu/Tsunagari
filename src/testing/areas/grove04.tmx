@@ -10,9 +10,9 @@
  <tileset firstgid="1" name="forest.png" tilewidth="32" tileheight="32">
   <image source="areas/tiles/forest.png" width="544" height="608"/>
  </tileset>
- <layer name="Tiles0" width="10" height="20">
+ <layer name="Tiles(-2)" width="10" height="20">
   <properties>
-   <property name="layer" value="0"/>
+   <property name="layer" value="-2"/>
   </properties>
   <data>
    <tile gid="76"/>
@@ -217,9 +217,9 @@
    <tile gid="76"/>
   </data>
  </layer>
- <layer name="Tiles1" width="10" height="20">
+ <layer name="Tiles(-1)" width="10" height="20">
   <properties>
-   <property name="layer" value="1"/>
+   <property name="layer" value="-1"/>
   </properties>
   <data>
    <tile gid="259"/>
@@ -257,7 +257,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="182"/>
-   <tile gid="31"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -274,7 +274,7 @@
    <tile gid="1"/>
    <tile gid="22"/>
    <tile gid="0"/>
-   <tile gid="124"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -355,8 +355,8 @@
    <tile gid="123"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="114"/>
-   <tile gid="115"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="164"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -365,8 +365,8 @@
    <tile gid="140"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="131"/>
-   <tile gid="132"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -375,8 +375,8 @@
    <tile gid="5"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="148"/>
-   <tile gid="149"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="196"/>
@@ -409,8 +409,8 @@
    <tile gid="198"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="80"/>
-   <tile gid="81"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="18"/>
    <tile gid="73"/>
    <tile gid="0"/>
@@ -424,9 +424,9 @@
    <tile gid="35"/>
   </data>
  </layer>
- <layer name="Tiles2" width="10" height="20">
+ <layer name="Tiles(1)" width="10" height="20">
   <properties>
-   <property name="layer" value="2"/>
+   <property name="layer" value="1"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -464,6 +464,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="31"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -480,6 +481,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="124"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -560,6 +562,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="114"/>
+   <tile gid="115"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -568,6 +572,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="131"/>
+   <tile gid="132"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -576,6 +582,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="148"/>
+   <tile gid="149"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -608,16 +616,8 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="80"/>
+   <tile gid="81"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -631,7 +631,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop0" width="10" height="20">
+ <objectgroup name="Prop(0)" width="10" height="20">
   <properties>
    <property name="layer" value="0"/>
   </properties>
@@ -725,15 +725,5 @@
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
- </objectgroup>
- <objectgroup name="Prop1" width="10" height="20">
-  <properties>
-   <property name="layer" value="1"/>
-  </properties>
- </objectgroup>
- <objectgroup name="Prop2" width="10" height="20">
-  <properties>
-   <property name="layer" value="2"/>
-  </properties>
  </objectgroup>
 </map>
