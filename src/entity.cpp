@@ -313,7 +313,7 @@ void Entity::calcDoff()
 	// X-axis is centered with tile.
 	doff.x = (area->getTileDimensions().x - imgw) / 2;
 	// Y-axis is aligned with bottom of tile.
-	doff.y = area->getTileDimensions().y - imgh;
+	doff.y = area->getTileDimensions().y - imgh - 1;
 }
 
 Tile& Entity::getTile()
