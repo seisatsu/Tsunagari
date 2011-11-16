@@ -11,18 +11,63 @@ template<class T>
 class vec2
 {
 public:
-	vec2();
-	vec2(const vec2<T>& other);
-	vec2(T x, T y);
-
-	vec2& operator +=(const vec2<T>& other);
-	vec2& operator -=(const vec2<T>& other);
-	vec2& operator *=(const vec2<T>& other);
-	vec2& operator *=(T coefficient);
-	vec2& operator /=(const vec2<T>& other);
-	vec2& operator /=(T coefficient);
-
 	T x, y;
+
+	vec2()
+	{
+	}
+
+	vec2(const vec2<T>& other)
+		: x(other.x), y(other.y)
+	{
+	}
+
+	vec2(T x, T y)
+		: x(x), y(y)
+	{
+	}
+
+	vec2<T>& operator +=(const vec2<T>& other)
+	{
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+
+	vec2<T>& operator -=(const vec2<T>& other)
+	{
+		x -= other.x;
+		y -= other.y;
+		return *this;
+	}
+
+	vec2<T>& operator *=(const vec2<T>& other)
+	{
+		x *= other.x;
+		y *= other.y;
+		return *this;
+	}
+
+	vec2<T>& operator *=(T coefficient)
+	{
+		x *= coefficient;
+		y *= coefficient;
+		return *this;
+	}
+
+	vec2<T>& operator /=(const vec2<T>& other)
+	{
+		x /= other.x;
+		y /= other.y;
+		return *this;
+	}
+
+	vec2<T>& operator /=(T coefficient)
+	{
+		x /= coefficient;
+		y /= coefficient;
+		return *this;
+	}
 };
 
 
@@ -30,18 +75,69 @@ template<class T>
 class vec3
 {
 public:
-	vec3();
-	vec3(const vec3<T>& other);
-	vec3(T x, T y, T z);
-
-	vec3& operator +=(const vec3<T>& other);
-	vec3& operator -=(const vec3<T>& other);
-	vec3& operator *=(const vec3<T>& other);
-	vec3& operator *=(T coefficient);
-	vec3& operator /=(const vec3<T>& other);
-	vec3& operator /=(T coefficient);
-
 	T x, y, z;
+
+	vec3()
+	{
+	}
+
+	vec3(const vec3<T>& other)
+		: x(other.x), y(other.y), z(other.z)
+	{
+	}
+
+	vec3(T x, T y, T z)
+		: x(x), y(y), z(z)
+	{
+	}
+
+	vec3<T>& operator +=(const vec3<T>& other)
+	{
+		x += other.x;
+		y += other.y;
+		z += other.z;
+		return *this;
+	}
+
+	vec3<T>& operator -=(const vec3<T>& other)
+	{
+		x -= other.x;
+		y -= other.y;
+		z -= other.z;
+		return *this;
+	}
+
+	vec3<T>& operator *=(const vec3<T>& other)
+	{
+		x *= other.x;
+		y *= other.y;
+		z *= other.z;
+		return *this;
+	}
+
+	vec3<T>& operator *=(T coefficient)
+	{
+		x *= coefficient;
+		y *= coefficient;
+		z *= coefficient;
+		return *this;
+	}
+
+	vec3<T>& operator /=(const vec3<T>& other)
+	{
+		x /= other.x;
+		y /= other.y;
+		z /= other.z;
+		return *this;
+	}
+
+	vec3<T>& operator /=(T coefficient)
+	{
+		x /= coefficient;
+		y /= coefficient;
+		z /= coefficient;
+		return *this;
+	}
 };
 
 //! Integer vector.
@@ -55,9 +151,6 @@ typedef vec3<double> rvec3;
 //! Coordinates.
 typedef ivec3 icoord;
 typedef rvec3 rcoord;
-
-// For template member definitions.
-#include "math.cpp"
 
 #endif
 
