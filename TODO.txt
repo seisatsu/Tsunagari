@@ -16,16 +16,13 @@ ITEMS
 
 * Investigate Guichan
 
-* Investigate PhysicsFS for world file access and event script jailing.
+* Investigate PhysicsFS for event script jailing.
 
 * The player's speed should actually change as they start to enter a speed
   modified tile. We may need to rethink event timing.
 
 * Resourcer returns Script rather than lua_State*
   Move bytecode functions and stuff to Script.
-
-* Stream music rather than loading it all at once. This will massively reduce
-  loading time.
 
 * Can we create a metatable for a userdata? Is that what liolib.c does? Right
   now we use a table object with userdata set at table.object.
@@ -39,8 +36,6 @@ ITEMS
 * Unify XML element/attribute naming scheme.
 
 * Support TMX zlib data.
-
-* Investigate using Gosu::Song with OpenAL, then with OpenAL+zip.
 
 * Separate Resourcer from file. Resourcer should be able to access multiple
   file sources.

@@ -10,6 +10,8 @@ ________                                _________________    ________
 
 Tsunagari Tile Engine
 
+Alpha Preview Release 3 "Kurotsuki" Revision 1
+
 Tsunagari is a tile engine inspired by the cult classic game Yume Nikki. It is
 intended as an open source replacement for the popular proprietary RPGMaker
 game development suite that the original and most fangames were/are written on.
