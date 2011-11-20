@@ -698,7 +698,7 @@ bool Area::processObject(XMLNode node, int zpos)
 	// Gather object properties now. Assign them to tiles later.
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
-	unsigned flags;
+	unsigned flags = 0x0;
 
 	XMLNode child = node.childrenNode(); // <properties>
 	for (child = child.childrenNode(); child; child = child.next()) {
