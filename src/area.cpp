@@ -18,6 +18,7 @@
 #include "entity.h"
 #include "log.h"
 #include "resourcer.h"
+#include "tile.h"
 #include "window.h"
 #include "world.h"
 
@@ -262,20 +263,7 @@ bool Area::processDescriptor()
 
 void Area::allocateMap()
 {
-	grid_t grid;
-	row_t row;
-
-	grid.reserve(dim.y);
-	for (int y = 0; y < dim.y; y++) {
-		row.reserve(dim.x);
-		for (int x = 0; x < dim.x; x++) {
-			Tile tile;
-			row.push_back(tile);
-		}
-		grid.push_back(row);
-		row.clear();
-	}
-	map.push_back(grid);
+	map.push_back(grid_t(dim.y, row_t(dim.x)));
 }
 
 bool Area::processMapProperties(XMLNode node)
