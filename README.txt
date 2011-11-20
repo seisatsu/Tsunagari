@@ -9,8 +9,11 @@ ________                                _________________    ________
 -----
 
 Tsunagari Tile Engine
+<http://tileengine.org/>
 
 Alpha Preview Release 3 "Kurotsuki" Revision 1
+
+-----
 
 Tsunagari is a tile engine inspired by the cult classic game Yume Nikki. It is
 intended as an open source replacement for the popular proprietary RPGMaker
@@ -34,7 +37,7 @@ major release.
 Requirements:
 NAME		LICENSE	  LINK
 libboost        (BOOST) - http://www.boost.org/
-libgosu         (MIT)   - http://www.libgosu.org/     version 0.7.35 or higher
+libgosu         (MIT)   - http://www.libgosu.org/     latest git recommended
 libxml2         (MIT)   - http://xmlsoft.org/
 PhysicsFS       (ZLIB)  - http://icculus.org/physfs/
 
