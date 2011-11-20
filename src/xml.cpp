@@ -98,7 +98,7 @@ bool XMLNode::doubleAttr(const std::string& name, double* d) const
 		Log::err(doc->path(), "expected decimal");
 		return false;
 	}
-	*d = atoi(s.c_str());
+	*d = atof(s.c_str());
 	return true;
 }
 
