@@ -49,6 +49,10 @@ void Player::stopMovement(icoord delta)
 
 void Player::moveByTile(icoord delta)
 {
+	if (moving)
+		// Support queueing moves?
+		return;
+
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
 	if (window.input().down(Gosu::kbLeftControl)) {

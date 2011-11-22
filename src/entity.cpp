@@ -234,7 +234,7 @@ void Entity::moveByPixel(icoord delta)
 
 void Entity::moveByTile(icoord delta)
 {
-	if (conf->moveMode == TILE && moving)
+	if (moving)
 		// Support queueing moves?
 		return;
 
