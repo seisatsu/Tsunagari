@@ -23,7 +23,6 @@ Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
 void Player::startMovement(icoord delta)
 {
 	if (conf->moveMode == TURN) {
-		// TODO Move by velocity would allow true diagonal movement
 		moveByTile(delta);
 	}
 	else if (conf->moveMode == TILE) {

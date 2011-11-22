@@ -16,8 +16,6 @@ ITEMS
 
 * Investigate Guichan
 
-* Investigate PhysicsFS for event script jailing.
-
 * The player's speed should actually change as they start to enter a speed
   modified tile. We may need to rethink event timing.
 

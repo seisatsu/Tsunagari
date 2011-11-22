@@ -41,7 +41,6 @@ bool World::init()
 
 	music = new Music(rc);
 
-	// FIXME The player entity doesn't have a descriptor yet.
 	player.reset(new Player(rc, NULL, conf));
 	if (!player->init(xml.playerentity))
 		return false;
