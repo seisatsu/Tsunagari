@@ -30,7 +30,8 @@ void Player::startMovement(icoord delta)
 		velocity.y += delta.y;
 		velocity.z += delta.z;
 		normalizeVelocity();
-		moveByTile(velocity);
+		if (velocity.x || velocity.y || velocity.z)
+			moveByTile(velocity);
 	}
 }
 
