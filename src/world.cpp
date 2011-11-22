@@ -75,6 +75,24 @@ void World::update(unsigned long dt)
 	area->update(dt);
 }
 
+bool World::loadArea(const std::string& areaName, icoord playerPos)
+{
+	Area* oldArea = area;
+	Area* newArea = new Area(rc, this, player.get(), music, areaName);
+	if (!newArea->init())
+		return false;
+	setArea(newArea, playerPos);
+	delete oldArea;
+	return true;
+}
+
+void World::setArea(Area* area, icoord playerPos)
+{
+	this->area = area;
+	player->setArea(area);
+	player->setTileCoords(playerPos);
+}
+
 bool World::processDescriptor()
 {
 	XMLRef doc = rc->getXMLDoc("world.conf", "world.dtd");
@@ -116,23 +134,5 @@ bool World::processDescriptor()
 		}
 	}
 	return true;
-}
-
-bool World::loadArea(const std::string& areaName, icoord playerPos)
-{
-	Area* oldArea = area;
-	Area* newArea = new Area(rc, this, player.get(), music, areaName);
-	if (!newArea->init())
-		return false;
-	setArea(newArea, playerPos);
-	delete oldArea;
-	return true;
-}
-
-void World::setArea(Area* area, icoord playerPos)
-{
-	this->area = area;
-	player->setArea(area);
-	player->setTileCoords(playerPos);
 }
 

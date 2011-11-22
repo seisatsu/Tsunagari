@@ -55,7 +55,11 @@ public:
 	//! Gosu Callback
 	void update(unsigned long dt);
 
+	//! Create a new Area object, loading from the appropriate files, and
+	//! set it as the current Area.
 	bool loadArea(const std::string& areaName, icoord playerPos);
+
+	//! Given an Area object, set it as the current one.
 	void setArea(Area* area, icoord playerPos);
 
 private:
