@@ -271,7 +271,6 @@ bool Area::processMapProperties(XMLNode node)
 
 /*
  <properties>
-  <property name="areaspec" value="1"/>
   <property name="author" value="Michael D. Reiley"/>
   <property name="name" value="Baby's First Area"/>
   <property name="intro_music" value="intro.music"/>
