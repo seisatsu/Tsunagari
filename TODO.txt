@@ -46,3 +46,5 @@ ITEMS
   is normalized to not moving, which will cause your character to move when you
   let go.
 
+* TiledImage should accept IDs instead of offsets.
+

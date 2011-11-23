@@ -96,7 +96,7 @@ private:
 	bool processTileSet(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processTileType(XMLNode node, TiledImage& img);
+	bool processTileType(XMLNode node, TiledImage& img, int id);
 
 	//! XML descriptor parsing function.
 	bool processLayer(XMLNode node);

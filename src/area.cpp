@@ -5,6 +5,7 @@
 ******************************/
 
 #include <math.h>
+#include <vector>
 
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
@@ -386,7 +387,7 @@ bool Area::processTileSet(XMLNode node)
 				tileTypes.push_back(TileType(img));
 
 			// Handle this (explicitly declared) type.
-			ASSERT(processTileType(child, img));
+			ASSERT(processTileType(child, img, id));
 		}
 	}
 
@@ -396,7 +397,7 @@ bool Area::processTileSet(XMLNode node)
 	return true;
 }
 
-bool Area::processTileType(XMLNode node, TiledImage& img)
+bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 {
 
 /*
@@ -409,8 +410,7 @@ bool Area::processTileType(XMLNode node, TiledImage& img)
   </tile>
   <tile id="14">
    <properties>
-    <property name="animated" value="1"/>
-    <property name="size" value="2"/>
+    <property name="members" value="1,2,3,4"/>
     <property name="speed" value="2"/>
    </properties>
   </tile>
@@ -454,23 +454,29 @@ bool Area::processTileType(XMLNode node, TiledImage& img)
 			type.events.push_back(e);
 			type.flags |= hasOnLeave;
 		}
-		else if (name == "animated") {
-			// XXX still needed?
-			// type.animated = parseBool((const char*)value);
-		}
-		else if (name == "size") {
-			int size;
-			ASSERT(child.intAttr("value", &size));
+		else if (name == "members") {
+			std::string memtemp;
+			std::vector<std::string> members;
+			std::vector<std::string>::iterator it;
+			memtemp = value;
+			members = splitStr(memtemp, ",");
+			
+			// Make sure the first member is this tile.
+			if (atoi(members[0].c_str()) != id) {
+				Log::err(descriptor, "first member of tile"
+					" id " + itostr(id) + " animation must be itself.");
+				return false;
+			}
 
-			// Add size-1 more frames to our animation.
+			// Add frames to our animation.
 			// We already have one from TileType's constructor.
-			for (int i = 0; i < size - 1; i++) {
+			for (it = members.begin()+1; it < members.end(); it++) {
 				if (img.empty()) {
 					Log::err(descriptor, "ran out of tiles"
 						"/frames for animated tile");
 					return false;
 				}
-				type.anim.addFrame(img[i]);
+				type.anim.addFrame(img[id-atoi(it->c_str())+1]);
 			}
 		}
 		else if (name == "speed") {

@@ -9,15 +9,13 @@
   <image source="areas/tiles/indoors.png" width="256" height="382"/>
   <tile id="14">
    <properties>
-    <property name="animated" value="1"/>
-    <property name="size" value="2"/>
+    <property name="members" value="14,15"/>
     <property name="speed" value="1"/>
    </properties>
   </tile>
   <tile id="30">
    <properties>
-    <property name="animated" value="1"/>
-    <property name="size" value="2"/>
+    <property name="members" value="30,31"/>
     <property name="speed" value="1"/>
    </properties>
   </tile>
