@@ -339,12 +339,13 @@ bool Area::processTileSet(XMLNode node)
 	// FIXME: compare with existing tileDim
 
 	if (tileTypes.empty()) {
-		// Add TileType #0, a transparent tile type that is fills map squares
-		// for sections of the map that don't exist.
+		// Add TileType #0, a transparent tile type that fills map
+		// squares for sections of the map that don't exist.
 		TileType zero;
 		zero.flags = nowalk;
 		tileTypes.push_back(zero);
-		// XXX: This tiletype isn't directly used anymore.
+		// XXX: Paul 2011-11-13: This tiletype isn't directly used
+		//      anymore. Should we remove it?
 	}
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
