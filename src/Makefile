@@ -11,17 +11,11 @@ CXX = g++
 # Warning flags to enable.
 WFLAGS = -Wall -Wextra -Wconversion
 
-# Internal Lua library.
-LUACFLAGS = -I../deps/lua
-LUALIB = ../deps/lua/liblua.a
-
 # Libraries to include.
-LIBS = $(LUALIB) -lgosu -lphysfs -lboost_program_options \
-	$(shell xml2-config --libs)
+LIBS = -lboost_program_options -lgosu -lphysfs $(shell xml2-config --libs)
 
 # Compiler and linker flags.
-CXXFLAGS = $(MYCFLAGS) -pedantic -ansi $(WFLAGS) \
-	$(shell xml2-config --cflags) $(LUACFLAGS)
+CXXFLAGS = $(MYCFLAGS) -pedantic -ansi $(WFLAGS) $(shell xml2-config --cflags)
 LDFLAGS = $(MYLDFLAGS) $(LIBS)
 
 # Name of testing world.
@@ -35,9 +29,8 @@ all: tsunagari $(TESTWORLD)
 depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
-tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
-           log.o main.o music.o player.o resourcer.o script.o script-sound.o \
-           tile.o window.o world.o xml.o
+tsunagari: animation.o area.o cmd.o common.o entity.o log.o main.o \
+           music.o player.o resourcer.o tile.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
@@ -55,50 +48,28 @@ clean:
 # a #include anywhere or if you add/remove a C++ file.
 
 animation.o: animation.cpp animation.h common.h log.h math.h resourcer.h \
- xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
+ xml.h
 area.o: animation.h area.cpp area.h common.h entity.h log.h math.h music.h \
- player.h resourcer.h tile.h window.h world.h xml.h ../deps/lua/lauxlib.h \
- ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
- ../deps/lua/lualib.h
+ player.h resourcer.h tile.h window.h world.h xml.h
 cmd.o: cmd.cpp cmd.h common.h log.h math.h
 common.o: common.cpp common.h log.h math.h
-entity-lua.o: animation.h common.h entity-lua.cpp entity-lua.h entity.h \
- log.h math.h resourcer.h script.h tile.h xml.h ../deps/lua/lauxlib.h \
- ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
- ../deps/lua/lualib.h
-entity.o: animation.h area.h common.h config.h entity-lua.h entity.cpp \
- entity.h log.h math.h music.h player.h resourcer.h script.h tile.h window.h \
- xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
+entity.o: animation.h area.h common.h config.h entity.cpp entity.h log.h \
+ math.h music.h player.h resourcer.h tile.h window.h xml.h
+image.o: image.cpp
 log.o: config.h log.cpp log.h
 main.o: cmd.h common.h config.h log.h main.cpp math.h window.h
-music.o: common.h log.h math.h music.cpp music.h resourcer.h xml.h \
- ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
+music.o: common.h log.h math.h music.cpp music.h resourcer.h xml.h
 player.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.cpp player.h resourcer.h tile.h window.h world.h xml.h \
- ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
+ player.cpp player.h resourcer.h tile.h window.h world.h xml.h
 resourcer.o: common.h config.h log.h math.h resourcer.cpp resourcer.h \
- window.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
-script-sound.o: common.h log.h math.h resourcer.h script-sound.cpp \
- script-sound.h script.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h \
- ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h
-script.o: common.h log.h math.h resourcer.h script-sound.h script.cpp \
- script.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
-tile.o: animation.h area.h common.h entity-lua.h entity.h log.h math.h \
- music.h player.h resourcer.h script.h tile.cpp tile.h window.h xml.h \
- ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
+ window.h xml.h
+tile.o: animation.h area.h common.h entity.h log.h math.h music.h player.h \
+ resourcer.h tile.cpp tile.h window.h xml.h
+viewport.o: animation.h common.h entity.h log.h math.h resourcer.h tile.h \
+ viewport.cpp viewport.h xml.h
 window.o: common.h config.h log.h math.h resourcer.h window.cpp window.h \
- world.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
+ world.h xml.h
 world.o: animation.h area.h common.h entity.h log.h math.h music.h player.h \
- resourcer.h tile.h window.h world.cpp world.h xml.h ../deps/lua/lauxlib.h \
- ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
- ../deps/lua/lualib.h
-xml.o: common.h log.h math.h xml.cpp xml.h
+ resourcer.h tile.h window.h world.cpp world.h xml.h
+xml.o: common.h config.h log.h math.h xml.cpp xml.h
 

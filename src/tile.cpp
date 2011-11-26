@@ -7,8 +7,6 @@
 #include <boost/foreach.hpp>
 
 #include "area.h"
-#include "entity-lua.h"
-#include "script.h"
 #include "tile.h"
 #include "window.h"
 
@@ -58,7 +56,7 @@ void Tile::onLeaveScripts(Resourcer* rc, Entity* triggeredBy)
 		runScripts(rc, triggeredBy, onLeave, events);
 }
 
-void Tile::runScripts(Resourcer* rc, Entity* entity,
+void Tile::runScripts(Resourcer*, Entity*,
                       const TileEventTrigger trigger,
                       const std::vector<TileEvent>& events)
 {
@@ -66,10 +64,12 @@ void Tile::runScripts(Resourcer* rc, Entity* entity,
 //	BOOST_FOREACH(const TileEvent& e, events) {
 		const TileEvent& e = *i;
 		if (e.trigger == trigger) {
+/* FIXME: Redo scripts.
 			Script s(rc);
 			bindEntity(&s, entity, "entity");
 			// TODO bindTile(script, tile, "tile");
 			s.run(rc, e.script);
+*/
 		}
 	}
 }

@@ -15,9 +15,6 @@
 #include <libxml/parser.h>
 
 #include "common.h"
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
 #include "xml.h"
 
 namespace Gosu {
@@ -70,10 +67,6 @@ public:
 	XMLRef getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
 
-	//! Requests a Lua script from disk or cache. Lua state L will parse
-	//! the script.
-	bool getLuaScript(const std::string& name, lua_State* L);
-
 	//! Expunge old stuff from the cache.
 	void garbageCollect();
 
@@ -99,10 +92,6 @@ private:
 	typedef boost::unordered_map<const std::string, CacheEntry<XMLRef> >
 		XMLRefMap;
 
-	// Holds compiled Lua scripts. Not garbage collected.
-	typedef boost::unordered_map<const std::string, std::vector<char> >
-		LuaBytecodeMap;
-
 
 	//! Garbage collect a map.
 	template<class Map, class MapValue>
@@ -111,10 +100,6 @@ private:
 	//! Reads an XML document from disk and parses it.
 	XMLDoc* readXMLDocFromDisk(const std::string& name,
 		const std::string& dtdFile) const;
-
-	//! Reads a Lua script from disk and parses it, returning the bytecode.
-	bool compileLuaFromDisk(const std::string& name, lua_State* L,
-                                std::vector<char>& bytes) const;
 
 	//! Read a string resource from disk.
 	std::string readStringFromDisk(const std::string& name) const;
@@ -135,9 +120,6 @@ private:
 	SampleRefMap samples;
 	SongRefMap songs;
 	XMLRefMap xmls;
-
-	// Not garbage collected.
-	LuaBytecodeMap code;
 };
 
 #endif

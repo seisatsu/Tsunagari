@@ -84,7 +84,7 @@ void Player::moveByTile(icoord delta)
 		redraw = true;
 		return;
 	}
-	
+
 	// Disallow diagonal movement in TILE mode.
 	if (conf->moveMode == TILE && (delta.x && delta.y))
 		return;
