@@ -37,7 +37,7 @@ depend:
 
 tsunagari: $(LUALIB) animation.o area.o cmd.o common.o entity.o entity-lua.o \
            log.o main.o music.o player.o resourcer.o script.o script-sound.o \
-           tile.o window.o world.o xml.o
+           tile.o viewport.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
@@ -71,6 +71,7 @@ entity.o: animation.h area.h common.h config.h entity-lua.h entity.cpp \
  entity.h log.h math.h music.h player.h resourcer.h script.h tile.h window.h \
  xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
+image.o: image.cpp
 log.o: config.h log.cpp log.h
 main.o: cmd.h common.h config.h log.h main.cpp math.h window.h
 music.o: common.h log.h math.h music.cpp music.h resourcer.h xml.h \
@@ -93,6 +94,9 @@ tile.o: animation.h area.h common.h entity-lua.h entity.h log.h math.h \
  music.h player.h resourcer.h script.h tile.cpp tile.h window.h xml.h \
  ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
+viewport.o: animation.h common.h entity.h log.h math.h resourcer.h tile.h \
+ viewport.cpp viewport.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h \
+ ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h
 window.o: common.h config.h log.h math.h resourcer.h window.cpp window.h \
  world.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
@@ -100,5 +104,4 @@ world.o: animation.h area.h common.h entity.h log.h math.h music.h player.h \
  resourcer.h tile.h window.h world.cpp world.h xml.h ../deps/lua/lauxlib.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
  ../deps/lua/lualib.h
-xml.o: common.h log.h math.h xml.cpp xml.h
-
+xml.o: common.h config.h log.h math.h xml.cpp xml.h
