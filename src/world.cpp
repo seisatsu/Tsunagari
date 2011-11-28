@@ -79,8 +79,10 @@ bool World::loadArea(const std::string& areaName, icoord playerPos)
 {
 	Area* oldArea = area;
 	Area* newArea = new Area(rc, this, &view, &player, music, areaName);
-	if (!newArea->init())
+	if (!newArea->init()) {
+		delete newArea;
 		return false;
+	}
 	setArea(newArea, playerPos);
 	delete oldArea;
 	return true;
