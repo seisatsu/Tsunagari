@@ -36,10 +36,11 @@
 
 Area::Area(Resourcer* rc,
            World* world,
+           Viewport* view,
            Player* player,
            Music* music,
            const std::string& descriptor)
-	: rc(rc), world(world), player(player), music(music),
+	: rc(rc), world(world), view(view), player(player), music(music),
 	  descriptor(descriptor), dim(0, 0, 0), loopX(false), loopY(false)
 {
 }

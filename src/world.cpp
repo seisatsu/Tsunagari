@@ -23,7 +23,7 @@ World* World::getWorld()
 }
 
 World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
-	: rc(rc), wnd(wnd), conf(conf), area(NULL)
+	: rc(rc), wnd(wnd), conf(conf), view(conf), area(NULL)
 {
 	globalWorld = this;
 }
@@ -78,7 +78,8 @@ void World::update(unsigned long dt)
 bool World::loadArea(const std::string& areaName, icoord playerPos)
 {
 	Area* oldArea = area;
-	Area* newArea = new Area(rc, this, player.get(), music, areaName);
+	Area* newArea = new Area(rc, this, &view, player.get(), music,
+	                         areaName);
 	if (!newArea->init())
 		return false;
 	setArea(newArea, playerPos);

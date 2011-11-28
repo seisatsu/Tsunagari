@@ -1,3 +1,6 @@
+#ifndef VIEWPORT_H
+#define VIEWPORT_H
+
 #include "common.h"
 #include "entity.h"
 
@@ -42,4 +45,6 @@ private:
 	const Entity* targete;
 	icoord targetc;
 };
+
+#endif
 

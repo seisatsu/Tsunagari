@@ -13,6 +13,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "common.h"
+#include "viewport.h"
 
 namespace Gosu {
 	class Button;
@@ -68,6 +69,7 @@ private:
 	Resourcer* rc;
 	GameWindow* wnd;
 	ClientValues* conf;
+	Viewport view;
 	Area* area;
 	Music* music;
 	boost::scoped_ptr<Player> player;
