@@ -4,6 +4,8 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Math.hpp>
+
 #include "area.h"
 #include "viewport.h"
 #include "window.h"
@@ -36,7 +38,7 @@ void Viewport::update(unsigned long)
 			r.x + 0.5 * td.x,
 			r.y + 0.5 * td.y
 		);
-		off = centerOn(epos);
+		off = boundToArea(centerOn(epos));
 		break;
 	case TM_SCROLL_TO_ENTITY:
 		// TODO
@@ -114,5 +116,35 @@ rvec2 Viewport::centerOn(rvec2 pt) const
 		pt.x - windowWidth/2.0,
 		pt.y - windowHeight/2.0
 	);
+}
+
+rvec2 Viewport::boundToArea(rvec2 pt) const
+{
+	const Gosu::Graphics& graphics = window.graphics();
+	double windowWidth = (double)graphics.width();
+	double windowHeight = (double)graphics.height();
+	icoord ad = area->getDimensions();
+	icoord td = area->getTileDimensions();
+	double areaWidth = ad.x * td.x;
+	double areaHeight = ad.y * td.y;
+	bool loopX = area->loopsInX();
+	bool loopY = area->loopsInY();
+
+	return rvec2(
+		boundDimension(windowWidth,  areaWidth,  pt.x, loopX),
+		boundDimension(windowHeight, areaHeight, pt.y, loopY)
+	);
+}
+
+double Viewport::boundDimension(double window, double area, double pt,
+                                bool loop) const
+{
+	if (loop)
+		return pt;
+
+	double wiggleRoom = area - window;
+	if (wiggleRoom <= 0)
+		return wiggleRoom/2;
+	return Gosu::boundBy(pt, 0.0, wiggleRoom);
 }
 

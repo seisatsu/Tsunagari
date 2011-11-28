@@ -209,6 +209,16 @@ icube_t Area::visibleTiles() const
 	return icube(x1, y1, 0, x2, y2, dim.z);
 }
 
+bool Area::loopsInX() const
+{
+	return loopX;
+}
+
+bool Area::loopsInY() const
+{
+	return loopY;
+}
+
 bool Area::processDescriptor()
 {
 	XMLRef doc;

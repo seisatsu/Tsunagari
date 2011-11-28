@@ -73,6 +73,9 @@ public:
 	bool tileExists(icoord c) const;
 	icube_t visibleTiles() const;
 
+	bool loopsInX() const;
+	bool loopsInY() const;
+
 private:
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
