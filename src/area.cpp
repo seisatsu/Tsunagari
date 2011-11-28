@@ -36,10 +36,11 @@
 
 Area::Area(Resourcer* rc,
            World* world,
+           Viewport* view,
            Player* player,
            Music* music,
            const std::string& descriptor)
-	: rc(rc), world(world), player(player), music(music),
+	: rc(rc), world(world), view(view), player(player), music(music),
 	  descriptor(descriptor), dim(0, 0, 0), loopX(false), loopY(false)
 {
 }
@@ -80,8 +81,8 @@ void Area::buttonUp(const Gosu::Button btn)
 void Area::draw()
 {
 	Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
-	const Gosu::Transform trans = viewportTransform();
-	graphics.pushTransform(trans);
+	rvec2 off = view->getOffset();
+	graphics.pushTransform(Gosu::translate(-off.x, -off.y));
 
 	updateTileAnimations();
 	drawTiles();
@@ -153,6 +154,7 @@ void Area::update(unsigned long dt)
 {
 	music->update();
 	player->update(dt);
+	view->update(dt);
 }
 
 icoord Area::getDimensions() const
@@ -188,29 +190,6 @@ Tile& Area::getTile(icoord c)
 	return map[c.z][c.y][c.x];
 }
 
-const rcoord Area::viewportOffset() const
-{
-	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
-	const double tileWidth = (double)tileDim.x;
-	const double tileHeight = (double)tileDim.y;
-	const double windowWidth = (double)graphics.width() / tileWidth;
-	const double windowHeight = (double)graphics.height() / tileHeight;
-	const double playerX = player->getRPixel().x / tileWidth + 0.5;
-	const double playerY = player->getRPixel().y / tileHeight + 0.5;
-
-	return rcoord(
-		(windowWidth/2.0 - playerX) * tileWidth,
-		(windowHeight/2.0 - playerY) * tileHeight,
-		0
-	);
-}
-
-const Gosu::Transform Area::viewportTransform() const
-{
-	const rcoord c = viewportOffset();
-	return Gosu::translate(c.x, c.y);
-}
-
 icube_t Area::visibleTiles() const
 {
 	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
@@ -218,13 +197,13 @@ icube_t Area::visibleTiles() const
 	const int tileHeight = tileDim.y;
 	const int windowWidth = graphics.width();
 	const int windowHeight = graphics.height();
-	const rcoord off = viewportOffset();
+	const rvec2 off = view->getOffset();
 
-	const int x1 = (int)floor(-off.x / tileWidth);
-	const int y1 = (int)floor(-off.y / tileHeight);
-	const int x2 = (int)ceil((double)(windowWidth - off.x) /
+	const int x1 = (int)floor(off.x / tileWidth);
+	const int y1 = (int)floor(off.y / tileHeight);
+	const int x2 = (int)ceil((double)(windowWidth + off.x) /
 		(double)tileWidth);
-	const int y2 = (int)ceil((double)(windowHeight - off.y) /
+	const int y2 = (int)ceil((double)(windowHeight + off.y) /
 		(double)tileHeight);
 
 	return icube(x1, y1, 0, x2, y2, dim.z);

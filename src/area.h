@@ -18,6 +18,7 @@
 #include "player.h"
 #include "resourcer.h"
 #include "tile.h"
+#include "viewport.h"
 #include "xml.h"
 
 namespace Gosu {
@@ -43,8 +44,8 @@ class Area
 {
 public:
 	//! Area Constructor
-	Area(Resourcer* rc, World* world, Player* player, Music* music,
-			const std::string& filename);
+	Area(Resourcer* rc, World* world, Viewport* view, Player* player,
+	     Music* music, const std::string& filename);
 
 	//! Area Destructor
 	~Area();
@@ -79,9 +80,6 @@ private:
 	void drawTiles() const;
 	void drawTile(const Tile& tile, int x, int y, int z) const;
 	void drawEntities();
-
-	const rcoord viewportOffset() const;
-	const Gosu::Transform viewportTransform() const;
 
 	//! XML descriptor parsing function.
 	bool processDescriptor();
@@ -124,6 +122,7 @@ private:
 
 	Resourcer* rc;
 	World* world;
+	Viewport* view;
 	Player* player;
 	Music* music;
 	const std::string descriptor;
