@@ -23,7 +23,7 @@ World* World::getWorld()
 }
 
 World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
-	: rc(rc), wnd(wnd), conf(conf), view(conf), area(NULL)
+	: rc(rc), wnd(wnd), conf(conf), view(*wnd, *conf), area(NULL)
 {
 	globalWorld = this;
 }
@@ -45,6 +45,7 @@ bool World::init()
 	if (!player->init(xml.playerentity))
 		return false;
 	player->setPhase("down");
+	view.trackEntity(&(*player));
 
 	wnd->setCaption(Gosu::widen(xml.name));
 	return loadArea(xml.entry.area, xml.entry.coords);
@@ -92,6 +93,7 @@ void World::setArea(Area* area, icoord playerPos)
 	this->area = area;
 	player->setArea(area);
 	player->setTileCoords(playerPos);
+	view.setArea(area);
 }
 
 bool World::processDescriptor()

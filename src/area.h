@@ -81,9 +81,6 @@ private:
 	void drawTile(const Tile& tile, int x, int y, int z) const;
 	void drawEntities();
 
-	const rcoord viewportOffset() const;
-	const Gosu::Transform viewportTransform() const;
-
 	//! XML descriptor parsing function.
 	bool processDescriptor();
 

@@ -10,6 +10,9 @@
 #include "common.h"
 #include "entity.h"
 
+class Area;
+class GameWindow;
+
 //! General control over where and how the map is rendered.
 /*!
 	
@@ -17,25 +20,29 @@
 class Viewport
 {
 public:
-	Viewport(const ClientValues* conf);
+	Viewport(const GameWindow& window, const ClientValues& conf);
 	~Viewport();
 
 	void update(unsigned long dt);
-	rvec2 getRenderOffset() const;
+	rvec2 getOffset() const;
 
 	// Immediatly center render offset. Stop any scrolling or tracking.
 	void jumpToXY(ivec2 off);
 	void jumpToXY(rvec2 off);
-	void jumpToEntity(const Entity& e);
+	void jumpToEntity(const Entity* e);
 
 	// Move over a duration. Stop any tracking.
-	void scrollToEntity(const Entity& e);
 	void scrollToTile(icoord c);
+	void scrollToEntity(const Entity* e);
 
 	// Continuously follow. Stop any scrolling.
-	void trackEntity(const Entity& e);
+	void trackEntity(const Entity* e);
+
+	void setArea(const Area* a);
 
 private:
+	rvec2 centerOn(rvec2 pt) const;
+
 	enum TrackingMode
 	{
 		TM_MANUAL,
@@ -44,12 +51,14 @@ private:
 		TM_SCROLL_TO_TILE
 	};
 
-	const ClientValues* conf;
+	const GameWindow& window;
+	const ClientValues& conf;
 	rvec2 off;
 
 	TrackingMode mode;
-	const Entity* targete;
+	const Area* area;
 	icoord targetc;
+	const Entity* targete;
 };
 
 #endif
