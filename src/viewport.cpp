@@ -1,3 +1,9 @@
+/******************************
+** Tsunagari Tile Engine     **
+** viewport.cpp              **
+** Copyright 2011 OmegaSDG   **
+******************************/
+
 #include "viewport.h"
 
 
