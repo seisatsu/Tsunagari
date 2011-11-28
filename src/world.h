@@ -13,6 +13,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "common.h"
+#include "player.h"
 #include "viewport.h"
 
 namespace Gosu {
@@ -21,7 +22,6 @@ namespace Gosu {
 
 class Area;
 class Music;
-class Player;
 class Resourcer;
 class GameWindow;
 
@@ -72,7 +72,7 @@ private:
 	Viewport view;
 	Area* area;
 	Music* music;
-	boost::scoped_ptr<Player> player;
+	Player player;
 
 	//! WorldTypeLocality XML Storage Enum
 	/*!

@@ -8,7 +8,6 @@
 
 #include "area.h"
 #include "common.h"
-#include "player.h"
 #include "log.h"
 #include "resourcer.h"
 #include "window.h"
@@ -23,7 +22,8 @@ World* World::getWorld()
 }
 
 World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
-	: rc(rc), wnd(wnd), conf(conf), view(*wnd, *conf), area(NULL)
+	: rc(rc), wnd(wnd), conf(conf), view(*wnd, *conf), area(NULL),
+	  player(rc, NULL, conf)
 {
 	globalWorld = this;
 }
@@ -41,11 +41,10 @@ bool World::init()
 
 	music = new Music(rc);
 
-	player.reset(new Player(rc, NULL, conf));
-	if (!player->init(xml.playerentity))
+	if (!player.init(xml.playerentity))
 		return false;
-	player->setPhase("down");
-	view.trackEntity(&(*player));
+	player.setPhase("down");
+	view.trackEntity(&player);
 
 	wnd->setCaption(Gosu::widen(xml.name));
 	return loadArea(xml.entry.area, xml.entry.coords);
@@ -79,8 +78,7 @@ void World::update(unsigned long dt)
 bool World::loadArea(const std::string& areaName, icoord playerPos)
 {
 	Area* oldArea = area;
-	Area* newArea = new Area(rc, this, &view, player.get(), music,
-	                         areaName);
+	Area* newArea = new Area(rc, this, &view, &player, music, areaName);
 	if (!newArea->init())
 		return false;
 	setArea(newArea, playerPos);
@@ -91,8 +89,8 @@ bool World::loadArea(const std::string& areaName, icoord playerPos)
 void World::setArea(Area* area, icoord playerPos)
 {
 	this->area = area;
-	player->setArea(area);
-	player->setTileCoords(playerPos);
+	player.setArea(area);
+	player.setTileCoords(playerPos);
 	view.setArea(area);
 }
 
