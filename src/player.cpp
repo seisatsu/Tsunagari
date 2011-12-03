@@ -16,33 +16,34 @@
 #include "window.h"
 
 Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
-	: Entity(rc, area, conf), velocity(icoord(0, 0, 0))
+	: Entity(rc, area, conf), velocity(0, 0, 0)
 {
 }
 
 void Player::startMovement(icoord delta)
 {
-	if (conf->moveMode == TURN) {
+	switch (conf->moveMode) {
+	case TURN:
 		moveByTile(delta);
-	}
-	else if (conf->moveMode == TILE) {
-		velocity.x += delta.x;
-		velocity.y += delta.y;
-		velocity.z += delta.z;
+		break;
+	case TILE:
+		velocity += delta;
 		normalizeVelocity();
-		if (velocity.x || velocity.y || velocity.z)
+		if (velocity)
 			moveByTile(velocity);
+		break;
+	case NOTILE:
+		// Not implemented yet.
+		break;
 	}
 }
 
 void Player::stopMovement(icoord delta)
 {
 	if (conf->moveMode == TILE) {
-		velocity.x -= delta.x;
-		velocity.y -= delta.y;
-		velocity.z -= delta.z;
+		velocity -= delta;
 		normalizeVelocity();
-		if (velocity.x || velocity.y || velocity.z)
+		if (velocity)
 			moveByTile(velocity);
 	}
 }
@@ -84,7 +85,7 @@ void Player::moveByTile(icoord delta)
 		redraw = true;
 		return;
 	}
-	
+
 	// Disallow diagonal movement in TILE mode.
 	if (conf->moveMode == TILE && (delta.x && delta.y))
 		return;
@@ -106,22 +107,18 @@ void Player::postMove()
 {
 	Entity::postMove();
 
-	const icoord coord = getTileCoords();
-	const Tile& dest = area->getTile(coord);
-	const boost::optional<Door> door = dest.door;
+	const boost::optional<Door> door = destTile->door;
 	if (door) {
 		if (!World::getWorld()->loadArea(door->area, door->tile)) {
 			// Roll back movement if door failed to open.
-			c = fromCoord;
-			r.x = c.x;
-			r.y = c.y;
-			r.z = c.z;
+			r = fromCoord;
 			Log::err("Door", door->area + ": failed to load properly");
 		}
 	}
-	if (conf->moveMode == TILE)
-		if (velocity.x || velocity.y || velocity.z)
-			moveByTile(velocity);
+
+	// If we have a velocity, keep moving.
+	if (conf->moveMode == TILE && velocity)
+		moveByTile(velocity);
 }
 
 void Player::normalizeVelocity()

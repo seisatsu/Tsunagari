@@ -157,16 +157,15 @@ protected:
 	//! TILE game mode.
 	bool moving;
 
-	icoord fromCoord;
+	rcoord fromCoord;
 	Tile* fromTile;
-	icoord destCoord;
+	rcoord destCoord;
 	Tile* destTile;
 
 	//! Pointer to Area this Entity is located on.
 	Area* area;
-	icoord c;
 	rcoord r; //!< real x,y position: hold partial pixel transversal
-	icoord doff; //!< Drawing offset to center entity on tile.
+	rcoord doff; //!< Drawing offset to center entity on tile.
 
 	std::string descriptor;
 

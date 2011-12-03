@@ -36,7 +36,6 @@ Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	  speedMul(1.0),
 	  moving(false),
 	  area(NULL),
-	  c(0, 0, 0),
 	  r(0.0, 0.0, 0.0),
 	  conf(conf)
 {
@@ -74,13 +73,13 @@ bool Entity::needsRedraw() const
 }
 
 
-static double angleFromXY(int x, int y)
+static double angleFromXY(double x, double y)
 {
 	double angle = 0.0;
 
 	// Moving at an angle
 	if (x != 0 && y != 0) {
-		angle = atan((double)y / (double)x);
+		angle = atan(y / x);
 		if (y < 0 && x < 0)
 			;
 		else if (y < 0 && x > 0)
@@ -133,15 +132,14 @@ void Entity::updateTile(unsigned long dt)
 
 	redraw = true;
 	double traveled = speed * (double)dt;
-	double destDist = Gosu::distance((double)c.x, (double)c.y,
-			(double)destCoord.x, (double)destCoord.y);
+	double destDist = Gosu::distance(r.x, r.y, destCoord.x, destCoord.y);
 	if (destDist < traveled) {
-		c = destCoord;
+		r = destCoord;
 		moving = false;
 		postMove();
 	}
 	else {
-		double angle = angleFromXY(c.x - destCoord.x, destCoord.y - c.y);
+		double angle = angleFromXY(r.x - destCoord.x, destCoord.y - r.y);
 		double dx = cos(angle);
 		double dy = -sin(angle);
 
@@ -154,9 +152,6 @@ void Entity::updateTile(unsigned long dt)
 		// Save state of partial pixel travel in double.
 		r.x += dx * traveled;
 		r.y += dy * traveled;
-
-		c.x = (int)r.x;
-		c.y = (int)r.y;
 	}
 }
 
@@ -188,7 +183,7 @@ rcoord Entity::getPixelCoord() const
 icoord Entity::getTileCoords() const
 {
 	ivec2 tileDim = area->getTileDimensions();
-	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
+	return icoord((int)r.x / tileDim.x, (int)r.y / tileDim.y, (int)r.z);
 }
 
 void Entity::setTileCoords(icoord coords)
@@ -196,14 +191,11 @@ void Entity::setTileCoords(icoord coords)
 	// FIXME: security: bounds check
 	redraw = true;
 	const ivec2 tileDim = area->getTileDimensions();
-	c = icoord(
+	r = rcoord(
 		coords.x * tileDim.x,
 		coords.y * tileDim.y,
 		coords.z
 	);
-	r.x = c.x;
-	r.y = c.y;
-	r.z = c.z;
 }
 
 void Entity::moveByTile(icoord delta)
@@ -226,8 +218,8 @@ void Entity::moveByTile(icoord delta)
 	}
 
 	ivec2 tileDim = area->getTileDimensions();
-	fromCoord = c;
-	destCoord += icoord(
+	fromCoord = r;
+	destCoord = rcoord(
 		fromCoord.x + delta.x * tileDim.x,
 		fromCoord.y + delta.y * tileDim.y,
 		fromCoord.z + delta.z
@@ -250,7 +242,7 @@ void Entity::moveByTile(icoord delta)
 
 	if (conf->moveMode == TURN) {
 		// Movement is instantaneous.
-		c = destCoord;
+		r = destCoord;
 		postMove();
 	}
 }
