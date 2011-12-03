@@ -162,14 +162,9 @@ icoord Area::getDimensions() const
 	return dim;
 }
 
-icoord Area::getTileDimensions() const
+ivec2 Area::getTileDimensions() const
 {
 	return tileDim;
-}
-
-icoord Area::getHalfTileDimensions() const
-{
-	return halfTileDim;
 }
 
 bool Area::tileExists(icoord c) const
@@ -322,15 +317,12 @@ bool Area::processTileSet(XMLNode node)
  </tileset>
 */
 
-	int x, y, z;
-
+	int x, y;
 	ASSERT(node.intAttr("tilewidth", &x));
 	ASSERT(node.intAttr("tileheight", &y));
-	z = 1;
 
 	TiledImage img;
-	tileDim = icoord(x, y, z);
-	halfTileDim = icoord(x/2, y/2, z/2);
+	tileDim = ivec2(x, y);
 	// FIXME: compare with existing tileDim
 
 	if (tileTypes.empty()) {

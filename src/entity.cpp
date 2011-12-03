@@ -187,7 +187,7 @@ rcoord Entity::getPixelCoord() const
 
 icoord Entity::getTileCoords() const
 {
-	icoord tileDim = area->getTileDimensions();
+	ivec2 tileDim = area->getTileDimensions();
 	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
 }
 
@@ -195,13 +195,15 @@ void Entity::setTileCoords(icoord coords)
 {
 	// FIXME: security: bounds check
 	redraw = true;
-	const icoord tileDim = area->getTileDimensions();
-	c = coords;
-	c *= tileDim;
-	// XXX: set c.z when we have Z-buffers
+	const ivec2 tileDim = area->getTileDimensions();
+	c = icoord(
+		coords.x * tileDim.x,
+		coords.y * tileDim.y,
+		coords.z
+	);
 	r.x = c.x;
 	r.y = c.y;
-	// r.z = c.z;
+	r.z = c.z;
 }
 
 void Entity::moveByTile(icoord delta)
@@ -223,12 +225,13 @@ void Entity::moveByTile(icoord delta)
 		return;
 	}
 
-	const icoord tileDim = area->getTileDimensions();
+	ivec2 tileDim = area->getTileDimensions();
 	fromCoord = c;
-	destCoord = fromCoord;
-	destCoord /= tileDim;
-	destCoord += delta;
-	destCoord *= tileDim;
+	destCoord += icoord(
+		fromCoord.x + delta.x * tileDim.x,
+		fromCoord.y + delta.y * tileDim.y,
+		fromCoord.z + delta.z
+	);
 
 	fromTile = &getTile();
 	destTile = &area->getTile(newCoord);

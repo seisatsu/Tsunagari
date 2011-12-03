@@ -67,8 +67,7 @@ public:
 	void update(unsigned long dt);
 
 	icoord getDimensions() const;
-	icoord getTileDimensions() const;
-	icoord getHalfTileDimensions() const;
+	ivec2 getTileDimensions() const;
 	const Tile& getTile(icoord c) const;
 	Tile& getTile(icoord c);
 	bool tileExists(icoord c) const;
@@ -143,10 +142,7 @@ private:
 
 	//! Pixel size for each tile in area. All tiles in an Area must be the
 	//! same size.
-	icoord tileDim;
-
-	//! tileDim / 2
-	icoord halfTileDim;
+	ivec2 tileDim;
 
 	//! Properties shared by all tiles of a type.
 	std::vector<TileType> tileTypes;

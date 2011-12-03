@@ -23,22 +23,22 @@ Viewport::~Viewport()
 
 void Viewport::update(unsigned long)
 {
-	rcoord r;
-	icoord td;
-	rvec2 epos;
+	rcoord pos;
+	ivec2 td;
+	rvec2 ecenter;
 
 	switch (mode) {
 	case TM_MANUAL:
 		// Do nothing.
 		break;
 	case TM_FOLLOW_ENTITY:
-		r = targete->getPixelCoord();
+		pos = targete->getPixelCoord();
 		td = area->getTileDimensions();
-		epos = rvec2(
-			r.x + 0.5 * td.x,
-			r.y + 0.5 * td.y
+		ecenter = rvec2(
+			pos.x + td.x/2,
+			pos.y + td.y/2
 		);
-		off = boundToArea(centerOn(epos));
+		off = boundToArea(centerOn(ecenter));
 		break;
 	case TM_SCROLL_TO_ENTITY:
 		// TODO
@@ -124,7 +124,7 @@ rvec2 Viewport::boundToArea(rvec2 pt) const
 	double windowWidth = (double)graphics.width();
 	double windowHeight = (double)graphics.height();
 	icoord ad = area->getDimensions();
-	icoord td = area->getTileDimensions();
+	ivec2 td = area->getTileDimensions();
 	double areaWidth = ad.x * td.x;
 	double areaHeight = ad.y * td.y;
 	bool loopX = area->loopsInX();
