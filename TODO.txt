@@ -10,10 +10,6 @@ ITEMS
 * Try moving descriptor filenames from constructors + class members to init()
   parameters.
 
-* Diagonal movement in all modes with correct input detection.
-
-* Diagonal movement at corners should only work in Roguelike.
-
 * Investigate Guichan
 
 * The player's speed should actually change as they start to enter a speed
@@ -45,6 +41,4 @@ ITEMS
 * If the game is started while holding an arrow key down, that keyboard state
   is normalized to not moving, which will cause your character to move when you
   let go.
-
-* TiledImage should accept IDs instead of offsets.
 
