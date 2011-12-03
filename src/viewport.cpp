@@ -72,7 +72,7 @@ void Viewport::jumpToXY(rvec2 off)
 void Viewport::jumpToEntity(const Entity* e)
 {
 	mode = TM_MANUAL;
-	const rcoord r = e->getRPixel();
+	rcoord r = e->getRPixel();
 	off.x = r.x;
 	off.y = r.y;
 }
@@ -109,12 +109,12 @@ void Viewport::setArea(const Area* a)
 rvec2 Viewport::centerOn(rvec2 pt) const
 {
 	const Gosu::Graphics& graphics = window.graphics();
-	double windowWidth = (double)graphics.width();
-	double windowHeight = (double)graphics.height();
+	unsigned windowWidth = graphics.width();
+	unsigned windowHeight = graphics.height();
 
 	return rvec2(
-		pt.x - windowWidth/2.0,
-		pt.y - windowHeight/2.0
+		pt.x - windowWidth/2,
+		pt.y - windowHeight/2
 	);
 }
 
@@ -139,6 +139,7 @@ rvec2 Viewport::boundToArea(rvec2 pt) const
 double Viewport::boundDimension(double window, double area, double pt,
                                 bool loop) const
 {
+	// Since looping areas continue without bound, this is a no-op.
 	if (loop)
 		return pt;
 

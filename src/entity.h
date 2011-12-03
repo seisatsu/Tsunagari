@@ -60,9 +60,15 @@ public:
 	//  different.
 	bool setPhase(const std::string& name);
 
-	//! Retrieve position within Area.
+	//! The offset from the upper-left of the Area to the upper-left of the
+	//! Tile the Entity is standing on.
 	icoord getIPixel() const;
+
+	//! The offset from the upper-left of the Area to the upper-left of the
+	//! Tile the Entity is standing on.
 	rcoord getRPixel() const;
+
+	//! Retrieve position within Area.
 	icoord getTileCoords() const;
 
 	//! Set location within Area.
