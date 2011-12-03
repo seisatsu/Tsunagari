@@ -441,23 +441,23 @@ bool Entity::processDescriptor()
 
 bool Entity::processSprite(XMLNode node)
 {
+	TiledImage tiles;
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
-			xml.sheet = node.content();
+			std::string imageSheet = node.content();
 			ASSERT(node.intAttr("tilewidth",  &imgw) &&
 			       node.intAttr("tileheight", &imgh));
+			ASSERT(rc->getTiledImage(tiles, imageSheet,
+			       imgw, imgh, false));
 		} else if (node.is("phases")) {
-			ASSERT(processPhases(node.childrenNode()));
+			ASSERT(processPhases(node.childrenNode(), tiles));
 		}
 	}
 	return true;
 }
 
-bool Entity::processPhases(XMLNode node)
+bool Entity::processPhases(XMLNode node, const TiledImage& tiles)
 {
-	TiledImage tiles;
-	ASSERT(rc->getTiledImage(tiles, xml.sheet, (unsigned)imgw,
-			(unsigned)imgh, false));
 	for (; node; node = node.next())
 		if (node.is("phase"))
 			ASSERT(processPhase(node, tiles));

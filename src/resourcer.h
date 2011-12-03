@@ -58,7 +58,7 @@ public:
 	//! number of tiles each with width and height w by h. Returns false if
 	//! the source image wasn't found.
 	bool getTiledImage(TiledImage& img, const std::string& name,
-		unsigned w, unsigned h, bool tileable);
+		int w, int h, bool tileable);
 
 	//! Returns a sound object from disk or cache.
 	SampleRef getSample(const std::string& name);

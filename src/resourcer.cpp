@@ -129,7 +129,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 }
 
 bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
-		unsigned w, unsigned h, bool tileable)
+		int w, int h, bool tileable)
 {
 	if (conf->cacheEnabled) {
 		TiledImageMap::iterator entry = tiles.find(name);
@@ -150,8 +150,8 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	boost::shared_ptr<TiledImage> result(new TiledImage);
-	Gosu::imagesFromTiledBitmap(window->graphics(), bitmap, w, h,
-			tileable, *result.get());
+	Gosu::imagesFromTiledBitmap(window->graphics(), bitmap,
+			(unsigned)w, (unsigned)h, tileable, *result.get());
 	img = *result.get();
 
 	if (conf->cacheEnabled) {

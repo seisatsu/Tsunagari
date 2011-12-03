@@ -124,7 +124,7 @@ protected:
 	// XML parsing functions used in constructing an Entity
 	bool processDescriptor();
 	bool processSprite(XMLNode node);
-	bool processPhases(XMLNode node);
+	bool processPhases(XMLNode node, const TiledImage& tiles);
 	bool processPhase(const XMLNode node, const TiledImage& tiles);
 	bool processMembers(XMLNode node, Animation& anim,
                             const TiledImage& tiles);
@@ -136,44 +136,47 @@ protected:
 	bool processScript(const XMLNode node);
 
 
+	//! Pointer to local resource object. Loads images, sounds, and scripts
+	//! with it.
 	Resourcer* rc;
+
+	//! Set to true if the Entity wants the screen to be redrawn.
+	bool redraw;
 
 	int imgw, imgh;
 	boost::unordered_map<std::string, Animation> phases;
 	Animation* phase;
-	bool redraw;
 	std::string facing;
 
+	//! List of sounds this Entity knows about.
 	boost::unordered_map<std::string, SampleRef> sounds;
+
+	//! List of scripts this Entity knows about.
 	boost::unordered_map<std::string, std::string> scripts;
 
-	double baseSpeed; //! Original speed, specified in descriptor
-	double speedMul;  //! Speed multiplier
-	double speed;     //! Effective speed = original speed * multiplier
+	double baseSpeed; //!< Original speed, specified in descriptor.
+	double speedMul;  //!< Speed multiplier.
+	double speed;     //!< Effective speed = original speed * multiplier
 
+	//! True if currently moving between two Tiles in an Area. Only used in
+	//! TILE game mode.
 	bool moving;
+
 	icoord fromCoord;
 	Tile* fromTile;
 	icoord destCoord;
 	Tile* destTile;
 
+	//! Pointer to Area this Entity is located on.
 	Area* area;
 	icoord c;
-	rcoord r; // real x,y position: hold partial pixel transversal
-	icoord doff; // Drawing offset to center entity on tile.
+	rcoord r; //!< real x,y position: hold partial pixel transversal
+	icoord doff; //!< Drawing offset to center entity on tile.
 
 	std::string descriptor;
 
+	//! Pointer to game configuration.
 	ClientValues* conf;
-
-	//! SpriteValues XML Storage Struct
-	/*!
-		Main XML storage struct for Sprite.
-	*/
-	struct SpriteValues {
-		std::string sheet;
-		boost::unordered_map<std::string, unsigned> phases;
-	} xml;
 };
 
 #endif
