@@ -15,12 +15,12 @@ Alpha Preview Release 3 "Kurotsuki" Revision 1
 
 -----
 
-Tsunagari is a tile engine inspired by the cult classic game Yume Nikki. It is
-intended as an open source replacement for the popular proprietary RPGMaker
-game development suite that the original and most fangames were/are written on.
-The main focus is compatibility with all features of the original game, and
-beyond that it strives to add networking and additional features. Tsunagari is
-written in C++, using the Gosu framework.
+Tsunagari is a free tile engine inspired by the cult classic game Yume Nikki.
+It is intended as an open source replacement for the popular proprietary
+RPGMaker game development suite that the original and most fangames were/are
+written on.  The main focus is compatibility with all features of the original
+game, and beyond that it strives to add networking and additional features.
+Tsunagari is written in C++, using the Gosu framework.
 
 Features:
 Tsunagari will be a comprehensive game design suite for singleplayer 2D games.
@@ -33,6 +33,8 @@ allow as much game variation as possible without direct modifications to the
 engine source code. Game design will require manual file editing during the
 Alpha and Beta phases, but a game editor suite will be shipped with the first
 major release.
+
+Tsunagari license: MIT
 
 Requirements:
 NAME		LICENSE	  LINK
