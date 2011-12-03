@@ -20,9 +20,9 @@ LIBS = $(LUALIB) -lgosu -lphysfs -lboost_program_options \
 	$(shell xml2-config --libs)
 
 # Compiler and linker flags.
-CXXFLAGS = $(MYCFLAGS) -pipe -pedantic -ansi $(WFLAGS) \
+CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic -ansi $(WFLAGS) \
 	$(shell xml2-config --cflags) $(LUACFLAGS)
-LDFLAGS = $(MYLDFLAGS) $(LIBS)
+LDFLAGS = $(BLDLDFLAGS) $(LIBS)
 
 # Name of testing world.
 TESTWORLD = testing.world

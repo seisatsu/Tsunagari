@@ -3,16 +3,16 @@
 all: debug
 
 debug:
-	$(MAKE) -C deps/lua all MYCFLAGS=-g
-	$(MAKE) -C src all MYCFLAGS=-g
+	$(MAKE) -C deps/lua all BLDCFLAGS=-g
+	$(MAKE) -C src all BLDCFLAGS=-g
 
 release:
-	$(MAKE) -C deps/lua all MYCFLAGS=-O2
-	$(MAKE) -C src all MYCFLAGS=-O2
+	$(MAKE) -C deps/lua all BLDCFLAGS=-O2
+	$(MAKE) -C src all BLDCFLAGS=-O2
 
 profile:
-	$(MAKE) -C deps/lua all MYCFLAGS=-pg
-	$(MAKE) -C src all MYCFLAGS=-pg MYLDFLAGS=-pg
+	$(MAKE) -C deps/lua all BLDCFLAGS=-pg
+	$(MAKE) -C src all BLDCFLAGS=-pg BLDLDFLAGS=-pg
 
 # Need to specify manually because './doc/' is a directory.
 .PHONY: doc

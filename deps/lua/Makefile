@@ -2,8 +2,8 @@
 # see luaconf.h for further customization
 
 # Project modified to compile as C++ for throwing exceptions on errors.
-CXXFLAGS= -pipe -Wall $(MYCFLAGS) # -DLUA_USE_APICHECK to have Lua assert for
-                                  # correct parameters
+CXXFLAGS= -pipe -Wall $(BLDCFLAGS) # -DLUA_USE_APICHECK to have Lua assert for
+                                   # correct parameters
 AR= ar rcu
 RM= rm -f
 
