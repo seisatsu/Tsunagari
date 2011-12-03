@@ -68,6 +68,11 @@ public:
 		y /= coefficient;
 		return *this;
 	}
+
+	operator bool()
+	{
+		return x || y;
+	}
 };
 
 
@@ -137,6 +142,11 @@ public:
 		y /= coefficient;
 		z /= coefficient;
 		return *this;
+	}
+
+	operator bool()
+	{
+		return x || y || z;
 	}
 };
 

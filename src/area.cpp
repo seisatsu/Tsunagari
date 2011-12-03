@@ -40,8 +40,16 @@ Area::Area(Resourcer* rc,
            Player* player,
            Music* music,
            const std::string& descriptor)
-	: rc(rc), world(world), view(view), player(player), music(music),
-	  descriptor(descriptor), dim(0, 0, 0), loopX(false), loopY(false)
+	: rc(rc),
+	  world(world),
+	  view(view),
+	  player(player),
+	  music(music),
+	  descriptor(descriptor),
+	  dim(0, 0, 0),
+	  tileDim(0, 0),
+	  loopX(false),
+	  loopY(false)
 {
 }
 
@@ -317,13 +325,18 @@ bool Area::processTileSet(XMLNode node)
  </tileset>
 */
 
+	TiledImage img;
 	int x, y;
+
 	ASSERT(node.intAttr("tilewidth", &x));
 	ASSERT(node.intAttr("tileheight", &y));
 
-	TiledImage img;
+	if (tileDim && tileDim != ivec2(x, y)) {
+		Log::err(descriptor,
+			"Tileset width/height contradict earlier layer");
+		return false;
+	}
 	tileDim = ivec2(x, y);
-	// FIXME: compare with existing tileDim
 
 	if (tileTypes.empty()) {
 		// Add TileType #0, a transparent tile type that fills map
