@@ -20,7 +20,7 @@ LIBS = $(LUALIB) -lgosu -lphysfs -lboost_program_options \
 	$(shell xml2-config --libs)
 
 # Compiler and linker flags.
-CXXFLAGS = $(MYCFLAGS) -pedantic -ansi $(WFLAGS) \
+CXXFLAGS = $(MYCFLAGS) -pipe -pedantic -ansi $(WFLAGS) \
 	$(shell xml2-config --cflags) $(LUACFLAGS)
 LDFLAGS = $(MYLDFLAGS) $(LIBS)
 
