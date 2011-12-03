@@ -57,16 +57,12 @@ public:
 	void updateNoTile(unsigned long dt);
 
 	//! Change the graphic. Returns true if it was changed to something
-	//  different.
+	//! different.
 	bool setPhase(const std::string& name);
 
 	//! The offset from the upper-left of the Area to the upper-left of the
 	//! Tile the Entity is standing on.
-	icoord getIPixel() const;
-
-	//! The offset from the upper-left of the Area to the upper-left of the
-	//! Tile the Entity is standing on.
-	rcoord getRPixel() const;
+	rcoord getPixelCoord() const;
 
 	//! Retrieve position within Area.
 	icoord getTileCoords() const;
@@ -76,11 +72,10 @@ public:
 	void setTileCoords(icoord c);
 
 	//! Move within Area.
-	void moveByPixel(icoord delta);
 	void moveByTile(icoord delta);
 
 	//! Sets the Area object this entity will ask when looking for
-	//  nearby Tiles. Doesn't change x,y,z position.
+	//! nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
 
 	//

@@ -30,9 +30,6 @@ static std::string facings[][3] = {
 };
 
 
-// TODO: Variable holds all nowalk flags relevent to entity. Fn checks for them
-// all.
-
 Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
 	: rc(rc),
 	  redraw(true),
@@ -148,7 +145,7 @@ void Entity::updateTile(unsigned long dt)
 		double dx = cos(angle);
 		double dy = -sin(angle);
 
-		// Fix inaccurate trig functions. (Why do I have to do this!??)
+		// Fix inaccurate trig functions. (Why do we have to do this!??)
 		if (-1e-10 < dx && dx < 1e-10)
 			dx = 0.0;
 		if (-1e-10 < dy && dy < 1e-10)
@@ -183,12 +180,7 @@ bool Entity::setPhase(const std::string& name)
 	return false;
 }
 
-icoord Entity::getIPixel() const
-{
-	return c;
-}
-
-rcoord Entity::getRPixel() const
+rcoord Entity::getPixelCoord() const
 {
 	return r;
 }
@@ -197,16 +189,6 @@ icoord Entity::getTileCoords() const
 {
 	icoord tileDim = area->getTileDimensions();
 	return icoord(c.x / tileDim.x, c.y / tileDim.y, c.z);
-}
-
-void Entity::setPixelCoords(icoord coords)
-{
-	// FIXME: security: bounds check
-	redraw = true;
-	c = coords;
-	r.x = c.x;
-	r.y = c.y;
-	r.z = c.z;
 }
 
 void Entity::setTileCoords(icoord coords)
@@ -220,16 +202,6 @@ void Entity::setTileCoords(icoord coords)
 	r.x = c.x;
 	r.y = c.y;
 	// r.z = c.z;
-}
-
-void Entity::moveByPixel(icoord delta)
-{
-	// FIXME: security: bounds check
-	c.x += delta.x;
-	c.y += delta.y;
-	c.z += delta.z;
-	// XXX: missing r =
-	redraw = true;
 }
 
 void Entity::moveByTile(icoord delta)
@@ -310,7 +282,7 @@ void Entity::setSpeed(double multiplier)
 
 void Entity::calcDoff()
 {
-	// X-axis is centered with tile.
+	// X-axis is centered on tile.
 	doff.x = (area->getTileDimensions().x - imgw) / 2;
 	// Y-axis is aligned with bottom of tile.
 	doff.y = area->getTileDimensions().y - imgh - 1;

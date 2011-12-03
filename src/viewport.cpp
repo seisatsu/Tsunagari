@@ -32,7 +32,7 @@ void Viewport::update(unsigned long)
 		// Do nothing.
 		break;
 	case TM_FOLLOW_ENTITY:
-		r = targete->getRPixel();
+		r = targete->getPixelCoord();
 		td = area->getTileDimensions();
 		epos = rvec2(
 			r.x + 0.5 * td.x,
@@ -72,7 +72,7 @@ void Viewport::jumpToXY(rvec2 off)
 void Viewport::jumpToEntity(const Entity* e)
 {
 	mode = TM_MANUAL;
-	rcoord r = e->getRPixel();
+	rcoord r = e->getPixelCoord();
 	off.x = r.x;
 	off.y = r.y;
 }
