@@ -68,6 +68,7 @@ public:
 
 	icoord getDimensions() const;
 	icoord getTileDimensions() const;
+	icoord getHalfTileDimensions() const;
 	const Tile& getTile(icoord c) const;
 	Tile& getTile(icoord c);
 	bool tileExists(icoord c) const;
@@ -134,11 +135,18 @@ private:
 	typedef std::vector<row_t> grid_t;
 	typedef std::vector<grid_t> tilematrix_t;
 
-	// All layers in the map must be in the range of [0, n]. There cannot
-	// be any gaps.
-	tilematrix_t map; // 3-dimensional array of tiles.
-	icoord dim; // 3-dimensional length of map.
-	icoord tileDim; // Pixel size for each tile in area.
+	//! 3-dimensional array of the tiles that make up the map.
+	tilematrix_t map;
+
+	//! 3-dimensional length of map.
+	icoord dim;
+
+	//! Pixel size for each tile in area. All tiles in an Area must be the
+	//! same size.
+	icoord tileDim;
+
+	//! tileDim / 2
+	icoord halfTileDim;
 
 	//! Properties shared by all tiles of a type.
 	std::vector<TileType> tileTypes;

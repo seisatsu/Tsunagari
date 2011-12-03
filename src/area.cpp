@@ -167,6 +167,11 @@ icoord Area::getTileDimensions() const
 	return tileDim;
 }
 
+icoord Area::getHalfTileDimensions() const
+{
+	return halfTileDim;
+}
+
 bool Area::tileExists(icoord c) const
 {
 	return inBounds(c.x, c.y, c.z);
@@ -325,6 +330,7 @@ bool Area::processTileSet(XMLNode node)
 
 	TiledImage img;
 	tileDim = icoord(x, y, z);
+	halfTileDim = icoord(x/2, y/2, z/2);
 	// FIXME: compare with existing tileDim
 
 	if (tileTypes.empty()) {
