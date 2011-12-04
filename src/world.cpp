@@ -62,7 +62,19 @@ void World::buttonUp(const Gosu::Button btn)
 
 void World::draw()
 {
+	Gosu::Graphics& graphics = wnd->graphics();
+	rvec2 off = view.getOffset();
+	rvec2 scale = view.getScale();
+	Gosu::Transform t = { {
+		scale.x,          0,                0, 0,
+		0,                scale.y,          0, 0,
+		0,                0,                1, 0,
+		scale.x * -off.x, scale.y * -off.y, 0, 1
+	} };
+
+	graphics.pushTransform(t);
 	area->draw();
+	graphics.popTransform();
 }
 
 bool World::needsRedraw() const

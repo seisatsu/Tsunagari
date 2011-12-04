@@ -12,7 +12,12 @@
 
 
 Viewport::Viewport(const GameWindow& window, const ClientValues& conf)
-	: window(window), conf(conf), mode(TM_MANUAL), area(NULL)
+	: window(window),
+	  conf(conf),
+	  off(0, 0),
+	  virtRes(640.0, 480.0),
+	  mode(TM_MANUAL),
+	  area(NULL)
 {
 }
 
@@ -42,6 +47,24 @@ void Viewport::update(unsigned long)
 rvec2 Viewport::getOffset() const
 {
 	return off;
+}
+
+rvec2 Viewport::getScale() const
+{
+	rvec2 physRes = rvec2(
+		(double)window.graphics().width(),
+		(double)window.graphics().height()
+	);
+
+	return rvec2(
+		physRes.x / virtRes.x,
+		physRes.y / virtRes.y
+	);
+}
+
+rvec2 Viewport::getVirtRes() const
+{
+	return virtRes;
 }
 
 
@@ -119,9 +142,6 @@ rvec2 Viewport::centerOn(rvec2 pt) const
 
 rvec2 Viewport::boundToArea(rvec2 pt) const
 {
-	const Gosu::Graphics& graphics = window.graphics();
-	double windowWidth = (double)graphics.width();
-	double windowHeight = (double)graphics.height();
 	icoord ad = area->getDimensions();
 	ivec2 td = area->getTileDimensions();
 	double areaWidth = ad.x * td.x;
@@ -130,12 +150,12 @@ rvec2 Viewport::boundToArea(rvec2 pt) const
 	bool loopY = area->loopsInY();
 
 	return rvec2(
-		boundDimension(windowWidth,  areaWidth,  pt.x, loopX),
-		boundDimension(windowHeight, areaHeight, pt.y, loopY)
+		boundDimension(virtRes.x, areaWidth,  pt.x, loopX),
+		boundDimension(virtRes.y, areaHeight, pt.y, loopY)
 	);
 }
 
-double Viewport::boundDimension(double window, double area, double pt,
+double Viewport::boundDimension(double screen, double area, double pt,
                                 bool loop) const
 {
 	// Since looping areas continue without bound, this is a no-op.
@@ -144,7 +164,7 @@ double Viewport::boundDimension(double window, double area, double pt,
 
 	// If the Area is smaller than the screen, center the Area. Otherwise,
 	// allow the screen to move to the edge of the Area, but not past.
-	double wiggleRoom = area - window;
+	double wiggleRoom = area - screen;
 	return wiggleRoom <= 0 ?
 	       wiggleRoom/2 :
 	       Gosu::boundBy(pt, 0.0, wiggleRoom);

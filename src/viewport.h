@@ -25,6 +25,8 @@ public:
 
 	void update(unsigned long dt);
 	rvec2 getOffset() const;
+	rvec2 getScale() const;
+	rvec2 getVirtRes() const;
 
 	// Immediatly center render offset. Stop any scrolling or tracking.
 	void jumpToXY(ivec2 off);
@@ -59,6 +61,7 @@ private:
 	const GameWindow& window;
 	const ClientValues& conf;
 	rvec2 off;
+	rvec2 virtRes;
 
 	TrackingMode mode;
 	const Area* area;

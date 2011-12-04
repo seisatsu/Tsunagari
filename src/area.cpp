@@ -88,15 +88,9 @@ void Area::buttonUp(const Gosu::Button btn)
 
 void Area::draw()
 {
-	Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
-	rvec2 off = view->getOffset();
-	graphics.pushTransform(Gosu::translate(-off.x, -off.y));
-
 	updateTileAnimations();
 	drawTiles();
 	drawEntities();
-
-	graphics.popTransform();
 }
 
 void Area::updateTileAnimations()
@@ -200,19 +194,13 @@ Tile& Area::getTile(icoord c)
 
 icube_t Area::visibleTiles() const
 {
-	const Gosu::Graphics& graphics = GameWindow::getWindow().graphics();
-	const int tileWidth = tileDim.x;
-	const int tileHeight = tileDim.y;
-	const int windowWidth = graphics.width();
-	const int windowHeight = graphics.height();
-	const rvec2 off = view->getOffset();
+	rvec2 screen = view->getVirtRes();
+	rvec2 off = view->getOffset();
 
-	const int x1 = (int)floor(off.x / tileWidth);
-	const int y1 = (int)floor(off.y / tileHeight);
-	const int x2 = (int)ceil((double)(windowWidth + off.x) /
-		(double)tileWidth);
-	const int y2 = (int)ceil((double)(windowHeight + off.y) /
-		(double)tileHeight);
+	int x1 = (int)floor(off.x / tileDim.x);
+	int y1 = (int)floor(off.y / tileDim.y);
+	int x2 = (int)ceil((screen.x + off.x) / tileDim.x);
+	int y2 = (int)ceil((screen.y + off.y) / tileDim.y);
 
 	return icube(x1, y1, 0, x2, y2, dim.z);
 }
