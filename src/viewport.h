@@ -41,6 +41,8 @@ public:
 	void setArea(const Area* a);
 
 private:
+	void _jumpToEntity(const Entity* e);
+
 	rvec2 centerOn(rvec2 pt) const;
 	rvec2 boundToArea(rvec2 pt) const;
 	double boundDimension(double window, double area, double pt,

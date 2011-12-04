@@ -33,7 +33,7 @@ void Player::startMovement(icoord delta)
 			moveByTile(velocity);
 		break;
 	case NOTILE:
-		// Not implemented yet.
+		// TODO
 		break;
 	}
 }

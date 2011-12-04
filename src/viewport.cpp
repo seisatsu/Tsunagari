@@ -23,22 +23,12 @@ Viewport::~Viewport()
 
 void Viewport::update(unsigned long)
 {
-	rcoord pos;
-	ivec2 td;
-	rvec2 ecenter;
-
 	switch (mode) {
 	case TM_MANUAL:
 		// Do nothing.
 		break;
 	case TM_FOLLOW_ENTITY:
-		pos = targete->getPixelCoord();
-		td = area->getTileDimensions();
-		ecenter = rvec2(
-			pos.x + td.x/2,
-			pos.y + td.y/2
-		);
-		off = boundToArea(centerOn(ecenter));
+		_jumpToEntity(targete);
 		break;
 	case TM_SCROLL_TO_ENTITY:
 		// TODO
@@ -71,10 +61,8 @@ void Viewport::jumpToXY(rvec2 off)
 
 void Viewport::jumpToEntity(const Entity* e)
 {
-	mode = TM_MANUAL;
-	rcoord r = e->getPixelCoord();
-	off.x = r.x;
-	off.y = r.y;
+	mode = TM_MANUAL; // API implies mode change.
+	_jumpToEntity(e);
 }
 
 
@@ -105,6 +93,17 @@ void Viewport::setArea(const Area* a)
 	area = a;
 }
 
+
+void Viewport::_jumpToEntity(const Entity* e)
+{
+	rcoord pos = e->getPixelCoord();
+	ivec2 td = area->getTileDimensions();
+	rvec2 ecenter = rvec2(
+		pos.x + td.x/2,
+		pos.y + td.y/2
+	);
+	off = boundToArea(centerOn(ecenter));
+}
 
 rvec2 Viewport::centerOn(rvec2 pt) const
 {
@@ -143,9 +142,11 @@ double Viewport::boundDimension(double window, double area, double pt,
 	if (loop)
 		return pt;
 
+	// If the Area is smaller than the screen, center the Area. Otherwise,
+	// allow the screen to move to the edge of the Area, but not past.
 	double wiggleRoom = area - window;
-	if (wiggleRoom <= 0)
-		return wiggleRoom/2;
-	return Gosu::boundBy(pt, 0.0, wiggleRoom);
+	return wiggleRoom <= 0 ?
+	       wiggleRoom/2 :
+	       Gosu::boundBy(pt, 0.0, wiggleRoom);
 }
 
