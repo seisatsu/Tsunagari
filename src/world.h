@@ -69,7 +69,7 @@ private:
 	Resourcer* rc;
 	GameWindow* wnd;
 	ClientValues* conf;
-	Viewport view;
+	Viewport* view;
 	Area* area;
 	Music* music;
 	Player player;
@@ -105,6 +105,7 @@ private:
 		WorldTypeLocality locality;
 		WorldEntry entry;
 		std::string initscript;
+		icoord viewport;
 	} xml;
 };
 

@@ -20,7 +20,7 @@ class GameWindow;
 class Viewport
 {
 public:
-	Viewport(const GameWindow& window, const ClientValues& conf);
+	Viewport(const GameWindow& window, icoord& vsize);
 	~Viewport();
 
 	void update(unsigned long dt);

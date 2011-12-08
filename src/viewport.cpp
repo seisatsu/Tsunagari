@@ -11,11 +11,11 @@
 #include "window.h"
 
 
-Viewport::Viewport(const GameWindow& window, const ClientValues& conf)
+Viewport::Viewport(const GameWindow& window, icoord& vsize)
 	: window(window),
 	  conf(conf),
 	  off(0, 0),
-	  virtRes(320.0, 240.0),
+	  virtRes(vsize.x, vsize.y),
 	  mode(TM_MANUAL),
 	  area(NULL)
 {

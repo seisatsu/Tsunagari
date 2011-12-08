@@ -23,8 +23,7 @@ World* World::getWorld()
 }
 
 World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
-	: rc(rc), wnd(wnd), conf(conf), view(*wnd, *conf), area(NULL),
-	  player(rc, NULL, conf)
+	: rc(rc), wnd(wnd), conf(conf), area(NULL), player(rc, NULL, conf)
 {
 	globalWorld = this;
 }
@@ -45,7 +44,9 @@ bool World::init()
 	if (!player.init(xml.playerentity))
 		return false;
 	player.setPhase("down");
-	view.trackEntity(&player);
+
+	view = new Viewport(*wnd, xml.viewport);
+	view->trackEntity(&player);
 
 	wnd->setCaption(Gosu::widen(xml.name));
 	return loadArea(xml.entry.area, xml.entry.coords);
@@ -64,8 +65,8 @@ void World::buttonUp(const Gosu::Button btn)
 void World::draw()
 {
 	Gosu::Graphics& graphics = wnd->graphics();
-	rvec2 off = view.getOffset();
-	rvec2 scale = view.getScale();
+	rvec2 off = view->getOffset();
+	rvec2 scale = view->getScale();
 	Gosu::Transform t = { {
 		scale.x,          0,                0, 0,
 		0,                scale.y,          0, 0,
@@ -91,7 +92,7 @@ void World::update(unsigned long dt)
 bool World::loadArea(const std::string& areaName, icoord playerPos)
 {
 	Area* oldArea = area;
-	Area* newArea = new Area(rc, this, &view, &player, music, areaName);
+	Area* newArea = new Area(rc, this, view, &player, music, areaName);
 	if (!newArea->init()) {
 		delete newArea;
 		return false;
@@ -106,7 +107,7 @@ void World::setArea(Area* area, icoord playerPos)
 	this->area = area;
 	player.setArea(area);
 	player.setTileCoords(playerPos);
-	view.setArea(area);
+	view->setArea(area);
 }
 
 bool World::processDescriptor()
@@ -144,6 +145,10 @@ bool World::processDescriptor()
 			if (!node.intAttr("x", &xml.entry.coords.x) ||
 			    !node.intAttr("y", &xml.entry.coords.y) ||
 			    !node.intAttr("z", &xml.entry.coords.z))
+				return false;
+		} else if (node.is("viewport")) {
+			if (!node.intAttr("width", &xml.viewport.x) ||
+			    !node.intAttr("height", &xml.viewport.y))
 				return false;
 		} else if (node.is("initscript")) {
 			xml.initscript = node.content();
