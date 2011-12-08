@@ -102,14 +102,14 @@ protected:
 
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove(icoord delta);
-	virtual void preMoveScript();
+	void preMoveScript();
 
 // What are these?
 //	void leaveTile();
 //	void enterTile();
 
 	//! Called after we have arrived at another tile.
-	void postMove();
+	virtual void postMove();
 	void postMoveScript();
 
 	void tileScripts(Tile& tile, std::vector<TileEvent>& events,

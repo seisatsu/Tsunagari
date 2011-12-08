@@ -83,11 +83,7 @@ void Player::moveByTile(icoord delta)
 		return;
 	}
 
-	// Disallow diagonal movement in TILE mode.
-	if (conf->moveMode == TILE && (delta.x && delta.y))
-		return;
-	else
-		Entity::moveByTile(delta);
+	Entity::moveByTile(velocity);
 }
 
 void Player::preMove(icoord delta)

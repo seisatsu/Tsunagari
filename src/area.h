@@ -83,6 +83,7 @@ private:
 	void drawTile(const Tile& tile, int x, int y, int z) const;
 	void drawEntities();
 
+
 	//! XML descriptor parsing function.
 	bool processDescriptor();
 
@@ -122,6 +123,7 @@ private:
 	//! Process a door convenience trigger.
 	Door parseDoor(const std::string dest);
 
+
 	Resourcer* rc;
 	World* world;
 	Viewport* view;
@@ -145,6 +147,7 @@ private:
 
 	//! Properties shared by all tiles of a type.
 	std::vector<TileType> tileTypes;
+
 
 	bool loopX, loopY;
 
