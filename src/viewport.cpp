@@ -131,7 +131,7 @@ void Viewport::_jumpToEntity(const Entity* e)
 rvec2 Viewport::centerOn(rvec2 pt) const
 {
 	return rvec2(
-		pt.x - virtRes.y/2,
+		pt.x - virtRes.x/2,
 		pt.y - virtRes.y/2
 	);
 }
