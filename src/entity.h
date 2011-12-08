@@ -102,19 +102,19 @@ protected:
 
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove(icoord delta);
-	virtual void preMoveLua();
+	virtual void preMoveScript();
 
-	void leaveTile();
-	void enterTile();
-	void postMoveScript();
+// What are these?
+//	void leaveTile();
+//	void enterTile();
 
 	//! Called after we have arrived at another tile.
-	virtual void postMove();
-	virtual void postMoveLua();
+	void postMove();
+	void postMoveScript();
 
 	void tileScripts(Tile& tile, std::vector<TileEvent>& events,
 	                 TileEventTrigger trigger);
-	void runTileLua(Tile& tile, const std::string& script);
+	void runTileScripts(Tile& tile, const std::string& script);
 
 	// XML parsing functions used in constructing an Entity
 	bool processDescriptor();

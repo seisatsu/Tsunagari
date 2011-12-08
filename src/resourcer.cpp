@@ -26,46 +26,6 @@
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
 
-//! Take a Lua compiler error message and format it like one of our error
-//! messages.
-static void luaParseError(const std::string& name, lua_State* L)
-{
-	const char* err = lua_tostring(L, -1);
-	const char* afterFile = strchr(err, ':') + 1; // +1 for ':'
-	const char* afterLine = strchr(afterFile, ':') + 2; // +2 for ': '
-	char line[512];
-	memcpy(line, afterFile, afterLine - afterFile - 2);
-	Log::err(name + ":" + line, std::string("parsing error: ") + afterLine);
-}
-
-template <class Container>
-static bool runLuaScript(lua_State* L, const Container& c, const char* name)
-{
-	int status = luaL_loadbuffer(L, c.data(), c.size(), name);
-
-	switch (status) {
-	case LUA_ERRSYNTAX:
-		luaParseError(name, L);
-		return false;
-	case LUA_ERRMEM:
-		// Should we even bother with this?
-		Log::err(name, "out of memory while parsing");
-		return false;
-	}
-
-	return true;
-}
-
-static int writeToVector(lua_State*, const void* data, size_t sz, void* vector)
-{
-	std::vector<char>* v = (std::vector<char>*)vector;
-	char* s = (char*)data; // GCC: can't do ++ on a const void*
-	while (sz--)
-		v->push_back(*s++);
-	return 0;
-}
-
-
 Resourcer::Resourcer(GameWindow* window, const ClientValues* conf)
 	: window(window), conf(conf)
 {
@@ -257,31 +217,6 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 	return result;
 }
 
-bool Resourcer::getLuaScript(const std::string& name, lua_State* L)
-{
-	if (conf->cacheEnabled) {
-		LuaBytecodeMap::iterator entry = code.find(name);
-		if (entry != code.end()) {
-			Log::dbg("Resourcer", name + ": requested (cached)");
-			return runLuaScript(L, entry->second, name.c_str());
-		}
-	}
-
-	std::vector<char> bytecode;
-	bool found = compileLuaFromDisk(name, L, bytecode);
-	if (!found) // error already logged
-		return false;
-
-	if (conf->cacheEnabled)
-		code[name].swap(bytecode);
-
-	// lua_State* L was the object that compiled the script, so we don't
-	// have to run the bytecode again.
-
-	Log::dbg("Resourcer", name + ": requested");
-	return true;
-}
-
 void Resourcer::garbageCollect()
 {
 	reclaim<ImageRefMap, ImageRef>(images);
@@ -337,26 +272,6 @@ XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
 		doc->init(p, data, dtdPath); // Ignore return value?
 	}
 	return doc;
-}
-
-bool Resourcer::compileLuaFromDisk(const std::string& name, lua_State* L,
-                                   std::vector<char>& bytes) const
-{
-	const std::string script = readStringFromDisk(name);
-	if (script.empty()) // error already logged
-		return false;
-
-	// Compile the Lua script.
-	bool compiled = runLuaScript(L, script, name.c_str());
-	if (!compiled) // error already logged
-		return false;
-
-	// Save the bytecode for the script to a vector.
-	int error = lua_dump(L, writeToVector, &bytes);
-	if (error)
-		return false;
-
-	return true;
 }
 
 std::string Resourcer::readStringFromDisk(const std::string& name) const

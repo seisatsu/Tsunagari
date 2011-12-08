@@ -14,10 +14,8 @@
 #include "area.h"
 #include "config.h"
 #include "entity.h"
-#include "entity-lua.h"
 #include "log.h"
 #include "resourcer.h"
-#include "script.h"
 #include "window.h"
 #include "xml.h"
 
@@ -332,26 +330,30 @@ void Entity::preMove(icoord delta)
 		setPhase("moving " + facing);
 
 	// Process triggers.
-	preMoveLua();
+	preMoveScript();
 }
 
-void Entity::preMoveLua()
+void Entity::preMoveScript()
 {
 	const std::string& name = scripts["premove"];
 	if (name.size()) {
+/* FIXME: Redo scripts.
 		Script s(rc);
 		bindEntity(&s, this, "entity");
 		s.run(rc, name);
+*/
 	}
 }
 
-void Entity::postMoveLua()
+void Entity::postMoveScript()
 {
 	const std::string& name = scripts["postmove"];
 	if (name.size()) {
+/* FIXME: Redo scripts.
 		Script s(rc);
 		bindEntity(&s, this, "entity");
 		s.run(rc, name);
+*/
 	}
 }
 
@@ -365,7 +367,7 @@ void Entity::postMove()
 
 	// Process triggers.
 	fromTile->onLeaveScripts(rc, this);
-	postMoveLua();
+	postMoveScript();
 	destTile->onEnterScripts(rc, this);
 
 	// TODO: move teleportation here
@@ -373,7 +375,7 @@ void Entity::postMove()
 	 * if (onDoor()) {
 	 * 	leaveTile();
 	 * 	moveArea(getDoor());
-	 * 	postMoveLua();
+	 * 	postMoveScript();
 	 * 	enterTile();
 	 * }
 	 */
