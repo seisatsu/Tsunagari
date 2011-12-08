@@ -11,7 +11,6 @@
 #include <vector>
 
 #include <boost/scoped_ptr.hpp>
-#include <Gosu/Graphics.hpp> // for Gosu::Transform
 
 #include "common.h"
 #include "music.h"

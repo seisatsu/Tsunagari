@@ -42,6 +42,12 @@ public:
 	//! GameWindow Initializer
 	bool init(char** argv);
 
+	//! Width of the window in pixels.
+	int width() const;
+
+	//! Height of the window in pixels.
+	int height() const;
+
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
 
@@ -58,7 +64,7 @@ public:
 	void update();
 
 	//! Syncronized time value used throughout the engine
-	int time();
+	int time() const;
 
 private:
 	//! Calculate time passed since engine state was last updated

@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <Gosu/Utility.hpp>
 
 #include "area.h"

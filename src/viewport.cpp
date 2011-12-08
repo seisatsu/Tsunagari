@@ -52,8 +52,8 @@ rvec2 Viewport::getOffset() const
 rvec2 Viewport::getScale() const
 {
 	rvec2 physRes = rvec2(
-		(double)window.graphics().width(),
-		(double)window.graphics().height()
+		(double)window.width(),
+		(double)window.height()
 	);
 
 	return rvec2(

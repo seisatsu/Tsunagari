@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <Gosu/Graphics.hpp> // for Gosu::Graphics
 #include <Gosu/Timing.hpp>
 #include <Gosu/Utility.hpp>
 
@@ -40,6 +41,16 @@ bool GameWindow::init(char** argv)
 	rc.reset(new Resourcer(this, conf));
 	world.reset(new World(this, rc.get(), conf));
 	return rc->init(argv) && world->init();
+}
+
+int GameWindow::width() const
+{
+	return (int)graphics().width();
+}
+
+int GameWindow::height() const
+{
+	return (int)graphics().height();
 }
 
 void GameWindow::buttonDown(const Gosu::Button btn)
@@ -92,7 +103,7 @@ void GameWindow::update()
 	}
 }
 
-int GameWindow::time()
+int GameWindow::time() const
 {
 	return now;
 }
