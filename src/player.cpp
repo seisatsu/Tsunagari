@@ -27,8 +27,7 @@ void Player::startMovement(icoord delta)
 		moveByTile(delta);
 		break;
 	case TILE:
-		velocity += delta;
-		normalizeVelocity();
+		velocity = delta;
 		if (velocity)
 			moveByTile(velocity);
 		break;
@@ -41,10 +40,8 @@ void Player::startMovement(icoord delta)
 void Player::stopMovement(icoord delta)
 {
 	if (conf->moveMode == TILE) {
-		velocity -= delta;
-		normalizeVelocity();
-		if (velocity)
-			moveByTile(velocity);
+		if (velocity == delta)
+			velocity = icoord(0, 0, 0);
 	}
 }
 
@@ -119,12 +116,5 @@ void Player::postMove()
 	// If we have a velocity, keep moving.
 	if (conf->moveMode == TILE && velocity)
 		moveByTile(velocity);
-}
-
-void Player::normalizeVelocity()
-{
-	velocity.x = Gosu::boundBy(velocity.x, -1, 1);
-	velocity.y = Gosu::boundBy(velocity.y, -1, 1);
-	velocity.z = Gosu::boundBy(velocity.z, -1, 1);
 }
 

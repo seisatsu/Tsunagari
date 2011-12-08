@@ -31,8 +31,6 @@ protected:
 	void postMove();
 
 private:
-	void normalizeVelocity();
-
 	//! Stores intent to move continuously in some direction.
 	icoord velocity;
 };

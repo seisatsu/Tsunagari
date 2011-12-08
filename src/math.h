@@ -150,6 +150,12 @@ public:
 	}
 };
 
+template<class T>
+bool operator==(const vec3<T>& a, const vec3<T>& b)
+{
+	return a.x == b.x && a.y == b.y && a.z == b.z;
+}
+
 //! Integer vector.
 typedef vec2<int> ivec2;
 typedef vec3<int> ivec3;
