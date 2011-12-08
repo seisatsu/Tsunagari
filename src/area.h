@@ -7,6 +7,7 @@
 #ifndef AREA_H
 #define AREA_H
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -71,6 +72,7 @@ public:
 
 	icoord getDimensions() const;
 	ivec2 getTileDimensions() const;
+	int depthIndex(double depth) const;
 	const Tile& getTile(icoord c) const;
 	Tile& getTile(icoord c);
 	bool tileExists(icoord c) const;
@@ -91,8 +93,8 @@ private:
 	//! XML descriptor parsing function.
 	bool processDescriptor();
 
-	//! Allocate all Tile objects in map based on dim.
-	void allocateMap();
+	//! Allocate all Tile objects for one layer in 'dim' sized map.
+	void allocateMapLayer();
 
 	//! XML descriptor parsing function.
 	bool processMapProperties(XMLNode node);
@@ -110,16 +112,16 @@ private:
 	bool processLayerProperties(XMLNode node, double* depth);
 
 	//! XML descriptor parsing function.
-	bool processLayerData(XMLNode node, double depth);
+	bool processLayerData(XMLNode node, int z, double depth);
 
 	//! XML descriptor parsing function.
 	bool processObjectGroup(XMLNode node);
 
 	//! XML descriptor parsing function.
-	bool processObjectGroupProperties(XMLNode node, int* zpos);
+	bool processObjectGroupProperties(XMLNode node, double* depth);
 
 	//! XML descriptor parsing function.
-	bool processObject(XMLNode node, int zpos);
+	bool processObject(XMLNode node, int z);
 
 	//! Split a tile's flags into individuals.
 	unsigned splitTileFlags(const std::string strOfFlags);
@@ -151,6 +153,12 @@ private:
 
 	//! Properties shared by all tiles of a type.
 	std::vector<TileType> tileTypes;
+
+	//! Maps virtual float-point depths to an index in our map array.
+	std::map<double, int> depth2idx;
+
+	//! Maps an index in our map array to a virtual float-point depth.
+	std::vector<double> idx2depth;
 
 
 	bool loopX, loopY;

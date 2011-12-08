@@ -105,10 +105,6 @@ public:
 	boost::optional<Door> door;
 	unsigned flags; //! Flags for each option in TileFlags enum.
 
-	//! Returns true if types contains at least one type. If this is false,
-	//! this tile should be considered non-functional in terms of gameplay.
-	bool hasType() const;
-
 	//! Determines whether this tile or one of its parent types embodies a
 	//! flag.
 	bool hasFlag(unsigned flag) const;

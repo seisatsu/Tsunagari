@@ -21,11 +21,6 @@ Tile::Tile()
 {
 }
 
-bool Tile::hasType() const
-{
-	return blocks.size();
-}
-
 bool Tile::hasFlag(unsigned flag) const
 {
 	if (flags & flag)

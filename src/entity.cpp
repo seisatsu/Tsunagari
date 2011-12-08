@@ -181,7 +181,11 @@ rcoord Entity::getPixelCoord() const
 icoord Entity::getTileCoords() const
 {
 	ivec2 tileDim = area->getTileDimensions();
-	return icoord((int)r.x / tileDim.x, (int)r.y / tileDim.y, (int)r.z);
+	return icoord(
+		(int)r.x / tileDim.x,
+		(int)r.y / tileDim.y,
+		area->depthIndex(r.z)
+	);
 }
 
 void Entity::setTileCoords(icoord coords)
@@ -227,9 +231,9 @@ void Entity::moveByTile(icoord delta)
 	destTile = &area->getTile(newCoord);
 
 	// Are we allowed to move?
-	if (!destTile->hasType() || destTile->hasFlag(nowalk)) {
-		// The tile we're trying to move onto is either blank or set as
-		// nowalk. Turn to face the direction, but don't move.
+	if (destTile->hasFlag(nowalk)) {
+		// The tile we're trying to move onto is set as nowalk. Turn to
+		// face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
 		return;
