@@ -58,9 +58,9 @@ animation.o: animation.cpp animation.h common.h log.h math.h resourcer.h \
  xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
 area.o: animation.h area.cpp area.h common.h entity.h log.h math.h music.h \
- player.h resourcer.h tile.h window.h world.h xml.h ../deps/lua/lauxlib.h \
- ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
- ../deps/lua/lualib.h
+ player.h resourcer.h tile.h viewport.h window.h world.h xml.h \
+ ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
+ ../deps/lua/luaconf.h ../deps/lua/lualib.h
 cmd.o: cmd.cpp cmd.h common.h log.h math.h
 common.o: common.cpp common.h log.h math.h
 entity-lua.o: animation.h common.h entity-lua.cpp entity-lua.h entity.h \
@@ -68,9 +68,9 @@ entity-lua.o: animation.h common.h entity-lua.cpp entity-lua.h entity.h \
  ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
  ../deps/lua/lualib.h
 entity.o: animation.h area.h common.h config.h entity-lua.h entity.cpp \
- entity.h log.h math.h music.h player.h resourcer.h script.h tile.h window.h \
- xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
- ../deps/lua/luaconf.h ../deps/lua/lualib.h
+ entity.h log.h math.h music.h player.h resourcer.h script.h tile.h \
+ viewport.h window.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h \
+ ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h
 image.o: image.cpp
 log.o: config.h log.cpp log.h
 main.o: cmd.h common.h config.h log.h main.cpp math.h window.h
@@ -78,7 +78,7 @@ music.o: common.h log.h math.h music.cpp music.h resourcer.h xml.h \
  ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
 player.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.cpp player.h resourcer.h tile.h window.h world.h xml.h \
+ player.cpp player.h resourcer.h tile.h viewport.h window.h world.h xml.h \
  ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
 resourcer.o: common.h config.h log.h math.h resourcer.cpp resourcer.h \
@@ -91,17 +91,19 @@ script.o: common.h log.h math.h resourcer.h script-sound.h script.cpp \
  script.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
 tile.o: animation.h area.h common.h entity-lua.h entity.h log.h math.h \
- music.h player.h resourcer.h script.h tile.cpp tile.h window.h xml.h \
+ music.h player.h resourcer.h script.h tile.cpp tile.h viewport.h window.h \
+ xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
+ ../deps/lua/luaconf.h ../deps/lua/lualib.h
+viewport.o: animation.h area.h common.h entity.h log.h math.h music.h \
+ player.h resourcer.h tile.h viewport.cpp viewport.h window.h xml.h \
  ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
-viewport.o: animation.h common.h entity.h log.h math.h resourcer.h tile.h \
- viewport.cpp viewport.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h \
- ../deps/lua/lua.h ../deps/lua/luaconf.h ../deps/lua/lualib.h
-window.o: common.h config.h log.h math.h resourcer.h window.cpp window.h \
- world.h xml.h ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
+window.o: animation.h common.h config.h entity.h log.h math.h player.h \
+ resourcer.h tile.h viewport.h window.cpp window.h world.h xml.h \
+ ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
  ../deps/lua/luaconf.h ../deps/lua/lualib.h
 world.o: animation.h area.h common.h entity.h log.h math.h music.h player.h \
- resourcer.h tile.h window.h world.cpp world.h xml.h ../deps/lua/lauxlib.h \
- ../deps/lua/lua.h ../deps/lua/lua.h ../deps/lua/luaconf.h \
- ../deps/lua/lualib.h
+ resourcer.h tile.h viewport.h window.h world.cpp world.h xml.h \
+ ../deps/lua/lauxlib.h ../deps/lua/lua.h ../deps/lua/lua.h \
+ ../deps/lua/luaconf.h ../deps/lua/lualib.h
 xml.o: common.h config.h log.h math.h xml.cpp xml.h
