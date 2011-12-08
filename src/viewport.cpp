@@ -15,7 +15,7 @@ Viewport::Viewport(const GameWindow& window, const ClientValues& conf)
 	: window(window),
 	  conf(conf),
 	  off(0, 0),
-	  virtRes(640.0, 480.0),
+	  virtRes(320.0, 240.0),
 	  mode(TM_MANUAL),
 	  area(NULL)
 {
@@ -130,13 +130,9 @@ void Viewport::_jumpToEntity(const Entity* e)
 
 rvec2 Viewport::centerOn(rvec2 pt) const
 {
-	const Gosu::Graphics& graphics = window.graphics();
-	unsigned windowWidth = graphics.width();
-	unsigned windowHeight = graphics.height();
-
 	return rvec2(
-		pt.x - windowWidth/2,
-		pt.y - windowHeight/2
+		pt.x - virtRes.y/2,
+		pt.y - virtRes.y/2
 	);
 }
 
