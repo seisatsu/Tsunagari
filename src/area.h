@@ -86,7 +86,7 @@ private:
 	void updateTileAnimations();
 	bool inBounds(int x, int y, int z) const;
 	void drawTiles() const;
-	void drawTile(const Tile& tile, int x, int y, int z) const;
+	void drawTile(const Tile& tile, int x, int y, double depth) const;
 	void drawEntities();
 
 
@@ -112,7 +112,7 @@ private:
 	bool processLayerProperties(XMLNode node, double* depth);
 
 	//! XML descriptor parsing function.
-	bool processLayerData(XMLNode node, int z, double depth);
+	bool processLayerData(XMLNode node, int z);
 
 	//! XML descriptor parsing function.
 	bool processObjectGroup(XMLNode node);

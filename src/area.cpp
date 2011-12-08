@@ -111,6 +111,7 @@ void Area::drawTiles() const
 {
 	const icube_t tiles = visibleTiles();
 	for (int z = tiles.z1; z < tiles.z2; z++) {
+		double depth = idx2depth[z];
 		for (int y = tiles.y1; y < tiles.y2; y++) {
 			for (int x = tiles.x1; x < tiles.x2; x++) {
 				int tx = x, ty = y, tz = z;
@@ -119,19 +120,20 @@ void Area::drawTiles() const
 				if (loopY)
 					ty = wrap(0, ty, dim.y);
 				if (inBounds(tx, ty, tz))
-					drawTile(map[tz][ty][tx], x, y, z);
+					drawTile(map[tz][ty][tx], x, y, depth);
 			}
 		}
 	}
 }
 
-void Area::drawTile(const Tile& tile, int x, int y, int) const
+void Area::drawTile(const Tile& tile, int x, int y, double depth) const
 {
-	BOOST_FOREACH(const Block& block, tile.blocks) {
-		const Gosu::Image* img = block.type->anim.frame();
+	const TileType* type = tile.type;
+	if (type) {
+		const Gosu::Image* img = type->anim.frame();
 		if (img)
 			img->draw((double)x*img->width(),
-			          (double)y*img->height(), block.depth);
+				  (double)y*img->height(), depth);
 	}
 }
 
@@ -519,13 +521,9 @@ bool Area::processLayer(XMLNode node)
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("properties")) {
 			ASSERT(processLayerProperties(child, &depth));
-
-			depth2idx[depth] = dim.z - 1;
-			idx2depth.push_back(depth);
-			// Effectively idx2depth[dim.z - 1] = depth;
 		}
 		else if (child.is("data")) {
-			ASSERT(processLayerData(child, dim.z - 1, depth));
+			ASSERT(processLayerData(child, dim.z - 1));
 		}
 	}
 
@@ -551,13 +549,17 @@ bool Area::processLayerProperties(XMLNode node, double* depth)
 				Log::err(descriptor, "depth used multiple times");
 				return false;
 			}
+
+			depth2idx[*depth] = dim.z - 1;
+			idx2depth.push_back(*depth);
+			// Effectively idx2depth[dim.z - 1] = depth;
 		}
 	}
 
 	return true;
 }
 
-bool Area::processLayerData(XMLNode node, int z, double depth)
+bool Area::processLayerData(XMLNode node, int z)
 {
 
 /*
@@ -589,10 +591,8 @@ bool Area::processLayerData(XMLNode node, int z, double depth)
 			if (gid > 0) {
 				TileType& type = tileTypes[gid];
 				Tile& tile = map[z][y][x];
-
-				Block block(depth, &type);
-				tile.blocks.push_back(block);
 				type.allOfType.push_back(&tile);
+				tile.type = &type;
 			}
 
 			if (++x == dim.x) {
