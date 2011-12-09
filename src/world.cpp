@@ -4,7 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <Gosu/Graphics.hpp> // for Gosu::Transform
 #include <Gosu/Utility.hpp>
 
 #include "area.h"
@@ -65,16 +64,9 @@ void World::buttonUp(const Gosu::Button btn)
 void World::draw()
 {
 	Gosu::Graphics& graphics = wnd->graphics();
-	rvec2 off = view->getOffset();
-	rvec2 scale = view->getScale();
-	Gosu::Transform t = { {
-		scale.x,          0,                0, 0,
-		0,                scale.y,          0, 0,
-		0,                0,                1, 0,
-		scale.x * -off.x, scale.y * -off.y, 0, 1
-	} };
 
-	graphics.pushTransform(t);
+	drawLetterbox();
+	graphics.pushTransform(getTransform());
 	area->draw();
 	graphics.popTransform();
 }
@@ -155,5 +147,44 @@ bool World::processDescriptor()
 		}
 	}
 	return true;
+}
+
+void World::drawLetterbox()
+{
+	rvec2 sz = view->getPhysRes();
+	rvec2 lb = rvec2(0.0, 0.0);
+	lb -= view->getLetterboxOffset();
+	Gosu::Color black = Gosu::Color::BLACK;
+
+	drawRect(0, sz.x, 0, lb.y, black, 1000);
+	drawRect(0, sz.x, sz.y - lb.y, sz.y, black, 1000);
+	drawRect(0, lb.x, 0, sz.y, black, 1000);
+	drawRect(sz.x - lb.x, sz.x, 0, sz.y, black, 1000);
+}
+
+void World::drawRect(double x1, double x2, double y1, double y2,
+                       Gosu::Color c, double z)
+{
+	wnd->graphics().drawQuad(
+		x1, y1, c,
+		x2, y1, c,
+		x2, y2, c,
+		x1, y2, c,
+		z
+	);
+}
+
+Gosu::Transform World::getTransform()
+{
+	rvec2 scale = view->getScale();
+	rvec2 scroll = view->getMapOffset();
+	rvec2 padding = view->getLetterboxOffset();
+	Gosu::Transform t = { {
+		scale.x,          0,                0, 0,
+		0,                scale.y,          0, 0,
+		0,                0,                1, 0,
+		scale.x * -scroll.x - padding.x, scale.y * -scroll.y - padding.y, 0, 1
+	} };
+	return t;
 }
 

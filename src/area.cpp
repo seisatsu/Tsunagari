@@ -195,7 +195,7 @@ Tile& Area::getTile(icoord c)
 icube_t Area::visibleTiles() const
 {
 	rvec2 screen = view->getVirtRes();
-	rvec2 off = view->getOffset();
+	rvec2 off = view->getMapOffset();
 
 	int x1 = (int)floor(off.x / tileDim.x);
 	int y1 = (int)floor(off.y / tileDim.y);

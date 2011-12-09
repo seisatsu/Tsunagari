@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <boost/scoped_ptr.hpp>
+#include <Gosu/Graphics.hpp> // for Gosu::Transform
 
 #include "common.h"
 #include "player.h"
@@ -65,6 +66,18 @@ public:
 
 private:
 	bool processDescriptor();
+
+	//! Draws black borders around the screen to correct the aspect ratio.
+	void drawLetterbox();
+
+	//! Draws a rectangle on the screen of the specified color. Coordinates
+	//! are in pixels.
+	void drawRect(double x1, double x2, double y1, double y2,
+	              Gosu::Color c, double z);
+
+	//! Returns an affine transformation that will zoom and pan the Area to
+	//! fit on-screen.
+	Gosu::Transform getTransform();
 
 	Resourcer* rc;
 	GameWindow* wnd;
