@@ -60,7 +60,7 @@ void Entity::draw()
 {
 	int millis = GameWindow::getWindow().time();
 	phase->updateFrame(millis);
-	phase->frame()->draw(doff.x + r.x, doff.y + r.y, 0.0);
+	phase->frame()->draw(doff.x + r.x, doff.y + r.y, r.z);
 	redraw = false;
 }
 

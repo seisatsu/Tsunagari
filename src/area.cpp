@@ -479,6 +479,12 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 			int len = (int)(1000.0/hertz);
 			type.anim.setFrameLen(len);
 		}
+		else if (name == "layermod") {
+			int mod;
+			ASSERT(child.intAttr("value", &mod));
+			type.layermod.reset(mod);
+			type.flags |= npc_nowalk;
+		}
 	}
 
 	tileTypes.push_back(type);
@@ -624,7 +630,7 @@ bool Area::processObjectGroup(XMLNode node)
  </objectgroup>
 */
 
-	double invalid = (double)NAN; // Not a number. See <math.h>
+	double invalid = (double)NAN; // Not a number.
 	int x, y;
 	ASSERT(node.intAttr("width", &x));
 	ASSERT(node.intAttr("height", &y));
@@ -699,6 +705,7 @@ bool Area::processObject(XMLNode node, int z)
 	// Gather object properties now. Assign them to tiles later.
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
+	boost::optional<int> layermod;
 	unsigned flags = 0x0;
 
 	XMLNode child = node.childrenNode(); // <properties>
@@ -735,6 +742,12 @@ bool Area::processObject(XMLNode node, int z)
 		}
 		else if (name == "door") {
 			door.reset(parseDoor(value));
+			flags |= npc_nowalk;
+		}
+		else if (name == "layermod") {
+			int mod;
+			ASSERT(child.intAttr("value", &mod));
+			layermod.reset(mod);
 			flags |= npc_nowalk;
 		}
 	}
@@ -775,6 +788,8 @@ bool Area::processObject(XMLNode node, int z)
 			tile.flags |= flags;
 			if (door)
 				tile.door = door;
+			if (layermod)
+				tile.layermod = layermod;
 			BOOST_FOREACH(TileEvent& e, events)
 				tile.events.push_back(e);
 		}

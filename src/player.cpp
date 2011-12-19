@@ -100,6 +100,7 @@ void Player::postMove()
 {
 	Entity::postMove();
 
+	// Doors
 	const boost::optional<Door> door = destTile->door;
 	if (door) {
 		if (!World::getWorld()->loadArea(door->area, door->tile)) {
@@ -107,6 +108,12 @@ void Player::postMove()
 			r = fromCoord;
 			Log::err("Door", door->area + ": failed to load properly");
 		}
+	}
+
+	// Layermod
+	const boost::optional<int> layermod = destTile->layermod;
+	if (layermod) {
+		r.z = *layermod;
 	}
 
 	// If we have a velocity, keep moving.
