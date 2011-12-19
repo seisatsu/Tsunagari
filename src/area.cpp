@@ -111,6 +111,7 @@ void Area::drawTiles() const
 {
 	const icube_t tiles = visibleTiles();
 	for (int z = tiles.z1; z < tiles.z2; z++) {
+		double depth = idx2depth[z];
 		for (int y = tiles.y1; y < tiles.y2; y++) {
 			for (int x = tiles.x1; x < tiles.x2; x++) {
 				int tx = x, ty = y, tz = z;
@@ -119,19 +120,20 @@ void Area::drawTiles() const
 				if (loopY)
 					ty = wrap(0, ty, dim.y);
 				if (inBounds(tx, ty, tz))
-					drawTile(map[tz][ty][tx], x, y, z);
+					drawTile(map[tz][ty][tx], x, y, depth);
 			}
 		}
 	}
 }
 
-void Area::drawTile(const Tile& tile, int x, int y, int) const
+void Area::drawTile(const Tile& tile, int x, int y, double depth) const
 {
-	BOOST_FOREACH(const Block& block, tile.blocks) {
-		const Gosu::Image* img = block.type->anim.frame();
+	const TileType* type = tile.type;
+	if (type) {
+		const Gosu::Image* img = type->anim.frame();
 		if (img)
 			img->draw((double)x*img->width(),
-			          (double)y*img->height(), block.depth);
+				  (double)y*img->height(), depth);
 	}
 }
 
@@ -172,6 +174,11 @@ ivec2 Area::getTileDimensions() const
 bool Area::tileExists(icoord c) const
 {
 	return inBounds(c.x, c.y, c.z);
+}
+
+int Area::depthIndex(double depth) const
+{
+	return depth2idx.find(depth)->second;
 }
 
 const Tile& Area::getTile(icoord c) const
@@ -225,9 +232,7 @@ bool Area::processDescriptor()
 
 	ASSERT(root.intAttr("width", &dim.x));
 	ASSERT(root.intAttr("height", &dim.y));
-	dim.z = 1;
-
-	allocateMap();
+	dim.z = 0;
 
 	for (XMLNode child = root.childrenNode(); child; child = child.next()) {
 		if (child.is("properties")) {
@@ -247,7 +252,7 @@ bool Area::processDescriptor()
 	return true;
 }
 
-void Area::allocateMap()
+void Area::allocateMapLayer()
 {
 	map.push_back(grid_t(dim.y, row_t(dim.x)));
 }
@@ -449,7 +454,7 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 			std::vector<std::string>::iterator it;
 			memtemp = value;
 			members = splitStr(memtemp, ",");
-			
+
 			// Make sure the first member is this tile.
 			if (atoi(members[0].c_str()) != id) {
 				Log::err(descriptor, "first member of tile"
@@ -473,6 +478,12 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 			ASSERT(child.doubleAttr("value", &hertz));
 			int len = (int)(1000.0/hertz);
 			type.anim.setFrameLen(len);
+		}
+		else if (name == "layermod") {
+			int mod;
+			ASSERT(child.intAttr("value", &mod));
+			type.layermod.reset(mod);
+			type.flags |= npc_nowalk;
 		}
 	}
 
@@ -510,14 +521,18 @@ bool Area::processLayer(XMLNode node)
 		return false;
 	}
 
+	dim.z++;
+	allocateMapLayer();
+
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("properties")) {
 			ASSERT(processLayerProperties(child, &depth));
 		}
 		else if (child.is("data")) {
-			ASSERT(processLayerData(child, depth));
+			ASSERT(processLayerData(child, dim.z - 1));
 		}
 	}
+
 	return true;
 }
 
@@ -536,14 +551,21 @@ bool Area::processLayerProperties(XMLNode node, double* depth)
 		std::string value = child.attr("value");
 		if (name == "layer") {
 			ASSERT(child.doubleAttr("value", depth));
-			// XXX: assert depth hasn't already been used
+			if (depth2idx.find(*depth) != depth2idx.end()) {
+				Log::err(descriptor, "depth used multiple times");
+				return false;
+			}
+
+			depth2idx[*depth] = dim.z - 1;
+			idx2depth.push_back(*depth);
+			// Effectively idx2depth[dim.z - 1] = depth;
 		}
 	}
 
 	return true;
 }
 
-bool Area::processLayerData(XMLNode node, double depth)
+bool Area::processLayerData(XMLNode node, int z)
 {
 
 /*
@@ -574,11 +596,9 @@ bool Area::processLayerData(XMLNode node, double depth)
 			// position on this layer.
 			if (gid > 0) {
 				TileType& type = tileTypes[gid];
-				Tile& tile = map[0][y][x];
-
-				Block block(depth, &type);
-				tile.blocks.push_back(block);
+				Tile& tile = map[z][y][x];
 				type.allOfType.push_back(&tile);
+				tile.type = &type;
 			}
 
 			if (++x == dim.x) {
@@ -597,7 +617,7 @@ bool Area::processObjectGroup(XMLNode node)
 /*
  <objectgroup name="Prop0" width="5" height="5">
   <properties>
-   <property name="layer" value="0"/>
+   <property name="layer" value="0.0"/>
   </properties>
   <object name="tile2" gid="7" x="64" y="320">
    <properties>
@@ -610,11 +630,12 @@ bool Area::processObjectGroup(XMLNode node)
  </objectgroup>
 */
 
+	double invalid = (double)NAN; // Not a number.
 	int x, y;
 	ASSERT(node.intAttr("width", &x));
 	ASSERT(node.intAttr("height", &y));
 
-	int zpos = -1;
+	double depth = invalid;
 
 	if (dim.x != x || dim.y != y) {
 		Log::err(descriptor, "objectgroup x,y size != map x,y size");
@@ -623,22 +644,24 @@ bool Area::processObjectGroup(XMLNode node)
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("properties")) {
-			ASSERT(processObjectGroupProperties(child, &zpos));
+			ASSERT(processObjectGroupProperties(child, &depth));
 		}
 		else if (child.is("object")) {
-			ASSERT(zpos != -1 && processObject(child, zpos));
+			ASSERT(depth != invalid);
+			int z = depth2idx[depth];
+			ASSERT(processObject(child, z));
 		}
 	}
 
 	return true;
 }
 
-bool Area::processObjectGroupProperties(XMLNode node, int* zpos)
+bool Area::processObjectGroupProperties(XMLNode node, double* depth)
 {
 
 /*
   <properties>
-   <property name="layer" value="0"/>
+   <property name="layer" value="0.0"/>
   </properties>
 */
 
@@ -646,21 +669,23 @@ bool Area::processObjectGroupProperties(XMLNode node, int* zpos)
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
 		if (name == "layer") {
-			int layer;
-			ASSERT(child.intAttr("value", &layer));
-//			if (layer < 0 || (int)dim.z <= layer) {
-//				Log::err(descriptor,
-//					"objectgroup must correspond with layer"
-//				);
-//				return false;
-//			}
-			*zpos = layer;
+			ASSERT(child.doubleAttr("value", depth));
+			if (depth2idx.find(*depth) == depth2idx.end()) {
+				// FIXME: Refactor into function.
+				// Allocate a new layer.
+				dim.z++;
+				allocateMapLayer();
+
+				depth2idx[*depth] = dim.z - 1;
+				idx2depth.push_back(*depth);
+				// Effectively idx2depth[dim.z - 1] = depth;
+			}
 		}
 	}
 	return true;
 }
 
-bool Area::processObject(XMLNode node, int zpos)
+bool Area::processObject(XMLNode node, int z)
 {
 
 /*
@@ -680,6 +705,7 @@ bool Area::processObject(XMLNode node, int zpos)
 	// Gather object properties now. Assign them to tiles later.
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
+	boost::optional<int> layermod;
 	unsigned flags = 0x0;
 
 	XMLNode child = node.childrenNode(); // <properties>
@@ -718,6 +744,12 @@ bool Area::processObject(XMLNode node, int zpos)
 			door.reset(parseDoor(value));
 			flags |= npc_nowalk;
 		}
+		else if (name == "layermod") {
+			int mod;
+			ASSERT(child.intAttr("value", &mod));
+			layermod.reset(mod);
+			flags |= npc_nowalk;
+		}
 	}
 
 	// Apply these properties directly to one or more tiles in a rectangle
@@ -751,11 +783,13 @@ bool Area::processObject(XMLNode node, int zpos)
 	// We know which Tiles are being talked about now... yay
 	for (int Y = y; Y < y + h; Y++) {
 		for (int X = x; X < x + w; X++) {
-			Tile& tile = map[zpos][Y][X];
+			Tile& tile = map[z][Y][X];
 
 			tile.flags |= flags;
 			if (door)
 				tile.door = door;
+			if (layermod)
+				tile.layermod = layermod;
 			BOOST_FOREACH(TileEvent& e, events)
 				tile.events.push_back(e);
 		}

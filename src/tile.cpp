@@ -11,28 +11,15 @@
 #include "window.h"
 
 
-Block::Block(double depth, TileType* type)
-	: depth(depth), type(type)
-{
-}
-
 Tile::Tile()
-	: flags(0x0)
+	: type(NULL), flags(0x0)
 {
-}
-
-bool Tile::hasType() const
-{
-	return blocks.size();
 }
 
 bool Tile::hasFlag(unsigned flag) const
 {
-	if (flags & flag)
+	if (flags & flag || (type && type->flags & flag))
 		return true;
-	BOOST_FOREACH(const Block& block, blocks)
-		if (block.type->flags & flag)
-			return true;
 	return false;
 }
 
@@ -40,18 +27,15 @@ void Tile::onEnterScripts(Resourcer* rc, Entity* triggeredBy)
 {
 	if (flags & hasOnEnter)
 		runScripts(rc, triggeredBy, onEnter, events);
-	BOOST_FOREACH(const Block& block, blocks)
-		if (block.type->flags & hasOnEnter)
-			runScripts(rc, triggeredBy, onEnter,
-			           block.type->events);
+	if (type && type->flags & hasOnEnter)
+		runScripts(rc, triggeredBy, onEnter, type->events);
 }
 
 void Tile::onLeaveScripts(Resourcer* rc, Entity* triggeredBy)
 {
-	BOOST_FOREACH(const Block& block, blocks)
-		if (block.type->flags & hasOnLeave)
-			runScripts(rc, triggeredBy, onLeave,
-			           block.type->events);
+	if (type && type->flags & hasOnLeave)
+		runScripts(rc, triggeredBy, onLeave,
+			   type->events);
 	if (flags & hasOnLeave)
 		runScripts(rc, triggeredBy, onLeave, events);
 }
@@ -103,9 +87,8 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 				// Do this check before passing _tiles_ to fn.
 				if (area.tileExists(pos)) {
 					const Tile& tile = area.getTile(pos);
-					BOOST_FOREACH(const Block& block, tile.blocks)
-						if (block.type == this)
-							return true;
+					if (tile.type == this)
+						return true;
 				}
 			}
 		}

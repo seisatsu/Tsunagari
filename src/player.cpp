@@ -100,6 +100,7 @@ void Player::postMove()
 {
 	Entity::postMove();
 
+	// Doors
 	const boost::optional<Door> door = destTile->door;
 	if (door) {
 		if (!World::getWorld()->loadArea(door->area, door->tile)) {

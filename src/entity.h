@@ -100,6 +100,9 @@ protected:
 	//! Calculate which way to face based upon a movement delta.
 	void calculateFacing(icoord delta);
 
+	//! Returns true if we can move in the desired direction.
+	bool canMove(icoord delta);
+
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove(icoord delta);
 	void preMoveScript();

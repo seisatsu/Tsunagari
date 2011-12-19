@@ -60,7 +60,7 @@ void Entity::draw()
 {
 	int millis = GameWindow::getWindow().time();
 	phase->updateFrame(millis);
-	phase->frame()->draw(doff.x + r.x, doff.y + r.y, 0.0);
+	phase->frame()->draw(doff.x + r.x, doff.y + r.y, r.z);
 	redraw = false;
 }
 
@@ -181,7 +181,11 @@ rcoord Entity::getPixelCoord() const
 icoord Entity::getTileCoords() const
 {
 	ivec2 tileDim = area->getTileDimensions();
-	return icoord((int)r.x / tileDim.x, (int)r.y / tileDim.y, (int)r.z);
+	return icoord(
+		(int)r.x / tileDim.x,
+		(int)r.y / tileDim.y,
+		area->depthIndex(r.z)
+	);
 }
 
 void Entity::setTileCoords(icoord coords)
@@ -205,31 +209,25 @@ void Entity::moveByTile(icoord delta)
 	// Everything past here will warrant a redraw.
 	redraw = true;
 
-	icoord newCoord = getTileCoords();
-	newCoord += delta;
+	// Try moving both normally, first. If that doesn't work, look to see
+	// if we're standing on a tile with layermod, and try moving with that.
+	const boost::optional<int> layermod = getTile().layermod;
+	icoord normal = delta;
+	icoord mod = delta;
+	if (layermod)
+		mod.z = *layermod - (int)r.z;
 
-	// The tile is off the map. Turn to face the direction, but don't move.
-	if (!area->tileExists(newCoord)) {
-		calculateFacing(delta);
-		setPhase(facing);
-		return;
+
+	if (canMove(normal)) {
+		delta = normal;
 	}
-
-	ivec2 tileDim = area->getTileDimensions();
-	fromCoord = r;
-	destCoord = rcoord(
-		fromCoord.x + delta.x * tileDim.x,
-		fromCoord.y + delta.y * tileDim.y,
-		fromCoord.z + delta.z
-	);
-
-	fromTile = &getTile();
-	destTile = &area->getTile(newCoord);
-
-	// Are we allowed to move?
-	if (!destTile->hasType() || destTile->hasFlag(nowalk)) {
-		// The tile we're trying to move onto is either blank or set as
-		// nowalk. Turn to face the direction, but don't move.
+	else if (layermod && canMove(mod)) {
+		// Set z right away so that we're on-level with the square we're entering.
+		r.z = *layermod;
+		delta = mod;
+	}
+	else {
+		// Turn to face the direction, but don't move.
 		calculateFacing(delta);
 		setPhase(facing);
 		return;
@@ -316,6 +314,29 @@ void Entity::calculateFacing(icoord delta)
 		y = 2;
 
 	facing = facings[y][x];
+}
+
+bool Entity::canMove(icoord delta)
+{
+	icoord newCoord = getTileCoords();
+	newCoord += delta;
+
+	if (!area->tileExists(newCoord))
+		// The tile is off the map.
+		return false;
+
+	ivec2 tileDim = area->getTileDimensions();
+	fromCoord = r;
+	destCoord = rcoord(
+		fromCoord.x + delta.x * tileDim.x,
+		fromCoord.y + delta.y * tileDim.y,
+		fromCoord.z + delta.z
+	);
+
+	fromTile = &getTile();
+	destTile = &area->getTile(newCoord);
+
+	return !destTile->hasFlag(nowalk);
 }
 
 void Entity::preMove(icoord delta)

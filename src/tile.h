@@ -17,7 +17,6 @@
 #include "resourcer.h" // for TiledImage
 
 class Area;
-struct Block;
 struct Door;
 class Entity;
 class Tile;
@@ -79,15 +78,6 @@ struct Door {
 	icoord tile;
 };
 
-//! An instance of a TileType hovering at a certain depth on a Tile.
-struct Block
-{
-	Block(double depth, TileType* type);
-
-	double depth;
-	TileType* type;
-};
-
 //! Contains properties unique to this tile.
 /*!
 	This struct contains local tile properties for a single tile in
@@ -100,14 +90,11 @@ class Tile
 public:
 	Tile();
 
-	std::vector<Block> blocks;
+	TileType* type;
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
+	boost::optional<int> layermod;
 	unsigned flags; //! Flags for each option in TileFlags enum.
-
-	//! Returns true if types contains at least one type. If this is false,
-	//! this tile should be considered non-functional in terms of gameplay.
-	bool hasType() const;
 
 	//! Determines whether this tile or one of its parent types embodies a
 	//! flag.
@@ -141,6 +128,7 @@ public:
 	Animation anim; //! Graphics for tiles of this type.
 	std::vector<TileEvent> events;
 	std::vector<Tile*> allOfType;
+	boost::optional<int> layermod;
 	unsigned flags; //! Flags for each option in TileFlags enum.
 
 private:
