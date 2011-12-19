@@ -13,6 +13,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
+#include "area.h" // for AreaPtr
 #include "common.h"
 #include "player.h"
 #include "viewport.h"
@@ -62,7 +63,7 @@ public:
 	bool loadArea(const std::string& areaName, icoord playerPos);
 
 	//! Given an Area object, set it as the current one.
-	void setArea(Area* area, icoord playerPos);
+	void setArea(AreaPtr area, icoord playerPos);
 
 private:
 	bool processDescriptor();
@@ -83,7 +84,7 @@ private:
 	GameWindow* wnd;
 	ClientValues* conf;
 	Viewport* view;
-	Area* area;
+	AreaPtr area;
 	Music* music;
 	Player player;
 

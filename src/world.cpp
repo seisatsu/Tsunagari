@@ -6,7 +6,6 @@
 
 #include <Gosu/Utility.hpp>
 
-#include "area.h"
 #include "common.h"
 #include "log.h"
 #include "resourcer.h"
@@ -22,14 +21,13 @@ World* World::getWorld()
 }
 
 World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
-	: rc(rc), wnd(wnd), conf(conf), area(NULL), player(rc, NULL, conf)
+	: rc(rc), wnd(wnd), conf(conf), player(rc, NULL, conf)
 {
 	globalWorld = this;
 }
 
 World::~World()
 {
-	delete area;
 	delete music;
 }
 
@@ -78,28 +76,31 @@ bool World::needsRedraw() const
 
 void World::update(unsigned long dt)
 {
+	// Prevent the Area from being deleted during this function call.
+	// Otherwise if it accesses its member variables and we've overwritten
+	// the memory, bad things happen.
+	boost::shared_ptr<Area> safe(area);
+
 	area->update(dt);
 }
 
 bool World::loadArea(const std::string& areaName, icoord playerPos)
 {
-	Area* oldArea = area;
-	Area* newArea = new Area(rc, this, view, &player, music, areaName);
-	if (!newArea->init()) {
-		delete newArea;
+	AreaPtr oldArea(area);
+	AreaPtr newArea(new Area(rc, this, view, &player, music, areaName));
+	if (!newArea->init())
 		return false;
-	}
 	setArea(newArea, playerPos);
-	delete oldArea;
+	// oldArea is deleted
 	return true;
 }
 
-void World::setArea(Area* area, icoord playerPos)
+void World::setArea(AreaPtr area, icoord playerPos)
 {
 	this->area = area;
-	player.setArea(area);
+	player.setArea(area.get());
 	player.setTileCoords(playerPos);
-	view->setArea(area);
+	view->setArea(area.get());
 }
 
 bool World::processDescriptor()

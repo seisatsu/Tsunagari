@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "common.h"
 #include "music.h"
@@ -26,12 +27,15 @@ namespace Gosu {
 	class Image;
 }
 
+class Area;
 class Entity;
 class GameWindow;
 class Music;
 class Resourcer;
 class Sprite;
 class World;
+
+typedef boost::shared_ptr<Area> AreaPtr;
 
 //! This class is responsible for each map, or area in a Tsunagari World.
 /*!
