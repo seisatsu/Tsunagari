@@ -7,6 +7,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <vector>
+
 #include "common.h"
 #include "entity.h"
 
@@ -33,6 +35,10 @@ protected:
 private:
 	//! Stores intent to move continuously in some direction.
 	icoord velocity;
+
+	//! Stack storing depressed keyboard keys in the form of movement
+	//! vectors.
+	std::vector<icoord> movements;
 };
 
 #endif

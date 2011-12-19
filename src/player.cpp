@@ -15,6 +15,19 @@
 #include "world.h"
 #include "window.h"
 
+template<class Cont, class ValueType>
+void removeValue(Cont* c, ValueType v)
+{
+	typename Cont::iterator it;
+	for (it = c->begin(); it != c->end(); ++it) {
+		if (*it == v) {
+			c->erase(it);
+			return;
+		}
+	}
+}
+
+
 Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
 	: Entity(rc, area, conf), velocity(0, 0, 0)
 {
@@ -27,9 +40,9 @@ void Player::startMovement(icoord delta)
 		moveByTile(delta);
 		break;
 	case TILE:
+		movements.push_back(delta);
 		velocity = delta;
-		if (velocity)
-			moveByTile(velocity);
+		moveByTile(velocity);
 		break;
 	case NOTILE:
 		// TODO
@@ -39,9 +52,18 @@ void Player::startMovement(icoord delta)
 
 void Player::stopMovement(icoord delta)
 {
-	if (conf->moveMode == TILE) {
-		if (velocity == delta)
-			velocity = icoord(0, 0, 0);
+	switch (conf->moveMode) {
+	case TURN:
+		break;
+	case TILE:
+		removeValue(&movements, delta);
+		velocity = movements.size() ?  movements.back() : icoord(0, 0, 0);
+		if (velocity)
+			moveByTile(velocity);
+		break;
+	case NOTILE:
+		// TODO
+		break;
 	}
 }
 
