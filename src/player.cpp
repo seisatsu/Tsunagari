@@ -110,12 +110,6 @@ void Player::postMove()
 		}
 	}
 
-	// Layermod
-	const boost::optional<int> layermod = destTile->layermod;
-	if (layermod) {
-		r.z = *layermod;
-	}
-
 	// If we have a velocity, keep moving.
 	if (conf->moveMode == TILE && velocity)
 		moveByTile(velocity);
