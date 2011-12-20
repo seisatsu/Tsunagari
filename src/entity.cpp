@@ -235,12 +235,6 @@ void Entity::moveByTile(icoord delta)
 
 	// Move!
 	preMove(delta);
-
-	if (conf->moveMode == TURN) {
-		// Movement is instantaneous.
-		r = destCoord;
-		postMove();
-	}
 }
 
 void Entity::setArea(Area* a)
@@ -352,6 +346,12 @@ void Entity::preMove(icoord delta)
 
 	// Process triggers.
 	preMoveScript();
+
+	if (conf->moveMode == TURN) {
+		// Movement is instantaneous.
+		r = destCoord;
+		postMove();
+	}
 }
 
 void Entity::preMoveScript()

@@ -105,7 +105,7 @@ void Player::moveByTile(icoord delta)
 		return;
 	}
 
-	Entity::moveByTile(velocity);
+	Entity::moveByTile(delta);
 }
 
 void Player::preMove(icoord delta)
