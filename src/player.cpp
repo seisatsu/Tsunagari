@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <boost/format.hpp>
 #include <Gosu/Audio.hpp>
 #include <Gosu/Input.hpp>
 #include <Gosu/Math.hpp>
@@ -11,6 +12,7 @@
 #include "area.h"
 #include "config.h"
 #include "entity.h"
+#include "log.h"
 #include "player.h"
 #include "world.h"
 #include "window.h"
@@ -131,6 +133,10 @@ void Player::postMove()
 			Log::err("Door", door->area + ": failed to load properly");
 		}
 	}
+
+	icoord tile = getTileCoords();
+	Log::dev("Player", boost::str(boost::format("location x:%d y:%d z:%d")
+	         % tile.x % tile.y % (int)r.z));
 
 	// If we have a velocity, keep moving.
 	if (conf->moveMode == TILE && velocity)
