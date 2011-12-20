@@ -138,7 +138,7 @@ void Player::postMove()
 	}
 
 	icoord tile = getTileCoords();
-	Log::dev("Player", boost::str(boost::format("location x:%d y:%d z:%d")
+	Log::dev("Player", boost::str(boost::format("position x:%d y:%d z:%d")
 	         % tile.x % tile.y % (int)r.z));
 
 	// If we have a velocity, keep moving.
