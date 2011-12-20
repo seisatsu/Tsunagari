@@ -11,13 +11,11 @@ CXX = g++
 # Warning flags to enable.
 WFLAGS = -Wall -Wextra -Wconversion
 
-# Libraries to include.
-LIBS = -lboost_program_options -lgosu -lphysfs $(shell xml2-config --libs)
-
 # Compiler and linker flags.
 CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic -ansi $(WFLAGS) \
-	$(shell xml2-config --cflags)
-LDFLAGS = $(BLDLDFLAGS) $(LIBS)
+	$(shell pkg-config --cflags python-2.7) $(shell xml2-config --cflags)
+LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
+	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
 
 # Name of testing world.
 TESTWORLD = testing.world
@@ -31,7 +29,8 @@ depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
 tsunagari: animation.o area.o cmd.o common.o entity.o log.o main.o music.o \
-           player.o resourcer.o tile.o viewport.o window.o world.o xml.o
+           player.o python.o resourcer.o tile.o viewport.o window.o world.o \
+           xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*

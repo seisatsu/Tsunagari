@@ -22,6 +22,7 @@
 #include "config.h"
 #include "cmd.h"
 #include "log.h"
+#include "python.h"
 #include "window.h"
 
 #ifdef _WINDOWS
@@ -277,6 +278,8 @@ static void initLibraries()
 	 * library used.
 	 */
 	LIBXML_TEST_VERSION
+
+	InitPython();
 }
 
 static void cleanupLibraries()
