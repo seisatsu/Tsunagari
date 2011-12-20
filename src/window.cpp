@@ -16,7 +16,7 @@
 
 static GameWindow* globalWindow = NULL;
 
-GameWindow& GameWindow::getWindow()
+const GameWindow& GameWindow::getWindow()
 {
 	return *globalWindow;
 }

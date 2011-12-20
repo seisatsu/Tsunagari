@@ -3,13 +3,13 @@
 all: debug
 
 debug:
-	$(MAKE) -C src all BLDCFLAGS=-g
+	$(MAKE) -C src all BLDCFLAGS="-g"
 
 release:
-	$(MAKE) -C src all BLDCFLAGS=-O2
+	$(MAKE) -C src all BLDCFLAGS="-O2 -flto" BLDLDFLAGS="-O2 -flto"
 
 profile:
-	$(MAKE) -C src all BLDCFLAGS=-pg BLDLDFLAGS=-pg
+	$(MAKE) -C src all BLDCFLAGS="-pg" BLDLDFLAGS="-pg"
 
 # Need to specify manually because './doc/' is a directory.
 .PHONY: doc
