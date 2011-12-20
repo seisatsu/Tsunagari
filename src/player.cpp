@@ -59,7 +59,9 @@ void Player::stopMovement(icoord delta)
 		break;
 	case TILE:
 		removeValue(&movements, delta);
-		velocity = movements.size() ?  movements.back() : icoord(0, 0, 0);
+		velocity = movements.size() ?
+		           movements.back() :
+			   icoord(0, 0, 0);
 		if (velocity)
 			moveByTile(velocity);
 		break;
@@ -130,7 +132,8 @@ void Player::postMove()
 		if (!World::getWorld()->loadArea(door->area, door->tile)) {
 			// Roll back movement if door failed to open.
 			r = fromCoord;
-			Log::err("Door", door->area + ": failed to load properly");
+			Log::err("Door",
+			         door->area + ": failed to load properly");
 		}
 	}
 
