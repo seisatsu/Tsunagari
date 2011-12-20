@@ -122,5 +122,8 @@ private:
 	XMLRefMap xmls;
 };
 
+void preinitPythonResourcer();
+void postinitPythonResourcer();
+
 #endif
 

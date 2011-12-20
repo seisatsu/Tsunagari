@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include <boost/foreach.hpp>
+#include <boost/python.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp>
@@ -20,6 +21,7 @@
 #include "config.h"
 #include "log.h"
 #include "resourcer.h"
+#include "python.h"
 #include "window.h"
 #include "xml.h"
 
@@ -29,6 +31,7 @@ typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 Resourcer::Resourcer(GameWindow* window, const ClientValues* conf)
 	: window(window), conf(conf)
 {
+	pySetGlobal("resourcer", this);
 }
 
 Resourcer::~Resourcer()
@@ -347,5 +350,23 @@ Gosu::Buffer* Resourcer::read(const std::string& name) const
 std::string Resourcer::path(const std::string& entryName) const
 {
 	return conf->world + "/" + entryName;
+}
+
+
+
+BOOST_PYTHON_MODULE(Resourcer)
+{
+	boost::python::class_<Resourcer>("Resourcer", boost::python::no_init)
+		.def("getSample", &Resourcer::getSample);
+}
+
+void preinitPythonResourcer()
+{
+	PyImport_AppendInittab("Resourcer", &initResourcer);
+}
+
+void postinitPythonResourcer()
+{
+	pyIncludeModule("Resourcer");
 }
 

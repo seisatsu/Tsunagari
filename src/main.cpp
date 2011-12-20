@@ -279,12 +279,12 @@ static void initLibraries()
 	 */
 	LIBXML_TEST_VERSION
 
-	InitPython();
+	pythonInit();
 }
 
 static void cleanupLibraries()
 {
-	// Clean the XML library.
+	pythonFinalize();
 	xmlCleanupParser();
 }
 
