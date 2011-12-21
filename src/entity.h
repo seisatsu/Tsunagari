@@ -89,35 +89,30 @@ public:
 	void setSpeed(double multiplier);
 
 protected:
+	std::vector<icoord> frontTiles() const;
+
 	//! Calculate what doff should be and save it in doff.
 	void calcDoff();
 
 	//! Get the Tile we are standing on.
-	Tile& getTile();
+	Tile& getTile() const;
 
 	SampleRef getSound(const std::string& name);
 
 	//! Calculate which way to face based upon a movement delta.
-	void calculateFacing(icoord delta);
+	void calculateFacing(int x, int y);
 
 	//! Returns true if we can move in the desired direction.
-	bool canMove(icoord delta);
+	virtual bool canMove(icoord delta);
 
 	//! Called right before starting to moving onto another tile.
-	virtual void preMove(icoord delta);
-	void preMoveScript();
-
-// What are these?
-//	void leaveTile();
-//	void enterTile();
+	virtual void preMove();
 
 	//! Called after we have arrived at another tile.
 	virtual void postMove();
-	void postMoveScript();
 
-	void tileScripts(Tile& tile, std::vector<TileEvent>& events,
-	                 TileEventTrigger trigger);
-	void runTileScripts(Tile& tile, const std::string& script);
+	void tileExitScript();
+	void tileEntryScript();
 
 	// XML parsing functions used in constructing an Entity
 	bool processDescriptor();
@@ -145,6 +140,7 @@ protected:
 	boost::unordered_map<std::string, Animation> phases;
 	Animation* phase;
 	std::string facing;
+	int faceX, faceY;
 
 	//! List of sounds this Entity knows about.
 	boost::unordered_map<std::string, SampleRef> sounds;

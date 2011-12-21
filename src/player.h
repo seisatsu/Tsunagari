@@ -25,11 +25,14 @@ public:
 	void stopMovement(icoord delta);
 
 	//! Move the player by dx, dy. Not guaranteed to be smooth if called
-	//  on each update().
+	//! on each update().
 	void moveByTile(icoord delta);
 
+	//! Try to use an object in front of the player.
+	void tryUse();
+
 protected:
-	void preMove(icoord delta);
+	void preMove();
 	void postMove();
 
 private:

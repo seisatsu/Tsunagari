@@ -73,6 +73,7 @@ public:
 	icoord getDimensions() const;
 	ivec2 getTileDimensions() const;
 	int depthIndex(double depth) const;
+	double indexDepth(int idx) const;
 	const Tile& getTile(icoord c) const;
 	Tile& getTile(icoord c);
 	bool tileExists(icoord c) const;

@@ -181,6 +181,11 @@ int Area::depthIndex(double depth) const
 	return depth2idx.find(depth)->second;
 }
 
+double Area::indexDepth(int idx) const
+{
+	return idx2depth[idx];
+}
+
 const Tile& Area::getTile(icoord c) const
 {
 	if (loopX)

@@ -80,7 +80,7 @@ void Player::moveByTile(icoord delta)
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
 	if (window.input().down(Gosu::kbLeftControl)) {
-		calculateFacing(delta);
+		calculateFacing(delta.x, delta.y);
 		setPhase(facing);
 		redraw = true;
 		return;
@@ -91,7 +91,7 @@ void Player::moveByTile(icoord delta)
 
 	// The tile is off the map. Turn to face the direction, but don't move.
 	if (!area->tileExists(newCoord)) {
-		calculateFacing(delta);
+		calculateFacing(delta.x, delta.y);
 		setPhase(facing);
 		redraw = true;
 		return;
@@ -103,7 +103,7 @@ void Player::moveByTile(icoord delta)
 	if (destTile->hasFlag(player_nowalk)) {
 		// The tile we're trying to move onto is set as player_nowalk.
 		// Turn to face the direction, but don't move.
-		calculateFacing(delta);
+		calculateFacing(delta.x, delta.y);
 		setPhase(facing);
 		redraw = true;
 		return;
@@ -112,9 +112,13 @@ void Player::moveByTile(icoord delta)
 	Entity::moveByTile(delta);
 }
 
-void Player::preMove(icoord delta)
+void Player::tryUse()
 {
-	Entity::preMove(delta);
+}
+
+void Player::preMove()
+{
+	Entity::preMove();
 
 	SampleRef step = getSound("step");
 	if (step)

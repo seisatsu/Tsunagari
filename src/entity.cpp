@@ -131,10 +131,16 @@ void Entity::updateTile(unsigned long dt)
 	redraw = true;
 	double traveled = speed * (double)dt;
 	double destDist = Gosu::distance(r.x, r.y, destCoord.x, destCoord.y);
-	if (destDist < traveled) {
+	if (destDist <= traveled) {
 		r = destCoord;
 		moving = false;
 		postMove();
+		if (moving) {
+			// Time rollover.
+			double perc = 1.0 - destDist/traveled;
+			unsigned long remt = (unsigned long)(perc * (double)dt);
+			update(remt);
+		}
 	}
 	else {
 		double angle = angleFromXY(r.x - destCoord.x, destCoord.y - r.y);
@@ -203,38 +209,17 @@ void Entity::setTileCoords(icoord coords)
 void Entity::moveByTile(icoord delta)
 {
 	if (moving)
-		// Support queueing moves?
 		return;
+	calculateFacing(delta.x, delta.y);
+	setPhase(facing);
 
-	// Everything past here will warrant a redraw.
-	redraw = true;
-
-	// Try moving both normally, first. If that doesn't work, look to see
-	// if we're standing on a tile with layermod, and try moving with that.
-	const boost::optional<int> layermod = getTile().layermod;
-	icoord normal = delta;
-	icoord mod = delta;
-	if (layermod)
-		mod.z = *layermod - (int)r.z;
-
-
-	if (canMove(normal)) {
-		delta = normal;
+	std::vector<icoord> tiles = frontTiles();
+	BOOST_FOREACH(const icoord& tile, tiles) {
+		if (canMove(tile)) {
+			preMove();
+			return;
+		}
 	}
-	else if (layermod && canMove(mod)) {
-		// Set z right away so that we're on-level with the square we're entering.
-		r.z = *layermod;
-		delta = mod;
-	}
-	else {
-		// Turn to face the direction, but don't move.
-		calculateFacing(delta);
-		setPhase(facing);
-		return;
-	}
-
-	// Move!
-	preMove(delta);
 }
 
 void Entity::setArea(Area* a)
@@ -265,6 +250,24 @@ void Entity::setSpeed(double multiplier)
 	}
 }
 
+std::vector<icoord> Entity::frontTiles() const
+{
+	std::vector<icoord> tiles;
+	icoord normal = getTileCoords();
+	normal += icoord(faceX, faceY, 0);
+	tiles.push_back(normal);
+
+	// If we are on a tile with the layermod property, we have access to
+	// tiles on the new layer, too.
+	const boost::optional<int> layermod = getTile().layermod;
+	if (layermod) {
+		icoord mod = normal;
+		mod.z = area->depthIndex(*layermod);
+		tiles.push_back(mod);
+	}
+	return tiles;
+}
+
 void Entity::calcDoff()
 {
 	// X-axis is centered on tile.
@@ -273,7 +276,7 @@ void Entity::calcDoff()
 	doff.y = area->getTileDimensions().y - imgh - 1;
 }
 
-Tile& Entity::getTile()
+Tile& Entity::getTile() const
 {
 	return area->getTile(getTileCoords());
 }
@@ -289,92 +292,66 @@ SampleRef Entity::getSound(const std::string& name)
 		return SampleRef();
 }
 
-void Entity::calculateFacing(icoord delta)
+void Entity::calculateFacing(int x, int y)
 {
-	int x, y;
-
-	if (delta.x < 0)
-		x = 0;
-	else if (delta.x == 0)
-		x = 1;
+	if (x < 0)
+		faceX = -1;
+	else if (x == 0)
+		faceX = 0;
 	else
-		x = 2;
+		faceX = 1;
 
-	if (delta.y < 0)
-		y = 0;
-	else if (delta.y == 0)
-		y = 1;
+	if (y < 0)
+		faceY = -1;
+	else if (y == 0)
+		faceY = 0;
 	else
-		y = 2;
+		faceY = 1;
 
-	facing = facings[y][x];
+	facing = facings[faceY+1][faceX+1];
 }
 
-bool Entity::canMove(icoord delta)
+bool Entity::canMove(icoord dest)
 {
-	icoord newCoord = getTileCoords();
-	newCoord += delta;
-
-	if (!area->tileExists(newCoord))
+	if (!area->tileExists(dest))
 		// The tile is off the map.
 		return false;
-
 	ivec2 tileDim = area->getTileDimensions();
-	fromCoord = r;
 	destCoord = rcoord(
-		fromCoord.x + delta.x * tileDim.x,
-		fromCoord.y + delta.y * tileDim.y,
-		fromCoord.z + delta.z
+		dest.x * tileDim.x,
+		dest.y * tileDim.y,
+		area->indexDepth(dest.z)
 	);
-
-	fromTile = &getTile();
-	destTile = &area->getTile(newCoord);
-
+	destTile = &area->getTile(dest);
 	return !destTile->hasFlag(nowalk);
 }
 
-void Entity::preMove(icoord delta)
+void Entity::preMove()
 {
+	fromCoord = r;
+	fromTile = &getTile();
 	moving = true;
 
+	// Set z right away so that we're on-level with the square we're entering.
+	r.z = destCoord.z;
+
 	// Start moving animation.
-	calculateFacing(delta);
-	if (conf->moveMode == TURN)
-		setPhase(facing);
-	else
+	switch (conf->moveMode) {
+	case TURN:
+		break;
+	case TILE:
+	case NOTILE:
 		setPhase("moving " + facing);
+		break;
+	}
 
 	// Process triggers.
-	preMoveScript();
+	tileExitScript();
 
 	if (conf->moveMode == TURN) {
 		// Movement is instantaneous.
 		r = destCoord;
 		postMove();
-	}
-}
-
-void Entity::preMoveScript()
-{
-	const std::string& name = scripts["premove"];
-	if (name.size()) {
-/* FIXME: Redo scripts.
-		Script s(rc);
-		bindEntity(&s, this, "entity");
-		s.run(rc, name);
-*/
-	}
-}
-
-void Entity::postMoveScript()
-{
-	const std::string& name = scripts["postmove"];
-	if (name.size()) {
-/* FIXME: Redo scripts.
-		Script s(rc);
-		bindEntity(&s, this, "entity");
-		s.run(rc, name);
-*/
 	}
 }
 
@@ -388,7 +365,7 @@ void Entity::postMove()
 
 	// Process triggers.
 	fromTile->onLeaveScripts(rc, this);
-	postMoveScript();
+	tileEntryScript();
 	destTile->onEnterScripts(rc, this);
 
 	// TODO: move teleportation here
@@ -402,9 +379,29 @@ void Entity::postMove()
 	 */
 }
 
-/**
- * Try to load in descriptor.
+void Entity::tileExitScript()
+{
+	const std::string& name = scripts["tileexit"];
+	if (name.size()) {
+		std::string lines = rc->getText(name);
+		pyExec(lines.c_str());
+	}
+}
+
+void Entity::tileEntryScript()
+{
+	const std::string& name = scripts["tileentry"];
+	if (name.size()) {
+		std::string lines = rc->getText(name);
+		pyExec(lines.c_str());
+	}
+}
+
+
+/*
+ * DESCRIPTOR CODE BELOW
  */
+
 bool Entity::processDescriptor()
 {
 	XMLRef doc = rc->getXMLDoc(descriptor, "entity.dtd");
@@ -571,9 +568,13 @@ bool Entity::processScript(const XMLNode node)
 		return false;
 	}
 
-	// Don't verify for script exists here. This happens when it's
-	// triggered.
-	scripts[trigger] = filename;
-	return true;
+	if (rc->resourceExists(filename)) {
+		scripts[trigger] = filename;
+		return true;
+	}
+	else {
+		Log::err(descriptor, std::string("script not found: ") + filename);
+		return false;
+	}
 }
 
