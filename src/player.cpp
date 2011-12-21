@@ -14,7 +14,6 @@
 #include "entity.h"
 #include "log.h"
 #include "player.h"
-#include "python.h"
 #include "world.h"
 #include "window.h"
 
@@ -147,8 +146,6 @@ void Player::postMove()
 		boost::format("location x:%d y:%d z:%d")
 		  % tile.x % tile.y % (int)r.z)
 	);
-
-	pyExec("resourcer.getSample('sounds/step.oga').play()");
 
 	// If we have a velocity, keep moving.
 	if (conf->moveMode == TILE && velocity)

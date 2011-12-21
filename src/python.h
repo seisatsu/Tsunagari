@@ -7,21 +7,20 @@
 #ifndef PYTHON_H
 #define PYTHON_H
 
-#include <boost/python.hpp>
 #include <stdlib.h>
 
-namespace python = boost::python;
+#include <boost/python.hpp>
 
 void pythonInit();
 void pythonFinalize();
 void pythonErr();
-python::object pyGlobals();
+boost::python::object pyGlobals();
 
 template<class T>
 void pySetGlobal(const char* name, T pointer)
 {
 	try {
-		pyGlobals()[name] = python::ptr(pointer);
+		pyGlobals()[name] = boost::python::ptr(pointer);
 	} catch (boost::python::error_already_set) {
 		pythonErr();
 	}

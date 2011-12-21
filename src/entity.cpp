@@ -15,6 +15,7 @@
 #include "config.h"
 #include "entity.h"
 #include "log.h"
+#include "python.h"
 #include "resourcer.h"
 #include "window.h"
 #include "xml.h"

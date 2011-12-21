@@ -4,13 +4,16 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <boost/format.hpp>
 #include <stdlib.h> // for exit
 #include <string.h> // for strrchr
+
+#include <boost/format.hpp>
 
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"
+
+namespace python = boost::python;
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
