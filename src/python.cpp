@@ -12,6 +12,30 @@
 #include "python.h"
 #include "resourcer.h"
 
+BOOST_PYTHON_MODULE(tsunagari)
+{
+	exportResourcer();
+}
+
+
+void pythonInit()
+{
+	try {
+		PyImport_AppendInittab("tsunagari", &inittsunagari);
+		Py_Initialize();
+		pyIncludeModule("tsunagari");
+	} catch (boost::python::error_already_set) {
+		Log::err("Python", "An error occured while populating the "
+			           "Python modules:");
+		pythonErr();
+	}
+}
+
+void pythonFinalize()
+{
+	Py_Finalize();
+}
+
 void pythonErr()
 {
 	// Something bad happened. Error is already set in Python.
@@ -26,24 +50,6 @@ void pythonErr()
 		boost::format("%s: %s") % type % value
 	));
 	exit(1);
-}
-
-void pythonInit()
-{
-	try {
-		preinitPythonResourcer();
-		Py_Initialize();
-		postinitPythonResourcer();
-	} catch (boost::python::error_already_set) {
-		Log::err("Python", "An error occured while populating the "
-			           "Python modules:");
-		pythonErr();
-	}
-}
-
-void pythonFinalize()
-{
-	Py_Finalize();
 }
 
 python::object pyGlobals()

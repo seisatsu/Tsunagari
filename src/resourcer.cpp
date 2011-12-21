@@ -354,19 +354,9 @@ std::string Resourcer::path(const std::string& entryName) const
 
 
 
-BOOST_PYTHON_MODULE(Resourcer)
+void exportResourcer()
 {
 	boost::python::class_<Resourcer>("Resourcer", boost::python::no_init)
 		.def("getSample", &Resourcer::getSample);
-}
-
-void preinitPythonResourcer()
-{
-	PyImport_AppendInittab("Resourcer", &initResourcer);
-}
-
-void postinitPythonResourcer()
-{
-	pyIncludeModule("Resourcer");
 }
 
