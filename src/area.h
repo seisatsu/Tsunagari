@@ -15,6 +15,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "common.h"
+#include "config.h"
 #include "music.h"
 #include "player.h"
 #include "resourcer.h"

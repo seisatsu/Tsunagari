@@ -7,7 +7,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP3 Revision 1"
+#define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP4 Revision 1"
 
 // === Default Configuration Settings ===
 	/* Tsunagari config file. */
@@ -48,6 +48,14 @@
 	/* Fix snprintf for VisualC++. */
 	#ifdef _MSC_VER
 		#define snprintf _snprintf
+	#endif
+	
+	/* Fix NAN constant. */
+	#ifdef _MSC_VER
+		#ifndef NAN
+		    static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
+		    #define NAN (*(const float *) __nan)
+		#endif
 	#endif
 
 	/* Fix PI declaration. */

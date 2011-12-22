@@ -383,8 +383,8 @@ void Entity::tileExitScript()
 {
 	const std::string& name = scripts["tileexit"];
 	if (name.size()) {
-		std::string lines = rc->getText(name);
-		pyExec(lines.c_str());
+		//std::string lines = rc->getText(name);
+		//pyExec(lines.c_str());
 	}
 }
 
@@ -392,8 +392,8 @@ void Entity::tileEntryScript()
 {
 	const std::string& name = scripts["tileentry"];
 	if (name.size()) {
-		std::string lines = rc->getText(name);
-		pyExec(lines.c_str());
+		//std::string lines = rc->getText(name);
+		//pyExec(lines.c_str());
 	}
 }
 
