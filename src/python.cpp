@@ -9,6 +9,15 @@
 
 #include <boost/format.hpp>
 
+// Python
+#include <Python.h>
+
+#include <grammar.h> // for struct grammar
+#include <node.h> // for struct node
+
+#include <parsetok.h> // for PyParser_ParseStringFlags
+// End Python
+
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"
@@ -20,14 +29,22 @@ BOOST_PYTHON_MODULE(tsunagari)
 	exportResourcer();
 }
 
+static void pythonIncludeModule(const char* name)
+{
+	python::object module(
+		python::handle<>(PyImport_ImportModule(name))
+	);
+	pythonGlobals()[name] = module;
+}
+
 
 void pythonInit()
 {
 	try {
 		PyImport_AppendInittab("tsunagari", &inittsunagari);
 		Py_Initialize();
-		pyIncludeModule("tsunagari");
-	} catch (boost::python::error_already_set) {
+		pythonIncludeModule("tsunagari");
+	} catch (python::error_already_set) {
 		Log::err("Python", "An error occured while populating the "
 			           "Python modules:");
 		pythonErr();
@@ -55,27 +72,45 @@ void pythonErr()
 	exit(1);
 }
 
-python::object pyGlobals()
+python::object pythonGlobals()
 {
 	python::object main = python::import("__main__");
 	python::object global = main.attr("__dict__");
 	return global;
 }
 
-void pyIncludeModule(const char* name)
+extern grammar _PyParser_Grammar; // From Python's graminit.c
+
+PyCodeObject* pythonCompile(const char* fn, const char* code)
 {
-	python::object module(
-		python::handle<>(PyImport_ImportModule(name))
+	perrdetail err;
+	node* n = PyParser_ParseStringFlagsFilename(
+		code, fn, &_PyParser_Grammar,
+		Py_file_input, &err, 0
 	);
-	pyGlobals()[name] = module;
+	if (!n) {
+		PyParser_SetError(&err);
+		pythonErr();
+		return NULL;
+	}
+	PyCodeObject* pco = PyNode_Compile(n, fn);
+	if (!pco) {
+		Log::err("Python", boost::str(
+			boost::format("%s: possibly unknown compile error") % fn
+		));
+		pythonErr();
+		return NULL;
+	}
+	return pco;
 }
 
-void pyExec(const char* s)
+void pythonExec(PyCodeObject* code)
 {
-	try {
-		python::exec(s, pyGlobals(), pyGlobals());
-	} catch (boost::python::error_already_set) {
+	if (!code)
+		return;
+	PyObject* g = pythonGlobals().ptr();
+	PyObject* result = PyEval_EvalCode(code, g, g);
+	if (!result)
 		pythonErr();
-	}
 }
 
