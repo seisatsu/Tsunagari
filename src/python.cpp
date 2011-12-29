@@ -74,8 +74,12 @@ void pythonErr()
 
 python::object pythonGlobals()
 {
-	python::object main = python::import("__main__");
-	python::object global = main.attr("__dict__");
+	static bool init = false;
+	static python::object global;
+	if (!init) {
+		init = true;
+		global = python::import("__main__").attr("__dict__");
+	}
 	return global;
 }
 
