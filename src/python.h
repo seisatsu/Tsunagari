@@ -40,8 +40,9 @@ void pythonSetGlobal(const char* name, T pointer)
 //! Compile a Python script. Returns NULL on failure and prints any errors.
 PyCodeObject* pythonCompile(const char* fn, const char* code);
 
-//! Run a compiled Python script. Print any errors.
-void pythonExec(PyCodeObject* code);
+//! Run a compiled Python script. Returns false on runtime error and prints the
+//! error.
+bool pythonExec(PyCodeObject* code);
 
 #endif
 

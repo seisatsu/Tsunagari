@@ -108,13 +108,14 @@ PyCodeObject* pythonCompile(const char* fn, const char* code)
 	return pco;
 }
 
-void pythonExec(PyCodeObject* code)
+bool pythonExec(PyCodeObject* code)
 {
 	if (!code)
-		return;
+		return false;
 	PyObject* g = pythonGlobals().ptr();
 	PyObject* result = PyEval_EvalCode(code, g, g);
 	if (!result)
 		pythonErr();
+	return result;
 }
 

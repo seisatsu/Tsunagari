@@ -13,6 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
+#include <Python.h>
 
 #include "common.h"
 #include "xml.h"
@@ -38,10 +39,7 @@ typedef std::deque<ImageRef> TiledImage;
 typedef boost::shared_ptr<TiledImage> TiledImageRef;
 typedef boost::shared_ptr<std::string> StringRef;
 
-//! Resourcer Class
-/*!
-	This class provides the engine's resource handling and caching.
-*/
+//! This class provides the engine's resource handling and caching.
 class Resourcer
 {
 public:
@@ -71,6 +69,9 @@ public:
 	XMLRef getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
 
+	//! Requests a Python script be run from disk or cache.
+	bool runPythonScript(const std::string& name);
+
 	//! Requests a text resource from disk or cache.
 	std::string getText(const std::string& name);
 
@@ -98,6 +99,8 @@ private:
 		SongRefMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<XMLRef> >
 		XMLRefMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<PyCodeObject*> >
+		CodeMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<StringRef> >
 		TextRefMap;
 
@@ -129,6 +132,7 @@ private:
 	SampleRefMap samples;
 	SongRefMap songs;
 	XMLRefMap xmls;
+	CodeMap codes;
 	TextRefMap texts;
 };
 

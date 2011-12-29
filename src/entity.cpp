@@ -383,23 +383,15 @@ void Entity::postMove()
 void Entity::tileExitScript()
 {
 	const std::string& name = scripts["tileexit"];
-	if (name.empty())
-		return;
-	const std::string lines = rc->getText(name);
-	if (lines.empty())
-		return;
-	pythonExec(pythonCompile("tileexit", lines.c_str()));
+	if (name.size())
+		rc->runPythonScript(name);
 }
 
 void Entity::tileEntryScript()
 {
 	const std::string& name = scripts["tileentry"];
-	if (name.empty())
-		return;
-	const std::string lines = rc->getText(name);
-	if (lines.empty())
-		return;
-	pythonExec(pythonCompile("tileentry", lines.c_str()));
+	if (name.size())
+		rc->runPythonScript(name);
 }
 
 

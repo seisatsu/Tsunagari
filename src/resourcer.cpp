@@ -220,6 +220,36 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 	return result;
 }
 
+bool Resourcer::runPythonScript(const std::string& name)
+{
+	if (conf->cacheEnabled) {
+		CodeMap::iterator entry = codes.find(name);
+		if (entry != codes.end()) {
+			int now = GameWindow::getWindow().time();
+			Log::dbg("Resourcer", name + ": requested (cached)");
+			// We set lastUsed to now because it won't be used by
+			// the time reclaim() gets to it.
+			entry->second.lastUsed = now;
+			PyCodeObject* result = entry->second.resource;
+			return pythonExec(result);
+		}
+	}
+	Log::dbg("Resourcer", name + ": requested");
+
+	std::string code = readStringFromDisk(name);
+	PyCodeObject* result = code.size() ?
+		pythonCompile(name.c_str(), code.c_str()) : NULL;
+
+	if (conf->cacheEnabled) {
+		CacheEntry<PyCodeObject*> data;
+		data.resource = result;
+		data.lastUsed = 0;
+		codes[name] = data;
+	}
+
+	return pythonExec(result);
+}
+
 std::string Resourcer::getText(const std::string& name)
 {
 	if (conf->cacheEnabled) {
@@ -233,6 +263,7 @@ std::string Resourcer::getText(const std::string& name)
 			return *entry->second.resource.get();
 		}
 	}
+	Log::dbg("Resourcer", name + ": requested");
 
 	StringRef result(new std::string(readStringFromDisk(name)));
 
@@ -243,7 +274,6 @@ std::string Resourcer::getText(const std::string& name)
 		texts[name] = data;
 	}
 
-	Log::dbg("Resourcer", name + ": requested");
 	return *result.get();
 }
 
