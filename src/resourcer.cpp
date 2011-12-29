@@ -69,6 +69,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 			return entry->second.resource;
 		}
 	}
+	Log::dbg("Resourcer", name + ": requested");
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
@@ -84,7 +85,6 @@ ImageRef Resourcer::getImage(const std::string& name)
 		images[name] = data;
 	}
 
-	Log::dbg("Resourcer", name + ": requested");
 	return result;
 }
 
@@ -103,6 +103,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 			return true;
 		}
 	}
+	Log::dbg("Resourcer", name + ": requested");
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
@@ -121,7 +122,6 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		tiles[name] = data;
 	}
 
-	Log::dbg("Resourcer", name + ": requested");
 	return true;
 }
 
@@ -140,6 +140,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 			return entry->second.resource;
 		}
 	}
+	Log::dbg("Resourcer", name + ": requested");
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
@@ -153,7 +154,6 @@ SampleRef Resourcer::getSample(const std::string& name)
 		samples[name] = data;
 	}
 
-	Log::dbg("Resourcer", name + ": requested");
 	return result;
 }
 
@@ -172,6 +172,7 @@ SongRef Resourcer::getSong(const std::string& name)
 			return entry->second.resource;
 		}
 	}
+	Log::dbg("Resourcer", name + ": requested");
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
@@ -185,7 +186,6 @@ SongRef Resourcer::getSong(const std::string& name)
 		songs[name] = data;
 	}
 
-	Log::dbg("Resourcer", name + ": requested");
 	return result;
 }
 
@@ -203,6 +203,7 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 			return entry->second.resource;
 		}
 	}
+	Log::dbg("Resourcer", name + ": requested");
 
 	XMLRef result(readXMLDocFromDisk(name, dtdFile));
 
@@ -213,7 +214,6 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 		xmls[name] = data;
 	}
 
-	Log::dbg("Resourcer", name + ": requested");
 	return result;
 }
 
