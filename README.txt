@@ -27,19 +27,20 @@ Tsunagari will be a comprehensive game design suite for singleplayer 2D games.
 The engine will support several styles, such as roguelikes, RPGs, and RTS
 games. Multiplayer support is more difficult, and is not expected to be present
 in the first release. Tsunagari is intended as an open source replacement for
-game design suites such as RPGMaker, and will allow Lua scripting for the event
-system, and for additional custom functionality. As a suite, Tsunagari aims to
-allow as much game variation as possible without direct modifications to the
-engine source code. Game design will require manual file editing during the
-Alpha and Beta phases, but a game editor suite will be shipped with the first
-major release.
+game design suites such as RPGMaker, and will allow Python scripting for the
+event system, and for additional custom functionality. As a suite, Tsunagari
+aims to allow as much game variation as possible without direct modifications
+to the engine source code. Game design will require manual file editing during
+the Alpha and Beta phases, but a game editor suite will be shipped with the
+first major release.
 
 Tsunagari license: MIT
 
 Requirements:
 NAME		LICENSE	  LINK
-libboost        (BOOST) - http://www.boost.org/
-libgosu         (MIT)   - http://www.libgosu.org/     latest git recommended
-libxml2         (MIT)   - http://xmlsoft.org/
-PhysicsFS       (ZLIB)  - http://icculus.org/physfs/
+libboost        (BOOST)  - http://www.boost.org/
+libgosu         (MIT)    - http://www.libgosu.org/     latest git recommended
+libpython       (PYTHON) - http://www.python.org/
+libxml2         (MIT)    - http://xmlsoft.org/
+PhysicsFS       (ZLIB)   - http://icculus.org/physfs/
 
