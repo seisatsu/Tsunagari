@@ -431,26 +431,26 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 			type.flags = splitTileFlags(value);
 		}
 		else if (name == "onEnter") {
-			if (!rc->resourceExists(value)) {
-				Log::err("Resourcer", "script " + value +
-						" referenced but not found");
+			std::string filename = value;
+			if (!rc->resourceExists(filename)) {
+				Log::err(descriptor, "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
 			e.trigger = onEnter;
-			e.script = value;
+			e.script = filename;
 			type.events.push_back(e);
 			type.flags |= hasOnEnter;
 		}
 		else if (name == "onLeave") {
-			if (!rc->resourceExists(value)) {
-				Log::err("Resourcer", "script " + value +
-						" referenced but not found");
+			std::string filename = value;
+			if (!rc->resourceExists(filename)) {
+				Log::err(descriptor, "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
 			e.trigger = onLeave;
-			e.script = value;
+			e.script = filename;
 			type.events.push_back(e);
 			type.flags |= hasOnLeave;
 		}
@@ -723,26 +723,26 @@ bool Area::processObject(XMLNode node, int z)
 			flags = splitTileFlags(value);
 		}
 		else if (name == "onEnter") {
-			if (!rc->resourceExists(value)) {
-				Log::err("Resourcer", "script " + value +
-						" referenced but not found");
+			std::string filename = value;
+			if (!rc->resourceExists(filename)) {
+				Log::err(descriptor, "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
 			e.trigger = onEnter;
-			e.script = value;
+			e.script = filename;
 			events.push_back(e);
 			flags |= hasOnEnter;
 		}
 		else if (name == "onLeave") {
-			if (!rc->resourceExists(value)) {
-				Log::err("Resourcer", "script " + value +
-						" referenced but not found");
+			std::string filename = value;
+			if (!rc->resourceExists(filename)) {
+				Log::err(descriptor, "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
 			e.trigger = onLeave;
-			e.script = value;
+			e.script = filename;
 			events.push_back(e);
 			flags |= hasOnLeave;
 		}
@@ -844,6 +844,11 @@ Door Area::parseDoor(const std::string dest)
 void exportArea()
 {
 	boost::python::class_<Area>("Area", boost::python::no_init)
+		.def("getTile",
+		    static_cast<Tile& (Area::*) (icoord)> (&Area::getTile),
+		    boost::python::return_value_policy<
+		      boost::python::reference_existing_object
+		    >())
 		.def("tileExists", &Area::tileExists);
 }
 

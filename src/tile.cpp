@@ -41,20 +41,15 @@ void Tile::onLeaveScripts(Resourcer* rc, Entity* triggeredBy)
 		runScripts(rc, triggeredBy, onLeave, events);
 }
 
-void Tile::runScripts(Resourcer*, Entity*,
+void Tile::runScripts(Resourcer* rc, Entity* entity,
                       const TileEventTrigger trigger,
                       const std::vector<TileEvent>& events)
 {
-	for (std::vector<TileEvent>::const_iterator i = events.begin(); i != events.end(); i++) {
-//	BOOST_FOREACH(const TileEvent& e, events) {
-		const TileEvent& e = *i;
+	BOOST_FOREACH(const TileEvent& e, events) {
 		if (e.trigger == trigger) {
-/* FIXME: Redo scripts.
-			Script s(rc);
-			bindEntity(&s, entity, "entity");
-			// TODO bindTile(script, tile, "tile");
-			s.run(rc, e.script);
-*/
+			pythonSetGlobal("entity", entity);
+			pythonSetGlobal("tile", this);
+			rc->runPythonScript(e.script);
 		}
 	}
 }

@@ -165,6 +165,11 @@ void Entity::updateNoTile(unsigned long)
 	// TODO
 }
 
+std::string Entity::getFacing() const
+{
+	return facing;
+}
+
 bool Entity::setPhase(const std::string& name)
 {
 	boost::unordered_map<std::string, Animation>::iterator it;
@@ -348,6 +353,7 @@ void Entity::preMove()
 
 	// Process triggers.
 	tileExitScript();
+	fromTile->onLeaveScripts(rc, this);
 
 	if (conf->moveMode == TURN) {
 		// Movement is instantaneous.
@@ -365,9 +371,8 @@ void Entity::postMove()
 		setPhase(facing);
 
 	// Process triggers.
-	fromTile->onLeaveScripts(rc, this);
-	tileEntryScript();
 	destTile->onEnterScripts(rc, this);
+	tileEntryScript();
 
 	// TODO: move teleportation here
 	/*
@@ -583,6 +588,7 @@ bool Entity::processScript(const XMLNode node)
 void exportEntity()
 {
 	boost::python::class_<Entity>("Entity", boost::python::no_init)
+		.add_property("facing", &Entity::getFacing)
 		.def("gotoRandomTile", &Entity::gotoRandomTile)
 		.def("setPhase", &Entity::setPhase)
 		.def("setSpeed", &Entity::setSpeed);

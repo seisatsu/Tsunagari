@@ -21,6 +21,7 @@
 #include "area.h" // for exportArea
 #include "entity.h" // for exportEntity
 #include "log.h"
+#include "math.h" // for exportVecs
 #include "python.h"
 #include "resourcer.h" // for exportResourcer
 #include "tile.h" // for export{Tile,TileType,Door}
@@ -29,6 +30,7 @@ namespace python = boost::python;
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
+	exportVecs();
 	exportResourcer();
 
 	exportEntity();

@@ -56,6 +56,8 @@ public:
 	void updateTile(unsigned long dt);
 	void updateNoTile(unsigned long dt);
 
+	std::string getFacing() const;
+
 	//! Change the graphic. Returns true if it was changed to something
 	//! different.
 	bool setPhase(const std::string& name);
