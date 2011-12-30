@@ -29,9 +29,9 @@ class TileType;
 	tile-bound event script funtion.
 */
 enum TileEventTrigger {
-	onUse,
 	onEnter,
 	onLeave,
+	onUse,
 	door
 };
 
@@ -52,7 +52,8 @@ enum TileFlags {
 
 	// Event flags, don't parse for these. We set them ourselves.
 	hasOnEnter    = 0x0100,
-	hasOnLeave    = 0x0200
+	hasOnLeave    = 0x0200,
+	hasOnUse      = 0x0400
 };
 
 //! Stores info for an event attached to a tile.
@@ -102,12 +103,21 @@ public:
 
 	void onEnterScripts(Resourcer* rc, Entity* triggeredBy);
 	void onLeaveScripts(Resourcer* rc, Entity* triggeredBy);
+	void onUseScripts(Resourcer* rc, Entity* triggeredBy);
 
 private:
-	//! Runs all scripts of type 'trigger'. Binds the rc and entity.
+	//! Runs all scripts owned by this tile or its type.
 	void runScripts(Resourcer* rc, Entity* entity,
-	                const TileEventTrigger trigger,
-	                const std::vector<TileEvent>& events);
+	                TileFlags flag, TileEventTrigger trigger);
+
+	//! Runs all scripts from a group that match the trigger.
+	void runScriptGroup(Resourcer* rc, Entity* entity,
+	                    TileEventTrigger trigger,
+	                    const std::vector<TileEvent>& events);
+
+	//! Runs a single script.
+	void runScript(Resourcer* rc, Entity* entity,
+	               const std::string& script);
 };
 
 //! Contains the properties shared by all tiles of a certain type.

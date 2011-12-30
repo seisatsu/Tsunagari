@@ -144,7 +144,8 @@ void Entity::updateTile(unsigned long dt)
 		}
 	}
 	else {
-		double angle = angleFromXY(r.x - destCoord.x, destCoord.y - r.y);
+		double angle = angleFromXY(r.x - destCoord.x,
+		                           destCoord.y - r.y);
 		double dx = cos(angle);
 		double dy = -sin(angle);
 

@@ -4,6 +4,7 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
+#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <Gosu/Audio.hpp>
 #include <Gosu/Input.hpp>
@@ -112,8 +113,13 @@ void Player::moveByTile(icoord delta)
 	Entity::moveByTile(delta);
 }
 
-void Player::tryUse()
+void Player::useTile()
 {
+	std::vector<icoord> tiles = frontTiles();
+	BOOST_FOREACH(icoord& c, tiles) {
+		Tile& t = area->getTile(c);
+		t.onUseScripts(rc, this);
+	}
 }
 
 void Player::preMove()

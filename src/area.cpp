@@ -73,6 +73,8 @@ void Area::buttonDown(const Gosu::Button btn)
 		player->startMovement(icoord(0, -1, 0));
 	else if (btn == Gosu::kbDown)
 		player->startMovement(icoord(0, 1, 0));
+	else if (btn == Gosu::kbSpace)
+		player->useTile();
 }
 
 void Area::buttonUp(const Gosu::Button btn)
@@ -406,6 +408,7 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
     <property name="flags" value="nowalk"/>
     <property name="onEnter" value="skid();speed(2)"/>
     <property name="onLeave" value="undo()"/>
+    <property name="onUse" value="undo()"/>
    </properties>
   </tile>
   <tile id="14">
@@ -433,7 +436,8 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 		else if (name == "onEnter") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor, "script not found: " + filename);
+				Log::err(descriptor,
+				         "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
@@ -445,7 +449,8 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 		else if (name == "onLeave") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor, "script not found: " + filename);
+				Log::err(descriptor,
+				         "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
@@ -453,6 +458,19 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 			e.script = filename;
 			type.events.push_back(e);
 			type.flags |= hasOnLeave;
+		}
+		else if (name == "onUse") {
+			std::string filename = value;
+			if (!rc->resourceExists(filename)) {
+				Log::err(descriptor,
+				         "script not found: " + filename);
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onUse;
+			e.script = filename;
+			type.events.push_back(e);
+			type.flags |= hasOnUse;
 		}
 		else if (name == "members") {
 			std::string memtemp;
@@ -464,7 +482,8 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 			// Make sure the first member is this tile.
 			if (atoi(members[0].c_str()) != id) {
 				Log::err(descriptor, "first member of tile"
-					" id " + itostr(id) + " animation must be itself.");
+					" id " + itostr(id) +
+					" animation must be itself.");
 				return false;
 			}
 
@@ -629,6 +648,7 @@ bool Area::processObjectGroup(XMLNode node)
    <properties>
     <property name="onEnter" value="speed(0.5)"/>
     <property name="onLeave" value="undo()"/>
+    <property name="onUse" value="undo()"/>
     <property name="door" value="grassfield.area,1,1,0"/>
     <property name="flags" value="npc_nowalk"/>
    </properties>
@@ -699,6 +719,7 @@ bool Area::processObject(XMLNode node, int z)
    <properties>
     <property name="onEnter" value="speed(0.5)"/>
     <property name="onLeave" value="undo()"/>
+    <property name="onUse" value="undo()"/>
     <property name="door" value="grassfield.area,1,1,0"/>
     <property name="flags" value="npc_nowalk"/>
    </properties>
@@ -725,7 +746,8 @@ bool Area::processObject(XMLNode node, int z)
 		else if (name == "onEnter") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor, "script not found: " + filename);
+				Log::err(descriptor,
+				         "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
@@ -737,7 +759,8 @@ bool Area::processObject(XMLNode node, int z)
 		else if (name == "onLeave") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor, "script not found: " + filename);
+				Log::err(descriptor,
+				         "script not found: " + filename);
 				continue;
 			}
 			TileEvent e;
@@ -745,6 +768,19 @@ bool Area::processObject(XMLNode node, int z)
 			e.script = filename;
 			events.push_back(e);
 			flags |= hasOnLeave;
+		}
+		else if (name == "onUse") {
+			std::string filename = value;
+			if (!rc->resourceExists(filename)) {
+				Log::err(descriptor,
+				         "script not found: " + filename);
+				continue;
+			}
+			TileEvent e;
+			e.trigger = onUse;
+			e.script = filename;
+			events.push_back(e);
+			flags |= hasOnUse;
 		}
 		else if (name == "door") {
 			door.reset(parseDoor(value));

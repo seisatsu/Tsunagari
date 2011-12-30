@@ -29,7 +29,7 @@ public:
 	void moveByTile(icoord delta);
 
 	//! Try to use an object in front of the player.
-	void tryUse();
+	void useTile();
 
 protected:
 	void preMove();
