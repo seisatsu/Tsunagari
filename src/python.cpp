@@ -18,14 +18,18 @@
 #include <parsetok.h> // for PyParser_ParseStringFlags
 // End Python
 
+#include "area.h" // for exportArea
+#include "entity.h" // for exportEntity
 #include "log.h"
 #include "python.h"
-#include "resourcer.h"
+#include "resourcer.h" // for exportResourcer
 
 namespace python = boost::python;
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
+	exportArea();
+	exportEntity();
 	exportResourcer();
 }
 

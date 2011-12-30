@@ -172,5 +172,7 @@ protected:
 	ClientValues* conf;
 };
 
+void exportEntity();
+
 #endif
 
