@@ -7,6 +7,7 @@
 #include <boost/foreach.hpp>
 
 #include "area.h"
+#include "python.h"
 #include "tile.h"
 #include "window.h"
 
@@ -94,5 +95,24 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 		}
 	}
 	return false;
+}
+
+
+void exportTile()
+{
+	boost::python::class_<Tile>("Tile", boost::python::no_init)
+		.def("hasFlag", &Tile::hasFlag)
+		.def("onEnterScripts", &Tile::onEnterScripts)
+		.def("onLeaveScripts", &Tile::onLeaveScripts);
+}
+
+void exportTileType()
+{
+	boost::python::class_<TileType>("TileType", boost::python::no_init);
+}
+
+void exportDoor()
+{
+	boost::python::class_<Door>("Door", boost::python::no_init);
 }
 

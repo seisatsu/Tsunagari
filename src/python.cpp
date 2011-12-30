@@ -23,14 +23,20 @@
 #include "log.h"
 #include "python.h"
 #include "resourcer.h" // for exportResourcer
+#include "tile.h" // for export{Tile,TileType,Door}
 
 namespace python = boost::python;
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
-	exportArea();
-	exportEntity();
 	exportResourcer();
+
+	exportEntity();
+
+	exportArea();
+	exportTile();
+	exportTileType();
+	exportDoor();
 }
 
 static void pythonIncludeModule(const char* name)

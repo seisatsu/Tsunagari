@@ -137,5 +137,9 @@ private:
 	bool visibleIn(const Area& area, const icube_t& tiles) const;
 };
 
+void exportTile();
+void exportTileType();
+void exportDoor();
+
 #endif
 
