@@ -18,6 +18,7 @@
 #include "common.h"
 #include "entity.h"
 #include "log.h"
+#include "python.h"
 #include "resourcer.h"
 #include "tile.h"
 #include "window.h"
@@ -837,5 +838,12 @@ Door Area::parseDoor(const std::string dest)
 	door.tile.y = atoi(strs[2].c_str());
 	door.tile.z = atoi(strs[3].c_str());
 	return door;
+}
+
+
+void exportArea()
+{
+	boost::python::class_<Area>("Area", boost::python::no_init)
+		.def("tileExists", &Area::tileExists);
 }
 

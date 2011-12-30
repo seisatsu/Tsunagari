@@ -11,13 +11,11 @@ CXX = g++
 # Warning flags to enable.
 WFLAGS = -Wall -Wextra -Wconversion
 
-# Libraries to include.
-LIBS = -lboost_program_options -lgosu -lphysfs $(shell xml2-config --libs)
-
 # Compiler and linker flags.
 CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic -ansi $(WFLAGS) \
-	$(shell xml2-config --cflags)
-LDFLAGS = $(BLDLDFLAGS) $(LIBS)
+	$(shell pkg-config --cflags python-2.7) $(shell xml2-config --cflags)
+LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
+	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
 
 # Name of testing world.
 TESTWORLD = testing.world
@@ -31,7 +29,8 @@ depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
 tsunagari: animation.o area.o cmd.o common.o entity.o log.o main.o music.o \
-           player.o resourcer.o tile.o viewport.o window.o world.o xml.o
+           player.o python.o resourcer.o tile.o viewport.o window.o world.o \
+           xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
@@ -56,20 +55,21 @@ cmd.o: cmd.cpp cmd.h common.h log.h math.h
 common.o: common.cpp common.h log.h math.h
 entity.o: animation.h area.h common.h config.h entity.cpp entity.h log.h \
  math.h music.h player.h resourcer.h tile.h viewport.h window.h xml.h
-image.o: image.cpp
 log.o: config.h log.cpp log.h
-main.o: cmd.h common.h config.h log.h main.cpp math.h window.h
+main.o: cmd.h common.h config.h log.h main.cpp math.h python.h window.h
 music.o: common.h log.h math.h music.cpp music.h resourcer.h xml.h
 player.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.cpp player.h resourcer.h tile.h viewport.h window.h world.h xml.h
-resourcer.o: common.h config.h log.h math.h resourcer.cpp resourcer.h \
- window.h xml.h
+ player.cpp player.h python.h resourcer.h tile.h viewport.h window.h world.h \
+ xml.h
+python.o: common.h log.h math.h python.cpp python.h resourcer.h xml.h
+resourcer.o: common.h config.h log.h math.h python.h resourcer.cpp \
+ resourcer.h window.h xml.h
 tile.o: animation.h area.h common.h entity.h log.h math.h music.h player.h \
  resourcer.h tile.cpp tile.h viewport.h window.h xml.h
 viewport.o: animation.h area.h common.h entity.h log.h math.h music.h \
  player.h resourcer.h tile.h viewport.cpp viewport.h window.h xml.h
-window.o: animation.h common.h config.h entity.h log.h math.h player.h \
- resourcer.h tile.h viewport.h window.cpp window.h world.h xml.h
+window.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
+ player.h resourcer.h tile.h viewport.h window.cpp window.h world.h xml.h
 world.o: animation.h area.h common.h entity.h log.h math.h music.h player.h \
  resourcer.h tile.h viewport.h window.h world.cpp world.h xml.h
 xml.o: common.h config.h log.h math.h xml.cpp xml.h

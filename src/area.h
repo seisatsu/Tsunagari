@@ -171,5 +171,7 @@ private:
 	std::string onLoadEvents;
 };
 
+void exportArea();
+
 #endif
 

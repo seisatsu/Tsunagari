@@ -13,6 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
+#include <Python.h>
 
 #include "common.h"
 #include "xml.h"
@@ -27,17 +28,18 @@ namespace Gosu {
 
 class GameWindow;
 
+using boost::shared_ptr;
+
 // We hand out and manage Gosu resources in these forms:
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Gosu::Sample> SampleRef;
 typedef boost::shared_ptr<Gosu::Song> SongRef;
 typedef boost::shared_ptr<XMLDoc> XMLRef;
 typedef std::deque<ImageRef> TiledImage;
+typedef boost::shared_ptr<TiledImage> TiledImageRef;
+typedef boost::shared_ptr<std::string> StringRef;
 
-//! Resourcer Class
-/*!
-	This class provides the engine's resource handling and caching.
-*/
+//! This class provides the engine's resource handling and caching.
 class Resourcer
 {
 public:
@@ -67,6 +69,12 @@ public:
 	XMLRef getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
 
+	//! Requests a Python script be run from disk or cache.
+	bool runPythonScript(const std::string& name);
+
+	//! Requests a text resource from disk or cache.
+	std::string getText(const std::string& name);
+
 	//! Expunge old stuff from the cache.
 	void garbageCollect();
 
@@ -83,14 +91,18 @@ private:
 	// Resource maps.
 	typedef boost::unordered_map<const std::string, CacheEntry<ImageRef> >
 		ImageRefMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<
-		boost::shared_ptr<TiledImage> > > TiledImageMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<TiledImageRef> >
+		TiledImageMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<SampleRef> >
 		SampleRefMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<SongRef> >
 		SongRefMap;
 	typedef boost::unordered_map<const std::string, CacheEntry<XMLRef> >
 		XMLRefMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<PyCodeObject*> >
+		CodeMap;
+	typedef boost::unordered_map<const std::string, CacheEntry<StringRef> >
+		TextRefMap;
 
 
 	//! Garbage collect a map.
@@ -120,7 +132,11 @@ private:
 	SampleRefMap samples;
 	SongRefMap songs;
 	XMLRefMap xmls;
+	CodeMap codes;
+	TextRefMap texts;
 };
+
+void exportResourcer();
 
 #endif
 

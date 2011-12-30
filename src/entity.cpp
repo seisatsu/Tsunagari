@@ -15,6 +15,7 @@
 #include "config.h"
 #include "entity.h"
 #include "log.h"
+#include "python.h"
 #include "resourcer.h"
 #include "window.h"
 #include "xml.h"
@@ -383,8 +384,8 @@ void Entity::tileExitScript()
 {
 	const std::string& name = scripts["tileexit"];
 	if (name.size()) {
-		//std::string lines = rc->getText(name);
-		//pyExec(lines.c_str());
+		pythonSetGlobal("entity", this);
+		rc->runPythonScript(name);
 	}
 }
 
@@ -392,8 +393,8 @@ void Entity::tileEntryScript()
 {
 	const std::string& name = scripts["tileentry"];
 	if (name.size()) {
-		//std::string lines = rc->getText(name);
-		//pyExec(lines.c_str());
+		pythonSetGlobal("entity", this);
+		rc->runPythonScript(name);
 	}
 }
 
@@ -576,5 +577,14 @@ bool Entity::processScript(const XMLNode node)
 		Log::err(descriptor, std::string("script not found: ") + filename);
 		return false;
 	}
+}
+
+
+void exportEntity()
+{
+	boost::python::class_<Entity>("Entity", boost::python::no_init)
+		.def("gotoRandomTile", &Entity::gotoRandomTile)
+		.def("setPhase", &Entity::setPhase)
+		.def("setSpeed", &Entity::setSpeed);
 }
 

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include <boost/foreach.hpp>
+#include <boost/python.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp>
@@ -20,6 +21,7 @@
 #include "config.h"
 #include "log.h"
 #include "resourcer.h"
+#include "python.h"
 #include "window.h"
 #include "xml.h"
 
@@ -29,6 +31,7 @@ typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 Resourcer::Resourcer(GameWindow* window, const ClientValues* conf)
 	: window(window), conf(conf)
 {
+	pythonSetGlobal("resourcer", this);
 }
 
 Resourcer::~Resourcer()
@@ -217,6 +220,63 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 	return result;
 }
 
+bool Resourcer::runPythonScript(const std::string& name)
+{
+	if (conf->cacheEnabled) {
+		CodeMap::iterator entry = codes.find(name);
+		if (entry != codes.end()) {
+			int now = GameWindow::getWindow().time();
+			Log::dbg("Resourcer", name + ": requested (cached)");
+			// We set lastUsed to now because it won't be used by
+			// the time reclaim() gets to it.
+			entry->second.lastUsed = now;
+			PyCodeObject* result = entry->second.resource;
+			return pythonExec(result);
+		}
+	}
+	Log::dbg("Resourcer", name + ": requested");
+
+	std::string code = readStringFromDisk(name);
+	PyCodeObject* result = code.size() ?
+		pythonCompile(name.c_str(), code.c_str()) : NULL;
+
+	if (conf->cacheEnabled) {
+		CacheEntry<PyCodeObject*> data;
+		data.resource = result;
+		data.lastUsed = 0;
+		codes[name] = data;
+	}
+
+	return pythonExec(result);
+}
+
+std::string Resourcer::getText(const std::string& name)
+{
+	if (conf->cacheEnabled) {
+		TextRefMap::iterator entry = texts.find(name);
+		if (entry != texts.end()) {
+			int now = GameWindow::getWindow().time();
+			Log::dbg("Resourcer", name + ": requested (cached)");
+			// We set lastUsed to now because it won't be used by
+			// the time reclaim() gets to it.
+			entry->second.lastUsed = now;
+			return *entry->second.resource.get();
+		}
+	}
+	Log::dbg("Resourcer", name + ": requested");
+
+	StringRef result(new std::string(readStringFromDisk(name)));
+
+	if (conf->cacheEnabled) {
+		CacheEntry<StringRef> data;
+		data.resource = result;
+		data.lastUsed = 0;
+		texts[name] = data;
+	}
+
+	return *result.get();
+}
+
 void Resourcer::garbageCollect()
 {
 	reclaim<ImageRefMap, ImageRef>(images);
@@ -224,6 +284,7 @@ void Resourcer::garbageCollect()
 	reclaim<SampleRefMap, SampleRef>(samples);
 	reclaim<SongRefMap, SongRef>(songs);
 	reclaim<XMLRefMap, XMLRef>(xmls);
+	reclaim<TextRefMap, StringRef>(texts);
 }
 
 template<class Map, class MapValue>
@@ -347,5 +408,13 @@ Gosu::Buffer* Resourcer::read(const std::string& name) const
 std::string Resourcer::path(const std::string& entryName) const
 {
 	return conf->world + "/" + entryName;
+}
+
+
+
+void exportResourcer()
+{
+	boost::python::class_<Resourcer>("Resourcer", boost::python::no_init)
+		.def("getText", &Resourcer::getText);
 }
 
