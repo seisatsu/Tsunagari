@@ -11,7 +11,6 @@
 #include <boost/python.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <Gosu/Audio.hpp>
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
@@ -20,8 +19,8 @@
 #include "common.h"
 #include "config.h"
 #include "log.h"
-#include "resourcer.h"
 #include "python.h"
+#include "resourcer.h"
 #include "window.h"
 #include "xml.h"
 
@@ -148,7 +147,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	BufferPtr buffer(read(name));
 	if (!buffer)
 		return SampleRef();
-	SampleRef result(new Gosu::Sample(buffer->frontReader()));
+	SampleRef result(new Sample(new Gosu::Sample(buffer->frontReader())));
 
 	if (conf->cacheEnabled) {
 		CacheEntry<SampleRef> data;
@@ -417,6 +416,7 @@ void exportResourcer()
 	boost::python::class_<Resourcer>("Resourcer", boost::python::no_init)
 		.def("resourceExists", &Resourcer::resourceExists)
 		.def("runPythonScript", &Resourcer::runPythonScript)
+		.def("getSample", &Resourcer::getSample)
 		.def("getText", &Resourcer::getText);
 }
 

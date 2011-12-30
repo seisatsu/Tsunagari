@@ -29,8 +29,8 @@ depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
 tsunagari: animation.o area.o cmd.o common.o entity.o log.o main.o math.o \
-           music.o player.o python.o resourcer.o tile.o viewport.o window.o \
-	   world.o xml.o
+           music.o player.o python.o resourcer.o sound.o tile.o viewport.o \
+	   window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world: %/*
@@ -48,31 +48,37 @@ clean:
 # a #include anywhere or if you add/remove a C++ file.
 
 animation.o: animation.cpp animation.h common.h log.h math.h resourcer.h \
- xml.h
+ sound.h xml.h
 area.o: animation.h area.cpp area.h common.h config.h entity.h log.h math.h \
- music.h player.h python.h resourcer.h tile.h viewport.h window.h world.h \
- xml.h
+ music.h player.h python.h resourcer.h sound.h tile.h viewport.h window.h \
+ world.h xml.h
 cmd.o: cmd.cpp cmd.h common.h log.h math.h
 common.o: common.cpp common.h log.h math.h
 entity.o: animation.h area.h common.h config.h entity.cpp entity.h log.h \
- math.h music.h player.h python.h resourcer.h tile.h viewport.h window.h \
- xml.h
+ math.h music.h player.h python.h resourcer.h sound.h tile.h viewport.h \
+ window.h xml.h
 log.o: config.h log.cpp log.h
 main.o: cmd.h common.h config.h log.h main.cpp math.h python.h window.h
 math.o: math.cpp math.h python.h
-music.o: common.h log.h math.h music.cpp music.h resourcer.h xml.h
+music.o: common.h log.h math.h music.cpp music.h resourcer.h sound.h xml.h
 player.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.cpp player.h resourcer.h tile.h viewport.h window.h world.h xml.h
+ player.cpp player.h resourcer.h sound.h tile.h viewport.h window.h world.h \
+ xml.h
 python.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.h python.cpp python.h resourcer.h tile.h viewport.h xml.h
+ player.h python.cpp python.h resourcer.h sound.h tile.h viewport.h xml.h
 resourcer.o: common.h config.h log.h math.h python.h resourcer.cpp \
- resourcer.h window.h xml.h
+ resourcer.h sound.h window.h xml.h
+sound.o: python.h sound.cpp sound.h
 tile.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.h python.h resourcer.h tile.cpp tile.h viewport.h window.h xml.h
+ player.h python.h resourcer.h sound.h tile.cpp tile.h viewport.h window.h \
+ xml.h
 viewport.o: animation.h area.h common.h config.h entity.h log.h math.h \
- music.h player.h resourcer.h tile.h viewport.cpp viewport.h window.h xml.h
+ music.h player.h resourcer.h sound.h tile.h viewport.cpp viewport.h \
+ window.h xml.h
 window.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.h resourcer.h tile.h viewport.h window.cpp window.h world.h xml.h
+ player.h resourcer.h sound.h tile.h viewport.h window.cpp window.h world.h \
+ xml.h
 world.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.h resourcer.h tile.h viewport.h window.h world.cpp world.h xml.h
+ player.h resourcer.h sound.h tile.h viewport.h window.h world.cpp world.h \
+ xml.h
 xml.o: common.h config.h log.h math.h xml.cpp xml.h

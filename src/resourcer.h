@@ -16,6 +16,7 @@
 #include <Python.h>
 
 #include "common.h"
+#include "sound.h"
 #include "xml.h"
 
 namespace Gosu {
@@ -32,7 +33,7 @@ using boost::shared_ptr;
 
 // We hand out and manage Gosu resources in these forms:
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
-typedef boost::shared_ptr<Gosu::Sample> SampleRef;
+typedef boost::shared_ptr<Sample> SampleRef;
 typedef boost::shared_ptr<Gosu::Song> SongRef;
 typedef boost::shared_ptr<XMLDoc> XMLRef;
 typedef std::deque<ImageRef> TiledImage;

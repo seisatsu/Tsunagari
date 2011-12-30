@@ -122,7 +122,7 @@ void Player::preMove()
 
 	SampleRef step = getSound("step");
 	if (step)
-		step->play(1, 1, 0);
+		step->play();
 
 }
 
