@@ -3,7 +3,7 @@
 # filter-depend.pl
 #   by Paul Merrill <napalminc@gmail.com>
 #
-# Read an list of GNU make dependencies from STDIN.
+# Read a list of GNU make dependencies from STDIN.
 # Remove dependencies not matching a @whitelist pattern.
 # Print what's left to STDOUT.
 #
@@ -39,9 +39,9 @@ sub filter {
 	return grep { whitelisted($_) } @_;
 }
 
-# Word wrap a string to $outputwidth columns. If split over multiple lines, all
-# but the last line are suffixed with a backslash and all but the first line
-# are indented with a space.
+# Word wrap a string to $width columns. If split over multiple lines, all but
+# the last line are suffixed with a backslash and all but the first line are
+# indented with a space.
 sub wrap {
 	my ($space, $token, @rest) = @_;
 	my $len = length($token);
