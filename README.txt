@@ -13,34 +13,39 @@ Tsunagari Tile Engine
 
 Alpha Preview Release 4 "Akatsuki" Revision 1
 
+Note:
+	Compiling requires Jamer's Gosu fork (retro branch).
+	https://github.com/jamer/gosu/tree/retro
+
 -----
 
-Tsunagari is a free tile engine inspired by the cult classic game Yume Nikki.
-It is intended as an open source replacement for the popular proprietary
-RPGMaker game development suite that the original and most fangames were/are
-written on.  The main focus is compatibility with all features of the original
-game, and beyond that it strives to add networking and additional features.
-Tsunagari is written in C++, using the Gosu framework.
+Tsunagari is a tiled game engine inspired by the cult classic game Yume Nikki. 
+It is intended as an open source replacement for the popular proprietary 
+RPGMaker game development suite that the original and most fangames were/are 
+written on. The main focus is compatibility with all features of Yume Nikki, 
+and beyond that it strives to add networking and additional features, and 
+become an all-purpose game authoring suite. Tsunagari is written in C++, using 
+the Gosu framework.
 
 Features:
-Tsunagari will be a comprehensive game design suite for singleplayer 2D games.
-The engine will support several styles, such as roguelikes, RPGs, and RTS
-games. Multiplayer support is more difficult, and is not expected to be present
-in the first release. Tsunagari is intended as an open source replacement for
-game design suites such as RPGMaker, and will allow Python scripting for the
-event system, and for additional custom functionality. As a suite, Tsunagari
-aims to allow as much game variation as possible without direct modifications
-to the engine source code. Game design will require manual file editing during
-the Alpha and Beta phases, but a game editor suite will be shipped with the
-first major release.
+Tsunagari will be a comprehensive game design suite for singleplayer 2D games. 
+The engine will support several styles, such as roguelikes, and old 
+console-style RPGs. Multiplayer support is more difficult, and is not expected 
+to be present in the first release. Tsunagari is intended as an open source 
+replacement for game design suites such as RPGMaker, and will allow Python 
+scripting for the event system, and for additional custom functionality. As a 
+suite, Tsunagari aims to allow as much game variation as possible without 
+direct modifications to the engine source code. Game design will require manual 
+file editing during the Alpha and Beta phases, but a game editor suite will be 
+shipped with the first major release.
 
 Tsunagari license: MIT
 
 Requirements:
-NAME		LICENSE	   LINK
-libboost        (BOOST)  - http://www.boost.org/
-libgosu         (MIT)    - http://www.libgosu.org/     latest git recommended
-libpython       (PYTHON) - http://www.python.org/
-libxml2         (MIT)    - http://xmlsoft.org/
-PhysicsFS       (ZLIB)   - http://icculus.org/physfs/
+NAME        LICENSE     LINK
+libboost    (BOOST)     http://www.boost.org/
+libgosu     (MIT)       http://www.libgosu.org/
+libpython   (PSF)       http://www.python.org/     
+libxml2     (MIT)       http://xmlsoft.org/
+PhysicsFS   (ZLIB)      http://icculus.org/physfs/
 

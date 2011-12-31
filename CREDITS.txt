@@ -12,8 +12,8 @@ Copyright (c) 2010-2011:
 	Paul Merrill
 
 License:
-	OmegaSDG Free Software License
-	<http://wiki.omegasdg.com/index.php?title=Licensing>
+	MIT License
+	<http://www.opensource.org/licenses/mit-license.php>
 
 -----
 
@@ -75,24 +75,14 @@ License:
 
 -----
 
-=== Lua ===
+=== LibPython ===
 
-Copyright (c) 1994–2011:
-	Lua.org
-	PUC-Rio
+Copyright (c) 1990-2011:
+	Python Software Foundation
 
 License:
-	MIT License
-	<http://www.opensource.org/licenses/mit-license.php>
+	PSF License
+	<http://docs.python.org/license.html>
 
 -----
 
-=== src/babysfirst/vlad.sheet ===
-
-Copyright (c) 2011:
-	Reiner “Tiles” Prokein
-
-License:
-	http://www.reinerstilesets.de/lizenz/
-
------
