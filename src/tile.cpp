@@ -7,10 +7,10 @@
 #include <boost/foreach.hpp>
 
 #include "area.h"
+#include "python_optional.h"
 #include "python.h"
 #include "tile.h"
 #include "window.h"
-
 
 Tile::Tile()
 	: type(NULL), flags(0x0)
@@ -63,6 +63,27 @@ void Tile::runScript(Resourcer* rc, Entity* entity, const std::string& script)
 	rc->runPythonScript(script);
 }
 
+boost::optional<Door> Tile::getDoor()
+{
+	return door;
+}
+
+void Tile::setDoor(boost::optional<Door> d)
+{
+	door = d;
+}
+
+void Tile::setWalkable(bool yes)
+{
+	flags = (flags & ~nowalk) | nowalk * !yes;
+}
+
+bool Tile::getWalkable()
+{
+	return !hasFlag(nowalk);
+}
+
+
 
 TileType::TileType()
 	: flags(0x0)
@@ -105,6 +126,10 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 void exportTile()
 {
 	boost::python::class_<Tile>("Tile", boost::python::no_init)
+		.add_property("door", &Tile::getDoor, &Tile::setDoor)
+		.add_property("walkable",
+		  &Tile::getWalkable, &Tile::setWalkable)
+		.def_readwrite("type", &Tile::type)
 		.def("hasFlag", &Tile::hasFlag)
 		.def("onEnterScripts", &Tile::onEnterScripts)
 		.def("onLeaveScripts", &Tile::onLeaveScripts);
@@ -117,6 +142,9 @@ void exportTileType()
 
 void exportDoor()
 {
-	boost::python::class_<Door>("Door", boost::python::no_init);
+	boost::python::class_<Door>("Door")
+		.def_readwrite("area", &Door::area)
+		.def_readwrite("tile", &Door::tile);
+	boost::python::optional_<Door>();
 }
 

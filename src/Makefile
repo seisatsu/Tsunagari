@@ -70,8 +70,8 @@ resourcer.o: common.h config.h log.h math.h python.h resourcer.cpp \
  resourcer.h sound.h window.h xml.h
 sound.o: python.h sound.cpp sound.h
 tile.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
- player.h python.h resourcer.h sound.h tile.cpp tile.h viewport.h window.h \
- xml.h
+ player.h python.h python_optional.h resourcer.h sound.h tile.cpp tile.h \
+ viewport.h window.h xml.h
 viewport.o: animation.h area.h common.h config.h entity.h log.h math.h \
  music.h player.h resourcer.h sound.h tile.h viewport.cpp viewport.h \
  window.h xml.h

@@ -580,7 +580,8 @@ bool Entity::processScript(const XMLNode node)
 		return true;
 	}
 	else {
-		Log::err(descriptor, std::string("script not found: ") + filename);
+		Log::err(descriptor,
+		         std::string("script not found: ") + filename);
 		return false;
 	}
 }
@@ -589,9 +590,9 @@ bool Entity::processScript(const XMLNode node)
 void exportEntity()
 {
 	boost::python::class_<Entity>("Entity", boost::python::no_init)
-		.add_property("facing", &Entity::getFacing)
+		.add_property("animation", &Entity::getFacing, &Entity::setPhase)
+		.def("getTileCoords", &Entity::getTileCoords)
 		.def("gotoRandomTile", &Entity::gotoRandomTile)
-		.def("setPhase", &Entity::setPhase)
 		.def("setSpeed", &Entity::setSpeed);
 }
 

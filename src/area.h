@@ -67,6 +67,7 @@ public:
 
 	//! Gosu Callback
 	bool needsRedraw() const;
+	void requestRedraw();
 
 	//! Gosu Callback
 	void update(unsigned long dt);
@@ -82,6 +83,8 @@ public:
 
 	bool loopsInX() const;
 	bool loopsInY() const;
+
+	TileType& getTileType(int idx);
 
 private:
 	//! Calculate frame to show for each type of tile
@@ -137,6 +140,7 @@ private:
 	Viewport* view;
 	Player* player;
 	Music* music;
+	bool redraw;
 	const std::string descriptor;
 
 	typedef std::vector<Tile> row_t;

@@ -105,6 +105,12 @@ public:
 	void onLeaveScripts(Resourcer* rc, Entity* triggeredBy);
 	void onUseScripts(Resourcer* rc, Entity* triggeredBy);
 
+	boost::optional<Door> getDoor();
+	void setDoor(boost::optional<Door> d);
+
+	void setWalkable(bool b);
+	bool getWalkable();
+
 private:
 	//! Runs all scripts owned by this tile or its type.
 	void runScripts(Resourcer* rc, Entity* entity,

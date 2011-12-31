@@ -47,6 +47,7 @@ Area::Area(Resourcer* rc,
 	  player(player),
 	  music(music),
 	  descriptor(descriptor),
+	  redraw(true),
 	  dim(0, 0, 0),
 	  tileDim(0, 0),
 	  loopX(false),
@@ -94,6 +95,7 @@ void Area::draw()
 	updateTileAnimations();
 	drawTiles();
 	drawEntities();
+	redraw = false;
 }
 
 void Area::updateTileAnimations()
@@ -147,6 +149,8 @@ void Area::drawEntities()
 
 bool Area::needsRedraw() const
 {
+	if (redraw)
+		return true;
 	if (player->needsRedraw())
 		return true;
 
@@ -157,8 +161,14 @@ bool Area::needsRedraw() const
 	return false;
 }
 
+void Area::requestRedraw()
+{
+	redraw = true;
+}
+
 void Area::update(unsigned long dt)
 {
+	pythonSetGlobal("area", this);
 	music->update();
 	player->update(dt);
 	view->update(dt);
@@ -228,6 +238,11 @@ bool Area::loopsInX() const
 bool Area::loopsInY() const
 {
 	return loopY;
+}
+
+TileType& Area::getTileType(int idx)
+{
+	return tileTypes[idx];
 }
 
 bool Area::processDescriptor()
@@ -810,16 +825,16 @@ bool Area::processObject(XMLNode node, int z)
 		w = 1;
 		h = 1;
 
-		// We don't actually use the object gid. It is supposed to indicate
-		// which tile our object is rendered as, but, for Tsunagari, tile
-		// objects are always transparent and reveal the tile below.
+		// We don't actually use the object gid. It is supposed to
+		// indicate which tile our object is rendered as, but, for
+		// Tsunagari, tile objects are always transparent and reveal
+		// the tile below.
 	}
 	else {
 		// This is one of Tiled's "Objects". It has a width and height.
 		ASSERT(node.intAttr("width", &w));
-		ASSERT(node.intAttr("height", &h));
-		w /= tileDim.x;
-		h /= tileDim.y;
+		ASSERT(node.intAttr("height", &h)); w /= tileDim.x; h /=
+		tileDim.y;
 	}
 
 	// We know which Tiles are being talked about now... yay
@@ -880,11 +895,20 @@ Door Area::parseDoor(const std::string dest)
 void exportArea()
 {
 	boost::python::class_<Area>("Area", boost::python::no_init)
+		.def("requestRedraw", &Area::requestRedraw)
 		.def("getTile",
 		    static_cast<Tile& (Area::*) (icoord)> (&Area::getTile),
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
-		    >())
-		.def("tileExists", &Area::tileExists);
+		    >()
+		)
+		.def("tileExists", &Area::tileExists)
+		.def("depthIndex", &Area::depthIndex)
+		.def("indexDepth", &Area::indexDepth)
+		.def("getTileType", &Area::getTileType,
+		    boost::python::return_value_policy<
+		      boost::python::reference_existing_object
+		    >()
+		);
 }
 
