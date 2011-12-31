@@ -37,7 +37,7 @@ first major release.
 Tsunagari license: MIT
 
 Requirements:
-NAME		LICENSE	  LINK
+NAME		LICENSE	   LINK
 libboost        (BOOST)  - http://www.boost.org/
 libgosu         (MIT)    - http://www.libgosu.org/     latest git recommended
 libpython       (PYTHON) - http://www.python.org/
