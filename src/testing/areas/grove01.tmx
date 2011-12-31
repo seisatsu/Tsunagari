@@ -8,7 +8,7 @@
  <tileset firstgid="1" name="forest.png" tilewidth="32" tileheight="32">
   <image source="areas/tiles/forest.png" width="544" height="608"/>
  </tileset>
- <layer name="Tiles(-2)" width="10" height="10">
+ <layer name="Tiles(-0.2)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.2"/>
   </properties>
@@ -115,7 +115,7 @@
    <tile gid="76"/>
   </data>
  </layer>
- <layer name="Tiles(-1)" width="10" height="10">
+ <layer name="Tiles(-0.1)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.1"/>
   </properties>
@@ -222,7 +222,7 @@
    <tile gid="278"/>
   </data>
  </layer>
- <layer name="Tiles(1)" width="10" height="10">
+ <layer name="Tiles(0.1)" width="10" height="10">
   <properties>
    <property name="layer" value="0.1"/>
   </properties>

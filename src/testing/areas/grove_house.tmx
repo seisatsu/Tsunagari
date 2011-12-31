@@ -20,7 +20,7 @@
    </properties>
   </tile>
  </tileset>
- <layer name="Tiles(-3)" width="10" height="10">
+ <layer name="Tiles(-0.3)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.3"/>
   </properties>
@@ -127,7 +127,7 @@
    <tile gid="7"/>
   </data>
  </layer>
- <layer name="Tiles(-2)" width="10" height="10">
+ <layer name="Tiles(-0.2)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.2"/>
   </properties>
@@ -234,7 +234,7 @@
    <tile gid="51"/>
   </data>
  </layer>
- <layer name="Tiles(-1)" width="10" height="10">
+ <layer name="Tiles(-0.1)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.1"/>
   </properties>
@@ -341,7 +341,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="Tiles(1)" width="10" height="10">
+ <layer name="Tiles(0.1)" width="10" height="10">
   <properties>
    <property name="layer" value="0.1"/>
   </properties>

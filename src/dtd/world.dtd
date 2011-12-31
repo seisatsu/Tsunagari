@@ -1,4 +1,4 @@
-<!ELEMENT world (name, author, version, player, type, entrypoint, viewport, initscript?)>
+<!ELEMENT world (name, author, version, player, type, entrypoint, viewport, input?, initscript?)>
 
 <!ELEMENT name (#PCDATA)>
 
@@ -17,6 +17,10 @@
                      x     CDATA #REQUIRED
                      y     CDATA #REQUIRED
                      layer CDATA #REQUIRED>
+
+<!ELEMENT input EMPTY>
+<!ATTLIST input persist-delay-init        CDATA #REQUIRED
+                persist-delay-consecutive CDATA #REQUIRED>
 
 <!ELEMENT viewport EMPTY>
 <!ATTLIST viewport height CDATA #REQUIRED
