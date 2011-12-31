@@ -17,8 +17,9 @@ def getTile(x, y, z):
 # Unlock the door!
 tile = getTile(4, 0, 0.0) # closed door on north wall
 tile.walkable = True
-tile.type = area.getTileType(7) # change to wooden floor tile
-tile.door = createDoor("areas/grove_house.tmx", 5, 8, 0)
+tile.type = area.getTileType(55) # change to open door
+tile.door = createDoor("areas/secret_room.tmx", 4, 4, 0)
 area.requestRedraw()
 playSnd("sounds/door.oga") # unlocking sound
+
 

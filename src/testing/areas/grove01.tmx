@@ -385,7 +385,7 @@
   </object>
   <object gid="76" x="0" y="288">
    <properties>
-    <property name="door" value="areas/grove02.tmx,9,8,0"/>
+    <property name="door" value="areas/grove02.tmx,8,8,0"/>
    </properties>
   </object>
  </objectgroup>
