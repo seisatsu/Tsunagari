@@ -76,7 +76,6 @@
 	</sounds>
 	
 	<scripts>
-		<script trigger="tileentry">entities/player/tileentry.py</script>
 	</scripts>
 </entity>
 
