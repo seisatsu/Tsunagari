@@ -4,7 +4,6 @@
 ** Copyright 2011 OmegaSDG   **
 ******************************/
 
-#include <stdlib.h> // for exit
 #include <string.h> // for strrchr
 
 #include <boost/format.hpp>
@@ -83,7 +82,6 @@ void pythonErr()
 	Log::err("Python", boost::str(
 		boost::format("%s: %s") % type % value
 	));
-	exit(1);
 }
 
 python::object pythonGlobals()
