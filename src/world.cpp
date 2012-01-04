@@ -28,7 +28,6 @@ World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
 
 World::~World()
 {
-	delete music;
 }
 
 bool World::init()
@@ -36,7 +35,7 @@ bool World::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 
-	music = new Music(rc);
+	music.reset(new Music(rc));
 
 	if (!player.init(xml.playerentity))
 		return false;
@@ -87,7 +86,7 @@ void World::update(unsigned long dt)
 bool World::loadArea(const std::string& areaName, icoord playerPos)
 {
 	AreaPtr oldArea(area);
-	AreaPtr newArea(new Area(rc, this, view, &player, music, areaName));
+	AreaPtr newArea(new Area(rc, this, view, &player, music.get(), areaName));
 	if (!newArea->init())
 		return false;
 	setArea(newArea, playerPos);

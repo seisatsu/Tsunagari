@@ -17,6 +17,7 @@
 #include <boost/program_options/detail/config_file.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <libxml/parser.h>
+#include <boost/scoped_ptr.hpp>
 
 #include "common.h"
 #include "config.h"
@@ -26,7 +27,7 @@
 #include "window.h"
 
 #ifdef _WINDOWS
-	#include <Windows.h>
+	#include <windows.h>
 #endif
 
 /* Output compiled-in engine defaults. */
@@ -60,22 +61,20 @@ static void defaultsQuery()
  * information will be stored in an ini file which we parse here.
  *
  * @param filename Name of the ini file to load from.
+ * @param conf ClientValues object to populate
  *
- * @return ClientValues object if successful
+ * @return false if error occured during processing
  */
-static ClientValues* parseConfig(const char* filename)
+static bool parseConfig(const char* filename, ClientValues* conf)
 {
 	namespace pod = boost::program_options::detail;
-
-	ClientValues* conf = new ClientValues;
 
 	conf->cacheEnabled = CACHE_EMPTY_TTL && CACHE_MAX_SIZE;
 
 	std::ifstream config(filename);
 	if (!config) {
 		Log::err(filename, "could not parse config");
-		delete conf;
-		return NULL;
+		return false;
 	}
 
 	std::set<std::string> options;
@@ -88,28 +87,28 @@ static ClientValues* parseConfig(const char* filename)
 
 	if (parameters["engine.world"].empty()) {
 		Log::err(filename, "\"[engine] world\" option expected");
-		return NULL;
+		return false;
 	}
 	else
 		conf->world = parameters["engine.world"];
 
 	if (parameters["window.width"].empty()) {
 		Log::err(filename, "\"[window] width\" option expected");
-		return NULL;
+		return false;
 	}
 	else
 		conf->windowSize.x = atoi(parameters["window.width"].c_str());
 
 	if (parameters["window.height"].empty()) {
 		Log::err(filename, "\"[window] height\" option expected");
-		return NULL;
+		return false;
 	}
 	else
 		conf->windowSize.y = atoi(parameters["window.height"].c_str());
 
 	if (parameters["window.fullscreen"].empty()) {
 		Log::err(filename, "\"[window] fullscreen\" option expected");
-		return NULL;
+		return false;
 	}
 	else
 		conf->fullscreen = parseBool(parameters["window.fullscreen"]);
@@ -161,7 +160,7 @@ static ClientValues* parseConfig(const char* filename)
 		conf->logLevel = MESSAGE_MODE;
 	}
 
-	return conf;
+	return true;
 }
 
 /* Parse and process command line options and arguments. */
@@ -204,12 +203,8 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	}
 
 	if (cmd.check("--config")) {
-		delete conf;
-		conf = parseConfig(cmd.get("--config").c_str());
-		if (!conf) {
-			Log::err(cmd.get("--config"), "loading config failed");
+		if (!parseConfig(cmd.get("--config").c_str(), conf))
 			return false;
-		}
 	}
 
 	if (cmd.check("--gameworld"))
@@ -267,26 +262,29 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	return true;
 }
 
-static void initLibraries()
+struct libraries
 {
-	// Initialize the C library's random seed.
-	srand((unsigned)time(NULL));
+	libraries()
+	{
+		// Initialize the C library's random seed.
+		srand((unsigned)time(NULL));
 
-	/*
-	 * This initializes the library and checks for potential ABI mismatches
-	 * between the version it was compiled for and the actual shared
-	 * library used.
-	 */
-	LIBXML_TEST_VERSION
+		/*
+		 * This initializes the XML library and checks for potential
+		 * ABI mismatches between the version it was compiled for and
+		 * the actual shared library used.
+		 */
+		LIBXML_TEST_VERSION
 
-	pythonInit();
-}
+		pythonInit();
+	}
 
-static void cleanupLibraries()
-{
-	pythonFinalize();
-	xmlCleanupParser();
-}
+	~libraries()
+	{
+		pythonFinalize();
+		xmlCleanupParser();
+	}
+};
 
 /**
  * Load client config and instantiate window.
@@ -303,32 +301,21 @@ int main(int argc, char** argv)
 	}
 	#endif
 
-	initLibraries();
+	// Init various libraries we use.
+	libraries libs;
 
-	ClientValues* conf = parseConfig(CLIENT_CONF_FILE);
-
-	if (!parseCommandLine(argc, argv, conf)) {
-		delete conf;
+	ClientValues conf;
+	if (!parseConfig(CLIENT_CONF_FILE, &conf))
 		return 1;
-	}
-
-	if (conf && conf->logLevel)
-		Log::setMode(conf->logLevel);
-
-	if (!conf) {
-		Log::err(CLIENT_CONF_FILE, "loading config failed");
-		delete conf;
+	if (!parseCommandLine(argc, argv, &conf))
 		return 1;
-	}
+	if (conf.logLevel)
+		Log::setMode(conf.logLevel);
 
-	GameWindow window(conf);
-	if (window.init(argv))
-		window.show();
-
-	delete conf;
-
-	cleanupLibraries();
-
+	GameWindow window(&conf);
+	if (!window.init(argv))
+		return 1;
+	window.show();
 	return 0;
 }
 

@@ -9,6 +9,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/python.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Bitmap.hpp>
@@ -337,7 +338,7 @@ XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
 std::string Resourcer::readStringFromDisk(const std::string& name) const
 {
 	unsigned long size;
-	char* buf;
+	boost::scoped_array<char> buf;
 	std::string str;
 	PHYSFS_File* zf;
 
@@ -353,10 +354,10 @@ std::string Resourcer::readStringFromDisk(const std::string& name) const
 	}
 
 	size = (unsigned long)PHYSFS_fileLength(zf);
-	buf = new char[size + 1];
+	buf.reset(new char[size + 1]);
 	buf[size] = '\0';
 
-	if (PHYSFS_read(zf, buf, 1,
+	if (PHYSFS_read(zf, buf.get(), 1,
 	   (PHYSFS_uint32)PHYSFS_fileLength(zf)) == -1) {
 		Log::err("Resourcer", path(name) + ": general I/O error"
 			" during loading");
@@ -364,8 +365,7 @@ std::string Resourcer::readStringFromDisk(const std::string& name) const
 		return "";
 	}
 
-	str = buf;
-	delete[] buf;
+	str = buf.get();
 
 	PHYSFS_close(zf);
 	return str;

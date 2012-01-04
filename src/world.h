@@ -85,7 +85,7 @@ private:
 	ClientValues* conf;
 	Viewport* view;
 	AreaPtr area;
-	Music* music;
+	boost::scoped_ptr<Music> music;
 	Player player;
 
 	//! WorldTypeLocality XML Storage Enum
