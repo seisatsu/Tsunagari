@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** python.cpp                **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** python.cpp                   **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include <string.h> // for strrchr
 

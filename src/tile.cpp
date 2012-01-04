@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** tile.cpp                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** tile.cpp                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include <boost/foreach.hpp>
 

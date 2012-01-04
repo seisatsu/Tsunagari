@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** config.h                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** config.h                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef CONFIG_H
 #define CONFIG_H

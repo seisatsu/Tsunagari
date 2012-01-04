@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** log.h                     **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** log.h                        **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef LOG_H
 #define LOG_H

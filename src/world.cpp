@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** world.cpp                 **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** world.cpp                    **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include <Gosu/Utility.hpp>
 

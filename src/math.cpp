@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** math.cpp                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** math.cpp                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include "math.h"
 #include "python.h"

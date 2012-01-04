@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** area.cpp                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** area.cpp                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include <math.h>
 #include <vector>

@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** viewport.cpp              **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** viewport.cpp                 **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include <Gosu/Graphics.hpp> // for Gosu::screenWidth/Height()
 #include <Gosu/Math.hpp>

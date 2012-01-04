@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** log.cpp                   **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** log.cpp                      **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include "config.h"
 #include "log.h"

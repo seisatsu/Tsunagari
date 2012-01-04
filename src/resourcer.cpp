@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** resourcer.cpp             **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** resourcer.cpp                **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include <errno.h>
 #include <stdlib.h>

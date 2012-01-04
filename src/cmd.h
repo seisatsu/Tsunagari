@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** cmd.h                     **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** cmd.h                        **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef CMD_H
 #define CMD_H

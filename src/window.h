@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** window.h                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** window.h                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef WINDOW_H
 #define WINDOW_H

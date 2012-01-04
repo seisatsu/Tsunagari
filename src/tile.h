@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** tile.h                    **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** tile.h                       **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef TILE_H
 #define TILE_H

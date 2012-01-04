@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** entity.h                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** entity.h                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef ENTITY_H
 #define ENTITY_H

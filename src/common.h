@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** common.h                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** common.h                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef COMMON_H
 #define COMMON_H

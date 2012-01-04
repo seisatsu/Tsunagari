@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** math.h                    **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** math.h                       **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef MATH_H
 #define MATH_H

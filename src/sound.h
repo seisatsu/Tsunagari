@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** sound.h                   **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** sound.h                      **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef SAMPLE_H
 #define SAMPLE_H

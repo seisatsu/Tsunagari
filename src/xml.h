@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** xml.h                     **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** xml.h                        **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef XML_H
 #define XML_H

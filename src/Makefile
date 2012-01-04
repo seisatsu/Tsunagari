@@ -1,5 +1,5 @@
 ############################################################
-# Tsunagari Tile Engine primary source Makefile (gnu make) #
+# Tsunagari Tile Engine Primary Source Makefile (gnu make) #
 ############################################################
 
 

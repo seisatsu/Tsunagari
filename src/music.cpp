@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** music.cpp                 **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** music.cpp                    **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #include "music.h"
 

@@ -1,8 +1,12 @@
+/*********************************
+** Tsunagari Tile Engine        **
+** python-optional.h            **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
+
 /*
  * Based on
  * http://stackoverflow.com/questions/6274822/boost-python-no-to-python-converter-found-for-stdstring
- *
- * Copyright 2011 OmegaSDG
  */
 
 #include <boost/optional.hpp>

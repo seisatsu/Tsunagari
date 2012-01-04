@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** player.h                  **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** player.h                     **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef PLAYER_H
 #define PLAYER_H

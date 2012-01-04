@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** area.h                    **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** area.h                       **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef AREA_H
 #define AREA_H

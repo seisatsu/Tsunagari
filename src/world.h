@@ -1,8 +1,8 @@
-/******************************
-** Tsunagari Tile Engine     **
-** world.h                   **
-** Copyright 2011 OmegaSDG   **
-******************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** world.h                      **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 #ifndef WORLD_H
 #define WORLD_H
