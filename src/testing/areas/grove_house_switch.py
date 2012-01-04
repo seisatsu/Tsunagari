@@ -22,4 +22,3 @@ tile.door = createDoor("areas/secret_room.tmx", 4, 4, 0)
 area.requestRedraw()
 playSnd("sounds/door.oga") # unlocking sound
 
-

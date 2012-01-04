@@ -46,8 +46,8 @@ Area::Area(Resourcer* rc,
 	  view(view),
 	  player(player),
 	  music(music),
-	  descriptor(descriptor),
 	  redraw(true),
+	  descriptor(descriptor),
 	  dim(0, 0, 0),
 	  tileDim(0, 0),
 	  loopX(false),
@@ -243,6 +243,13 @@ bool Area::loopsInY() const
 TileType& Area::getTileType(int idx)
 {
 	return tileTypes[idx];
+}
+
+void Area::reset()
+{
+	icoord c = player->getTileCoords();
+	c.z = (int)indexDepth(c.z);
+	world->loadArea(descriptor, c);
 }
 
 bool Area::processDescriptor()
@@ -909,6 +916,7 @@ void exportArea()
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
-		);
+		)
+		.def("reset", &Area::reset);
 }
 

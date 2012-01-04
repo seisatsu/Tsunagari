@@ -85,6 +85,7 @@ public:
 	bool loopsInY() const;
 
 	TileType& getTileType(int idx);
+	void reset();
 
 private:
 	//! Calculate frame to show for each type of tile
