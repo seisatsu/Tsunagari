@@ -8,6 +8,7 @@
 
 #include "common.h"
 #include "log.h"
+#include "python.h"
 #include "resourcer.h"
 #include "window.h"
 #include "world.h"
@@ -37,15 +38,20 @@ bool World::init()
 
 	music.reset(new Music(rc));
 
-	if (!player.init(xml.playerentity))
+	if (!player.init(playerentity))
 		return false;
 	player.setPhase("down");
 
-	view = new Viewport(*wnd, xml.viewport);
+	if (onLoadScript.size()) {
+		pythonSetGlobal("player", &player);
+		rc->runPythonScript(onLoadScript);
+	}
+
+	view = new Viewport(*wnd, viewport);
 	view->trackEntity(&player);
 
-	wnd->setCaption(Gosu::widen(xml.name));
-	return loadArea(xml.entry.area, xml.entry.coords);
+	wnd->setCaption(Gosu::widen(name));
+	return loadArea(entry.area, entry.coords);
 }
 
 void World::buttonDown(const Gosu::Button btn)
@@ -100,6 +106,12 @@ void World::setArea(AreaPtr area, icoord playerPos)
 	player.setArea(area.get());
 	player.setTileCoords(playerPos);
 	view->setArea(area.get());
+
+	if (onAreaLoadScript.size()) {
+		pythonSetGlobal("area", newArea.get());
+		rc->runPythonScript(onAreaLoadScript);
+	}
+	newArea->runOnLoads();
 }
 
 bool World::processDescriptor()
@@ -113,17 +125,17 @@ bool World::processDescriptor()
 
 	for (XMLNode node = root.childrenNode(); node; node = node.next()) {
 		if (node.is("name")) {
-			xml.name = node.content();
+			name = node.content();
 		} else if (node.is("author")) {
-			xml.author = node.content();
+			author = node.content();
 		} else if (node.is("player")) {
-			xml.playerentity = node.content();
+			playerentity = node.content();
 		} else if (node.is("type")) {
 			std::string str = node.attr("locality");
 			if (str == "local")
-				xml.locality = LOCAL;
+				locality = LOCAL;
 			else if (str == "network")
-				xml.locality = NETWORK;
+				locality = NETWORK;
 
 			str = node.attr("movement");
 			if (str == "turn")
@@ -133,17 +145,35 @@ bool World::processDescriptor()
 			else if (str == "notile")
 				conf->moveMode = NOTILE;
 		} else if (node.is("entrypoint")) {
-			xml.entry.area = node.attr("area");
-			if (!node.intAttr("x", &xml.entry.coords.x) ||
-			    !node.intAttr("y", &xml.entry.coords.y) ||
-			    !node.intAttr("z", &xml.entry.coords.z))
+			entry.area = node.attr("area");
+			if (!node.intAttr("x", &entry.coords.x) ||
+			    !node.intAttr("y", &entry.coords.y) ||
+			    !node.intAttr("z", &entry.coords.z))
 				return false;
 		} else if (node.is("viewport")) {
-			if (!node.intAttr("width", &xml.viewport.x) ||
-			    !node.intAttr("height", &xml.viewport.y))
+			if (!node.intAttr("width", &viewport.x) ||
+			    !node.intAttr("height", &viewport.y))
 				return false;
-		} else if (node.is("initscript")) {
-			xml.initscript = node.content();
+		} else if (node.is("onLoad")) {
+			std::string filename = node.content();
+			if (rc->resourceExists(filename)) {
+				onLoadScript = filename;
+			}
+			else {
+				Log::err("world.conf",
+				  std::string("script not found: ") + filename);
+				return false;
+			}
+		} else if (node.is("onAreaLoad")) {
+			std::string filename = node.content();
+			if (rc->resourceExists(filename)) {
+				onAreaLoadScript = filename;
+			}
+			else {
+				Log::err("world.conf",
+				  std::string("script not found: ") + filename);
+				return false;
+			}
 		}
 	}
 	return true;

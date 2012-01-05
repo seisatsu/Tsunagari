@@ -108,19 +108,14 @@ private:
 		icoord coords;
 	};
 
-	//! WorldValues XML Storage Struct
-	/*!
-		Main XML storage struct for World.
-	*/
-	struct WorldValues {
-		std::string name;
-		std::string author;
-		std::string playerentity;
-		WorldTypeLocality locality;
-		WorldEntry entry;
-		std::string initscript;
-		icoord viewport;
-	} xml;
+	std::string name;
+	std::string author;
+	std::string playerentity;
+	WorldTypeLocality locality;
+	WorldEntry entry;
+	std::string onLoadScript;
+	std::string onAreaLoadScript;
+	icoord viewport;
 };
 
 #endif

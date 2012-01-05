@@ -1,4 +1,4 @@
-<!ELEMENT world (name, author, version, player, type, entrypoint, viewport, input?, initscript?)>
+<!ELEMENT world (name, author, version, player, type, entrypoint, viewport, input?, onLoad?, onAreaLoad?)>
 
 <!ELEMENT name (#PCDATA)>
 
@@ -26,5 +26,7 @@
 <!ATTLIST viewport height CDATA #REQUIRED
                    width  CDATA #REQUIRED>
 
-<!ELEMENT initscript (#PCDATA)>
+<!ELEMENT onLoad (#PCDATA)>
+
+<!ELEMENT onAreaLoad (#PCDATA)>
 

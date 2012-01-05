@@ -61,12 +61,15 @@ Area::~Area()
 
 bool Area::init()
 {
-	bool b = processDescriptor();
+	return processDescriptor();
+}
+
+void Area::runOnLoads()
+{
 	BOOST_FOREACH(const std::string& script, onLoadScripts) {
 		pythonSetGlobal("area", this);
 		rc->runPythonScript(script);
 	}
-	return b;
 }
 
 void Area::buttonDown(const Gosu::Button btn)

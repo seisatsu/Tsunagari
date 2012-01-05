@@ -58,6 +58,9 @@ public:
 	//! Function that must be called after the constructor.
 	bool init();
 
+	//! Run all onLoad scripts specified by the Area's descriptor.
+	void runOnLoads();
+
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
 	void buttonUp(const Gosu::Button btn);
