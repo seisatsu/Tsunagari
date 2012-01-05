@@ -43,7 +43,8 @@ bool World::init()
 	player.setPhase("down");
 
 	if (onLoadScript.size()) {
-		pythonSetGlobal("player", &player);
+		// XXX: Is it okay to not have a Player cast?
+		pythonSetGlobal("player", (Entity*)&player);
 		rc->runPythonScript(onLoadScript);
 	}
 
