@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string>
 #include <string.h>
@@ -276,7 +277,8 @@ struct libraries
 		 */
 		LIBXML_TEST_VERSION
 
-		pythonInit();
+		if (!pythonInit())
+			exit(1);
 	}
 
 	~libraries()

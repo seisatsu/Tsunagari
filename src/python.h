@@ -12,7 +12,7 @@
 #include <boost/python.hpp>
 
 //! Initialize Python libraries for use.
-void pythonInit();
+bool pythonInit();
 
 //! Free resourcers used by Python libraries and uninitialize them.
 void pythonFinalize();
@@ -21,7 +21,11 @@ void pythonFinalize();
 void pythonErr();
 
 
-//! Access to global namespace that is used by all Python scripts.
+//! Access to special built-in namespace where Python provides some elementary
+//! functions.
+boost::python::object pythonBuiltins();
+
+//! Access to global namespace shared by all Python scripts.
 boost::python::object pythonGlobals();
 
 //! Convenience function for binding a C++ object into the global Python

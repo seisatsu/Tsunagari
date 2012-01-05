@@ -20,6 +20,14 @@
 
 namespace python = boost::python;
 
+static void pythonUndefine(const char* fn)
+{
+	PyObject* bltins = pythonBuiltins().ptr();
+	PyDict_DelItem(bltins, PyString_FromString(fn));
+	if (PyErr_Occurred())
+		python::throw_error_already_set();
+}
+
 static void pythonIncludeModule(const char* name)
 {
 	python::object module(
@@ -28,17 +36,21 @@ static void pythonIncludeModule(const char* name)
 	pythonGlobals()[name] = module;
 }
 
-void pythonInit()
+bool pythonInit()
 {
 	try {
 		PyImport_AppendInittab("tsunagari", &pythonInitBindings);
 		Py_Initialize();
+		pythonUndefine("execfile");
+		pythonUndefine("open");
 		pythonIncludeModule("tsunagari");
 	} catch (python::error_already_set) {
 		Log::err("Python", "An error occured while populating the "
 			           "Python modules:");
 		pythonErr();
+		return false;
 	}
+	return true;
 }
 
 void pythonFinalize()
@@ -59,6 +71,17 @@ void pythonErr()
 	Log::err("Python", boost::str(
 		boost::format("%s: %s") % type % value
 	));
+}
+
+python::object pythonBuiltins()
+{
+	static bool init = false;
+	static python::object bltins;
+	if (!init) {
+		init = true;
+		bltins = python::import("__builtin__").attr("__dict__");
+	}
+	return bltins;
 }
 
 python::object pythonGlobals()
