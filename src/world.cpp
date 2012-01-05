@@ -108,10 +108,10 @@ void World::setArea(AreaPtr area, icoord playerPos)
 	view->setArea(area.get());
 
 	if (onAreaLoadScript.size()) {
-		pythonSetGlobal("area", newArea.get());
+		pythonSetGlobal("area", area.get());
 		rc->runPythonScript(onAreaLoadScript);
 	}
-	newArea->runOnLoads();
+	area->runOnLoads();
 }
 
 bool World::processDescriptor()

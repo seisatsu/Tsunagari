@@ -8,39 +8,17 @@
 
 #include <boost/format.hpp>
 
-// Python
-#include <Python.h>
+#include "log.h"
+#include "python.h"
+#include "python_bindings.h" // for inittsunagari
 
+// Note: Including before "python.h" breaks Windows builds.
+#include <Python.h>
 #include <grammar.h> // for struct grammar
 #include <node.h> // for struct node
-
 #include <parsetok.h> // for PyParser_ParseStringFlags
-// End Python
-
-#include "area.h" // for exportArea
-#include "entity.h" // for exportEntity
-#include "log.h"
-#include "math.h" // for exportVecs
-#include "python.h"
-#include "resourcer.h" // for exportResourcer
-#include "sound.h" // for exportSound
-#include "tile.h" // for export{Tile,TileType,Door}
 
 namespace python = boost::python;
-
-BOOST_PYTHON_MODULE(tsunagari)
-{
-	exportVecs();
-	exportResourcer();
-
-	exportEntity();
-	exportSound();
-
-	exportArea();
-	exportTile();
-	exportTileType();
-	exportDoor();
-}
 
 static void pythonIncludeModule(const char* name)
 {
@@ -50,11 +28,10 @@ static void pythonIncludeModule(const char* name)
 	pythonGlobals()[name] = module;
 }
 
-
 void pythonInit()
 {
 	try {
-		PyImport_AppendInittab("tsunagari", &inittsunagari);
+		PyImport_AppendInittab("tsunagari", &pythonInitBindings);
 		Py_Initialize();
 		pythonIncludeModule("tsunagari");
 	} catch (python::error_already_set) {
