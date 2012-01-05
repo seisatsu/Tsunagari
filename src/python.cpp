@@ -20,19 +20,23 @@
 
 namespace python = boost::python;
 
-static void pythonUndefine(const char* fn)
+static void pythonUndefineBuiltin(const char* fn)
 {
-	PyObject* bltins = pythonBuiltins().ptr();
-	PyDict_DelItem(bltins, PyString_FromString(fn));
+	python::object str(fn);
+	PyDict_DelItem(pythonBuiltins().ptr(), str.ptr());
 	if (PyErr_Occurred())
 		python::throw_error_already_set();
 }
 
+static void pythonClearSysPath()
+{
+	python::object empty( python::handle<>(PyList_New(0)) );
+	PySys_SetObject((char*)"path", empty.ptr());
+}
+
 static void pythonIncludeModule(const char* name)
 {
-	python::object module(
-		python::handle<>(PyImport_ImportModule(name))
-	);
+	python::object module( python::handle<>(PyImport_ImportModule(name)) );
 	pythonGlobals()[name] = module;
 }
 
@@ -41,9 +45,12 @@ bool pythonInit()
 	try {
 		PyImport_AppendInittab("tsunagari", &pythonInitBindings);
 		Py_Initialize();
-		pythonUndefine("execfile");
-		pythonUndefine("open");
 		pythonIncludeModule("tsunagari");
+
+		// Hack in some rough safety.
+		pythonUndefineBuiltin("execfile");
+		pythonUndefineBuiltin("open");
+		pythonClearSysPath();
 	} catch (python::error_already_set) {
 		Log::err("Python", "An error occured while populating the "
 			           "Python modules:");
@@ -99,6 +106,7 @@ extern grammar _PyParser_Grammar; // From Python's graminit.c
 
 PyCodeObject* pythonCompile(const char* fn, const char* code)
 {
+	// XXX: memory leaks
 	perrdetail err;
 	node* n = PyParser_ParseStringFlagsFilename(
 		code, fn, &_PyParser_Grammar,
