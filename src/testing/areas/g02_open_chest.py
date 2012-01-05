@@ -15,10 +15,12 @@ def getTile(x, y, z):
     return tile
 
 # Open the chest!
-tile = getTile(5, 2, -0.05) # closed chest
-tile2 = getTile(5, 1, -0.05) # closed chest, above
-tile.type = area.getTileType(367) # change to open chest
-tile2.type = area.getTileType(360) # change to open chest, above
-area.requestRedraw()
-playSnd("sounds/door.oga") # unlocking sound
+if openedTheChest == False:
+    openedTheChest = True
+    tile = getTile(5, 2, -0.05) # closed chest
+    tile2 = getTile(5, 1, -0.05) # closed chest, above
+    tile.type = area.getTileType(367) # change to open chest
+    tile2.type = area.getTileType(360) # change to open chest, above
+    area.requestRedraw()
+    playSnd("sounds/door.oga") # unlocking sound
 

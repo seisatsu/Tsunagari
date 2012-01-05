@@ -4,6 +4,7 @@
   <property name="author" value="Michael D. Reiley"/>
   <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove House"/>
+  <property name="onLoad" value="areas/house_load.py"/>
  </properties>
  <tileset firstgid="1" name="indoors.png" tilewidth="32" tileheight="32">
   <image source="areas/tiles/indoors.png" width="256" height="382"/>
@@ -499,7 +500,7 @@
   </object>
   <object x="192" y="0" width="32" height="32">
    <properties>
-    <property name="onUse" value="areas/grove_house_switch.py"/>
+    <property name="onUse" value="areas/house_switch.py"/>
    </properties>
   </object>
  </objectgroup>

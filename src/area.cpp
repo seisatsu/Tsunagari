@@ -61,7 +61,12 @@ Area::~Area()
 
 bool Area::init()
 {
-	return processDescriptor();
+	bool b = processDescriptor();
+	BOOST_FOREACH(const std::string& script, onLoadScripts) {
+		pythonSetGlobal("area", this);
+		rc->runPythonScript(script);
+	}
+	return b;
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -172,6 +177,13 @@ void Area::update(unsigned long dt)
 	music->update();
 	player->update(dt);
 	view->update(dt);
+
+	if (onUpdateScripts.size()) {
+		BOOST_FOREACH(const std::string& script, onUpdateScripts) {
+			pythonSetGlobal("area", this);
+			rc->runPythonScript(script);
+		}
+	}
 }
 
 icoord Area::getDimensions() const
@@ -292,12 +304,12 @@ bool Area::processMapProperties(XMLNode node)
 
 /*
  <properties>
-  <property name="author" value="Michael D. Reiley"/>
-  <property name="name" value="Baby's First Area"/>
-  <property name="intro_music" value="intro.music"/>
-  <property name="main_music" value="wind.music"/>
-  <property name="onLoad" value="babysfirst_init()"/>
-  <property name="scripts" value="areainits.event,test.event"/>
+  <property name="author" value="Random J. Hacker"/>
+  <property name="name" value="Wooded Area"/>
+  <property name="intro_music" value="arrive.ogg"/>
+  <property name="main_music" value="wind.ogg"/>
+  <property name="onLoad" value="wood_setup.py"/>
+  <property name="onUpdate" value="wood_update.py"/>
   <property name="loop" value="xy"/>
  </properties>
 */
@@ -307,6 +319,8 @@ bool Area::processMapProperties(XMLNode node)
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
+		if (value.empty())
+			continue;
 		if (name == "author")
 			author = value;
 		else if (name == "name")
@@ -319,10 +333,26 @@ bool Area::processMapProperties(XMLNode node)
 			music->setMain(value);
 			mainSet = true;
 		}
-		else if (name == "onLoad")
-			onLoadEvents = value;
-		else if (name == "scripts")
-			scripts = value; // TODO split(), load
+		else if (name == "onLoad") {
+			std::string filename = value;
+			if (rc->resourceExists(filename)) {
+				onLoadScripts.push_back(filename);
+			}
+			else {
+				Log::err(descriptor,
+				  std::string("script not found: ") + filename);
+			}
+		}
+		else if (name == "onUpdate") {
+			std::string filename = value;
+			if (rc->resourceExists(filename)) {
+				onUpdateScripts.push_back(filename);
+			}
+			else {
+				Log::err(descriptor,
+				  std::string("script not found: ") + filename);
+			}
+		}
 		else if (name == "loop") {
 			loopX = value.find('x') != std::string::npos;
 			loopY = value.find('y') != std::string::npos;

@@ -172,8 +172,8 @@ private:
 
 	std::string name;
 	std::string author;
-	std::string scripts;
-	std::string onLoadEvents;
+	std::vector<std::string> onLoadScripts;
+	std::vector<std::string> onUpdateScripts;
 };
 
 void exportArea();

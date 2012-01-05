@@ -1,0 +1,2 @@
+openedTheChest = False
+
