@@ -8,36 +8,96 @@
 
 #include <boost/format.hpp>
 
-#include "log.h"
-#include "python.h"
-#include "python_bindings.h" // for inittsunagari
-
-// Note: Including before "python.h" breaks Windows builds.
+// Python includes.
 #include <Python.h>
 #include <grammar.h> // for struct grammar
 #include <node.h> // for struct node
 #include <parsetok.h> // for PyParser_ParseStringFlags
 
-namespace python = boost::python;
+#include "log.h"
+#include "python.h"
+#include "python_bindings.h" // for pythonInitBindings
 
-static void pythonUndefineBuiltin(const char* fn)
+namespace bp = boost::python;
+
+static const char* moduleWhitelist[] = {
+	"math",
+	"sys",
+	NULL,
+};
+
+
+static void pythonUndefineBuiltin(const char* key)
 {
-	python::object str(fn);
-	PyDict_DelItem(pythonBuiltins().ptr(), str.ptr());
+	bp::object k(key);
+	PyDict_DelItem(pythonBuiltins().ptr(), k.ptr());
 	if (PyErr_Occurred())
-		python::throw_error_already_set();
-}
-
-static void pythonClearSysPath()
-{
-	python::object empty( python::handle<>(PyList_New(0)) );
-	PySys_SetObject((char*)"path", empty.ptr());
+		bp::throw_error_already_set();
 }
 
 static void pythonIncludeModule(const char* name)
 {
-	python::object module( python::handle<>(PyImport_ImportModule(name)) );
+	bp::object module(bp::handle<>(PyImport_ImportModule(name)));
 	pythonGlobals()[name] = module;
+}
+
+static void pythonSetDefaultEncoding(const char* enc)
+{
+	if (PyUnicode_SetDefaultEncoding(enc) != 0) {
+		PyErr_Format(PyExc_SystemError,
+			"encoding %s not found", enc);
+		bp::throw_error_already_set();
+	}
+}
+
+static PyObject*
+safeImport(PyObject*, PyObject* args, PyObject* kwds)
+{
+	static const char* kwlist[] = {"name", "globals", "locals", "fromlist",
+		"level", 0};
+	char* name;
+	PyObject* globals, *locals, *fromList;
+	int level = -1;
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|OOOi:__import__",
+			(char**)kwlist, &name, &globals, &locals, &fromList,
+			level))
+		return NULL;
+	Log::dbg("Python", std::string("import ") + name);
+
+	bool whitelisted = false;
+	for (int i = 0; moduleWhitelist[i]; i++) {
+		const char* mod = moduleWhitelist[i];
+		if (!strcmp(mod, name)) {
+			whitelisted = true;
+			break;
+		}
+	}
+	if (whitelisted) {
+		return PyImport_ImportModuleLevel(name, globals, locals,
+			fromList, level);
+	}
+	else {
+		PyErr_Format(PyExc_SystemError, "importing of most external "
+			"modules disabled in Tsunagari");
+		return NULL;
+	}
+}
+
+static PyMethodDef newImport[] = {
+	{"__import__", (PyCFunction)safeImport, METH_VARARGS | METH_KEYWORDS, ""},
+	{NULL, NULL, 0, NULL},
+};
+
+static void pythonOverrideImportStatement()
+{
+	// InitModule doesn't delete existing modules, so we can use it to
+	// insert new methods into a pre-existing module.
+	PyObject* module = Py_InitModule("__builtin__", newImport);
+	if (!module) {
+		PyErr_Format(PyExc_SystemError, "overriding __builtin__ module failed");
+		bp::throw_error_already_set();
+	}
 }
 
 bool pythonInit()
@@ -45,13 +105,19 @@ bool pythonInit()
 	try {
 		PyImport_AppendInittab("tsunagari", &pythonInitBindings);
 		Py_Initialize();
+		pythonSetDefaultEncoding("utf-8");
 		pythonIncludeModule("tsunagari");
 
-		// Hack in some rough safety.
+		// Hack in some rough safety. Disable external scripts and IO.
+		pythonUndefineBuiltin("__import__");
 		pythonUndefineBuiltin("execfile");
+		pythonUndefineBuiltin("file");
 		pythonUndefineBuiltin("open");
-		pythonClearSysPath();
-	} catch (python::error_already_set) {
+		pythonUndefineBuiltin("reload");
+		// TODO: save "bytes = os.urandom(n)" maybe?
+
+		pythonOverrideImportStatement();
+	} catch (bp::error_already_set) {
 		Log::err("Python", "An error occured while populating the "
 			           "Python modules:");
 		pythonErr();
@@ -75,29 +141,27 @@ void pythonErr()
 	type = strrchr(type, '.') + 1;
 	char* value = PyString_AsString(pvalue);
 
-	Log::err("Python", boost::str(
-		boost::format("%s: %s") % type % value
-	));
+	Log::err("Python", boost::str(boost::format("%s: %s") % type % value));
 }
 
-python::object pythonBuiltins()
+bp::object pythonBuiltins()
 {
 	static bool init = false;
-	static python::object bltins;
+	static bp::object bltins;
 	if (!init) {
 		init = true;
-		bltins = python::import("__builtin__").attr("__dict__");
+		bltins = bp::import("__builtin__").attr("__dict__");
 	}
 	return bltins;
 }
 
-python::object pythonGlobals()
+bp::object pythonGlobals()
 {
 	static bool init = false;
-	static python::object global;
+	static bp::object global;
 	if (!init) {
 		init = true;
-		global = python::import("__main__").attr("__dict__");
+		global = bp::import("__main__").attr("__dict__");
 	}
 	return global;
 }

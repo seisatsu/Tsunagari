@@ -12,7 +12,7 @@ CXX = g++
 WFLAGS = -Wall -Wextra -Wconversion
 
 # Compiler and linker flags.
-CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic -ansi $(WFLAGS) \
+CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
 	$(shell pkg-config --cflags python-2.7) $(shell xml2-config --cflags)
 LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
 	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
