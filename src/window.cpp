@@ -22,8 +22,16 @@ const GameWindow& GameWindow::getWindow()
 }
 
 GameWindow::GameWindow(ClientValues* conf)
-	: Gosu::Window((unsigned)conf->windowSize.x,
-	  (unsigned)conf->windowSize.y, conf->fullscreen),
+	// Gosu emulates the requested screen resolution on fullscreen,
+	// but this breaks our aspect ratio-correcting letterbox.
+	// Ergo we just make a window the size of the screen.
+	: Gosu::Window(
+	    conf->fullscreen ? Gosu::screenWidth() :
+	                       (unsigned)conf->windowSize.x,
+	    conf->fullscreen ? Gosu::screenHeight() :
+	                       (unsigned)conf->windowSize.y,
+	    conf->fullscreen
+	  ),
 	  lastTime((int)Gosu::milliseconds()),
 	  now(lastTime),
 	  currentSecond(now/1000),
