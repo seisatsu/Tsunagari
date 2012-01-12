@@ -51,7 +51,8 @@ Area::Area(Resourcer* rc,
 	  dim(0, 0, 0),
 	  tileDim(0, 0),
 	  loopX(false),
-	  loopY(false)
+	  loopY(false),
+	  beenFocused(false)
 {
 }
 
@@ -64,12 +65,15 @@ bool Area::init()
 	return processDescriptor();
 }
 
-void Area::runOnLoads()
+void Area::focus()
 {
-	BOOST_FOREACH(const std::string& script, onLoadScripts) {
-		pythonSetGlobal("area", this);
-		rc->runPythonScript(script);
+	if (!beenFocused) {
+		beenFocused = true;
+		runOnLoads();
 	}
+
+	music->setIntro(musicIntro);
+	music->setMain(musicLoop);
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -264,7 +268,21 @@ void Area::reset()
 {
 	icoord c = player->getTileCoords();
 	c.z = (int)indexDepth(c.z);
-	world->loadArea(descriptor, c);
+	AreaPtr newSelf = world->getArea(descriptor, AREA_ALWAYS_CREATE);
+	world->focusArea(newSelf, c);
+}
+
+void Area::runOnLoads()
+{
+	std::string onAreaLoadScript = world->getAreaLoadScript();
+	if (onAreaLoadScript.size()) {
+		pythonSetGlobal("area", this);
+		rc->runPythonScript(onAreaLoadScript);
+	}
+	BOOST_FOREACH(const std::string& script, onLoadScripts) {
+		pythonSetGlobal("area", this);
+		rc->runPythonScript(script);
+	}
 }
 
 bool Area::processDescriptor()
@@ -316,9 +334,6 @@ bool Area::processMapProperties(XMLNode node)
   <property name="loop" value="xy"/>
  </properties>
 */
-	bool introSet = false;
-	bool mainSet = false;
-
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
@@ -329,12 +344,10 @@ bool Area::processMapProperties(XMLNode node)
 		else if (name == "name")
 			this->name = value;
 		else if (name == "intro_music") {
-			music->setIntro(value);
-			introSet = true;
+			musicIntro = value;
 		}
 		else if (name == "main_music") {
-			music->setMain(value);
-			mainSet = true;
+			musicLoop = value;
 		}
 		else if (name == "onLoad") {
 			std::string filename = value;
@@ -362,10 +375,6 @@ bool Area::processMapProperties(XMLNode node)
 		}
 	}
 
-	if (!introSet)
-		music->setIntro("");
-	if (!mainSet)
-		music->setMain("");
 	return true;
 }
 
@@ -632,7 +641,8 @@ bool Area::processLayerProperties(XMLNode node, double* depth)
 		if (name == "layer") {
 			ASSERT(child.doubleAttr("value", depth));
 			if (depth2idx.find(*depth) != depth2idx.end()) {
-				Log::err(descriptor, "depth used multiple times");
+				Log::err(descriptor,
+				         "depth used multiple times");
 				return false;
 			}
 

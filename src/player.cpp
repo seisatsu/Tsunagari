@@ -139,7 +139,12 @@ void Player::postMove()
 	// Doors
 	const boost::optional<Door> door = destTile->door;
 	if (door) {
-		if (!World::getWorld()->loadArea(door->area, door->tile)) {
+		World* world = World::getWorld();
+		AreaPtr newArea = world->getArea(door->area);
+		if (newArea) {
+			world->focusArea(newArea, door->tile);
+		}
+		else {
 			// Roll back movement if door failed to open.
 			r = fromCoord;
 			Log::err("Door",

@@ -58,8 +58,8 @@ public:
 	//! Function that must be called after the constructor.
 	bool init();
 
-	//! Run all onLoad scripts specified by the Area's descriptor.
-	void runOnLoads();
+	//! Prepare game state for this Area to be in focus.
+	void focus();
 
 	//! Gosu Callback
 	void buttonDown(const Gosu::Button btn);
@@ -91,6 +91,9 @@ public:
 	void reset();
 
 private:
+	//! Run all scripts that need to be run before this Area is usable.
+	void runOnLoads();
+
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
 	bool inBounds(int x, int y, int z) const;
@@ -173,8 +176,11 @@ private:
 
 	bool loopX, loopY;
 
+	bool beenFocused;
 	std::string name;
 	std::string author;
+	std::string musicIntro;
+	std::string musicLoop;
 	std::vector<std::string> onLoadScripts;
 	std::vector<std::string> onUpdateScripts;
 };

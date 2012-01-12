@@ -52,7 +52,11 @@ bool World::init()
 	view->trackEntity(&player);
 
 	wnd->setCaption(Gosu::widen(name));
-	return loadArea(entry.area, entry.coords);
+	AreaPtr area = getArea(entry.area);
+	if (!area)
+		return false;
+	focusArea(area, entry.coords);
+	return true;
 }
 
 void World::buttonDown(const Gosu::Button btn)
@@ -90,29 +94,43 @@ void World::update(unsigned long dt)
 	area->update(dt);
 }
 
-bool World::loadArea(const std::string& areaName, icoord playerPos)
+AreaPtr World::getArea(const std::string& filename, int flags)
 {
-	AreaPtr oldArea(area);
-	AreaPtr newArea(new Area(rc, this, view, &player, music.get(), areaName));
+	if (conf->cacheEnabled && (flags & AREA_ALWAYS_CREATE) == false) {
+		AreaMap::iterator entry = areas.find(filename);
+		if (entry != areas.end()) {
+			Log::dbg("World", filename + ": requested (cached)");
+			return entry->second;
+		}
+	}
+	if (flags & AREA_ALWAYS_CREATE)
+		Log::dbg("World", filename + ": requested (explicit nocache)");
+	else
+		Log::dbg("World", filename + ": requested");
+
+	AreaPtr newArea(
+		new Area(rc, this, view, &player, music.get(), filename)
+	);
+
 	if (!newArea->init())
-		return false;
-	setArea(newArea, playerPos);
-	// oldArea is deleted
-	return true;
+		newArea = AreaPtr();
+	if (conf->cacheEnabled)
+		areas[filename] = newArea;
+	return newArea;
 }
 
-void World::setArea(AreaPtr area, icoord playerPos)
+void World::focusArea(AreaPtr area, icoord playerPos)
 {
 	this->area = area;
 	player.setArea(area.get());
 	player.setTileCoords(playerPos);
 	view->setArea(area.get());
+	area->focus();
+}
 
-	if (onAreaLoadScript.size()) {
-		pythonSetGlobal("area", area.get());
-		rc->runPythonScript(onAreaLoadScript);
-	}
-	area->runOnLoads();
+std::string World::getAreaLoadScript()
+{
+	return onAreaLoadScript;
 }
 
 bool World::processDescriptor()
@@ -211,10 +229,11 @@ Gosu::Transform World::getTransform()
 	rvec2 scroll = view->getMapOffset();
 	rvec2 padding = view->getLetterboxOffset();
 	Gosu::Transform t = { {
-		scale.x,          0,                0, 0,
-		0,                scale.y,          0, 0,
-		0,                0,                1, 0,
-		scale.x * -scroll.x - padding.x, scale.y * -scroll.y - padding.y, 0, 1
+		scale.x, 0,       0, 0,
+		0,       scale.y, 0, 0,
+		0,       0,       1, 0,
+		scale.x * -scroll.x - padding.x,
+		scale.y * -scroll.y - padding.y, 0, 1
 	} };
 	return t;
 }
