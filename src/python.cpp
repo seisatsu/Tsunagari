@@ -4,9 +4,8 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <algorithm> // for std::replace
 #include <string.h> // for strrchr
-
-#include <boost/format.hpp>
 
 // Python includes.
 #include <Python.h>
@@ -17,14 +16,30 @@
 #include "log.h"
 #include "python.h"
 #include "python_bindings.h" // for pythonInitBindings
+#include "resourcer.h"
 
 namespace bp = boost::python;
 
-static const char* moduleWhitelist[] = {
+static Resourcer* rc = NULL;
+static bp::object modMain, modBltin;
+static bp::object dictMain, dictBltin;
+
+//! List of known safe Python modules allowed for importing.
+static std::string moduleWhitelist[] = {
+	"__main__",
+	"__builtin__",
 	"math",
 	"sys",
-	NULL,
+	"",
 };
+
+static bool inWhitelist(const std::string& name)
+{
+	for (int i = 0; moduleWhitelist[i].size(); i++)
+		if (name == moduleWhitelist[i])
+			return true;
+	return false;
+}
 
 
 static void pythonUndefineBuiltin(const char* key)
@@ -50,52 +65,58 @@ static void pythonSetDefaultEncoding(const char* enc)
 	}
 }
 
+//! Python will call this function when it tries to import a module. Things are
+//! a bit messy as we have to conform to the Python ABI.
 static PyObject*
 safeImport(PyObject*, PyObject* args, PyObject* kwds)
 {
 	static const char* kwlist[] = {"name", "globals", "locals", "fromlist",
 		"level", 0};
-	char* name;
+	char* _name;
+	std::string name;
 	PyObject* globals, *locals, *fromList;
 	int level = -1;
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|OOOi:__import__",
-			(char**)kwlist, &name, &globals, &locals, &fromList,
-			level))
+			(char**)kwlist, &_name, &globals, &locals, &fromList,
+			&level))
 		return NULL;
-	Log::dbg("Python", std::string("import ") + name);
+	name = _name;
+	Log::dbg("Python", "import " + name);
 
-	bool whitelisted = false;
-	for (int i = 0; moduleWhitelist[i]; i++) {
-		const char* mod = moduleWhitelist[i];
-		if (!strcmp(mod, name)) {
-			whitelisted = true;
-			break;
-		}
-	}
-	if (whitelisted) {
-		return PyImport_ImportModuleLevel(name, globals, locals,
+	// Search whitelisted Python modules.
+	if (inWhitelist(name))
+		return PyImport_ImportModuleLevel(_name, globals, locals,
 			fromList, level);
-	}
-	else {
-		PyErr_Format(PyExc_SystemError, "importing of most external "
-			"modules disabled in Tsunagari");
-		return NULL;
-	}
-}
 
-static PyMethodDef newImport[] = {
-	{"__import__", (PyCFunction)safeImport, METH_VARARGS | METH_KEYWORDS, ""},
-	{NULL, NULL, 0, NULL},
-};
+	// Search Python scripts inside World.
+	std::replace(name.begin(), name.end(), '.', '/');
+	name += ".py";
+	if (rc && rc->resourceExists(name)) {
+		rc->runPythonScript(name);
+		return modMain.ptr();
+	}
+
+	// Nothing acceptable found.
+	PyErr_Format(PyExc_SystemError, "importing of most external "
+		"modules disabled in Tsunagari");
+	return NULL;
+}
 
 static void pythonOverrideImportStatement()
 {
-	// InitModule doesn't delete existing modules, so we can use it to
+	static PyMethodDef newImport[] = {
+		{"__import__", (PyCFunction)safeImport,
+		 METH_VARARGS | METH_KEYWORDS, ""},
+		{NULL, NULL, 0, NULL},
+	};
+
+	// InitModule doesn't remove existing modules, so we can use it to
 	// insert new methods into a pre-existing module.
 	PyObject* module = Py_InitModule("__builtin__", newImport);
 	if (!module) {
-		PyErr_Format(PyExc_SystemError, "overriding __builtin__ module failed");
+		PyErr_Format(PyExc_SystemError,
+			"overriding __builtin__ module failed");
 		bp::throw_error_already_set();
 	}
 }
@@ -106,6 +127,12 @@ bool pythonInit()
 		PyImport_AppendInittab("tsunagari", &pythonInitBindings);
 		Py_Initialize();
 		pythonSetDefaultEncoding("utf-8");
+
+		modMain = bp::import("__main__");
+		dictMain = modMain.attr("__dict__");
+		modBltin = bp::import("__builtin__");
+		dictBltin = modBltin.attr("__dict__");
+
 		pythonIncludeModule("tsunagari");
 
 		// Hack in some rough safety. Disable external scripts and IO.
@@ -141,36 +168,30 @@ void pythonErr()
 	type = strrchr(type, '.') + 1;
 	char* value = PyString_AsString(pvalue);
 
-	Log::err("Python", boost::str(boost::format("%s: %s") % type % value));
+	Log::err("Python", std::string(type) + ": " + value);
+}
+
+void pythonSetResourcer(Resourcer* r)
+{
+	rc = r;
 }
 
 bp::object pythonBuiltins()
 {
-	static bool init = false;
-	static bp::object bltins;
-	if (!init) {
-		init = true;
-		bltins = bp::import("__builtin__").attr("__dict__");
-	}
-	return bltins;
+	return dictBltin;
 }
 
 bp::object pythonGlobals()
 {
-	static bool init = false;
-	static bp::object global;
-	if (!init) {
-		init = true;
-		global = bp::import("__main__").attr("__dict__");
-	}
-	return global;
+	return dictMain;
 }
 
 extern grammar _PyParser_Grammar; // From Python's graminit.c
 
 PyCodeObject* pythonCompile(const char* fn, const char* code)
 {
-	// XXX: memory leaks
+	// FIXME: memory leaks
+	// XXX: there's already a compile function in Python somewhere
 	perrdetail err;
 	node* n = PyParser_ParseStringFlagsFilename(
 		code, fn, &_PyParser_Grammar,
@@ -183,9 +204,8 @@ PyCodeObject* pythonCompile(const char* fn, const char* code)
 	}
 	PyCodeObject* pco = PyNode_Compile(n, fn);
 	if (!pco) {
-		Log::err("Python", boost::str(
-			boost::format("%s: possibly unknown compile error") % fn
-		));
+		Log::err("Python",
+		         std::string(fn) + ": possibly unknown compile error");
 		pythonErr();
 		return NULL;
 	}
