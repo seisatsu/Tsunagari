@@ -7,16 +7,20 @@
 #include <algorithm> // for std::replace
 #include <string.h> // for strrchr
 
-// Python includes.
-#include <Python.h>
-#include <grammar.h> // for struct grammar
-#include <node.h> // for struct node
-#include <parsetok.h> // for PyParser_ParseStringFlags
+#include <boost/python.hpp>
 
 #include "log.h"
 #include "python.h"
 #include "python_bindings.h" // for pythonInitBindings
 #include "resourcer.h"
+
+// Include libpython after everything else so it doesn't mess with Windows'
+// namespace.
+#include <Python.h>
+#include <grammar.h> // for struct grammar
+#include <node.h> // for struct node
+#include <parsetok.h> // for PyParser_ParseStringFlags
+
 
 namespace bp = boost::python;
 
@@ -24,13 +28,15 @@ static Resourcer* rc = NULL;
 static bp::object modMain, modBltin;
 static bp::object dictMain, dictBltin;
 
+
 //! List of known safe Python modules allowed for importing.
 static std::string moduleWhitelist[] = {
-	"__main__",
 	"__builtin__",
+	"__main__",
 	"math",
 	"sys",
 	"",
+	// TODO: save "os.urandom(n)" maybe?
 };
 
 static bool inWhitelist(const std::string& name)
@@ -45,7 +51,7 @@ static bool inWhitelist(const std::string& name)
 static void pythonUndefineBuiltin(const char* key)
 {
 	bp::object k(key);
-	PyDict_DelItem(pythonBuiltins().ptr(), k.ptr());
+	PyDict_DelItem(dictBltin.ptr(), k.ptr());
 	if (PyErr_Occurred())
 		bp::throw_error_already_set();
 }
@@ -53,7 +59,7 @@ static void pythonUndefineBuiltin(const char* key)
 static void pythonIncludeModule(const char* name)
 {
 	bp::object module(bp::handle<>(PyImport_ImportModule(name)));
-	pythonGlobals()[name] = module;
+	dictMain[name] = module;
 }
 
 static void pythonSetDefaultEncoding(const char* enc)
@@ -66,7 +72,7 @@ static void pythonSetDefaultEncoding(const char* enc)
 }
 
 //! Python will call this function when it tries to import a module. Things are
-//! a bit messy as we have to conform to the Python ABI.
+//! a bit messy as we conform to the Python ABI.
 static PyObject*
 safeImport(PyObject*, PyObject* args, PyObject* kwds)
 {
@@ -77,6 +83,7 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	PyObject* globals, *locals, *fromList;
 	int level = -1;
 
+	// Validate args from Python.
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|OOOi:__import__",
 			(char**)kwlist, &_name, &globals, &locals, &fromList,
 			&level))
@@ -94,12 +101,14 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	name += ".py";
 	if (rc && rc->resourceExists(name)) {
 		rc->runPythonScript(name);
-		return modMain.ptr();
+		return modMain.ptr(); // We have to return a module...
 	}
 
 	// Nothing acceptable found.
-	PyErr_Format(PyExc_SystemError, "importing of most external "
-		"modules disabled in Tsunagari");
+	std::string msg = std::string("Module '") + _name + "' not found or "
+		"not allowed. Note that Tsunagari runs in a sandbox and does "
+		"not allow most external modules.";
+	PyErr_Format(PyExc_ImportError, msg.c_str());
 	return NULL;
 }
 
@@ -121,6 +130,25 @@ static void pythonOverrideImportStatement()
 	}
 }
 
+static void nullExecfile(std::string /* filename */)
+{
+	Log::err("Python", "execfile(): Tsunagari runs scripts in a sandbox "
+	                   "and does not allow accessing the standard "
+			   "filesystem");
+}
+
+static void nullFile(std::string /* filename */)
+{
+	Log::err("Python", "file(): Tsunagari runs scripts in a sandbox and "
+	                   "does not allow accessing the standard filesystem");
+}
+
+static void nullOpen(std::string /* filename */)
+{
+	Log::err("Python", "open(): Tsunagari runs scripts in a sandbox and "
+	                   "does not allow accessing the standard filesystem");
+}
+
 bool pythonInit()
 {
 	try {
@@ -136,12 +164,10 @@ bool pythonInit()
 		pythonIncludeModule("tsunagari");
 
 		// Hack in some rough safety. Disable external scripts and IO.
-		pythonUndefineBuiltin("__import__");
-		pythonUndefineBuiltin("execfile");
-		pythonUndefineBuiltin("file");
-		pythonUndefineBuiltin("open");
-		pythonUndefineBuiltin("reload");
-		// TODO: save "bytes = os.urandom(n)" maybe?
+		dictBltin["execfile"] = bp::make_function(nullExecfile);
+		dictBltin["file"] = bp::make_function(nullFile);
+		dictBltin["open"] = bp::make_function(nullOpen);
+		pythonUndefineBuiltin("reload"); // FIXME: Trouble with this one...
 
 		pythonOverrideImportStatement();
 	} catch (bp::error_already_set) {
@@ -174,11 +200,6 @@ void pythonErr()
 void pythonSetResourcer(Resourcer* r)
 {
 	rc = r;
-}
-
-bp::object pythonBuiltins()
-{
-	return dictBltin;
 }
 
 bp::object pythonGlobals()
@@ -216,8 +237,8 @@ bool pythonExec(PyCodeObject* code)
 {
 	if (!code)
 		return false;
-	PyObject* g = pythonGlobals().ptr();
-	PyObject* result = PyEval_EvalCode(code, g, g);
+	PyObject* globals = dictMain.ptr();
+	PyObject* result = PyEval_EvalCode(code, globals, globals);
 	if (!result)
 		pythonErr();
 	return result;

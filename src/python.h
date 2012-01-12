@@ -7,9 +7,16 @@
 #ifndef PYTHON_H
 #define PYTHON_H
 
-#include <stdlib.h>
+// In this file.
+#include <boost/python/errors.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/ptr.hpp>
 
-#include <boost/python.hpp>
+// For bindings.
+#include <boost/python/class.hpp>
+#include <boost/python/operators.hpp>
+#include <boost/python/other.hpp>
+#include <boost/python/self.hpp>
 
 class Resourcer;
 
@@ -28,10 +35,6 @@ void pythonErr();
 void pythonSetResourcer(Resourcer* rc);
 
 
-//! Access to special built-in namespace where Python provides some elementary
-//! functions.
-boost::python::object pythonBuiltins();
-
 //! Access to global namespace shared by all Python scripts.
 boost::python::object pythonGlobals();
 
@@ -48,7 +51,9 @@ void pythonSetGlobal(const char* name, T pointer)
 }
 
 
-//! Compile a Python script. Returns NULL on failure and prints any errors.
+//! Compile a Python script. Must provide both a representative filename for
+//! any error messages along with a string containing the body of code to
+//! compile. Returns NULL on failure and prints any errors.
 PyCodeObject* pythonCompile(const char* fn, const char* code);
 
 //! Run a compiled Python script. Returns false on runtime error and prints the
