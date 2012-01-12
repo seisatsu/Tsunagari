@@ -300,7 +300,7 @@ void Resourcer::reclaim(Map& map)
 		if (unused) {
 			if (!cache.lastUsed) {
 				cache.lastUsed = now;
-				Log::dbg("Resourcer", name + ": unused");
+				//Log::dbg("Resourcer", name + ": unused");
 			}
 			else if (now < cache.lastUsed) {
 				// Handle time overflow
