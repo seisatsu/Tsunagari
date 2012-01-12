@@ -193,6 +193,11 @@ void Area::update(unsigned long dt)
 	}
 }
 
+const std::string& Area::getDescriptor() const
+{
+	return descriptor;
+}
+
 icoord Area::getDimensions() const
 {
 	return dim;

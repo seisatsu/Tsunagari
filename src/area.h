@@ -75,6 +75,7 @@ public:
 	//! Gosu Callback
 	void update(unsigned long dt);
 
+	const std::string& getDescriptor() const;
 	icoord getDimensions() const;
 	ivec2 getTileDimensions() const;
 	int depthIndex(double depth) const;

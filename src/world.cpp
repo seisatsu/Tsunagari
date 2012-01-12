@@ -98,15 +98,9 @@ AreaPtr World::getArea(const std::string& filename, int flags)
 {
 	if (conf->cacheEnabled && (flags & AREA_ALWAYS_CREATE) == false) {
 		AreaMap::iterator entry = areas.find(filename);
-		if (entry != areas.end()) {
-			Log::dbg("World", filename + ": requested (cached)");
+		if (entry != areas.end())
 			return entry->second;
-		}
 	}
-	if (flags & AREA_ALWAYS_CREATE)
-		Log::dbg("World", filename + ": requested (explicit nocache)");
-	else
-		Log::dbg("World", filename + ": requested");
 
 	AreaPtr newArea(
 		new Area(rc, this, view, &player, music.get(), filename)
@@ -121,6 +115,7 @@ AreaPtr World::getArea(const std::string& filename, int flags)
 
 void World::focusArea(AreaPtr area, icoord playerPos)
 {
+	Log::dbg("World", area->getDescriptor() + ": focused");
 	this->area = area;
 	player.setArea(area.get());
 	player.setTileCoords(playerPos);
