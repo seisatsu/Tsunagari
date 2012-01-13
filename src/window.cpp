@@ -13,6 +13,16 @@
 #include "world.h"
 #include "window.h"
 
+namespace Gosu {
+	/**
+	 * Enable 1980s-style graphics scaling: nearest-neighbor filtering.
+	 * Call this function before creating any Gosu::Image.
+	 */
+	void enableUndocumentedRetrofication() {
+		extern bool undocumentedRetrofication;
+		undocumentedRetrofication = true;
+	}
+}
 
 static GameWindow* globalWindow = NULL;
 
@@ -38,6 +48,7 @@ GameWindow::GameWindow(ClientValues* conf)
 	  conf(conf)
 {
 	globalWindow = this;
+	Gosu::enableUndocumentedRetrofication();
 }
 
 GameWindow::~GameWindow()
