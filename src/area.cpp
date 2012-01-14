@@ -127,9 +127,6 @@ void Area::requestRedraw()
 
 void Area::update(unsigned long dt)
 {
-	view->update(dt);
-	music->update();
-
 	pythonSetGlobal("area", this);
 	player->update(dt);
 
@@ -139,6 +136,9 @@ void Area::update(unsigned long dt)
 			rc->runPythonScript(script);
 		}
 	}
+
+	view->update(dt);
+	music->update();
 }
 
 void Area::reset()
@@ -151,31 +151,23 @@ void Area::reset()
 
 
 
-bool Area::tileExists(icoord phys) const
+const Tile& Area::getTile(int x, int y, int z) const
 {
-	return inBounds(phys.x, phys.y, phys.z);
+	if (loopX)
+		x = wrap(0, x, dim.x);
+	if (loopY)
+		y = wrap(0, y, dim.y);
+	return map[z][y][x];
 }
 
-icube_t Area::visibleTiles() const
+const Tile& Area::getTile(int x, int y, double z) const
 {
-	rvec2 screen = view->getVirtRes();
-	rvec2 off = view->getMapOffset();
-
-	int x1 = (int)floor(off.x / tileDim.x);
-	int y1 = (int)floor(off.y / tileDim.y);
-	int x2 = (int)ceil((screen.x + off.x) / tileDim.x);
-	int y2 = (int)ceil((screen.y + off.y) / tileDim.y);
-
-	return icube(x1, y1, 0, x2, y2, dim.z);
+	return getTile(x, y, depthIndex(z));
 }
 
 const Tile& Area::getTile(icoord phys) const
 {
-	if (loopX)
-		phys.x = wrap(0, phys.x, dim.x);
-	if (loopY)
-		phys.y = wrap(0, phys.y, dim.y);
-	return map[phys.z][phys.y][phys.x];
+	return getTile(phys.x, phys.y, phys.z);
 }
 
 const Tile& Area::getTile(vtcoord virt) const
@@ -183,13 +175,23 @@ const Tile& Area::getTile(vtcoord virt) const
 	return getTile(virt2phys(virt));
 }
 
-Tile& Area::getTile(icoord phys)
+Tile& Area::getTile(int x, int y, int z)
 {
 	if (loopX)
-		phys.x = wrap(0, phys.x, dim.x);
+		x = wrap(0, x, dim.x);
 	if (loopY)
-		phys.y = wrap(0, phys.y, dim.y);
-	return map[phys.z][phys.y][phys.x];
+		y = wrap(0, y, dim.y);
+	return map[z][y][x];
+}
+
+Tile& Area::getTile(int x, int y, double z)
+{
+	return getTile(x, y, depthIndex(z));
+}
+
+Tile& Area::getTile(icoord phys)
+{
+	return getTile(phys.x, phys.y, phys.z);
 }
 
 Tile& Area::getTile(vtcoord virt)
@@ -213,6 +215,43 @@ ivec2 Area::getTileDimensions() const
 {
 	return tileDim;
 }
+
+icube_t Area::visibleTiles() const
+{
+	rvec2 screen = view->getVirtRes();
+	rvec2 off = view->getMapOffset();
+
+	int x1 = (int)floor(off.x / tileDim.x);
+	int y1 = (int)floor(off.y / tileDim.y);
+	int x2 = (int)ceil((screen.x + off.x) / tileDim.x);
+	int y2 = (int)ceil((screen.y + off.y) / tileDim.y);
+
+	return icube(x1, y1, 0, x2, y2, dim.z);
+}
+
+bool Area::inBounds(int x, int y, int z) const
+{
+	return ((loopX || (0 <= x && x < dim.x)) &&
+		(loopY || (0 <= y && y < dim.y)) &&
+		          0 <= z && z < dim.z);
+}
+
+bool Area::inBounds(int x, int y, double z) const
+{
+	return inBounds(x, y, depthIndex(z));
+}
+
+bool Area::inBounds(icoord phys) const
+{
+	return inBounds(phys.x, phys.y, phys.z);
+}
+
+bool Area::inBounds(vtcoord virt) const
+{
+	return inBounds(virt2phys(virt));
+}
+
+
 
 bool Area::loopsInX() const
 {
@@ -289,13 +328,6 @@ void Area::updateTileAnimations()
 	const int millis = GameWindow::getWindow().time();
 	BOOST_FOREACH(TileType& type, tileTypes)
 		type.anim.updateFrame(millis);
-}
-
-bool Area::inBounds(int x, int y, int z) const
-{
-	return ((loopX || (0 <= x && x < dim.x)) &&
-		(loopY || (0 <= y && y < dim.y)) &&
-		          0 <= z && z < dim.z);
 }
 
 void Area::drawTiles() const
@@ -996,12 +1028,15 @@ void exportArea()
 	boost::python::class_<Area>("Area", boost::python::no_init)
 		.def("requestRedraw", &Area::requestRedraw)
 		.def("getTile",
-		    static_cast<Tile& (Area::*) (vtcoord)> (&Area::getTile),
+		    static_cast<Tile& (Area::*) (int, int, double)>
+		    (&Area::getTile),
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
 		)
-		.def("tileExists", &Area::tileExists)
+		.def("inBounds",
+		    static_cast<bool (Area::*) (int, int, double) const>
+		    (&Area::inBounds))
 		.def("depthIndex", &Area::depthIndex)
 		.def("indexDepth", &Area::indexDepth)
 		.def("getTileType", &Area::getTileType,

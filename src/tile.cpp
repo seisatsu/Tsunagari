@@ -111,7 +111,7 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 			for (int x = tiles.x1; x != tiles.x2; x++) {
 				icoord pos(x, y, z);
 				// Do this check before passing _tiles_ to fn.
-				if (area.tileExists(pos)) {
+				if (area.inBounds(pos)) {
 					const Tile& tile = area.getTile(pos);
 					if (tile.type == this)
 						return true;

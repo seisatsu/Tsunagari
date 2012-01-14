@@ -95,10 +95,12 @@ public:
 	//! it. The Player's location is preserved.
 	void reset();
 
-	bool tileExists(icoord phys) const;
-	icube_t visibleTiles() const;
+	const Tile& getTile(int x, int y, int z) const; /* phys */
+	const Tile& getTile(int x, int y, double z) const; /* virt */
 	const Tile& getTile(icoord phys) const;
 	const Tile& getTile(vtcoord virt) const;
+	Tile& getTile(int x, int y, int z); /* phys */
+	Tile& getTile(int x, int y, double z); /* virt */
 	Tile& getTile(icoord phys);
 	Tile& getTile(vtcoord virt);
 	TileType& getTileType(int idx);
@@ -107,6 +109,14 @@ public:
 	ivec3 getDimensions() const;
 	//! Return the pixel dimensions of a Tile graphic.
 	ivec2 getTileDimensions() const;
+	//! Returns a physical cubic range of Tiles that are visible on-screen.
+	icube_t visibleTiles() const;
+
+	//! Returns true if a Tile exists at the specified coordinate.
+	bool inBounds(int x, int y, int z) const; /* phys */
+	bool inBounds(int x, int y, double z) const; /* virt */
+	bool inBounds(icoord phys) const;
+	bool inBounds(vtcoord virt) const;
 
 	bool loopsInX() const;
 	bool loopsInY() const;
@@ -134,7 +144,6 @@ private:
 
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
-	bool inBounds(int x, int y, int z) const;
 	void drawTiles() const;
 	void drawTile(const Tile& tile, int x, int y, double depth) const;
 	void drawEntities();

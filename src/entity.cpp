@@ -320,7 +320,7 @@ void Entity::calculateFacing(int x, int y)
 
 bool Entity::canMove(icoord dest)
 {
-	if (!area->tileExists(dest))
+	if (!area->inBounds(dest))
 		// The tile is off the map.
 		return false;
 	ivec2 tileDim = area->getTileDimensions();
