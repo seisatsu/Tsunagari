@@ -91,7 +91,7 @@ void Player::moveByTile(icoord delta)
 	newCoord += delta;
 
 	// The tile is off the map. Turn to face the direction, but don't move.
-	if (!area->tileExists(newCoord)) {
+	if (!area->inBounds(newCoord)) {
 		calculateFacing(delta.x, delta.y);
 		setPhase(facing);
 		redraw = true;

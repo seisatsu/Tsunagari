@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/unordered_map.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -39,7 +40,21 @@ class World;
 
 typedef boost::shared_ptr<Area> AreaPtr;
 
-//! This class is responsible for each map, or area in a Tsunagari World.
+/**
+ * Virtual tile coordinate.
+ *
+ * x and y are the same as a physical coordinate.
+ * z is the layer depth.
+ */
+struct vtcoord
+{
+	vtcoord(int x, int y, double z): x(x), y(y), z(z) {}
+
+	int x, y;
+	double z;
+};
+
+//! An Area represents one map, or screen, in a Tsunagari World.
 /*!
 	The Area class handles the parsing of TMX-format Area descriptor files,
 	the initialization, placement, and drawing of tiles, and various
@@ -48,48 +63,80 @@ typedef boost::shared_ptr<Area> AreaPtr;
 class Area
 {
 public:
-	//! Area Constructor
 	Area(Resourcer* rc, World* world, Viewport* view, Player* player,
 	     Music* music, const std::string& filename);
-
-	//! Area Destructor
 	~Area();
 
-	//! Function that must be called after the constructor.
+	//! Parse the file specified in the constructor, generating a full Area
+	//! object. Must be called before use.
 	bool init();
 
 	//! Prepare game state for this Area to be in focus.
 	void focus();
 
-	//! Gosu Callback
+	//! Processes keyboard input, calling the Player object when necessary.
 	void buttonDown(const Gosu::Button btn);
 	void buttonUp(const Gosu::Button btn);
 
-	//! Gosu Callback
+	//! Renders all visible Tiles and Entities within this Area.
 	void draw();
 
-	//! Gosu Callback
+	//! If false, drawing might be skipped. Saves CPU cycles when idle.
 	bool needsRedraw() const;
+
+	//! Inform the Area that a redraw is needed.
 	void requestRedraw();
 
-	//! Gosu Callback
+	//! Update the game state within this Area as if dt milliseconds had
+	//! passed since the last call. Updates Entities and runs scripts.
 	void update(unsigned long dt);
 
-	const std::string& getDescriptor() const;
-	icoord getDimensions() const;
+	//! Creates a new Area based off the same descriptor file and focuses
+	//! it. The Player's location is preserved.
+	void reset();
+
+	const Tile& getTile(int x, int y, int z) const; /* phys */
+	const Tile& getTile(int x, int y, double z) const; /* virt */
+	const Tile& getTile(icoord phys) const;
+	const Tile& getTile(vtcoord virt) const;
+	Tile& getTile(int x, int y, int z); /* phys */
+	Tile& getTile(int x, int y, double z); /* virt */
+	Tile& getTile(icoord phys);
+	Tile& getTile(vtcoord virt);
+	TileType& getTileType(int idx);
+
+	//! Return the dimensions of the Tile matrix.
+	ivec3 getDimensions() const;
+	//! Return the pixel dimensions of a Tile graphic.
 	ivec2 getTileDimensions() const;
-	int depthIndex(double depth) const;
-	double indexDepth(int idx) const;
-	const Tile& getTile(icoord c) const;
-	Tile& getTile(icoord c);
-	bool tileExists(icoord c) const;
+	//! Returns a physical cubic range of Tiles that are visible on-screen.
 	icube_t visibleTiles() const;
+
+	//! Returns true if a Tile exists at the specified coordinate.
+	bool inBounds(int x, int y, int z) const; /* phys */
+	bool inBounds(int x, int y, double z) const; /* virt */
+	bool inBounds(icoord phys) const;
+	bool inBounds(vtcoord virt) const;
 
 	bool loopsInX() const;
 	bool loopsInY() const;
 
-	TileType& getTileType(int idx);
-	void reset();
+	const std::string& getDescriptor() const;
+
+
+	// Convert between virtual and physical map coordinates. Physical
+	// coordinates are the physical indexes into the Tile matrix. Layer
+	// depth is represented by an arbirarily chosen integer in the physical
+	// system. Virtual coordinates include the correct floating-point
+	// depth.
+	// {
+	vtcoord phys2virt(icoord phys) /* const */;
+	rcoord phys2virt(icoord phys) const;
+	icoord virt2phys(vtcoord virt) const;
+	icoord virt2phys(rcoord virt) const;
+	int depthIndex(double depth) const;
+	double indexDepth(int idx) const;
+	// }
 
 private:
 	//! Run all scripts that need to be run before this Area is usable.
@@ -97,59 +144,35 @@ private:
 
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
-	bool inBounds(int x, int y, int z) const;
 	void drawTiles() const;
 	void drawTile(const Tile& tile, int x, int y, double depth) const;
 	void drawEntities();
 
 
-	//! XML descriptor parsing function.
-	bool processDescriptor();
-
-	//! Allocate all Tile objects for one layer in 'dim' sized map.
+	//! Allocate Tile objects for one layer of map.
 	void allocateMapLayer();
 
-	//! XML descriptor parsing function.
+	//! Parse an Area file.
+	bool processDescriptor();
 	bool processMapProperties(XMLNode node);
-
-	//! XML descriptor parsing function.
 	bool processTileSet(XMLNode node);
-
-	//! XML descriptor parsing function.
 	bool processTileType(XMLNode node, TiledImage& img, int id);
-
-	//! XML descriptor parsing function.
 	bool processLayer(XMLNode node);
-
-	//! XML descriptor parsing function.
 	bool processLayerProperties(XMLNode node, double* depth);
-
-	//! XML descriptor parsing function.
 	bool processLayerData(XMLNode node, int z);
-
-	//! XML descriptor parsing function.
 	bool processObjectGroup(XMLNode node);
-
-	//! XML descriptor parsing function.
 	bool processObjectGroupProperties(XMLNode node, double* depth);
-
-	//! XML descriptor parsing function.
 	bool processObject(XMLNode node, int z);
+	unsigned splitTileFlags(const std::string& strOfFlags);
+	Door parseDoor(const std::string& dest);
 
-	//! Split a tile's flags into individuals.
-	unsigned splitTileFlags(const std::string strOfFlags);
-
-	//! Process a door convenience trigger.
-	Door parseDoor(const std::string dest);
-
-
+private:
 	Resourcer* rc;
 	World* world;
 	Viewport* view;
 	Player* player;
 	Music* music;
-	bool redraw;
-	const std::string descriptor;
+
 
 	typedef std::vector<Tile> row_t;
 	typedef std::vector<row_t> grid_t;
@@ -159,7 +182,7 @@ private:
 	tilematrix_t map;
 
 	//! 3-dimensional length of map.
-	icoord dim;
+	ivec3 dim;
 
 	//! Pixel size for each tile in area. All tiles in an Area must be the
 	//! same size.
@@ -169,23 +192,25 @@ private:
 	std::vector<TileType> tileTypes;
 
 	//! Maps virtual float-point depths to an index in our map array.
-	std::map<double, int> depth2idx;
+	boost::unordered_map<double, int> depth2idx;
 
 	//! Maps an index in our map array to a virtual float-point depth.
 	std::vector<double> idx2depth;
 
 
+	std::string name, author;
 	bool loopX, loopY;
-
 	bool beenFocused;
-	std::string name;
-	std::string author;
-	std::string musicIntro;
-	std::string musicLoop;
+	bool redraw;
+
+	// The following contain filenames such that they may be loaded lazily.
+	const std::string descriptor;
+	std::string musicIntro, musicLoop;
 	std::vector<std::string> onLoadScripts;
 	std::vector<std::string> onUpdateScripts;
 };
 
+//! Register Areas with Python.
 void exportArea();
 
 #endif

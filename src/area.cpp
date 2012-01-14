@@ -26,9 +26,6 @@
 
 #define ASSERT(x)  if (!(x)) return false
 
-// Rename Tile => Square
-// Introduce new Tile
-
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
          can't imagine why the author did this, but we have to take it into
@@ -46,13 +43,12 @@ Area::Area(Resourcer* rc,
 	  view(view),
 	  player(player),
 	  music(music),
-	  redraw(true),
-	  descriptor(descriptor),
 	  dim(0, 0, 0),
 	  tileDim(0, 0),
-	  loopX(false),
-	  loopY(false),
-	  beenFocused(false)
+	  loopX(false), loopY(false),
+	  beenFocused(false),
+	  redraw(true),
+	  descriptor(descriptor)
 {
 }
 
@@ -110,11 +106,127 @@ void Area::draw()
 	redraw = false;
 }
 
-void Area::updateTileAnimations()
+bool Area::needsRedraw() const
 {
-	const int millis = GameWindow::getWindow().time();
-	BOOST_FOREACH(TileType& type, tileTypes)
-		type.anim.updateFrame(millis);
+	if (redraw)
+		return true;
+	if (player->needsRedraw())
+		return true;
+
+	// Do any onscreen tile types need to update their animations?
+	BOOST_FOREACH(const TileType& type, tileTypes)
+		if (type.needsRedraw(*this))
+			return true;
+	return false;
+}
+
+void Area::requestRedraw()
+{
+	redraw = true;
+}
+
+void Area::update(unsigned long dt)
+{
+	pythonSetGlobal("area", this);
+	player->update(dt);
+
+	if (onUpdateScripts.size()) {
+		BOOST_FOREACH(const std::string& script, onUpdateScripts) {
+			pythonSetGlobal("area", this);
+			rc->runPythonScript(script);
+		}
+	}
+
+	view->update(dt);
+	music->update();
+}
+
+void Area::reset()
+{
+	icoord c = player->getTileCoords();
+	c.z = (int)indexDepth(c.z);
+	AreaPtr newSelf = world->getArea(descriptor, AREA_ALWAYS_CREATE);
+	world->focusArea(newSelf, c);
+}
+
+
+
+const Tile& Area::getTile(int x, int y, int z) const
+{
+	if (loopX)
+		x = wrap(0, x, dim.x);
+	if (loopY)
+		y = wrap(0, y, dim.y);
+	return map[z][y][x];
+}
+
+const Tile& Area::getTile(int x, int y, double z) const
+{
+	return getTile(x, y, depthIndex(z));
+}
+
+const Tile& Area::getTile(icoord phys) const
+{
+	return getTile(phys.x, phys.y, phys.z);
+}
+
+const Tile& Area::getTile(vtcoord virt) const
+{
+	return getTile(virt2phys(virt));
+}
+
+Tile& Area::getTile(int x, int y, int z)
+{
+	if (loopX)
+		x = wrap(0, x, dim.x);
+	if (loopY)
+		y = wrap(0, y, dim.y);
+	return map[z][y][x];
+}
+
+Tile& Area::getTile(int x, int y, double z)
+{
+	return getTile(x, y, depthIndex(z));
+}
+
+Tile& Area::getTile(icoord phys)
+{
+	return getTile(phys.x, phys.y, phys.z);
+}
+
+Tile& Area::getTile(vtcoord virt)
+{
+	return getTile(virt2phys(virt));
+}
+
+TileType& Area::getTileType(int idx)
+{
+	return tileTypes[idx];
+}
+
+
+
+ivec3 Area::getDimensions() const
+{
+	return dim;
+}
+
+ivec2 Area::getTileDimensions() const
+{
+	return tileDim;
+}
+
+icube_t Area::visibleTiles() const
+{
+	rvec2 screen = view->getVirtRes();
+	rvec2 off = view->getMapOffset();
+
+	int x1 = (int)floor(off.x / tileDim.x);
+	int y1 = (int)floor(off.y / tileDim.y);
+	int x2 = (int)ceil((screen.x + off.x) / tileDim.x);
+	int y2 = (int)ceil((screen.y + off.y) / tileDim.y);
+
+	return icube(x1, y1, 0, x2, y2, dim.z);
 }
 
 bool Area::inBounds(int x, int y, int z) const
@@ -122,6 +234,100 @@ bool Area::inBounds(int x, int y, int z) const
 	return ((loopX || (0 <= x && x < dim.x)) &&
 		(loopY || (0 <= y && y < dim.y)) &&
 		          0 <= z && z < dim.z);
+}
+
+bool Area::inBounds(int x, int y, double z) const
+{
+	return inBounds(x, y, depthIndex(z));
+}
+
+bool Area::inBounds(icoord phys) const
+{
+	return inBounds(phys.x, phys.y, phys.z);
+}
+
+bool Area::inBounds(vtcoord virt) const
+{
+	return inBounds(virt2phys(virt));
+}
+
+
+
+bool Area::loopsInX() const
+{
+	return loopX;
+}
+
+bool Area::loopsInY() const
+{
+	return loopY;
+}
+
+const std::string& Area::getDescriptor() const
+{
+	return descriptor;
+}
+
+
+
+vtcoord Area::phys2virt(icoord phys)
+{
+	return vtcoord(phys.x, phys.y, indexDepth(phys.z));
+}
+
+rcoord Area::phys2virt(icoord phys) const
+{
+	return rcoord(
+		(double)phys.x * tileDim.x,
+		(double)phys.y * tileDim.y,
+		indexDepth(phys.z)
+	);
+}
+
+icoord Area::virt2phys(vtcoord virt) const
+{
+	return icoord(virt.x, virt.y, depthIndex(virt.z));
+}
+
+icoord Area::virt2phys(rcoord virt) const
+{
+	return icoord(
+		(int)(virt.x / tileDim.x),
+		(int)(virt.y / tileDim.y),
+		depthIndex(virt.z)
+	);
+}
+
+int Area::depthIndex(double depth) const
+{
+	return depth2idx.find(depth)->second;
+}
+
+double Area::indexDepth(int idx) const
+{
+	return idx2depth[idx];
+}
+
+
+
+void Area::runOnLoads()
+{
+	std::string onAreaLoadScript = world->getAreaLoadScript();
+	if (onAreaLoadScript.size()) {
+		pythonSetGlobal("area", this);
+		rc->runPythonScript(onAreaLoadScript);
+	}
+	BOOST_FOREACH(const std::string& script, onLoadScripts) {
+		pythonSetGlobal("area", this);
+		rc->runPythonScript(script);
+	}
+}
+
+void Area::updateTileAnimations()
+{
+	const int millis = GameWindow::getWindow().time();
+	BOOST_FOREACH(TileType& type, tileTypes)
+		type.anim.updateFrame(millis);
 }
 
 void Area::drawTiles() const
@@ -159,135 +365,11 @@ void Area::drawEntities()
 	player->draw();
 }
 
-bool Area::needsRedraw() const
+
+
+void Area::allocateMapLayer()
 {
-	if (redraw)
-		return true;
-	if (player->needsRedraw())
-		return true;
-
-	// Do any onscreen tile types need to update their animations?
-	BOOST_FOREACH(const TileType& type, tileTypes)
-		if (type.needsRedraw(*this))
-			return true;
-	return false;
-}
-
-void Area::requestRedraw()
-{
-	redraw = true;
-}
-
-void Area::update(unsigned long dt)
-{
-	pythonSetGlobal("area", this);
-	music->update();
-	player->update(dt);
-	view->update(dt);
-
-	if (onUpdateScripts.size()) {
-		BOOST_FOREACH(const std::string& script, onUpdateScripts) {
-			pythonSetGlobal("area", this);
-			rc->runPythonScript(script);
-		}
-	}
-}
-
-const std::string& Area::getDescriptor() const
-{
-	return descriptor;
-}
-
-icoord Area::getDimensions() const
-{
-	return dim;
-}
-
-ivec2 Area::getTileDimensions() const
-{
-	return tileDim;
-}
-
-bool Area::tileExists(icoord c) const
-{
-	return inBounds(c.x, c.y, c.z);
-}
-
-int Area::depthIndex(double depth) const
-{
-	return depth2idx.find(depth)->second;
-}
-
-double Area::indexDepth(int idx) const
-{
-	return idx2depth[idx];
-}
-
-const Tile& Area::getTile(icoord c) const
-{
-	if (loopX)
-		c.x = wrap(0, c.x, dim.x);
-	if (loopY)
-		c.y = wrap(0, c.y, dim.y);
-	return map[c.z][c.y][c.x];
-}
-
-Tile& Area::getTile(icoord c)
-{
-	if (loopX)
-		c.x = wrap(0, c.x, dim.x);
-	if (loopY)
-		c.y = wrap(0, c.y, dim.y);
-	return map[c.z][c.y][c.x];
-}
-
-icube_t Area::visibleTiles() const
-{
-	rvec2 screen = view->getVirtRes();
-	rvec2 off = view->getMapOffset();
-
-	int x1 = (int)floor(off.x / tileDim.x);
-	int y1 = (int)floor(off.y / tileDim.y);
-	int x2 = (int)ceil((screen.x + off.x) / tileDim.x);
-	int y2 = (int)ceil((screen.y + off.y) / tileDim.y);
-
-	return icube(x1, y1, 0, x2, y2, dim.z);
-}
-
-bool Area::loopsInX() const
-{
-	return loopX;
-}
-
-bool Area::loopsInY() const
-{
-	return loopY;
-}
-
-TileType& Area::getTileType(int idx)
-{
-	return tileTypes[idx];
-}
-
-void Area::reset()
-{
-	icoord c = player->getTileCoords();
-	c.z = (int)indexDepth(c.z);
-	AreaPtr newSelf = world->getArea(descriptor, AREA_ALWAYS_CREATE);
-	world->focusArea(newSelf, c);
-}
-
-void Area::runOnLoads()
-{
-	std::string onAreaLoadScript = world->getAreaLoadScript();
-	if (onAreaLoadScript.size()) {
-		pythonSetGlobal("area", this);
-		rc->runPythonScript(onAreaLoadScript);
-	}
-	BOOST_FOREACH(const std::string& script, onLoadScripts) {
-		pythonSetGlobal("area", this);
-		rc->runPythonScript(script);
-	}
+	map.push_back(grid_t(dim.y, row_t(dim.x)));
 }
 
 bool Area::processDescriptor()
@@ -318,11 +400,6 @@ bool Area::processDescriptor()
 	}
 
 	return true;
-}
-
-void Area::allocateMapLayer()
-{
-	map.push_back(grid_t(dim.y, row_t(dim.x)));
 }
 
 bool Area::processMapProperties(XMLNode node)
@@ -911,10 +988,9 @@ bool Area::processObject(XMLNode node, int z)
 }
 
 // FIXME: It can fail, should return bool.
-unsigned Area::splitTileFlags(const std::string strOfFlags)
+unsigned Area::splitTileFlags(const std::string& strOfFlags)
 {
-	std::vector<std::string> strs;
-	strs = splitStr(strOfFlags, ",");
+	std::vector<std::string> strs = splitStr(strOfFlags, ",");
 
 	unsigned flags = 0x0;
 	BOOST_FOREACH(const std::string& str, strs) {
@@ -925,7 +1001,7 @@ unsigned Area::splitTileFlags(const std::string strOfFlags)
 }
 
 // FIXME: It can fail, should return bool.
-Door Area::parseDoor(const std::string dest)
+Door Area::parseDoor(const std::string& dest)
 {
 
 /*
@@ -933,8 +1009,7 @@ Door Area::parseDoor(const std::string dest)
   E.g.:   "babysfirst.area,1,3,0"
 */
 
-	std::vector<std::string> strs;
-	strs = splitStr(dest, ",");
+	std::vector<std::string> strs = splitStr(dest, ",");
 
 	// TODO: verify the validity of the input string... it's coming from
 	// user land
@@ -947,17 +1022,21 @@ Door Area::parseDoor(const std::string dest)
 }
 
 
+
 void exportArea()
 {
 	boost::python::class_<Area>("Area", boost::python::no_init)
 		.def("requestRedraw", &Area::requestRedraw)
 		.def("getTile",
-		    static_cast<Tile& (Area::*) (icoord)> (&Area::getTile),
+		    static_cast<Tile& (Area::*) (int, int, double)>
+		    (&Area::getTile),
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
 		)
-		.def("tileExists", &Area::tileExists)
+		.def("inBounds",
+		    static_cast<bool (Area::*) (int, int, double) const>
+		    (&Area::inBounds))
 		.def("depthIndex", &Area::depthIndex)
 		.def("indexDepth", &Area::indexDepth)
 		.def("getTileType", &Area::getTileType,
@@ -966,5 +1045,10 @@ void exportArea()
 		    >()
 		)
 		.def("reset", &Area::reset);
+	boost::python::class_<vtcoord>("vtcoord",
+	  boost::python::init<int, int, double>())
+		.def_readwrite("x", &vtcoord::x)
+		.def_readwrite("y", &vtcoord::y)
+		.def_readwrite("z", &vtcoord::z);
 }
 
