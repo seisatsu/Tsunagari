@@ -213,16 +213,6 @@ bool Area::tileExists(icoord c) const
 	return inBounds(c.x, c.y, c.z);
 }
 
-int Area::depthIndex(double depth) const
-{
-	return depth2idx.find(depth)->second;
-}
-
-double Area::indexDepth(int idx) const
-{
-	return idx2depth[idx];
-}
-
 const Tile& Area::getTile(icoord c) const
 {
 	if (loopX)
@@ -253,6 +243,47 @@ icube_t Area::visibleTiles() const
 
 	return icube(x1, y1, 0, x2, y2, dim.z);
 }
+
+
+vtcoord Area::phys2virt(icoord phys)
+{
+	vtcoord virt = { phys.x, phys.y, indexDepth(phys.z) };
+	return virt;
+}
+
+rcoord Area::phys2virt(icoord phys) const
+{
+	return rcoord(
+		(double)phys.x * tileDim.x,
+		(double)phys.y * tileDim.y,
+		indexDepth(phys.z)
+	);
+}
+
+icoord Area::virt2phys(vtcoord virt) const
+{
+	return icoord(virt.x, virt.y, depthIndex(virt.z));
+}
+
+icoord Area::virt2phys(rcoord virt) const
+{
+	return icoord(
+		(int)(virt.x / tileDim.x),
+		(int)(virt.y / tileDim.y),
+		depthIndex(virt.z)
+	);
+}
+
+int Area::depthIndex(double depth) const
+{
+	return depth2idx.find(depth)->second;
+}
+
+double Area::indexDepth(int idx) const
+{
+	return idx2depth[idx];
+}
+
 
 bool Area::loopsInX() const
 {

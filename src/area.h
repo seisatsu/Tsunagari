@@ -39,6 +39,18 @@ class World;
 
 typedef boost::shared_ptr<Area> AreaPtr;
 
+/**
+ * Virtual tile coordinate.
+ *
+ * x and y are the same as a physical coordinate.
+ * z is the layer depth.
+ */
+struct vtcoord
+{
+	int x, y;
+	double z;
+};
+
 //! This class is responsible for each map, or area in a Tsunagari World.
 /*!
 	The Area class handles the parsing of TMX-format Area descriptor files,
@@ -78,12 +90,17 @@ public:
 	const std::string& getDescriptor() const;
 	icoord getDimensions() const;
 	ivec2 getTileDimensions() const;
-	int depthIndex(double depth) const;
-	double indexDepth(int idx) const;
 	const Tile& getTile(icoord c) const;
 	Tile& getTile(icoord c);
 	bool tileExists(icoord c) const;
 	icube_t visibleTiles() const;
+
+	vtcoord phys2virt(icoord phys) /* const */;
+	rcoord phys2virt(icoord phys) const;
+	icoord virt2phys(vtcoord virt) const;
+	icoord virt2phys(rcoord virt) const;
+	int depthIndex(double depth) const;
+	double indexDepth(int idx) const;
 
 	bool loopsInX() const;
 	bool loopsInY() const;
