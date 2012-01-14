@@ -222,6 +222,11 @@ const Tile& Area::getTile(icoord c) const
 	return map[c.z][c.y][c.x];
 }
 
+const Tile& Area::getTile(vtcoord c) const
+{
+	return getTile(virt2phys(c));
+}
+
 Tile& Area::getTile(icoord c)
 {
 	if (loopX)
@@ -229,6 +234,11 @@ Tile& Area::getTile(icoord c)
 	if (loopY)
 		c.y = wrap(0, c.y, dim.y);
 	return map[c.z][c.y][c.x];
+}
+
+Tile& Area::getTile(vtcoord c)
+{
+	return getTile(virt2phys(c));
 }
 
 icube_t Area::visibleTiles() const
@@ -247,8 +257,7 @@ icube_t Area::visibleTiles() const
 
 vtcoord Area::phys2virt(icoord phys)
 {
-	vtcoord virt = { phys.x, phys.y, indexDepth(phys.z) };
-	return virt;
+	return vtcoord(phys.x, phys.y, indexDepth(phys.z));
 }
 
 rcoord Area::phys2virt(icoord phys) const
@@ -983,7 +992,7 @@ void exportArea()
 	boost::python::class_<Area>("Area", boost::python::no_init)
 		.def("requestRedraw", &Area::requestRedraw)
 		.def("getTile",
-		    static_cast<Tile& (Area::*) (icoord)> (&Area::getTile),
+		    static_cast<Tile& (Area::*) (vtcoord)> (&Area::getTile),
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
@@ -997,5 +1006,10 @@ void exportArea()
 		    >()
 		)
 		.def("reset", &Area::reset);
+	boost::python::class_<vtcoord>("vtcoord",
+	  boost::python::init<int, int, double>())
+		.def_readwrite("x", &vtcoord::x)
+		.def_readwrite("y", &vtcoord::y)
+		.def_readwrite("z", &vtcoord::z);
 }
 

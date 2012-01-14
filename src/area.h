@@ -47,6 +47,8 @@ typedef boost::shared_ptr<Area> AreaPtr;
  */
 struct vtcoord
 {
+	vtcoord(int x, int y, double z): x(x), y(y), z(z) {}
+
 	int x, y;
 	double z;
 };
@@ -91,7 +93,9 @@ public:
 	icoord getDimensions() const;
 	ivec2 getTileDimensions() const;
 	const Tile& getTile(icoord c) const;
+	const Tile& getTile(vtcoord c) const;
 	Tile& getTile(icoord c);
+	Tile& getTile(vtcoord c);
 	bool tileExists(icoord c) const;
 	icube_t visibleTiles() const;
 

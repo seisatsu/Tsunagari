@@ -10,7 +10,7 @@ def createDoor(area, x, y, z):
     return door
 
 def getTile(x, y, z):
-    coord = tsunagari.icoord(x, y, area.depthIndex(z))
+    coord = tsunagari.vtcoord(x, y, z)
     tile = area.getTile(coord)
     return tile
 
