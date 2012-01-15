@@ -7,10 +7,20 @@
 #include <boost/foreach.hpp>
 
 #include "area.h"
-#include "python_optional.h"
 #include "python.h"
+#include "python_optional.h"
 #include "tile.h"
 #include "window.h"
+
+Door::Door()
+{
+}
+
+Door::Door(const std::string area, int x, int y, double z)
+	: area(area), tile(x, y, z)
+{
+}
+
 
 Tile::Tile()
 	: type(NULL), flags(0x0)
@@ -142,7 +152,8 @@ void exportTileType()
 
 void exportDoor()
 {
-	boost::python::class_<Door>("Door")
+	boost::python::class_<Door>("Door",
+	  boost::python::init<const std::string, int, int, double>())
 		.def_readwrite("area", &Door::area)
 		.def_readwrite("tile", &Door::tile);
 	boost::python::optional_<Door>();

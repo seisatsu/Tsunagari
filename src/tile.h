@@ -75,6 +75,9 @@ struct TileEvent {
 	area and coordinates.
 */
 struct Door {
+	Door();
+	Door(const std::string area, int x, int y, double z);
+
 	std::string area;
 	vicoord tile;
 };
