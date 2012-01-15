@@ -22,7 +22,7 @@
 
 #define ASSERT(x)  if (!(x)) return false
 
-static std::string facings[][3] = {
+static std::string directions[][3] = {
 	{"up-left",   "up",   "up-right"},
 	{"left",      "",     "right"},
 	{"down-left", "down", "down-right"},
@@ -53,7 +53,7 @@ bool Entity::init(const std::string& descriptor)
 		return false;
 
 	// Set an initial phase.
-	phase = &phases.begin()->second;
+	setPhase(directionStr(setFacing(ivec2(0, 1))));
 	return true;
 }
 
@@ -166,14 +166,14 @@ void Entity::updateNoTile(unsigned long)
 	// TODO
 }
 
-std::string Entity::getFacing() const
+const std::string Entity::getFacing() const
 {
-	return facing;
+	return directionStr(facing);
 }
 
 bool Entity::setPhase(const std::string& name)
 {
-	boost::unordered_map<std::string, Animation>::iterator it;
+	AnimationMap::iterator it;
 	it = phases.find(name);
 	if (it != phases.end()) {
 		Animation* newPhase = &it->second;
@@ -191,34 +191,37 @@ rcoord Entity::getPixelCoord() const
 	return r;
 }
 
-icoord Entity::getTileCoords() const
+icoord Entity::getTileCoords_i() const
 {
-	ivec2 tileDim = area->getTileDimensions();
-	return icoord(
-		(int)r.x / tileDim.x,
-		(int)r.y / tileDim.y,
-		area->depthIndex(r.z)
-	);
+	return area->virt2phys(r);
 }
 
-void Entity::setTileCoords(icoord coords)
+vicoord Entity::getTileCoords_vi() const
 {
-	// FIXME: security: bounds check
+	return area->virt2virt(r);
+}
+
+void Entity::setTileCoords(icoord phys)
+{
+	if (!area->inBounds(phys))
+		return;
 	redraw = true;
-	const ivec2 tileDim = area->getTileDimensions();
-	r = rcoord(
-		coords.x * tileDim.x,
-		coords.y * tileDim.y,
-		coords.z
-	);
+	r = area->phys2virt_r(phys);
 }
 
-void Entity::moveByTile(icoord delta)
+void Entity::setTileCoords(vicoord virt)
+{
+	if (!area->inBounds(virt))
+		return;
+	redraw = true;
+	r = area->virt2virt(virt);
+}
+
+void Entity::moveByTile(ivec2 delta)
 {
 	if (moving)
 		return;
-	calculateFacing(delta.x, delta.y);
-	setPhase(facing);
+	setPhase(directionStr(setFacing(delta)));
 
 	std::vector<icoord> tiles = frontTiles();
 	BOOST_FOREACH(const icoord& tile, tiles) {
@@ -260,16 +263,16 @@ void Entity::setSpeed(double multiplier)
 std::vector<icoord> Entity::frontTiles() const
 {
 	std::vector<icoord> tiles;
-	icoord normal = getTileCoords();
-	normal += icoord(faceX, faceY, 0);
+	icoord normal = getTileCoords_i();
+	normal += icoord(facing.x, facing.y, 0);
 	tiles.push_back(normal);
 
 	// If we are on a tile with the layermod property, we have access to
 	// tiles on the new layer, too.
-	const boost::optional<int> layermod = getTile().layermod;
+	const boost::optional<double> layermod = getTile().layermod;
 	if (layermod) {
-		icoord mod = normal;
-		mod.z = area->depthIndex(*layermod);
+		icoord mod = area->virt2phys(
+			vicoord(normal.x, normal.y, *layermod));
 		tiles.push_back(mod);
 	}
 	return tiles;
@@ -285,13 +288,12 @@ void Entity::calcDoff()
 
 Tile& Entity::getTile() const
 {
-	return area->getTile(getTileCoords());
+	return area->getTile(getTileCoords_i());
 }
 
-SampleRef Entity::getSound(const std::string& name)
+SampleRef Entity::getSound(const std::string& name) const
 {
-	boost::unordered_map<std::string, SampleRef>::iterator it;
-
+	SampleMap::const_iterator it;
 	it = sounds.find(name);
 	if (it != sounds.end())
 		return it->second;
@@ -299,23 +301,18 @@ SampleRef Entity::getSound(const std::string& name)
 		return SampleRef();
 }
 
-void Entity::calculateFacing(int x, int y)
+ivec2 Entity::setFacing(ivec2 facing)
 {
-	if (x < 0)
-		faceX = -1;
-	else if (x == 0)
-		faceX = 0;
-	else
-		faceX = 1;
+	this->facing = ivec2(
+		Gosu::clamp(facing.x, -1, 1),
+		Gosu::clamp(facing.y, -1, 1)
+	);
+	return this->facing;
+}
 
-	if (y < 0)
-		faceY = -1;
-	else if (y == 0)
-		faceY = 0;
-	else
-		faceY = 1;
-
-	facing = facings[faceY+1][faceX+1];
+const std::string& Entity::directionStr(ivec2 facing) const
+{
+	return directions[facing.y+1][facing.x+1];
 }
 
 bool Entity::canMove(icoord dest)
@@ -323,12 +320,7 @@ bool Entity::canMove(icoord dest)
 	if (!area->inBounds(dest))
 		// The tile is off the map.
 		return false;
-	ivec2 tileDim = area->getTileDimensions();
-	destCoord = rcoord(
-		dest.x * tileDim.x,
-		dest.y * tileDim.y,
-		area->indexDepth(dest.z)
-	);
+	destCoord = area->phys2virt_r(dest);
 	destTile = &area->getTile(dest);
 	return !destTile->hasFlag(nowalk);
 }
@@ -339,7 +331,8 @@ void Entity::preMove()
 	fromTile = &getTile();
 	moving = true;
 
-	// Set z right away so that we're on-level with the square we're entering.
+	// Set z right away so that we're on-level with the square we're
+	// entering.
 	r.z = destCoord.z;
 
 	// Start moving animation.
@@ -348,7 +341,7 @@ void Entity::preMove()
 		break;
 	case TILE:
 	case NOTILE:
-		setPhase("moving " + facing);
+		setPhase("moving " + getFacing());
 		break;
 	}
 
@@ -369,7 +362,7 @@ void Entity::postMove()
 
 	// Stop moving animation.
 	if (conf->moveMode != TURN)
-		setPhase(facing);
+		setPhase(getFacing());
 
 	// Process triggers.
 	destTile->onEnterScripts(rc, this);
@@ -591,7 +584,7 @@ void exportEntity()
 {
 	boost::python::class_<Entity>("Entity", boost::python::no_init)
 		.add_property("animation", &Entity::getFacing, &Entity::setPhase)
-		.def("getTileCoords", &Entity::getTileCoords)
+		.def("getTileCoords", &Entity::getTileCoords_vi)
 		.def("gotoRandomTile", &Entity::gotoRandomTile)
 		.def("setSpeed", &Entity::setSpeed);
 }

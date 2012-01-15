@@ -21,12 +21,12 @@ public:
 	Player(Resourcer* rc, Area* area, ClientValues* conf);
 
 	//! Smooth continuous movement.
-	void startMovement(icoord delta);
-	void stopMovement(icoord delta);
+	void startMovement(ivec2 delta);
+	void stopMovement(ivec2 delta);
 
 	//! Move the player by dx, dy. Not guaranteed to be smooth if called
 	//! on each update().
-	void moveByTile(icoord delta);
+	void moveByTile(ivec2 delta);
 
 	//! Try to use an object in front of the player.
 	void useTile();
@@ -37,11 +37,11 @@ protected:
 
 private:
 	//! Stores intent to move continuously in some direction.
-	icoord velocity;
+	ivec2 velocity;
 
 	//! Stack storing depressed keyboard keys in the form of movement
 	//! vectors.
-	std::vector<icoord> movements;
+	std::vector<ivec2> movements;
 };
 
 #endif

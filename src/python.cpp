@@ -191,7 +191,9 @@ void pythonErr()
 	PyErr_Fetch(&ptype, &pvalue, &ptraceback);
 
 	char* type = PyExceptionClass_Name(ptype);
-	type = strrchr(type, '.') + 1;
+	char* dot = strrchr(type, '.');
+	if (dot)
+		type = dot + 1;
 	char* value = PyString_AsString(pvalue);
 
 	Log::err("Python", std::string(type) + ": " + value);

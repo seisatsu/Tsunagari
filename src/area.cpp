@@ -75,13 +75,13 @@ void Area::focus()
 void Area::buttonDown(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
-		player->startMovement(icoord(1, 0, 0));
+		player->startMovement(ivec2(1, 0));
 	else if (btn == Gosu::kbLeft)
-		player->startMovement(icoord(-1, 0, 0));
+		player->startMovement(ivec2(-1, 0));
 	else if (btn == Gosu::kbUp)
-		player->startMovement(icoord(0, -1, 0));
+		player->startMovement(ivec2(0, -1));
 	else if (btn == Gosu::kbDown)
-		player->startMovement(icoord(0, 1, 0));
+		player->startMovement(ivec2(0, 1));
 	else if (btn == Gosu::kbSpace)
 		player->useTile();
 }
@@ -89,13 +89,13 @@ void Area::buttonDown(const Gosu::Button btn)
 void Area::buttonUp(const Gosu::Button btn)
 {
 	if (btn == Gosu::kbRight)
-		player->stopMovement(icoord(1, 0, 0));
+		player->stopMovement(ivec2(1, 0));
 	else if (btn == Gosu::kbLeft)
-		player->stopMovement(icoord(-1, 0, 0));
+		player->stopMovement(ivec2(-1, 0));
 	else if (btn == Gosu::kbUp)
-		player->stopMovement(icoord(0, -1, 0));
+		player->stopMovement(ivec2(0, -1));
 	else if (btn == Gosu::kbDown)
-		player->stopMovement(icoord(0, 1, 0));
+		player->stopMovement(ivec2(0, 1));
 }
 
 void Area::draw()
@@ -113,7 +113,7 @@ bool Area::needsRedraw() const
 	if (player->needsRedraw())
 		return true;
 
-	// Do any onscreen tile types need to update their animations?
+	// Do any on-screen tile types need to update their animations?
 	BOOST_FOREACH(const TileType& type, tileTypes)
 		if (type.needsRedraw(*this))
 			return true;
@@ -141,12 +141,14 @@ void Area::update(unsigned long dt)
 	music->update();
 }
 
-void Area::reset()
+AreaPtr Area::reset()
 {
-	icoord c = player->getTileCoords();
-	c.z = (int)indexDepth(c.z);
 	AreaPtr newSelf = world->getArea(descriptor, AREA_ALWAYS_CREATE);
-	world->focusArea(newSelf, c);
+	if (world->getFocusedArea().get() == this) {
+		vicoord c = player->getTileCoords_vi();
+		world->focusArea(newSelf, c);
+	}
+	return newSelf;
 }
 
 
@@ -170,7 +172,7 @@ const Tile& Area::getTile(icoord phys) const
 	return getTile(phys.x, phys.y, phys.z);
 }
 
-const Tile& Area::getTile(vtcoord virt) const
+const Tile& Area::getTile(vicoord virt) const
 {
 	return getTile(virt2phys(virt));
 }
@@ -194,7 +196,7 @@ Tile& Area::getTile(icoord phys)
 	return getTile(phys.x, phys.y, phys.z);
 }
 
-Tile& Area::getTile(vtcoord virt)
+Tile& Area::getTile(vicoord virt)
 {
 	return getTile(virt2phys(virt));
 }
@@ -246,7 +248,7 @@ bool Area::inBounds(icoord phys) const
 	return inBounds(phys.x, phys.y, phys.z);
 }
 
-bool Area::inBounds(vtcoord virt) const
+bool Area::inBounds(vicoord virt) const
 {
 	return inBounds(virt2phys(virt));
 }
@@ -270,12 +272,12 @@ const std::string& Area::getDescriptor() const
 
 
 
-vtcoord Area::phys2virt(icoord phys)
+vicoord Area::phys2virt_vi(icoord phys) const
 {
-	return vtcoord(phys.x, phys.y, indexDepth(phys.z));
+	return vicoord(phys.x, phys.y, indexDepth(phys.z));
 }
 
-rcoord Area::phys2virt(icoord phys) const
+rcoord Area::phys2virt_r(icoord phys) const
 {
 	return rcoord(
 		(double)phys.x * tileDim.x,
@@ -284,7 +286,7 @@ rcoord Area::phys2virt(icoord phys) const
 	);
 }
 
-icoord Area::virt2phys(vtcoord virt) const
+icoord Area::virt2phys(vicoord virt) const
 {
 	return icoord(virt.x, virt.y, depthIndex(virt.z));
 }
@@ -297,6 +299,25 @@ icoord Area::virt2phys(rcoord virt) const
 		depthIndex(virt.z)
 	);
 }
+
+rcoord Area::virt2virt(vicoord virt) const
+{
+	return rcoord(
+		(double)virt.x * tileDim.x,
+		(double)virt.y * tileDim.y,
+		virt.z
+	);
+}
+
+vicoord Area::virt2virt(rcoord virt) const
+{
+	return vicoord(
+		(int)virt.x / tileDim.x,
+		(int)virt.y / tileDim.y,
+		virt.z
+	);
+}
+
 
 int Area::depthIndex(double depth) const
 {
@@ -1017,7 +1038,7 @@ Door Area::parseDoor(const std::string& dest)
 	door.area = strs[0];
 	door.tile.x = atoi(strs[1].c_str());
 	door.tile.y = atoi(strs[2].c_str());
-	door.tile.z = atoi(strs[3].c_str());
+	door.tile.z = atof(strs[3].c_str());
 	return door;
 }
 
@@ -1037,18 +1058,16 @@ void exportArea()
 		.def("inBounds",
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
-		.def("depthIndex", &Area::depthIndex)
-		.def("indexDepth", &Area::indexDepth)
 		.def("getTileType", &Area::getTileType,
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
 		)
 		.def("reset", &Area::reset);
-	boost::python::class_<vtcoord>("vtcoord",
+	boost::python::class_<vicoord>("vicoord",
 	  boost::python::init<int, int, double>())
-		.def_readwrite("x", &vtcoord::x)
-		.def_readwrite("y", &vtcoord::y)
-		.def_readwrite("z", &vtcoord::z);
+		.def_readwrite("x", &vicoord::x)
+		.def_readwrite("y", &vicoord::y)
+		.def_readwrite("z", &vicoord::z);
 }
 

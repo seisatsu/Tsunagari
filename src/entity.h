@@ -56,7 +56,7 @@ public:
 	void updateTile(unsigned long dt);
 	void updateNoTile(unsigned long dt);
 
-	std::string getFacing() const;
+	const std::string getFacing() const;
 
 	//! Change the graphic. Returns true if it was changed to something
 	//! different.
@@ -67,24 +67,22 @@ public:
 	rcoord getPixelCoord() const;
 
 	//! Retrieve position within Area.
-	icoord getTileCoords() const;
+	icoord getTileCoords_i() const;
+	vicoord getTileCoords_vi() const;
 
 	//! Set location within Area.
-	void setPixelCoords(icoord c);
-	void setTileCoords(icoord c);
+	void setTileCoords(icoord phys);
+	void setTileCoords(vicoord virt);
 
-	//! Move within Area.
-	void moveByTile(icoord delta);
+	//! Initiate a movement within the Area.
+	void moveByTile(ivec2 delta);
 
-	//! Sets the Area object this entity will ask when looking for
+	//! Specifies the Area object this entity will ask when looking for
 	//! nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
 
-	//
-	// Lua callback targets
-	//
 
-	//! Move to the upper left corner. Sets x,y tile positions to 1,1.
+	//! Move to a random Tile in the Area that is not designated 'nowalk'.
 	void gotoRandomTile();
 
 	//! Sets speed multiplier.
@@ -93,16 +91,22 @@ public:
 protected:
 	std::vector<icoord> frontTiles() const;
 
-	//! Calculate what doff should be and save it in doff.
+	//! Calculate what the draw offset should be and saves it in 'doff'.
 	void calcDoff();
 
 	//! Get the Tile we are standing on.
 	Tile& getTile() const;
 
-	SampleRef getSound(const std::string& name);
+	//! Retrieves a sound custom-defined within this Entity's descriptor
+	//! file.
+	SampleRef getSound(const std::string& name) const;
 
-	//! Calculate which way to face based upon a movement delta.
-	void calculateFacing(int x, int y);
+	//! Normalize each of the X-Y axes into [-1, 0, or 1] and saves value
+	//! to 'facing'.
+	ivec2 setFacing(ivec2 facing);
+
+	//! Gets a string describing a direction.
+	const std::string& directionStr(ivec2 facing) const;
 
 	//! Returns true if we can move in the desired direction.
 	virtual bool canMove(icoord delta);
@@ -138,17 +142,19 @@ protected:
 	//! Set to true if the Entity wants the screen to be redrawn.
 	bool redraw;
 
+	typedef boost::unordered_map<std::string, Animation> AnimationMap;
+	typedef boost::unordered_map<std::string, SampleRef> SampleMap;
+	typedef boost::unordered_map<std::string, std::string> StringMap;
+
 	int imgw, imgh;
-	boost::unordered_map<std::string, Animation> phases;
+	AnimationMap phases;
 	Animation* phase;
-	std::string facing;
-	int faceX, faceY;
+	ivec2 facing;
 
 	//! List of sounds this Entity knows about.
-	boost::unordered_map<std::string, SampleRef> sounds;
-
+	SampleMap sounds;
 	//! List of scripts this Entity knows about.
-	boost::unordered_map<std::string, std::string> scripts;
+	StringMap scripts;
 
 	double baseSpeed; //!< Original speed, specified in descriptor.
 	double speedMul;  //!< Speed multiplier.

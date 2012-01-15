@@ -76,7 +76,7 @@ struct TileEvent {
 */
 struct Door {
 	std::string area;
-	icoord tile;
+	vicoord tile;
 };
 
 //! Contains properties unique to this tile.
@@ -94,7 +94,7 @@ public:
 	TileType* type;
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
-	boost::optional<int> layermod;
+	boost::optional<double> layermod;
 	unsigned flags; //! Flags for each option in TileFlags enum.
 
 	//! Determines whether this tile or one of its parent types embodies a
@@ -144,7 +144,7 @@ public:
 	Animation anim; //! Graphics for tiles of this type.
 	std::vector<TileEvent> events;
 	std::vector<Tile*> allOfType;
-	boost::optional<int> layermod;
+	boost::optional<double> layermod;
 	unsigned flags; //! Flags for each option in TileFlags enum.
 
 private:

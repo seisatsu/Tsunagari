@@ -40,20 +40,6 @@ class World;
 
 typedef boost::shared_ptr<Area> AreaPtr;
 
-/**
- * Virtual tile coordinate.
- *
- * x and y are the same as a physical coordinate.
- * z is the layer depth.
- */
-struct vtcoord
-{
-	vtcoord(int x, int y, double z): x(x), y(y), z(z) {}
-
-	int x, y;
-	double z;
-};
-
 //! An Area represents one map, or screen, in a Tsunagari World.
 /*!
 	The Area class handles the parsing of TMX-format Area descriptor files,
@@ -93,16 +79,16 @@ public:
 
 	//! Creates a new Area based off the same descriptor file and focuses
 	//! it. The Player's location is preserved.
-	void reset();
+	AreaPtr reset();
 
 	const Tile& getTile(int x, int y, int z) const; /* phys */
 	const Tile& getTile(int x, int y, double z) const; /* virt */
 	const Tile& getTile(icoord phys) const;
-	const Tile& getTile(vtcoord virt) const;
+	const Tile& getTile(vicoord virt) const;
 	Tile& getTile(int x, int y, int z); /* phys */
 	Tile& getTile(int x, int y, double z); /* virt */
 	Tile& getTile(icoord phys);
-	Tile& getTile(vtcoord virt);
+	Tile& getTile(vicoord virt);
 	TileType& getTileType(int idx);
 
 	//! Return the dimensions of the Tile matrix.
@@ -116,7 +102,7 @@ public:
 	bool inBounds(int x, int y, int z) const; /* phys */
 	bool inBounds(int x, int y, double z) const; /* virt */
 	bool inBounds(icoord phys) const;
-	bool inBounds(vtcoord virt) const;
+	bool inBounds(vicoord virt) const;
 
 	bool loopsInX() const;
 	bool loopsInY() const;
@@ -129,16 +115,18 @@ public:
 	// depth is represented by an arbirarily chosen integer in the physical
 	// system. Virtual coordinates include the correct floating-point
 	// depth.
-	// {
-	vtcoord phys2virt(icoord phys) /* const */;
-	rcoord phys2virt(icoord phys) const;
-	icoord virt2phys(vtcoord virt) const;
+	vicoord phys2virt_vi(icoord phys) const;
+	rcoord phys2virt_r(icoord phys) const;
+	icoord virt2phys(vicoord virt) const;
 	icoord virt2phys(rcoord virt) const;
-	int depthIndex(double depth) const;
-	double indexDepth(int idx) const;
-	// }
+	rcoord virt2virt(vicoord virt) const;
+	vicoord virt2virt(rcoord virt) const;
 
 private:
+	// Convert between virtual and physical map depths.
+	int depthIndex(double depth) const;
+	double indexDepth(int idx) const;
+
 	//! Run all scripts that need to be run before this Area is usable.
 	void runOnLoads();
 

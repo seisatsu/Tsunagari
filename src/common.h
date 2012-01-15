@@ -20,6 +20,21 @@ enum movement_mode_t {
 	NOTILE
 };
 
+/**
+ * Virtual integer coordinate.
+ *
+ * x and y are the same as a physical integer coordinate.
+ * z is a virtual layer depth within an Area.
+ */
+struct vicoord
+{
+	vicoord() {}
+	vicoord(int x, int y, double z): x(x), y(y), z(z) {}
+
+	int x, y;
+	double z;
+};
+
 //! 3D cube type.
 struct icube_t {
 	int x1, x2;

@@ -64,7 +64,8 @@ music.o: common.h log.h math.h music.cpp music.h resourcer.h sound.h xml.h
 player.o: animation.h area.h common.h config.h entity.h log.h math.h music.h \
  player.cpp player.h resourcer.h sound.h tile.h viewport.h window.h world.h \
  xml.h
-python.o: log.h python.cpp python.h python_bindings.h
+python.o: common.h log.h math.h python.cpp python.h python_bindings.h \
+ resourcer.h sound.h xml.h
 python_bindings.o: animation.h area.h common.h config.h entity.h log.h \
  math.h music.h player.h python_bindings.cpp resourcer.h sound.h tile.h \
  viewport.h xml.h

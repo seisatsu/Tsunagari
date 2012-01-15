@@ -67,9 +67,12 @@ public:
 	//! unless flags contains ALREA_ALWAYS_CREATE.
 	AreaPtr getArea(const std::string& filename, int flags = 0);
 
+	//! Returns the currently focused Area.
+	AreaPtr getFocusedArea();
+
 	//! Switch the game to a new Area, moving the player to the specified
 	//! position in the Area.
-	void focusArea(AreaPtr area, icoord playerPos);
+	void focusArea(AreaPtr area, vicoord playerPos);
 
 	//! Get name of script to be run on every Area load.
 	std::string getAreaLoadScript();
@@ -117,7 +120,7 @@ private:
 	*/
 	struct WorldEntry {
 		std::string area;
-		icoord coords;
+		vicoord coords;
 	};
 
 	std::string name;

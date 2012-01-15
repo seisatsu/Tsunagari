@@ -32,11 +32,11 @@ void removeValue(Cont* c, ValueType v)
 
 
 Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
-	: Entity(rc, area, conf), velocity(0, 0, 0)
+	: Entity(rc, area, conf), velocity(0, 0)
 {
 }
 
-void Player::startMovement(icoord delta)
+void Player::startMovement(ivec2 delta)
 {
 	switch (conf->moveMode) {
 	case TURN:
@@ -53,7 +53,7 @@ void Player::startMovement(icoord delta)
 	}
 }
 
-void Player::stopMovement(icoord delta)
+void Player::stopMovement(ivec2 delta)
 {
 	switch (conf->moveMode) {
 	case TURN:
@@ -62,7 +62,7 @@ void Player::stopMovement(icoord delta)
 		removeValue(&movements, delta);
 		velocity = movements.size() ?
 		           movements.back() :
-			   icoord(0, 0, 0);
+			   ivec2(0, 0);
 		if (velocity)
 			moveByTile(velocity);
 		break;
@@ -72,7 +72,7 @@ void Player::stopMovement(icoord delta)
 	}
 }
 
-void Player::moveByTile(icoord delta)
+void Player::moveByTile(ivec2 delta)
 {
 	if (moving)
 		// Support queueing moves?
@@ -81,19 +81,18 @@ void Player::moveByTile(icoord delta)
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
 	if (window.input().down(Gosu::kbLeftControl)) {
-		calculateFacing(delta.x, delta.y);
-		setPhase(facing);
+		setPhase(directionStr(setFacing(delta)));
 		redraw = true;
 		return;
 	}
 
-	icoord newCoord = getTileCoords();
-	newCoord += delta;
+	// FIXME: use frontTiles()
+	icoord newCoord = getTileCoords_i();
+	newCoord += icoord(delta.x, delta.y, 0);
 
 	// The tile is off the map. Turn to face the direction, but don't move.
 	if (!area->inBounds(newCoord)) {
-		calculateFacing(delta.x, delta.y);
-		setPhase(facing);
+		setPhase(directionStr(setFacing(delta)));
 		redraw = true;
 		return;
 	}
@@ -104,8 +103,7 @@ void Player::moveByTile(icoord delta)
 	if (destTile->hasFlag(player_nowalk)) {
 		// The tile we're trying to move onto is set as player_nowalk.
 		// Turn to face the direction, but don't move.
-		calculateFacing(delta.x, delta.y);
-		setPhase(facing);
+		setPhase(directionStr(setFacing(delta)));
 		redraw = true;
 		return;
 	}
@@ -152,10 +150,10 @@ void Player::postMove()
 		}
 	}
 
-	icoord tile = getTileCoords();
+	vicoord tile = getTileCoords_vi();
 	Log::dev("Player", boost::str(
-		boost::format("location x:%d y:%d z:%d")
-		  % tile.x % tile.y % (int)r.z)
+		boost::format("location x:%d y:%d z:%.1f")
+		  % tile.x % tile.y % r.z)
 	);
 
 	// If we have a velocity, keep moving.

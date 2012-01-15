@@ -113,7 +113,12 @@ AreaPtr World::getArea(const std::string& filename, int flags)
 	return newArea;
 }
 
-void World::focusArea(AreaPtr area, icoord playerPos)
+AreaPtr World::getFocusedArea()
+{
+	return area;
+}
+
+void World::focusArea(AreaPtr area, vicoord playerPos)
 {
 	Log::dbg("World", area->getDescriptor() + ": focused");
 	this->area = area;
@@ -162,7 +167,7 @@ bool World::processDescriptor()
 			entry.area = node.attr("area");
 			if (!node.intAttr("x", &entry.coords.x) ||
 			    !node.intAttr("y", &entry.coords.y) ||
-			    !node.intAttr("z", &entry.coords.z))
+			    !node.doubleAttr("z", &entry.coords.z))
 				return false;
 		} else if (node.is("viewport")) {
 			if (!node.intAttr("width", &viewport.x) ||
