@@ -1064,10 +1064,5 @@ void exportArea()
 		    >()
 		)
 		.def("reset", &Area::reset);
-	boost::python::class_<vicoord>("vicoord",
-	  boost::python::init<int, int, double>())
-		.def_readwrite("x", &vicoord::x)
-		.def_readwrite("y", &vicoord::y)
-		.def_readwrite("z", &vicoord::z);
 }
 

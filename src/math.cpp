@@ -4,6 +4,7 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include "common.h"
 #include "math.h"
 #include "python.h"
 
@@ -30,5 +31,9 @@ void exportVecs()
 		.def(self -= other<rcoord>())
 		.def(self *= other<rcoord>())
 		.def(self /= other<rcoord>());
+	class_<vicoord>("vicoord", init<int, int, double>())
+		.def_readwrite("x", &vicoord::x)
+		.def_readwrite("y", &vicoord::y)
+		.def_readwrite("z", &vicoord::z);
 }
 
