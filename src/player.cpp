@@ -31,14 +31,14 @@ void removeValue(Cont* c, ValueType v)
 }
 
 
-Player::Player(Resourcer* rc, Area* area, ClientValues* conf)
-	: Entity(rc, area, conf), velocity(0, 0)
+Player::Player(Resourcer* rc, Area* area)
+	: Entity(rc, area), velocity(0, 0)
 {
 }
 
 void Player::startMovement(ivec2 delta)
 {
-	switch (conf->moveMode) {
+	switch (conf.moveMode) {
 	case TURN:
 		moveByTile(delta);
 		break;
@@ -55,7 +55,7 @@ void Player::startMovement(ivec2 delta)
 
 void Player::stopMovement(ivec2 delta)
 {
-	switch (conf->moveMode) {
+	switch (conf.moveMode) {
 	case TURN:
 		break;
 	case TILE:
@@ -157,7 +157,7 @@ void Player::postMove()
 	);
 
 	// If we have a velocity, keep moving.
-	if (conf->moveMode == TILE && velocity)
+	if (conf.moveMode == TILE && velocity)
 		moveByTile(velocity);
 }
 

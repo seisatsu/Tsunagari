@@ -49,7 +49,7 @@
 	#ifdef _MSC_VER
 		#define snprintf _snprintf
 	#endif
-	
+
 	/* Fix NAN constant. */
 	#ifdef _MSC_VER
 		#ifndef NAN

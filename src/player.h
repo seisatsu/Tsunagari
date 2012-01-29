@@ -18,7 +18,7 @@ class Resourcer;
 class Player : public Entity
 {
 public:
-	Player(Resourcer* rc, Area* area, ClientValues* conf);
+	Player(Resourcer* rc, Area* area);
 
 	//! Smooth continuous movement.
 	void startMovement(ivec2 delta);

@@ -21,8 +21,8 @@ World* World::getWorld()
 	return globalWorld;
 }
 
-World::World(GameWindow* wnd, Resourcer* rc, ClientValues* conf)
-	: rc(rc), wnd(wnd), conf(conf), player(rc, NULL, conf)
+World::World(GameWindow* wnd, Resourcer* rc)
+	: rc(rc), wnd(wnd), player(rc, NULL)
 {
 	globalWorld = this;
 }
@@ -96,7 +96,7 @@ void World::update(unsigned long dt)
 
 AreaPtr World::getArea(const std::string& filename, int flags)
 {
-	if (conf->cacheEnabled && (flags & AREA_ALWAYS_CREATE) == false) {
+	if (conf.cacheEnabled && (flags & AREA_ALWAYS_CREATE) == false) {
 		AreaMap::iterator entry = areas.find(filename);
 		if (entry != areas.end())
 			return entry->second;
@@ -108,7 +108,7 @@ AreaPtr World::getArea(const std::string& filename, int flags)
 
 	if (!newArea->init())
 		newArea = AreaPtr();
-	if (conf->cacheEnabled)
+	if (conf.cacheEnabled)
 		areas[filename] = newArea;
 	return newArea;
 }
@@ -158,11 +158,11 @@ bool World::processDescriptor()
 
 			str = node.attr("movement");
 			if (str == "turn")
-				conf->moveMode = TURN;
+				conf.moveMode = TURN;
 			else if (str == "tile")
-				conf->moveMode = TILE;
+				conf.moveMode = TILE;
 			else if (str == "notile")
-				conf->moveMode = NOTILE;
+				conf.moveMode = NOTILE;
 		} else if (node.is("entrypoint")) {
 			entry.area = node.attr("area");
 			if (!node.intAttr("x", &entry.coords.x) ||

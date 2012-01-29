@@ -11,6 +11,8 @@
 
 #include "common.h"
 
+ClientValues conf; // Project-wide global ClientValues.
+
 
 icube_t icube(int x1, int y1, int z1,
               int x2, int y2, int z2)

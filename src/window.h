@@ -34,7 +34,7 @@ public:
 	static const GameWindow& getWindow();
 
 	//! GameWindow Constructor
-	GameWindow(ClientValues* conf);
+	GameWindow();
 
 	//! GameWindow Destructor
 	virtual ~GameWindow();
@@ -87,8 +87,6 @@ private:
 
 	//! Call the garbage colelctor once a second.
 	int currentSecond;
-
-	ClientValues* conf;
 
 	struct keystate {
 		bool consecutive, initiallyResolved;

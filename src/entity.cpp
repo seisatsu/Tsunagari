@@ -29,14 +29,13 @@ static std::string directions[][3] = {
 };
 
 
-Entity::Entity(Resourcer* rc, Area* area, ClientValues* conf)
+Entity::Entity(Resourcer* rc, Area* area)
 	: rc(rc),
 	  redraw(true),
 	  speedMul(1.0),
 	  moving(false),
 	  area(NULL),
-	  r(0.0, 0.0, 0.0),
-	  conf(conf)
+	  r(0.0, 0.0, 0.0)
 {
 	if (area)
 		setArea(area);
@@ -106,7 +105,7 @@ static double angleFromXY(double x, double y)
 
 void Entity::update(unsigned long dt)
 {
-	switch (conf->moveMode) {
+	switch (conf.moveMode) {
 	case TURN:
 		updateTurn(dt);
 		break;
@@ -336,7 +335,7 @@ void Entity::preMove()
 	r.z = destCoord.z;
 
 	// Start moving animation.
-	switch (conf->moveMode) {
+	switch (conf.moveMode) {
 	case TURN:
 		break;
 	case TILE:
@@ -349,7 +348,7 @@ void Entity::preMove()
 	tileExitScript();
 	fromTile->onLeaveScripts(rc, this);
 
-	if (conf->moveMode == TURN) {
+	if (conf.moveMode == TURN) {
 		// Movement is instantaneous.
 		r = destCoord;
 		postMove();
@@ -361,7 +360,7 @@ void Entity::postMove()
 	moving = false;
 
 	// Stop moving animation.
-	if (conf->moveMode != TURN)
+	if (conf.moveMode != TURN)
 		setPhase(getFacing());
 
 	// Process triggers.

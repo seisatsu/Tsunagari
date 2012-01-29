@@ -43,7 +43,7 @@ public:
 	//! Get the currently open World.
 	static World* getWorld();
 
-	World(GameWindow* wnd, Resourcer* rc, ClientValues* conf);
+	World(GameWindow* wnd, Resourcer* rc);
 	~World();
 
 	//! Initialize the world for use.
@@ -94,7 +94,6 @@ private:
 
 	Resourcer* rc;
 	GameWindow* wnd;
-	ClientValues* conf;
 	Viewport* view;
 	AreaPtr area;
 	boost::scoped_ptr<Music> music;

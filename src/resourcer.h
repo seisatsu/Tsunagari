@@ -44,7 +44,7 @@ typedef boost::shared_ptr<std::string> StringRef;
 class Resourcer
 {
 public:
-	Resourcer(GameWindow* window, const ClientValues* conf);
+	Resourcer(GameWindow* window);
 	~Resourcer();
 	bool init(char** argv);
 
@@ -125,7 +125,6 @@ private:
 
 
 	GameWindow* window;
-	const ClientValues* conf;
 
 	// Caches that store processed, game-ready objects. Garbage collected.
 	ImageRefMap images;

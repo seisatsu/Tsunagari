@@ -58,6 +58,7 @@ struct ClientValues {
 	int cacheTTL;
 	int cacheSize;
 };
+extern ClientValues conf;
 
 //! Returns a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);

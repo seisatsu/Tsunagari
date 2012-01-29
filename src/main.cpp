@@ -62,15 +62,14 @@ static void defaultsQuery()
  * information will be stored in an ini file which we parse here.
  *
  * @param filename Name of the ini file to load from.
- * @param conf ClientValues object to populate
  *
  * @return false if error occured during processing
  */
-static bool parseConfig(const char* filename, ClientValues* conf)
+static bool parseConfig(const char* filename)
 {
 	namespace pod = boost::program_options::detail;
 
-	conf->cacheEnabled = CACHE_EMPTY_TTL && CACHE_MAX_SIZE;
+	conf.cacheEnabled = CACHE_EMPTY_TTL && CACHE_MAX_SIZE;
 
 	std::ifstream config(filename);
 	if (!config) {
@@ -91,81 +90,81 @@ static bool parseConfig(const char* filename, ClientValues* conf)
 		return false;
 	}
 	else
-		conf->world = parameters["engine.world"];
+		conf.world = parameters["engine.world"];
 
 	if (parameters["window.width"].empty()) {
 		Log::err(filename, "\"[window] width\" option expected");
 		return false;
 	}
 	else
-		conf->windowSize.x = atoi(parameters["window.width"].c_str());
+		conf.windowSize.x = atoi(parameters["window.width"].c_str());
 
 	if (parameters["window.height"].empty()) {
 		Log::err(filename, "\"[window] height\" option expected");
 		return false;
 	}
 	else
-		conf->windowSize.y = atoi(parameters["window.height"].c_str());
+		conf.windowSize.y = atoi(parameters["window.height"].c_str());
 
 	if (parameters["window.fullscreen"].empty()) {
 		Log::err(filename, "\"[window] fullscreen\" option expected");
 		return false;
 	}
 	else
-		conf->fullscreen = parseBool(parameters["window.fullscreen"]);
+		conf.fullscreen = parseBool(parameters["window.fullscreen"]);
 
 	if (parameters["audio.enabled"].size())
-		conf->audioEnabled = parseBool(parameters["audio.enabled"]);
+		conf.audioEnabled = parseBool(parameters["audio.enabled"]);
 	else
-		conf->audioEnabled = true;
+		conf.audioEnabled = true;
 
 	if (!parameters["cache.enabled"].empty()) {
 		if (parseBool(parameters["cache.enabled"]))
-			conf->cacheEnabled = true;
+			conf.cacheEnabled = true;
 		else
-			conf->cacheEnabled = false;
+			conf.cacheEnabled = false;
 	}
 
 	if (parameters["cache.ttl"].empty())
-		conf->cacheTTL = CACHE_EMPTY_TTL;
+		conf.cacheTTL = CACHE_EMPTY_TTL;
 	else {
 		if (atoi(parameters["cache.ttl"].c_str()) == 0)
-			conf->cacheEnabled = 0;
-		conf->cacheTTL = atoi(parameters["cache.ttl"].c_str());
+			conf.cacheEnabled = 0;
+		conf.cacheTTL = atoi(parameters["cache.ttl"].c_str());
 	}
 
 	if (parameters["cache.size"].empty())
-		conf->cacheSize = CACHE_MAX_SIZE;
+		conf.cacheSize = CACHE_MAX_SIZE;
 	else {
 		if (atoi(parameters["cache.size"].c_str()) == 0)
-			conf->cacheEnabled = 0;
-		conf->cacheSize = atoi(parameters["cache.size"].c_str());
+			conf.cacheEnabled = 0;
+		conf.cacheSize = atoi(parameters["cache.size"].c_str());
 	}
 
 	if (parameters["engine.loglevel"].empty())
-		conf->logLevel = MESSAGE_MODE;
+		conf.logLevel = MESSAGE_MODE;
 	else if (parameters["engine.loglevel"] == "error" ||
 	    parameters["engine.loglevel"] == "Error" ||
 	    parameters["engine.loglevel"] == "ERROR")
-		conf->logLevel = MM_SILENT;
+		conf.logLevel = MM_SILENT;
 	else if (parameters["engine.loglevel"] == "devel" ||
 	    parameters["engine.loglevel"] == "Devel" ||
 	    parameters["engine.loglevel"] == "DEVEL")
-	conf->logLevel = MM_DEVELOPER;
+	conf.logLevel = MM_DEVELOPER;
 	else if (parameters["engine.loglevel"] == "debug" ||
 	    parameters["engine.loglevel"] == "Debug" ||
 	    parameters["engine.loglevel"] == "DEBUG")
-	conf->logLevel = MM_DEBUG;
+	conf.logLevel = MM_DEBUG;
 	else {
 		Log::err(filename, "unknown value for \"[engine] loglevel\", using default");
-		conf->logLevel = MESSAGE_MODE;
+		conf.logLevel = MESSAGE_MODE;
 	}
 
 	return true;
 }
 
 /* Parse and process command line options and arguments. */
-static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
+static bool parseCommandLine(int argc, char* argv[])
 {
 	CommandLineOptions cmd(argc, argv);
 
@@ -204,20 +203,20 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	}
 
 	if (cmd.check("--config")) {
-		if (!parseConfig(cmd.get("--config").c_str(), conf))
+		if (!parseConfig(cmd.get("--config").c_str()))
 			return false;
 	}
 
 	if (cmd.check("--gameworld"))
-		conf->world = cmd.get("--gameworld");
+		conf.world = cmd.get("--gameworld");
 
 	if (cmd.check("--verbosity")) {
 		if (cmd.get("--verbosity") == "error")
-			conf->logLevel = MM_SILENT;
+			conf.logLevel = MM_SILENT;
 		else if (cmd.get("--verbosity") == "devel")
-			conf->logLevel = MM_DEVELOPER;
+			conf.logLevel = MM_DEVELOPER;
 		else if (cmd.get("--verbosity") == "debug")
-			conf->logLevel = MM_DEBUG;
+			conf.logLevel = MM_DEBUG;
 		else {
 			Log::err(argv[0], "invalid argument for --verbosity");
 			return false;
@@ -225,18 +224,18 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	}
 
 	if (cmd.check("--no-audio"))
-		conf->audioEnabled = false;
+		conf.audioEnabled = false;
 
 	if (cmd.check("--cache-ttl")) {
-		conf->cacheTTL = atoi(cmd.get("--cache-ttl").c_str());
-		if (conf->cacheTTL == 0)
-			conf->cacheEnabled = false;
+		conf.cacheTTL = atoi(cmd.get("--cache-ttl").c_str());
+		if (conf.cacheTTL == 0)
+			conf.cacheEnabled = false;
 	}
 
 	if (cmd.check("--cache-size")) {
-		conf->cacheSize = atoi(cmd.get("--cache-size").c_str());
-		if (conf->cacheSize == 0)
-			conf->cacheEnabled = false;
+		conf.cacheSize = atoi(cmd.get("--cache-size").c_str());
+		if (conf.cacheSize == 0)
+			conf.cacheEnabled = false;
 	}
 
 	if (cmd.check("--size")) {
@@ -245,8 +244,8 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 			Log::err(argv[0], "invalid argument for --size");
 			return false;
 		}
-		conf->windowSize.x = atoi(dim[0].c_str());
-		conf->windowSize.y = atoi(dim[1].c_str());
+		conf.windowSize.x = atoi(dim[0].c_str());
+		conf.windowSize.y = atoi(dim[1].c_str());
 	}
 
 	if (cmd.check("--fullscreen") && cmd.check("--window")) {
@@ -255,10 +254,10 @@ static bool parseCommandLine(int argc, char* argv[], ClientValues* conf)
 	}
 
 	if (cmd.check("--fullscreen"))
-		conf->fullscreen = true;
+		conf.fullscreen = true;
 
 	if (cmd.check("--window"))
-		conf->fullscreen = false;
+		conf.fullscreen = false;
 
 	return true;
 }
@@ -306,15 +305,14 @@ int main(int argc, char** argv)
 	// Init various libraries we use.
 	libraries libs;
 
-	ClientValues conf;
-	if (!parseConfig(CLIENT_CONF_FILE, &conf))
+	if (!parseConfig(CLIENT_CONF_FILE))
 		return 1;
-	if (!parseCommandLine(argc, argv, &conf))
+	if (!parseCommandLine(argc, argv))
 		return 1;
 	if (conf.logLevel)
 		Log::setMode(conf.logLevel);
 
-	GameWindow window(&conf);
+	GameWindow window;
 	if (!window.init(argv))
 		return 1;
 	window.show();

@@ -41,7 +41,7 @@ namespace Gosu {
 class Entity
 {
 public:
-	Entity(Resourcer* rc, Area* area, ClientValues* conf);
+	Entity(Resourcer* rc, Area* area);
 	~Entity();
 
 	//! Entity Initializer
@@ -175,9 +175,6 @@ protected:
 	rcoord doff; //!< Drawing offset to center entity on tile.
 
 	std::string descriptor;
-
-	//! Pointer to game configuration.
-	ClientValues* conf;
 };
 
 void exportEntity();

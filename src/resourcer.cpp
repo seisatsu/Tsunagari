@@ -28,8 +28,8 @@
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
 
-Resourcer::Resourcer(GameWindow* window, const ClientValues* conf)
-	: window(window), conf(conf)
+Resourcer::Resourcer(GameWindow* window)
+	: window(window)
 {
 	pythonSetResourcer(this);
 	pythonSetGlobal("resourcer", this);
@@ -47,9 +47,9 @@ bool Resourcer::init(char** argv)
 	if (!err)
 		return false;
 
-	err = PHYSFS_mount(conf->world.c_str(), NULL, 0);
+	err = PHYSFS_mount(conf.world.c_str(), NULL, 0);
 	if (!err) {
-		Log::err("Resourcer", conf->world + ": could not open world");
+		Log::err("Resourcer", conf.world + ": could not open world");
 		return false;
 	}
 
@@ -63,7 +63,7 @@ bool Resourcer::resourceExists(const std::string& name) const
 
 ImageRef Resourcer::getImage(const std::string& name)
 {
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		ImageRefMap::iterator entry = images.find(name);
 		if (entry != images.end()) {
 			if (entry->second.lastUsed) {
@@ -82,7 +82,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CacheEntry<ImageRef> data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -95,7 +95,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		int w, int h, bool tileable)
 {
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		TiledImageMap::iterator entry = tiles.find(name);
 		if (entry != tiles.end()) {
 			int now = GameWindow::getWindow().time();
@@ -119,7 +119,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 			(unsigned)w, (unsigned)h, tileable, *result.get());
 	img = *result.get();
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CacheEntry<boost::shared_ptr<TiledImage> > data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -131,10 +131,10 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 
 SampleRef Resourcer::getSample(const std::string& name)
 {
-	if (!conf->audioEnabled)
+	if (!conf.audioEnabled)
 		return SampleRef();
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		SampleRefMap::iterator entry = samples.find(name);
 		if (entry != samples.end()) {
 			if (entry->second.lastUsed) {
@@ -151,7 +151,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 		return SampleRef();
 	SampleRef result(new Sample(new Gosu::Sample(buffer->frontReader())));
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CacheEntry<SampleRef> data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -163,10 +163,10 @@ SampleRef Resourcer::getSample(const std::string& name)
 
 SongRef Resourcer::getSong(const std::string& name)
 {
-	if (!conf->audioEnabled)
+	if (!conf.audioEnabled)
 		return SongRef();
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		SongRefMap::iterator entry = songs.find(name);
 		if (entry != songs.end()) {
 			if (entry->second.lastUsed) {
@@ -183,7 +183,7 @@ SongRef Resourcer::getSong(const std::string& name)
 		return SongRef();
 	SongRef result(new Gosu::Song(buffer->frontReader()));
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CacheEntry<SongRef> data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -196,7 +196,7 @@ SongRef Resourcer::getSong(const std::string& name)
 XMLRef Resourcer::getXMLDoc(const std::string& name,
                             const std::string& dtdFile)
 {
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		XMLRefMap::iterator entry = xmls.find(name);
 		if (entry != xmls.end()) {
 			int now = GameWindow::getWindow().time();
@@ -211,7 +211,7 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 
 	XMLRef result(readXMLDocFromDisk(name, dtdFile));
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CacheEntry<XMLRef> data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -223,7 +223,7 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 
 bool Resourcer::runPythonScript(const std::string& name)
 {
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CodeMap::iterator entry = codes.find(name);
 		if (entry != codes.end()) {
 			int now = GameWindow::getWindow().time();
@@ -241,7 +241,7 @@ bool Resourcer::runPythonScript(const std::string& name)
 	PyCodeObject* result = code.size() ?
 		pythonCompile(name.c_str(), code.c_str()) : NULL;
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CacheEntry<PyCodeObject*> data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -253,7 +253,7 @@ bool Resourcer::runPythonScript(const std::string& name)
 
 std::string Resourcer::getText(const std::string& name)
 {
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		TextRefMap::iterator entry = texts.find(name);
 		if (entry != texts.end()) {
 			int now = GameWindow::getWindow().time();
@@ -268,7 +268,7 @@ std::string Resourcer::getText(const std::string& name)
 
 	StringRef result(new std::string(readStringFromDisk(name)));
 
-	if (conf->cacheEnabled) {
+	if (conf.cacheEnabled) {
 		CacheEntry<StringRef> data;
 		data.resource = result;
 		data.lastUsed = 0;
@@ -306,7 +306,7 @@ void Resourcer::reclaim(Map& map)
 				// Handle time overflow
 				cache.lastUsed = now;
 			}
-			else if (now > cache.lastUsed + conf->cacheTTL*1000) {
+			else if (now > cache.lastUsed + conf.cacheTTL*1000) {
 				dead.push_back(name);
 				Log::dbg("Resourcer", name + ": purged from cache");
 			}
@@ -407,7 +407,7 @@ Gosu::Buffer* Resourcer::read(const std::string& name) const
 
 std::string Resourcer::path(const std::string& entryName) const
 {
-	return conf->world + "/" + entryName;
+	return conf.world + "/" + entryName;
 }
 
 
