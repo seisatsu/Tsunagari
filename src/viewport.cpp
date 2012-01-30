@@ -15,7 +15,6 @@
 
 Viewport::Viewport(const GameWindow& window, icoord vsize)
 	: window(window),
-	  conf(conf),
 	  off(0, 0),
 	  virtRes(vsize.x, vsize.y),
 	  mode(TM_MANUAL),

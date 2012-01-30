@@ -49,7 +49,7 @@ bool Resourcer::init(char* argv0)
 
 	err = PHYSFS_mount(conf.worldFilename.c_str(), NULL, 0);
 	if (!err) {
-		Log::err("Resourcer", conf.world + ": could not open world");
+		Log::err("Resourcer", conf.worldFilename + ": could not open world");
 		return false;
 	}
 
@@ -113,7 +113,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	BufferPtr buffer(read(name));
 	if (!buffer)
 		return SampleRef();
-	SampleRef result(new Sample(new Gosu::Sample(buffer->frontReader())));
+	SampleRef result(new Sound(new Gosu::Sample(buffer->frontReader())));
 
 	sounds.put(name, result);
 	return result;
@@ -168,7 +168,7 @@ std::string Resourcer::getText(const std::string& name)
 {
 	StringRef existing = texts.momentaryRequest(name);
 	if (existing)
-		return *result.get();
+		return *existing.get();
 
 	StringRef result(new std::string(readStringFromDisk(name)));
 
@@ -271,7 +271,7 @@ Gosu::Buffer* Resourcer::read(const std::string& name) const
 
 std::string Resourcer::path(const std::string& entryName) const
 {
-	return conf.world + "/" + entryName;
+	return conf.worldFilename + "/" + entryName;
 }
 
 

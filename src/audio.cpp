@@ -9,7 +9,7 @@
 #include "python.h"
 #include "audio.h"
 
-Sound::Sound(Gosu::Sound* source)
+Sound::Sound(Gosu::Sample* source)
 	: source(source)
 {
 }
@@ -22,7 +22,7 @@ void Sound::play()
 
 void exportSound()
 {
-	boost::python::class_<Sample, boost::shared_ptr<Sound> >
+	boost::python::class_<Sound, boost::shared_ptr<Sound> >
 		("Sound", boost::python::no_init)
 		.def("play", &Sound::play);
 }

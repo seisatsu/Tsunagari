@@ -14,9 +14,9 @@
 #include <libxml/parser.h>
 #include <Python.h>
 
+#include "audio.h"
 #include "cache.h"
 #include "common.h"
-#include "sound.h"
 #include "xml.h"
 
 namespace Gosu {
@@ -33,7 +33,7 @@ using boost::shared_ptr;
 
 // We hand out and manage resources in these forms:
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
-typedef boost::shared_ptr<Sample> SampleRef;
+typedef boost::shared_ptr<Sound> SampleRef;
 typedef boost::shared_ptr<Gosu::Song> SongRef;
 typedef boost::shared_ptr<XMLDoc> XMLRef;
 typedef std::deque<ImageRef> TiledImage;
@@ -112,7 +112,8 @@ private:
 	Cache<SampleRef> sounds;
 	Cache<SongRef> songs;
 	Cache<XMLRef> xmls;
-	Cache<TextRef> texts;
+	Cache<PyCodeObject*> codes;
+	Cache<StringRef> texts;
 };
 
 void exportResourcer();

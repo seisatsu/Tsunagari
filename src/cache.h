@@ -10,7 +10,9 @@
 #include <string>
 #include <vector>
 
+#include "common.h"
 #include "log.h"
+#include "window.h"
 
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
@@ -24,7 +26,7 @@ public:
 	T momentaryRequest(const std::string& name)
 	{
 		if (conf.cacheEnabled) {
-			CacheMap::iterator it = map.find(name);
+			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
 				Log::dbg("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
@@ -42,7 +44,7 @@ public:
 	T lifetimeRequest(const std::string& name)
 	{
 		if (conf.cacheEnabled) {
-			CacheMap::iterator it = map.find(name);
+			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
 				Log::dbg("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
@@ -58,7 +60,7 @@ public:
 	{
 		if (!conf.cacheEnabled)
 			return;
-		CacheEntry<T> entry;
+		CacheEntry entry;
 		entry.resource = data;
 		entry.lastUsed = 0;
 		map[name] = entry;
@@ -101,7 +103,7 @@ private:
 		int memoryUsed;
 	};
 
-	typedef boost::unordered_map<const std::string, CacheEntry<T> > CacheMap;
+	typedef boost::unordered_map<const std::string, CacheEntry> CacheMap;
 	CacheMap map;
 };
 

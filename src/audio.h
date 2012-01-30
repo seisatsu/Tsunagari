@@ -16,7 +16,7 @@ public:
 	void play();
 
 private:
-	Gosu::Sound* source;
+	Gosu::Sample* source;
 };
 
 void exportSound();

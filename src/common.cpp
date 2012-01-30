@@ -11,7 +11,7 @@
 
 #include "common.h"
 
-ClientValues conf; // Project-wide global ClientValues.
+TsunagariConf conf; // Project-wide global TsunagariConf.
 
 
 icube_t icube(int x1, int y1, int z1,

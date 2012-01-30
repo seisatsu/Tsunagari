@@ -69,7 +69,7 @@ void Area::focus()
 	}
 
 	music->setIntro(musicIntro);
-	music->setMain(musicLoop);
+	music->setLoop(musicLoop);
 }
 
 void Area::buttonDown(const Gosu::Button btn)
