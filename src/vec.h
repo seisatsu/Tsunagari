@@ -1,11 +1,11 @@
 /*********************************
 ** Tsunagari Tile Engine        **
-** math.h                       **
+** vec.h                        **
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
-#ifndef MATH_H
-#define MATH_H
+#ifndef VEC_H
+#define VEC_H
 
 template<class T>
 class vec2

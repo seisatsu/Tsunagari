@@ -9,9 +9,9 @@
 #include "audio.h" // for exportSound
 #include "area.h" // for exportArea
 #include "entity.h" // for exportEntity
-#include "math.h" // for exportVecs
 #include "resourcer.h" // for exportResourcer
 #include "tile.h" // for export{Tile,TileType,Door}
+#include "vec.h" // for exportVecs
 
 BOOST_PYTHON_MODULE(tsunagari)
 {

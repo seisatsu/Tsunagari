@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "log.h" // for message_mode_t
-#include "math.h" // for icoord
+#include "vec.h" // for icoord
 
 //! Game Movement Mode
 enum movement_mode_t {

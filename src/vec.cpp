@@ -1,12 +1,12 @@
 /*********************************
 ** Tsunagari Tile Engine        **
-** math.cpp                     **
+** vec.cpp                      **
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
 #include "common.h"
-#include "math.h"
 #include "python.h"
+#include "vec.h"
 
 using boost::python::class_;
 using boost::python::init;

@@ -8,7 +8,7 @@
 #include <Gosu/Math.hpp>
 
 #include "area.h"
-#include "math.h"
+#include "vec.h"
 #include "viewport.h"
 #include "window.h"
 
