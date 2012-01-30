@@ -14,6 +14,8 @@ Music::Music(Resourcer* rc)
 
 Music::~Music()
 {
+	if (musicInst && musicInst->playing())
+		musicInst->stop();
 }
 
 void Music::setIntro(const std::string& filename)
@@ -21,7 +23,7 @@ void Music::setIntro(const std::string& filename)
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
-	case PLAYING_MAIN:
+	case PLAYING_LOOP:
 		if (newIntro != filename)
 			setState(CHANGED_INTRO);
 	default:
@@ -33,20 +35,20 @@ void Music::setIntro(const std::string& filename)
 	}
 }
 
-void Music::setMain(const std::string& filename)
+void Music::setLoop(const std::string& filename)
 {
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
-	case PLAYING_MAIN:
-		if (newMain != filename)
-			setState(CHANGED_MAIN);
+	case PLAYING_LOOP:
+		if (newLoop != filename)
+			setState(CHANGED_LOOP);
 	default:
 		break;
 	}
-	if (newMain != filename) {
-		newMain = filename;
-		mainMusic = filename.size() ? rc->getSong(filename) : SongRef();
+	if (newLoop != filename) {
+		newLoop = filename;
+		loopMusic = filename.size() ? rc->getSong(filename) : SongRef();
 	}
 }
 
@@ -59,29 +61,29 @@ void Music::update()
 		break;
 	case PLAYING_INTRO:
 		if (!musicInst->playing()) {
-			if (newMain.size() && mainMusic)
-				playMain();
+			if (newLoop.size() && loopMusic)
+				playLoop();
 			else
 				setState(NOT_PLAYING);
 		}
 		break;
-	case PLAYING_MAIN:
+	case PLAYING_LOOP:
 		break;
 	case CHANGED_INTRO:
 		if (newIntro.size() && introMusic)
 			playIntro();
-		else if (newMain.size() && newMain != curMain)
-			setState(CHANGED_MAIN);
-		else if (newMain.size())
-			setState(PLAYING_MAIN);
+		else if (newLoop.size() && newLoop != curLoop)
+			setState(CHANGED_LOOP);
+		else if (newLoop.size())
+			setState(PLAYING_LOOP);
 		else
 			setState(NOT_PLAYING);
 		break;
-	case CHANGED_MAIN:
-		if (newIntro.size() && mainMusic)
+	case CHANGED_LOOP:
+		if (newIntro.size() && loopMusic)
 			playIntro();
-		else if (newMain.size() && mainMusic)
-			playMain();
+		else if (newLoop.size() && loopMusic)
+			playLoop();
 		else
 			setState(NOT_PLAYING);
 		break;
@@ -98,14 +100,14 @@ void Music::playIntro()
 	setState(PLAYING_INTRO);
 }
 
-void Music::playMain()
+void Music::playLoop()
 {
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
-	curMain = newMain;
-	mainMusic->play(true);
-	musicInst = mainMusic;
-	setState(PLAYING_MAIN);
+	curLoop = newLoop;
+	loopMusic->play(true);
+	musicInst = loopMusic;
+	setState(PLAYING_LOOP);
 }
 
 /*
@@ -116,12 +118,12 @@ static const char* stateStr(MUSIC_STATE state)
 		return "NOT_PLAYING";
 	case PLAYING_INTRO:
 		return "PLAYING_INTRO";
-	case PLAYING_MAIN:
-		return "PLAYING_MAIN";
+	case PLAYING_LOOP:
+		return "PLAYING_LOOP";
 	case CHANGED_INTRO:
 		return "CHANGED_INTRO";
-	case CHANGED_MAIN:
-		return "CHANGED_MAIN";
+	case CHANGED_LOOP:
+		return "CHANGED_LOOP";
 	default:
 		return "";
 	}

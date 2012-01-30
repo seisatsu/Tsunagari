@@ -16,40 +16,50 @@ enum MUSIC_STATE
 {
 	NOT_PLAYING,
 	PLAYING_INTRO,
-	PLAYING_MAIN,
+	PLAYING_LOOP,
 	CHANGED_INTRO,
-	CHANGED_MAIN
+	CHANGED_LOOP
 };
 
+/**
+ * State manager for currently playing music. Continuously controls which music
+ * will play. At the moment, each Area has an INTRO music and a LOOP music.
+ * Immediately upon entering an Area, the currently playing music is stopped
+ * and the associated intro music started. Once the intro music finishes, or,
+ * if there is no intro music, then immediately upon entering said Area, the
+ * loop music begins. Loop music is looped forever until either the world is
+ * exited or new music is specified, either by a script or by entering a new
+ * Area.
+ *
+ * When switching to a new Area with the same intro or loop music as the
+ * previous Area, the music is left alone, if possible.
+ */
 class Music
 {
 public:
-	//! Music Constructor
 	Music(Resourcer* rc);
-
-	//! Music Destructor
 	~Music();
 
 	void setIntro(const std::string& filename);
-	void setMain(const std::string& filename);
+	void setLoop(const std::string& filename);
 
 	void update();
 
 private:
 	void playIntro();
-	void playMain();
+	void playLoop();
 	void setState(MUSIC_STATE state);
 
 	Resourcer* rc;
 
-	SongRef musicInst, introMusic, mainMusic;
+	SongRef musicInst, introMusic, loopMusic;
 
 	MUSIC_STATE state;
 
 	std::string newIntro;
-	std::string newMain;
+	std::string newLoop;
 	std::string curIntro;
-	std::string curMain;
+	std::string curLoop;
 };
 
 #endif
