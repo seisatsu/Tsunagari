@@ -1,20 +1,20 @@
 /*********************************
 ** Tsunagari Tile Engine        **
-** sound.cpp                    **
+** audio.cpp                    **
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
 #include <boost/shared_ptr.hpp>
 
 #include "python.h"
-#include "sound.h"
+#include "audio.h"
 
-Sample::Sample(Gosu::Sample* source)
+Sound::Sound(Gosu::Sound* source)
 	: source(source)
 {
 }
 
-void Sample::play()
+void Sound::play()
 {
 	source->play();
 }
@@ -22,8 +22,8 @@ void Sample::play()
 
 void exportSound()
 {
-	boost::python::class_<Sample, boost::shared_ptr<Sample> >
-		("Sample", boost::python::no_init)
-		.def("play", &Sample::play);
+	boost::python::class_<Sample, boost::shared_ptr<Sound> >
+		("Sound", boost::python::no_init)
+		.def("play", &Sound::play);
 }
 

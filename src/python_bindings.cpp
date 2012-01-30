@@ -6,11 +6,11 @@
 
 #include <boost/python/module.hpp>
 
+#include "audio.h" // for exportSound
 #include "area.h" // for exportArea
 #include "entity.h" // for exportEntity
 #include "math.h" // for exportVecs
 #include "resourcer.h" // for exportResourcer
-#include "sound.h" // for exportSound
 #include "tile.h" // for export{Tile,TileType,Door}
 
 BOOST_PYTHON_MODULE(tsunagari)

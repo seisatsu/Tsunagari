@@ -417,7 +417,7 @@ void exportResourcer()
 	boost::python::class_<Resourcer>("Resourcer", boost::python::no_init)
 		.def("resourceExists", &Resourcer::resourceExists)
 		.def("runPythonScript", &Resourcer::runPythonScript)
-		.def("getSample", &Resourcer::getSample)
+		.def("getSound", &Resourcer::getSample)
 		.def("getText", &Resourcer::getText);
 }
 

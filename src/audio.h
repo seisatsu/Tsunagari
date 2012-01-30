@@ -1,22 +1,22 @@
 /*********************************
 ** Tsunagari Tile Engine        **
-** sound.h                      **
+** audio.h                      **
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
-#ifndef SAMPLE_H
-#define SAMPLE_H
+#ifndef AUDIO_H
+#define AUDIO_H
 
 #include <Gosu/Audio.hpp>
 
-class Sample
+class Sound
 {
 public:
-	Sample(Gosu::Sample* source);
+	Sound(Gosu::Sample* source);
 	void play();
 
 private:
-	Gosu::Sample* source;
+	Gosu::Sound* source;
 };
 
 void exportSound();
