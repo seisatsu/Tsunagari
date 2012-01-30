@@ -56,13 +56,24 @@ public:
 		return T();
 	}
 
-	void put(const std::string& name, T data)
+	void momentaryPut(const std::string& name, T data)
 	{
 		if (!conf.cacheEnabled)
 			return;
 		CacheEntry entry;
 		entry.resource = data;
-		entry.lastUsed = 0;
+		int now = GameWindow::getWindow().time();
+		entry.lastUsed = now;
+		map[name] = entry;
+	}
+
+	void lifetimePut(const std::string& name, T data)
+	{
+		if (!conf.cacheEnabled)
+			return;
+		CacheEntry entry;
+		entry.resource = data;
+		entry.lastUsed = IN_USE_NOW;
 		map[name] = entry;
 	}
 

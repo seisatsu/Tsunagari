@@ -74,7 +74,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
 
-	images.put(name, result);
+	images.lifetimePut(name, result);
 	return result;
 }
 
@@ -97,7 +97,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 			(unsigned)w, (unsigned)h, tileable, *result.get());
 	img = *result.get();
 
-	tiles.put(name, result);
+	tiles.momentaryPut(name, result);
 	return true;
 }
 
@@ -115,7 +115,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 		return SampleRef();
 	SampleRef result(new Sound(new Gosu::Sample(buffer->frontReader())));
 
-	sounds.put(name, result);
+	sounds.lifetimePut(name, result);
 	return result;
 }
 
@@ -133,7 +133,7 @@ SongRef Resourcer::getSong(const std::string& name)
 		return SongRef();
 	SongRef result(new Gosu::Song(buffer->frontReader()));
 
-	songs.put(name, result);
+	songs.lifetimePut(name, result);
 	return result;
 }
 
@@ -146,7 +146,7 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 
 	XMLRef result(readXMLDocFromDisk(name, dtdFile));
 
-	xmls.put(name, result);
+	xmls.momentaryPut(name, result);
 	return result;
 }
 
@@ -160,7 +160,7 @@ bool Resourcer::runPythonScript(const std::string& name)
 	PyCodeObject* result = code.size() ?
 		pythonCompile(name.c_str(), code.c_str()) : NULL;
 
-	codes.put(name, result);
+	codes.momentaryPut(name, result);
 	return pythonExec(result);
 }
 
@@ -172,7 +172,7 @@ std::string Resourcer::getText(const std::string& name)
 
 	StringRef result(new std::string(readStringFromDisk(name)));
 
-	texts.put(name, result);
+	texts.momentaryPut(name, result);
 	return *result.get();
 }
 
