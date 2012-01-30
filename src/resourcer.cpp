@@ -40,10 +40,10 @@ Resourcer::~Resourcer()
 	PHYSFS_deinit();
 }
 
-bool Resourcer::init(char** argv)
+bool Resourcer::init(char* argv0)
 {
 	int err;
-	err = PHYSFS_init(argv[0]);
+	err = PHYSFS_init(argv0);
 	if (!err)
 		return false;
 

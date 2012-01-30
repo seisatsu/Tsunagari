@@ -313,7 +313,7 @@ int main(int argc, char** argv)
 		Log::setMode(conf.logLevel);
 
 	GameWindow window;
-	if (!window.init(argv))
+	if (!window.init(argv[0]))
 		return 1;
 	window.show();
 	return 0;

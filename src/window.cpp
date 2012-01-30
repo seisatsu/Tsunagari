@@ -54,11 +54,11 @@ GameWindow::~GameWindow()
 {
 }
 
-bool GameWindow::init(char** argv)
+bool GameWindow::init(char* argv0)
 {
 	rc.reset(new Resourcer(this));
 	world.reset(new World(this, rc.get()));
-	return rc->init(argv) && world->init();
+	return rc->init(argv0) && world->init();
 }
 
 int GameWindow::width() const

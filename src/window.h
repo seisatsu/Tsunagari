@@ -40,7 +40,7 @@ public:
 	virtual ~GameWindow();
 
 	//! GameWindow Initializer
-	bool init(char** argv);
+	bool init(char* argv0);
 
 	//! Width of the window in pixels.
 	int width() const;

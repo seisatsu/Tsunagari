@@ -31,7 +31,7 @@ class GameWindow;
 
 using boost::shared_ptr;
 
-// We hand out and manage Gosu resources in these forms:
+// We hand out and manage resources in these forms:
 typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Sample> SampleRef;
 typedef boost::shared_ptr<Gosu::Song> SongRef;
@@ -40,43 +40,53 @@ typedef std::deque<ImageRef> TiledImage;
 typedef boost::shared_ptr<TiledImage> TiledImageRef;
 typedef boost::shared_ptr<std::string> StringRef;
 
-//! This class provides the engine's resource handling and caching.
+/**
+ * Provides data and resource extraction for a World.
+ * Each World comes bundled with associated data in the form of a Zip file.
+ * A Resourcer object knows how to navigate the data, extract individual
+ * requested files, and process the files into data structures. The final data
+ * structures are kept in memory for future requests.
+ */
 class Resourcer
 {
 public:
 	Resourcer(GameWindow* window);
 	~Resourcer();
-	bool init(char** argv);
+	bool init(char* argv0);
 
-	//! Returns true if the world contains a resource by that name.
+	//! Returns true if the World contains a resource by that name.
 	bool resourceExists(const std::string& name) const;
 
-	//! Requests an image resource from disk or cache.
+	//! Request an image from the World.
 	ImageRef getImage(const std::string& name);
 
-	//! Requests an image resource from the cache and splits it into a
-	//! number of tiles each with width and height w by h. Returns false if
-	//! the source image wasn't found.
+	//! Request an image resource from the World and splits it into a
+	//! number of tiles that each have width and height w by h. Returns
+	//! false if the source image is not found.
 	bool getTiledImage(TiledImage& img, const std::string& name,
 		int w, int h, bool tileable);
 
-	//! Returns a sound object from disk or cache.
+	//! Request a sound object from the World. The sound will be
+	//! completely loaded into memory at once.
 	SampleRef getSample(const std::string& name);
 
-	//! Returns a music stream from disk or cache.
+	//! Request a music stream from the World. The stream will be
+	//! loaded from disk as it is being played.
 	SongRef getSong(const std::string& name);
 
-	//! Requests an XML resource from disk or cache.
+	//! Request an XML document from the World.
 	XMLRef getXMLDoc(const std::string& name,
 		const std::string& dtdFile);
 
-	//! Requests a Python script be run from disk or cache.
+	//! Request a Python script from the World be run.
 	bool runPythonScript(const std::string& name);
 
-	//! Requests a text resource from disk or cache.
+	//! Request a text file from the World.
 	std::string getText(const std::string& name);
 
-	//! Expunge old stuff from the cache.
+	//! Expunge old resources cached in memory. Decisions on what is
+	//! removed and what is kept are found in the global ClientValues
+	//! struct.
 	void garbageCollect();
 
 private:
