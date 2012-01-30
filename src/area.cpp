@@ -143,7 +143,7 @@ void Area::update(unsigned long dt)
 
 AreaPtr Area::reset()
 {
-	AreaPtr newSelf = world->getArea(descriptor, AREA_ALWAYS_CREATE);
+	AreaPtr newSelf = world->getArea(descriptor, GETAREA_ALWAYS_CREATE);
 	if (world->getFocusedArea().get() == this) {
 		vicoord c = player->getTileCoords_vi();
 		world->focusArea(newSelf, c);

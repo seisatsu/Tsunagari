@@ -96,7 +96,7 @@ void World::update(unsigned long dt)
 
 AreaPtr World::getArea(const std::string& filename, int flags)
 {
-	if (conf.cacheEnabled && (flags & AREA_ALWAYS_CREATE) == false) {
+	if (conf.cacheEnabled && (flags & GETAREA_ALWAYS_CREATE) == false) {
 		AreaMap::iterator entry = areas.find(filename);
 		if (entry != areas.end())
 			return entry->second;

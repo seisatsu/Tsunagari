@@ -90,7 +90,7 @@ static bool parseConfig(const char* filename)
 		return false;
 	}
 	else
-		conf.world = parameters["engine.world"];
+		conf.worldFilename = parameters["engine.world"];
 
 	if (parameters["window.width"].empty()) {
 		Log::err(filename, "\"[window] width\" option expected");
@@ -208,7 +208,7 @@ static bool parseCommandLine(int argc, char* argv[])
 	}
 
 	if (cmd.check("--gameworld"))
-		conf.world = cmd.get("--gameworld");
+		conf.worldFilename = cmd.get("--gameworld");
 
 	if (cmd.check("--verbosity")) {
 		if (cmd.get("--verbosity") == "error")

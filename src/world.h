@@ -27,16 +27,14 @@ class Music;
 class Resourcer;
 class GameWindow;
 
-#define AREA_ALWAYS_CREATE 0x01
+#define GETAREA_ALWAYS_CREATE 0x01
 
-//! World Class
-/*!
-	This class is the top class handling all data necessary to create a
-	game. Such a collection of data is called a "world". Materially, a
-	world is just a set of graphics, sound effects, music, and scripts.
-	From the perspective from a player, each world should be a separate
-	game. Tsunagari is an engine that powers worlds.
-*/
+/**
+ * Top class holding all data necessary to create a game. Such a collection of
+ * data is called a "world". Materially, a world is just a set of graphics,
+ * sound effects, music, and scripts. From the perspective from a player, each
+ * world should be a separate game. Tsunagari is an engine that powers worlds.
+ */
 class World
 {
 public:

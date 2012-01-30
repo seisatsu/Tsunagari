@@ -74,7 +74,6 @@ private:
 	};
 
 	const GameWindow& window;
-	const ClientValues& conf;
 	double aspectRatio;
 	rvec2 off;
 	rvec2 virtRes;

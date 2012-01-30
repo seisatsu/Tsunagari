@@ -47,8 +47,8 @@ icube_t icube(int x1, int y1, int z1,
               int x2, int y2, int z2);
 
 //! Engine-wide user-confurable values.
-struct ClientValues {
-	std::string world;
+struct TsunagariConf {
+	std::string worldFilename;
 	message_mode_t logLevel;
 	movement_mode_t moveMode;
 	icoord windowSize;
@@ -58,9 +58,9 @@ struct ClientValues {
 	int cacheTTL;
 	int cacheSize;
 };
-extern ClientValues conf;
+extern TsunagariConf conf;
 
-//! Returns a bool from a "true"/"false" string.
+//! Return a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);
 
 //! Split a string by a delimiter.

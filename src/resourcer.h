@@ -84,8 +84,8 @@ public:
 	//! Request a text file from the World.
 	std::string getText(const std::string& name);
 
-	//! Expunge old resources cached in memory. Decisions on what is
-	//! removed and what is kept are found in the global ClientValues
+	//! Expunge old resources cached in memory. Decisions on which are
+	//! removed and which are kept are based on the global TsunagariConf
 	//! struct.
 	void garbageCollect();
 
