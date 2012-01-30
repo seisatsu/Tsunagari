@@ -63,17 +63,9 @@ bool Resourcer::resourceExists(const std::string& name) const
 
 ImageRef Resourcer::getImage(const std::string& name)
 {
-	if (conf.cacheEnabled) {
-		ImageRefMap::iterator entry = images.find(name);
-		if (entry != images.end()) {
-			if (entry->second.lastUsed) {
-				Log::dbg("Resourcer", name + ": requested (cached)");
-				entry->second.lastUsed = 0;
-			}
-			return entry->second.resource;
-		}
-	}
-	Log::dbg("Resourcer", name + ": requested");
+	ImageRef existing = images.lifetimeRequest(name);
+	if (existing)
+		return existing;
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
@@ -82,50 +74,30 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
 
-	if (conf.cacheEnabled) {
-		CacheEntry<ImageRef> data;
-		data.resource = result;
-		data.lastUsed = 0;
-		images[name] = data;
-	}
-
+	images.put(name, result);
 	return result;
 }
 
 bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		int w, int h, bool tileable)
 {
-	if (conf.cacheEnabled) {
-		TiledImageMap::iterator entry = tiles.find(name);
-		if (entry != tiles.end()) {
-			int now = GameWindow::getWindow().time();
-			Log::dbg("Resourcer", name + ": requested (cached)");
-			// We set lastUsed to now because it won't be used by
-			// the time reclaim() gets to it.
-			entry->second.lastUsed = now;
-			img = *entry->second.resource.get();
-			return true;
-		}
+	TiledImageRef existing = tiles.momentaryRequest(name);
+	if (existing) {
+		img = *existing.get();
+		return true;
 	}
-	Log::dbg("Resourcer", name + ": requested");
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
 		return false;
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
-	boost::shared_ptr<TiledImage> result(new TiledImage);
+	TiledImageRef result(new TiledImage);
 	Gosu::imagesFromTiledBitmap(window->graphics(), bitmap,
 			(unsigned)w, (unsigned)h, tileable, *result.get());
 	img = *result.get();
 
-	if (conf.cacheEnabled) {
-		CacheEntry<boost::shared_ptr<TiledImage> > data;
-		data.resource = result;
-		data.lastUsed = 0;
-		tiles[name] = data;
-	}
-
+	tiles.put(name, result);
 	return true;
 }
 
@@ -134,30 +106,16 @@ SampleRef Resourcer::getSample(const std::string& name)
 	if (!conf.audioEnabled)
 		return SampleRef();
 
-	if (conf.cacheEnabled) {
-		SampleRefMap::iterator entry = samples.find(name);
-		if (entry != samples.end()) {
-			if (entry->second.lastUsed) {
-				Log::dbg("Resourcer", name + ": requested (cached)");
-				entry->second.lastUsed = 0;
-			}
-			return entry->second.resource;
-		}
-	}
-	Log::dbg("Resourcer", name + ": requested");
+	SampleRef existing = sounds.lifetimeRequest(name);
+	if (existing)
+		return existing;
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
 		return SampleRef();
 	SampleRef result(new Sample(new Gosu::Sample(buffer->frontReader())));
 
-	if (conf.cacheEnabled) {
-		CacheEntry<SampleRef> data;
-		data.resource = result;
-		data.lastUsed = 0;
-		samples[name] = data;
-	}
-
+	sounds.put(name, result);
 	return result;
 }
 
@@ -166,126 +124,66 @@ SongRef Resourcer::getSong(const std::string& name)
 	if (!conf.audioEnabled)
 		return SongRef();
 
-	if (conf.cacheEnabled) {
-		SongRefMap::iterator entry = songs.find(name);
-		if (entry != songs.end()) {
-			if (entry->second.lastUsed) {
-				Log::dbg("Resourcer", name + ": requested (cached)");
-				entry->second.lastUsed = 0;
-			}
-			return entry->second.resource;
-		}
-	}
-	Log::dbg("Resourcer", name + ": requested");
+	SongRef existing = songs.lifetimeRequest(name);
+	if (existing)
+		return existing;
 
 	BufferPtr buffer(read(name));
 	if (!buffer)
 		return SongRef();
 	SongRef result(new Gosu::Song(buffer->frontReader()));
 
-	if (conf.cacheEnabled) {
-		CacheEntry<SongRef> data;
-		data.resource = result;
-		data.lastUsed = 0;
-		songs[name] = data;
-	}
-
+	songs.put(name, result);
 	return result;
 }
 
 XMLRef Resourcer::getXMLDoc(const std::string& name,
                             const std::string& dtdFile)
 {
-	if (conf.cacheEnabled) {
-		XMLRefMap::iterator entry = xmls.find(name);
-		if (entry != xmls.end()) {
-			int now = GameWindow::getWindow().time();
-			Log::dbg("Resourcer", name + ": requested (cached)");
-			// We set lastUsed to now because it won't be used by
-			// the time reclaim() gets to it.
-			entry->second.lastUsed = now;
-			return entry->second.resource;
-		}
-	}
-	Log::dbg("Resourcer", name + ": requested");
+	XMLRef existing = xmls.momentaryRequest(name);
+	if (existing)
+		return existing;
 
 	XMLRef result(readXMLDocFromDisk(name, dtdFile));
 
-	if (conf.cacheEnabled) {
-		CacheEntry<XMLRef> data;
-		data.resource = result;
-		data.lastUsed = 0;
-		xmls[name] = data;
-	}
-
+	xmls.put(name, result);
 	return result;
 }
 
 bool Resourcer::runPythonScript(const std::string& name)
 {
-	if (conf.cacheEnabled) {
-		CodeMap::iterator entry = codes.find(name);
-		if (entry != codes.end()) {
-			int now = GameWindow::getWindow().time();
-			Log::dbg("Resourcer", name + ": requested (cached)");
-			// We set lastUsed to now because it won't be used by
-			// the time reclaim() gets to it.
-			entry->second.lastUsed = now;
-			PyCodeObject* result = entry->second.resource;
-			return pythonExec(result);
-		}
-	}
-	Log::dbg("Resourcer", name + ": requested");
+	PyCodeObject* existing = codes.momentaryRequest(name);
+	if (existing)
+		return pythonExec(existing);
 
 	std::string code = readStringFromDisk(name);
 	PyCodeObject* result = code.size() ?
 		pythonCompile(name.c_str(), code.c_str()) : NULL;
 
-	if (conf.cacheEnabled) {
-		CacheEntry<PyCodeObject*> data;
-		data.resource = result;
-		data.lastUsed = 0;
-		codes[name] = data;
-	}
-
+	codes.put(name, result);
 	return pythonExec(result);
 }
 
 std::string Resourcer::getText(const std::string& name)
 {
-	if (conf.cacheEnabled) {
-		TextRefMap::iterator entry = texts.find(name);
-		if (entry != texts.end()) {
-			int now = GameWindow::getWindow().time();
-			Log::dbg("Resourcer", name + ": requested (cached)");
-			// We set lastUsed to now because it won't be used by
-			// the time reclaim() gets to it.
-			entry->second.lastUsed = now;
-			return *entry->second.resource.get();
-		}
-	}
-	Log::dbg("Resourcer", name + ": requested");
+	StringRef existing = texts.momentaryRequest(name);
+	if (existing)
+		return *result.get();
 
 	StringRef result(new std::string(readStringFromDisk(name)));
 
-	if (conf.cacheEnabled) {
-		CacheEntry<StringRef> data;
-		data.resource = result;
-		data.lastUsed = 0;
-		texts[name] = data;
-	}
-
+	texts.put(name, result);
 	return *result.get();
 }
 
 void Resourcer::garbageCollect()
 {
-	reclaim<ImageRefMap, ImageRef>(images);
-	reclaim<TiledImageMap, boost::shared_ptr<TiledImage> >(tiles);
-	reclaim<SampleRefMap, SampleRef>(samples);
-	reclaim<SongRefMap, SongRef>(songs);
-	reclaim<XMLRefMap, XMLRef>(xmls);
-	reclaim<TextRefMap, StringRef>(texts);
+	images.garbageCollect();
+	tiles.garbageCollect();
+	sounds.garbageCollect();
+	songs.garbageCollect();
+	xmls.garbageCollect();
+	texts.garbageCollect();
 }
 
 XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,

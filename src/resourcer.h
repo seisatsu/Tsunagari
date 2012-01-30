@@ -106,22 +106,13 @@ private:
 private:
 	GameWindow* window;
 
-	// Resource map types.
-	typedef CacheMap<ImageRef> ImageRefMap;
-	typedef CacheMap<TiledImageRef> TiledImageMap;
-	typedef CacheMap<SampleRef> SampleRefMap;
-	typedef CacheMap<SongRef> SongRefMap;
-	typedef CacheMap<XMLRef> XMLRefMap;
-	typedef CacheMap<TextRef> TextRefMap;
-
 	// Caches that store processed, game-ready objects. Garbage collected.
-	ImageRefMap images;
-	TiledImageMap tiles;
-	SampleRefMap samples;
-	SongRefMap songs;
-	XMLRefMap xmls;
-	CodeMap codes;
-	TextRefMap texts;
+	Cache<ImageRef> images;
+	Cache<TiledImageRef> tiles;
+	Cache<SampleRef> sounds;
+	Cache<SongRef> songs;
+	Cache<XMLRef> xmls;
+	Cache<TextRef> texts;
 };
 
 void exportResourcer();
