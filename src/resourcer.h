@@ -11,10 +11,10 @@
 #include <string>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 #include <Python.h>
 
+#include "cache.h"
 #include "common.h"
 #include "sound.h"
 #include "xml.h"
@@ -90,37 +90,7 @@ public:
 	void garbageCollect();
 
 private:
-	template<class Res>
-	struct CacheEntry
-	{
-		Res resource;
-		int lastUsed;
-		int memoryUsed;
-	};
-
-
-	// Resource maps.
-	typedef boost::unordered_map<const std::string, CacheEntry<ImageRef> >
-		ImageRefMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<TiledImageRef> >
-		TiledImageMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<SampleRef> >
-		SampleRefMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<SongRef> >
-		SongRefMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<XMLRef> >
-		XMLRefMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<PyCodeObject*> >
-		CodeMap;
-	typedef boost::unordered_map<const std::string, CacheEntry<StringRef> >
-		TextRefMap;
-
-
-	//! Garbage collect a map.
-	template<class Map, class MapValue>
-	void reclaim(Map& map);
-
-	//! Reads an XML document from disk and parses it.
+	//! Read an XML document from disk and parse it.
 	XMLDoc* readXMLDocFromDisk(const std::string& name,
 		const std::string& dtdFile) const;
 
@@ -130,11 +100,19 @@ private:
 	//! Read a generic resource from disk.
 	Gosu::Buffer* read(const std::string& name) const;
 
-	//! Helper function
+	//! Helper function.
 	std::string path(const std::string& entryName) const;
 
-
+private:
 	GameWindow* window;
+
+	// Resource map types.
+	typedef CacheMap<ImageRef> ImageRefMap;
+	typedef CacheMap<TiledImageRef> TiledImageMap;
+	typedef CacheMap<SampleRef> SampleRefMap;
+	typedef CacheMap<SongRef> SongRefMap;
+	typedef CacheMap<XMLRef> XMLRefMap;
+	typedef CacheMap<TextRef> TextRefMap;
 
 	// Caches that store processed, game-ready objects. Garbage collected.
 	ImageRefMap images;
