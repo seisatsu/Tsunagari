@@ -17,7 +17,7 @@ class Resourcer;
 class Player : public Entity
 {
 public:
-	Player(Area* area);
+	Player();
 
 	//! Smooth continuous movement.
 	void startMovement(ivec2 delta);

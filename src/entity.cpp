@@ -29,7 +29,7 @@ static std::string directions[][3] = {
 };
 
 
-Entity::Entity(Area* area)
+Entity::Entity()
 	: redraw(true),
 	  phase(NULL),
 	  speedMul(1.0),
@@ -39,8 +39,6 @@ Entity::Entity(Area* area)
 	  area(NULL),
 	  r(0.0, 0.0, 0.0)
 {
-	if (area)
-		setArea(area);
 }
 
 Entity::~Entity()
@@ -107,6 +105,7 @@ static double angleFromXY(double x, double y)
 
 void Entity::update(unsigned long dt)
 {
+	onUpdateScripts();
 	switch (conf.moveMode) {
 	case TURN:
 		updateTurn(dt);
@@ -166,6 +165,19 @@ void Entity::updateNoTile(unsigned long)
 	// TODO
 }
 
+void Entity::onUpdateScripts()
+{
+	BOOST_FOREACH(boost::python::object& fn, updateListenerFns) {
+		pythonSetGlobal("entity", this);
+		try {
+			fn();
+		} catch (boost::python::error_already_set) {
+			Log::err("Python", "entity.onUpdateScripts():");
+			pythonErr();
+		}
+	}
+}
+
 const std::string Entity::getFacing() const
 {
 	return directionStr(facing);
@@ -212,6 +224,15 @@ void Entity::setTileCoords(int x, int y)
 	r = area->virt2virt(virt);
 }
 
+void Entity::setTileCoords(int x, int y, double z)
+{
+	vicoord virt(x, y, z);
+	if (!area->inBounds(virt))
+		return;
+	redraw = true;
+	r = area->virt2virt(virt);
+}
+
 void Entity::setTileCoords(icoord phys)
 {
 	if (!area->inBounds(phys))
@@ -228,7 +249,7 @@ void Entity::setTileCoords(vicoord virt)
 	r = area->virt2virt(virt);
 }
 
-bool Entity::isMoving()
+bool Entity::isMoving() const
 {
 	return moving || stillMoving;
 }
@@ -279,6 +300,11 @@ void Entity::setSpeed(double multiplier)
 		double tilesPerSecond = area->getTileDimensions().x / 1000.0;
 		speed = baseSpeed * speedMul * tilesPerSecond;
 	}
+}
+
+void Entity::addOnUpdateListener(boost::python::object callable)
+{
+	updateListenerFns.push_back(callable);
 }
 
 Tile& Entity::getTile() const
@@ -662,12 +688,14 @@ void exportEntity()
 {
 	using namespace boost::python;
 
-	class_<Entity>("Entity", no_init)
+	class_<Entity>("Entity")
+		.def("init", &Entity::init)
 		.add_property("animation",
 		    &Entity::getFacing, &Entity::setPhase)
 		.add_property("area",
 		    make_function(&Entity::getArea,
-		      return_value_policy<reference_existing_object>()))
+		      return_value_policy<reference_existing_object>()),
+		    &Entity::setArea)
 		.add_property("tile", make_function(
 		    static_cast<Tile& (Entity::*) ()> (&Entity::getTile),
 		    return_value_policy<reference_existing_object>()))
@@ -675,10 +703,17 @@ void exportEntity()
 		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)
 		.add_property("moving", &Entity::isMoving)
 		.add_property("exempt", &Entity::exemptManip)
+		.def("set_coords",
+		    static_cast<void (Entity::*) (int,int,double)>
+		      (&Entity::setTileCoords))
 		.def("move", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::moveByTile))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::setTileCoords))
+		.def("add_on_update_listener", &Entity::addOnUpdateListener)
+		.def("move",
+		    static_cast<void (Entity::*) (int,int)>
+		      (&Entity::moveByTile));
 		;
 }
 

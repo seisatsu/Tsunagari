@@ -128,6 +128,10 @@ bool Area::needsRedraw() const
 	if (player->needsRedraw())
 		return true;
 
+	BOOST_FOREACH(Entity* e, entities)
+		if (e->needsRedraw())
+			return true;
+
 	// Do any on-screen tile types need to update their animations?
 	const icube tiles = visibleTiles();
 	for (int z = tiles.z1; z < tiles.z2; z++) {
@@ -150,15 +154,20 @@ void Area::requestRedraw()
 
 void Area::update(unsigned long dt)
 {
-	pythonSetGlobal("Area", this);
-	player->update(dt);
-
 	if (onUpdateScripts.size()) {
 		BOOST_FOREACH(const std::string& script, onUpdateScripts) {
 			pythonSetGlobal("Area", this);
 			Resourcer* rc = Resourcer::instance();
 			rc->runPythonScript(script);
 		}
+	}
+
+	pythonSetGlobal("Area", this);
+	player->update(dt);
+
+	BOOST_FOREACH(Entity* e, entities) {
+		pythonSetGlobal("Area", this);
+		e->update(dt);
 	}
 
 	view->update(dt);
@@ -341,6 +350,16 @@ const std::string Area::getDescriptor() const
 	return descriptor;
 }
 
+void Area::insert(Entity* e)
+{
+	entities.insert(e);
+}
+
+void Area::erase(Entity* e)
+{
+	entities.erase(e);
+}
+
 
 
 vicoord Area::phys2virt_vi(icoord phys) const
@@ -453,6 +472,9 @@ void Area::drawTile(const Tile& tile, int x, int y, double depth) const
 
 void Area::drawEntities()
 {
+	BOOST_FOREACH(Entity* e, entities) {
+		e->draw();
+	}
 	player->draw();
 }
 
@@ -501,6 +523,8 @@ void exportArea()
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
 		.def("color_overlay", &Area::setColorOverlay)
+		.def("add_entity", &Area::insert)
+		.def("del_entity", &Area::erase)
 		;
 }
 

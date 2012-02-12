@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity>
+	<speed>2</speed> <!-- movement speed in tiles per second -->
+	<sprite>
+		<sheet tile_width="16" tile_height="18">entities/wizard/wizard.png</sheet>
+		<phases>
+			<phase name="down" pos="7" />
+			<phase name="down-left" pos="7" />
+			<phase name="left" pos="10" />
+			<phase name="up-left" pos="1" />
+			<phase name="up" pos="1" />
+			<phase name="up-right" pos="1" />
+			<phase name="right" pos="4" />
+			<phase name="down-right" pos="7" />
+
+			<phase name="moving up" speed="4">
+				<member pos="0" />
+				<member pos="1" />
+				<member pos="2" />
+				<member pos="1" />
+			</phase>
+
+			<phase name="moving up-right" speed="4">
+				<member pos="0" />
+				<member pos="1" />
+				<member pos="2" />
+				<member pos="1" />
+			</phase>
+
+			<phase name="moving right" speed="4">
+				<member pos="3" />
+				<member pos="4" />
+				<member pos="5" />
+				<member pos="4" />
+			</phase>
+
+			<phase name="moving down-right" speed="4">
+				<member pos="6" />
+				<member pos="7" />
+				<member pos="8" />
+				<member pos="7" />
+			</phase>
+
+			<phase name="moving down" speed="4">
+				<member pos="6" />
+				<member pos="7" />
+				<member pos="8" /> <member pos="7" /> </phase>
+
+			<phase name="moving down-left" speed="4">
+				<member pos="6" />
+				<member pos="7" />
+				<member pos="8" />
+				<member pos="7" />
+			</phase>
+
+			<phase name="moving left" speed="4">
+				<member pos="9" />
+				<member pos="10" />
+				<member pos="11" />
+				<member pos="10" />
+			</phase>
+
+			<phase name="moving up-left" speed="4">
+				<member pos="0" />
+				<member pos="1" />
+				<member pos="2" />
+				<member pos="1" />
+			</phase>
+		</phases>
+	</sprite>
+
+	<sounds>
+		<sound name="step">sounds/step.oga</sound>
+	</sounds>
+
+	<scripts>
+	</scripts>
+</entity>
+

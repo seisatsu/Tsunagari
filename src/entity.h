@@ -15,6 +15,7 @@
 
 #include "tile.h" // for enum TileEventTrigger
 #include "resourcer.h"
+#include "python.h"
 
 class Animation;
 class Area;
@@ -40,7 +41,7 @@ namespace Gosu {
 class Entity
 {
 public:
-	Entity(Area* area);
+	Entity();
 	~Entity();
 
 	//! Entity Initializer
@@ -54,6 +55,7 @@ public:
 	void updateTurn(unsigned long dt);
 	void updateTile(unsigned long dt);
 	void updateNoTile(unsigned long dt);
+	void onUpdateScripts();
 
 	const std::string getFacing() const;
 
@@ -72,12 +74,14 @@ public:
 
 	//! Set location within Area.
 	void setTileCoords(int x, int y);
+	void setTileCoords(int x, int y, double z);
 	void setTileCoords(icoord phys);
 	void setTileCoords(vicoord virt);
 
 
-	//! Indicates whether we are in the middle of transitioning between tiles.
-	bool isMoving();
+	//! Indicates whether we are in the middle of transitioning between
+	//! tiles.
+	bool isMoving() const;
 
 	//! Initiate a movement within the Area.
 	void moveByTile(int x, int y);
@@ -104,8 +108,14 @@ public:
 	Tile& getTile();
 
 
+	//
+	// Python-specific interface
+	//
+
 	//! Exempt ourselves from TILE_NOWALK et al.
 	FlagManip exemptManip();
+
+	void addOnUpdateListener(boost::python::object callable);
 
 protected:
 	std::vector<icoord> frontTiles() const;
@@ -169,6 +179,8 @@ protected:
 	SampleMap sounds;
 	//! List of scripts this Entity knows about.
 	StringMap scripts;
+
+	std::vector<boost::python::object> updateListenerFns;
 
 	double baseSpeed; //!< Original speed, specified in descriptor.
 	double speedMul;  //!< Speed multiplier.

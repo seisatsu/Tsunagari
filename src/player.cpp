@@ -31,8 +31,8 @@ void removeValue(Cont* c, ValueType v)
 }
 
 
-Player::Player(Area* area)
-	: Entity(area), velocity(0, 0)
+Player::Player()
+	: Entity(), velocity(0, 0)
 {
 	nowalkFlags |= TILE_NOWALK_PLAYER;
 }

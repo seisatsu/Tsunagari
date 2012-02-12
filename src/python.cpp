@@ -185,7 +185,7 @@ void pythonFinalize()
 	Py_Finalize();
 }
 
-std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
+static std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
 {
 	using namespace boost::python;
 
@@ -202,7 +202,8 @@ std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
 	}
 }
 
-std::string extractException2(PyObject* exc, PyObject* val, PyObject*)
+/*
+static std::string extractException2(PyObject* exc, PyObject* val, PyObject*)
 {
 	char* type = PyExceptionClass_Name(exc);
 	char* dot = strrchr(type, '.');
@@ -210,11 +211,15 @@ std::string extractException2(PyObject* exc, PyObject* val, PyObject*)
 		type = dot + 1;
 	char* value = PyString_AsString(val);
 
-	std::string msg = type;
-	if (value)
-		msg.append(": ").append(value);
+	std::string msg = "";
+	msg += type ? type : "<unknown type>";
+	if (value) {
+		msg += ": ";
+		msg += value;
+	}
 	return msg;
 }
+*/
 
 void pythonErr()
 {
@@ -224,7 +229,7 @@ void pythonErr()
 
 	if (!exc) {
 		Log::err("Python",
-			"pythonErr() called, but no exception thrown");
+			"pythonErr() called, but no exception set");
 		return;
 	}
 

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/python/tuple.hpp>
@@ -112,6 +113,8 @@ public:
 
 	const std::string getDescriptor() const;
 
+	void insert(Entity* e);
+	void erase(Entity* e);
 
 	// Convert between virtual and physical map coordinates. Physical
 	// coordinates are the physical indexes into the Tile matrix. Layer
@@ -146,6 +149,7 @@ protected:
 protected:
 	Viewport* view;
 	Player* player;
+	boost::unordered_set<Entity*> entities;
 	Music* music;
 	Gosu::Color colorOverlay;
 

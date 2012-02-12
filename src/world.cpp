@@ -25,7 +25,7 @@ World* World::instance()
 }
 
 World::World()
-	: music(new Music()), player(NULL)
+	: music(new Music())
 {
 	globalWorld = this;
 	pythonSetGlobal("World", this);
