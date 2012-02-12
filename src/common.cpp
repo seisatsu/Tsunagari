@@ -11,7 +11,7 @@
 
 #include "common.h"
 
-TsunagariConf conf; // Project-wide global TsunagariConf.
+Conf conf; // Project-wide global configuration.
 
 
 icube_t icube(int x1, int y1, int z1,

@@ -85,8 +85,7 @@ public:
 	std::string getText(const std::string& name);
 
 	//! Expunge old resources cached in memory. Decisions on which are
-	//! removed and which are kept are based on the global TsunagariConf
-	//! struct.
+	//! removed and which are kept are based on the global Conf struct.
 	void garbageCollect();
 
 private:

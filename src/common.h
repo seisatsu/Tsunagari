@@ -47,7 +47,7 @@ icube_t icube(int x1, int y1, int z1,
               int x2, int y2, int z2);
 
 //! Engine-wide user-confurable values.
-struct TsunagariConf {
+struct Conf {
 	std::string worldFilename;
 	message_mode_t logLevel;
 	movement_mode_t moveMode;
@@ -58,7 +58,7 @@ struct TsunagariConf {
 	int cacheTTL;
 	int cacheSize;
 };
-extern TsunagariConf conf;
+extern Conf conf;
 
 //! Return a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);
