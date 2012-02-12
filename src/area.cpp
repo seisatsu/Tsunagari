@@ -33,13 +33,11 @@
 */
 
 Area::Area(Resourcer* rc,
-           World* world,
            Viewport* view,
            Player* player,
            Music* music,
            const std::string& descriptor)
 	: rc(rc),
-	  world(world),
 	  view(view),
 	  player(player),
 	  music(music),
@@ -143,6 +141,7 @@ void Area::update(unsigned long dt)
 
 AreaPtr Area::reset()
 {
+	World* world = World::getWorld();
 	AreaPtr newSelf = world->getArea(descriptor, GETAREA_ALWAYS_CREATE);
 	if (world->getFocusedArea().get() == this) {
 		vicoord c = player->getTileCoords_vi();
@@ -333,7 +332,7 @@ double Area::indexDepth(int idx) const
 
 void Area::runOnLoads()
 {
-	std::string onAreaLoadScript = world->getAreaLoadScript();
+	std::string onAreaLoadScript = World::getWorld()->getAreaLoadScript();
 	if (onAreaLoadScript.size()) {
 		pythonSetGlobal("area", this);
 		rc->runPythonScript(onAreaLoadScript);

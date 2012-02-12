@@ -103,7 +103,7 @@ AreaPtr World::getArea(const std::string& filename, int flags)
 	}
 
 	AreaPtr newArea(
-		new Area(rc, this, view, &player, music.get(), filename)
+		new Area(rc, view, &player, music.get(), filename)
 	);
 
 	if (!newArea->init())

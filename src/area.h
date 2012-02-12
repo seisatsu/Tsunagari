@@ -49,7 +49,7 @@ typedef boost::shared_ptr<Area> AreaPtr;
 class Area
 {
 public:
-	Area(Resourcer* rc, World* world, Viewport* view, Player* player,
+	Area(Resourcer* rc, Viewport* view, Player* player,
 	     Music* music, const std::string& filename);
 	~Area();
 
@@ -156,7 +156,6 @@ private:
 
 private:
 	Resourcer* rc;
-	World* world;
 	Viewport* view;
 	Player* player;
 	Music* music;
