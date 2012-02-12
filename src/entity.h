@@ -41,7 +41,7 @@ namespace Gosu {
 class Entity
 {
 public:
-	Entity(Resourcer* rc, Area* area);
+	Entity(Area* area);
 	~Entity();
 
 	//! Entity Initializer
@@ -134,10 +134,6 @@ protected:
 	bool processScripts(XMLNode node);
 	bool processScript(const XMLNode node);
 
-
-	//! Pointer to local resource object. Loads images, sounds, and scripts
-	//! with it.
-	Resourcer* rc;
 
 	//! Set to true if the Entity wants the screen to be redrawn.
 	bool redraw;

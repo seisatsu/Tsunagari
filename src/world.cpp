@@ -21,8 +21,8 @@ World* World::getWorld()
 	return globalWorld;
 }
 
-World::World(GameWindow* wnd, Resourcer* rc)
-	: rc(rc), wnd(wnd), player(rc, NULL)
+World::World(GameWindow* wnd)
+	: wnd(wnd), player(NULL)
 {
 	globalWorld = this;
 }
@@ -36,7 +36,7 @@ bool World::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 
-	music.reset(new Music(rc));
+	music.reset(new Music());
 
 	if (!player.init(playerentity))
 		return false;
@@ -45,7 +45,7 @@ bool World::init()
 	if (onLoadScript.size()) {
 		// XXX: Is it okay to not have a Player cast?
 		pythonSetGlobal("player", (Entity*)&player);
-		rc->runPythonScript(onLoadScript);
+		Resourcer::getResourcer()->runPythonScript(onLoadScript);
 	}
 
 	view = new Viewport(*wnd, viewport);
@@ -103,7 +103,7 @@ AreaPtr World::getArea(const std::string& filename, int flags)
 	}
 
 	AreaPtr newArea(
-		new Area(rc, view, &player, music.get(), filename)
+		new Area(view, &player, music.get(), filename)
 	);
 
 	if (!newArea->init())
@@ -135,7 +135,7 @@ std::string World::getAreaLoadScript()
 
 bool World::processDescriptor()
 {
-	XMLRef doc = rc->getXMLDoc("world.conf", "world.dtd");
+	XMLRef doc = Resourcer::getResourcer()->getXMLDoc("world.conf", "world.dtd");
 	if (!doc)
 		return false;
 	const XMLNode root = doc->root(); // <world>
@@ -175,7 +175,7 @@ bool World::processDescriptor()
 				return false;
 		} else if (node.is("onLoad")) {
 			std::string filename = node.content();
-			if (rc->resourceExists(filename)) {
+			if (Resourcer::getResourcer()->resourceExists(filename)) {
 				onLoadScript = filename;
 			}
 			else {
@@ -185,7 +185,7 @@ bool World::processDescriptor()
 			}
 		} else if (node.is("onAreaLoad")) {
 			std::string filename = node.content();
-			if (rc->resourceExists(filename)) {
+			if (Resourcer::getResourcer()->resourceExists(filename)) {
 				onAreaLoadScript = filename;
 			}
 			else {

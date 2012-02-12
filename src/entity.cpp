@@ -29,9 +29,8 @@ static std::string directions[][3] = {
 };
 
 
-Entity::Entity(Resourcer* rc, Area* area)
-	: rc(rc),
-	  redraw(true),
+Entity::Entity(Area* area)
+	: redraw(true),
 	  speedMul(1.0),
 	  moving(false),
 	  area(NULL),
@@ -346,7 +345,7 @@ void Entity::preMove()
 
 	// Process triggers.
 	tileExitScript();
-	fromTile->onLeaveScripts(rc, this);
+	fromTile->onLeaveScripts(this);
 
 	if (conf.moveMode == TURN) {
 		// Movement is instantaneous.
@@ -364,7 +363,7 @@ void Entity::postMove()
 		setPhase(getFacing());
 
 	// Process triggers.
-	destTile->onEnterScripts(rc, this);
+	destTile->onEnterScripts(this);
 	tileEntryScript();
 
 	// TODO: move teleportation here
@@ -383,7 +382,7 @@ void Entity::tileExitScript()
 	const std::string& name = scripts["tileexit"];
 	if (name.size()) {
 		pythonSetGlobal("entity", this);
-		rc->runPythonScript(name);
+		Resourcer::getResourcer()->runPythonScript(name);
 	}
 }
 
@@ -392,7 +391,7 @@ void Entity::tileEntryScript()
 	const std::string& name = scripts["tileentry"];
 	if (name.size()) {
 		pythonSetGlobal("entity", this);
-		rc->runPythonScript(name);
+		Resourcer::getResourcer()->runPythonScript(name);
 	}
 }
 
@@ -403,7 +402,7 @@ void Entity::tileEntryScript()
 
 bool Entity::processDescriptor()
 {
-	XMLRef doc = rc->getXMLDoc(descriptor, "entity.dtd");
+	XMLRef doc = Resourcer::getResourcer()->getXMLDoc(descriptor, "entity.dtd");
 	if (!doc)
 		return false;
 	const XMLNode root = doc->root(); // <entity>
@@ -433,7 +432,7 @@ bool Entity::processSprite(XMLNode node)
 			std::string imageSheet = node.content();
 			ASSERT(node.intAttr("tilewidth",  &imgw) &&
 			       node.intAttr("tileheight", &imgh));
-			ASSERT(rc->getTiledImage(tiles, imageSheet,
+			ASSERT(Resourcer::getResourcer()->getTiledImage(tiles, imageSheet,
 			       imgw, imgh, false));
 		} else if (node.is("phases")) {
 			ASSERT(processPhases(node.childrenNode(), tiles));
@@ -541,7 +540,7 @@ bool Entity::processSound(const XMLNode node)
 		return false;
 	}
 
-	SampleRef s = rc->getSample(filename);
+	SampleRef s = Resourcer::getResourcer()->getSample(filename);
 	if (s)
 		sounds[name] = s;
 	return true;
@@ -567,7 +566,7 @@ bool Entity::processScript(const XMLNode node)
 		return false;
 	}
 
-	if (rc->resourceExists(filename)) {
+	if (Resourcer::getResourcer()->resourceExists(filename)) {
 		scripts[trigger] = filename;
 		return true;
 	}

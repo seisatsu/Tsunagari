@@ -32,45 +32,43 @@ bool Tile::hasFlag(unsigned flag) const
 	return flags & flag || (type && type->flags & flag);
 }
 
-void Tile::onEnterScripts(Resourcer* rc, Entity* triggeredBy)
+void Tile::onEnterScripts(Entity* triggeredBy)
 {
-	runScripts(rc, triggeredBy, hasOnEnter, onEnter);
+	runScripts(triggeredBy, hasOnEnter, onEnter);
 }
 
-void Tile::onLeaveScripts(Resourcer* rc, Entity* triggeredBy)
+void Tile::onLeaveScripts(Entity* triggeredBy)
 {
-	runScripts(rc, triggeredBy, hasOnLeave, onLeave);
+	runScripts(triggeredBy, hasOnLeave, onLeave);
 }
 
-void Tile::onUseScripts(Resourcer* rc, Entity* triggeredBy)
+void Tile::onUseScripts(Entity* triggeredBy)
 {
-	runScripts(rc, triggeredBy, hasOnUse, onUse);
+	runScripts(triggeredBy, hasOnUse, onUse);
 }
 
-void Tile::runScripts(Resourcer* rc, Entity* entity,
-                      TileFlags flag, TileEventTrigger trigger)
+void Tile::runScripts(Entity* entity, TileFlags flag, TileEventTrigger trigger)
 {
 	if (type && type->flags & flag)
-		runScriptGroup(rc, entity, trigger, type->events);
+		runScriptGroup(entity, trigger, type->events);
 	if (flags & flag)
-		runScriptGroup(rc, entity, trigger, events);
+		runScriptGroup(entity, trigger, events);
 }
 
-void Tile::runScriptGroup(Resourcer* rc, Entity* entity,
-                      TileEventTrigger trigger,
+void Tile::runScriptGroup(Entity* entity, TileEventTrigger trigger,
                       const std::vector<TileEvent>& events)
 {
 	BOOST_FOREACH(const TileEvent& event, events) {
 		if (event.trigger == trigger)
-			runScript(rc, entity, event.script);
+			runScript(entity, event.script);
 	}
 }
 
-void Tile::runScript(Resourcer* rc, Entity* entity, const std::string& script)
+void Tile::runScript(Entity* entity, const std::string& script)
 {
 	pythonSetGlobal("entity", entity);
 	pythonSetGlobal("tile", this);
-	rc->runPythonScript(script);
+	Resourcer::getResourcer()->runPythonScript(script);
 }
 
 boost::optional<Door> Tile::getDoor()

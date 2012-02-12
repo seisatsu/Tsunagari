@@ -6,9 +6,8 @@
 
 #include "music.h"
 
-Music::Music(Resourcer* rc)
-	: rc(rc),
-	  state(NOT_PLAYING)
+Music::Music()
+	: state(NOT_PLAYING)
 {
 }
 
@@ -31,7 +30,7 @@ void Music::setIntro(const std::string& filename)
 	}
 	if (newIntro != filename) {
 		newIntro = filename;
-		introMusic = filename.size() ? rc->getSong(filename) : SongRef();
+		introMusic = filename.size() ? Resourcer::getResourcer()->getSong(filename) : SongRef();
 	}
 }
 
@@ -48,7 +47,7 @@ void Music::setLoop(const std::string& filename)
 	}
 	if (newLoop != filename) {
 		newLoop = filename;
-		loopMusic = filename.size() ? rc->getSong(filename) : SongRef();
+		loopMusic = filename.size() ? Resourcer::getResourcer()->getSong(filename) : SongRef();
 	}
 }
 

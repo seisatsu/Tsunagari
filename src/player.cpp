@@ -31,8 +31,8 @@ void removeValue(Cont* c, ValueType v)
 }
 
 
-Player::Player(Resourcer* rc, Area* area)
-	: Entity(rc, area), velocity(0, 0)
+Player::Player(Area* area)
+	: Entity(area), velocity(0, 0)
 {
 }
 
@@ -116,7 +116,7 @@ void Player::useTile()
 	std::vector<icoord> tiles = frontTiles();
 	BOOST_FOREACH(icoord& c, tiles) {
 		Tile& t = area->getTile(c);
-		t.onUseScripts(rc, this);
+		t.onUseScripts(this);
 	}
 }
 

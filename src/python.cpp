@@ -24,7 +24,6 @@
 
 namespace bp = boost::python;
 
-static Resourcer* rc = NULL;
 static bp::object modMain, modBltin;
 static bp::object dictMain, dictBltin;
 
@@ -99,8 +98,8 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	// Search Python scripts inside World.
 	std::replace(name.begin(), name.end(), '.', '/');
 	name += ".py";
-	if (rc && rc->resourceExists(name)) {
-		rc->runPythonScript(name);
+	if (Resourcer::getResourcer()->resourceExists(name)) {
+		Resourcer::getResourcer()->runPythonScript(name);
 		return modMain.ptr(); // We have to return a module...
 	}
 
@@ -197,11 +196,6 @@ void pythonErr()
 	char* value = PyString_AsString(pvalue);
 
 	Log::err("Python", std::string(type) + ": " + value);
-}
-
-void pythonSetResourcer(Resourcer* r)
-{
-	rc = r;
 }
 
 bp::object pythonGlobals()

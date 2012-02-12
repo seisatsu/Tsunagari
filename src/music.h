@@ -37,7 +37,7 @@ enum MUSIC_STATE
 class Music
 {
 public:
-	Music(Resourcer* rc);
+	Music();
 	~Music();
 
 	void setIntro(const std::string& filename);
@@ -49,8 +49,6 @@ private:
 	void playIntro();
 	void playLoop();
 	void setState(MUSIC_STATE state);
-
-	Resourcer* rc;
 
 	SongRef musicInst, introMusic, loopMusic;
 

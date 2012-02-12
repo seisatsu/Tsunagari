@@ -18,9 +18,6 @@
 #include <boost/python/other.hpp>
 #include <boost/python/self.hpp>
 
-class Resourcer;
-
-
 //! Initialize Python libraries for use.
 bool pythonInit();
 
@@ -29,10 +26,6 @@ void pythonFinalize();
 
 //! Print last error received within Python.
 void pythonErr();
-
-//! Selects Resourcer object to search when looking to import a module from
-//! World.
-void pythonSetResourcer(Resourcer* rc);
 
 
 //! Access to global namespace shared by all Python scripts.

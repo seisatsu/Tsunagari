@@ -32,13 +32,11 @@
          account.
 */
 
-Area::Area(Resourcer* rc,
-           Viewport* view,
+Area::Area(Viewport* view,
            Player* player,
            Music* music,
            const std::string& descriptor)
-	: rc(rc),
-	  view(view),
+	: view(view),
 	  player(player),
 	  music(music),
 	  dim(0, 0, 0),
@@ -131,7 +129,7 @@ void Area::update(unsigned long dt)
 	if (onUpdateScripts.size()) {
 		BOOST_FOREACH(const std::string& script, onUpdateScripts) {
 			pythonSetGlobal("area", this);
-			rc->runPythonScript(script);
+			Resourcer::getResourcer()->runPythonScript(script);
 		}
 	}
 
@@ -335,11 +333,11 @@ void Area::runOnLoads()
 	std::string onAreaLoadScript = World::getWorld()->getAreaLoadScript();
 	if (onAreaLoadScript.size()) {
 		pythonSetGlobal("area", this);
-		rc->runPythonScript(onAreaLoadScript);
+		Resourcer::getResourcer()->runPythonScript(onAreaLoadScript);
 	}
 	BOOST_FOREACH(const std::string& script, onLoadScripts) {
 		pythonSetGlobal("area", this);
-		rc->runPythonScript(script);
+		Resourcer::getResourcer()->runPythonScript(script);
 	}
 }
 
@@ -397,7 +395,7 @@ bool Area::processDescriptor()
 	XMLRef doc;
 	XMLNode root;
 
-	ASSERT(doc = rc->getXMLDoc(descriptor, "area.dtd"));
+	ASSERT(doc = Resourcer::getResourcer()->getXMLDoc(descriptor, "area.dtd"));
 	ASSERT(root = doc->root()); // <map>
 
 	ASSERT(root.intAttr("width", &dim.x));
@@ -453,7 +451,7 @@ bool Area::processMapProperties(XMLNode node)
 		}
 		else if (name == "onLoad") {
 			std::string filename = value;
-			if (rc->resourceExists(filename)) {
+			if (Resourcer::getResourcer()->resourceExists(filename)) {
 				onLoadScripts.push_back(filename);
 			}
 			else {
@@ -463,7 +461,7 @@ bool Area::processMapProperties(XMLNode node)
 		}
 		else if (name == "onUpdate") {
 			std::string filename = value;
-			if (rc->resourceExists(filename)) {
+			if (Resourcer::getResourcer()->resourceExists(filename)) {
 				onUpdateScripts.push_back(filename);
 			}
 			else {
@@ -518,7 +516,7 @@ bool Area::processTileSet(XMLNode node)
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("image")) {
 			std::string source = child.attr("source");
-			rc->getTiledImage(img, source,
+			Resourcer::getResourcer()->getTiledImage(img, source,
 				(unsigned)x, (unsigned)y, true);
 		}
 		else if (child.is("tile")) {
@@ -601,7 +599,7 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 		}
 		else if (name == "onEnter") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
+			if (!Resourcer::getResourcer()->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -614,7 +612,7 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 		}
 		else if (name == "onLeave") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
+			if (!Resourcer::getResourcer()->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -627,7 +625,7 @@ bool Area::processTileType(XMLNode node, TiledImage& img, int id)
 		}
 		else if (name == "onUse") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
+			if (!Resourcer::getResourcer()->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -912,7 +910,7 @@ bool Area::processObject(XMLNode node, int z)
 		}
 		else if (name == "onEnter") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
+			if (!Resourcer::getResourcer()->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -925,7 +923,7 @@ bool Area::processObject(XMLNode node, int z)
 		}
 		else if (name == "onLeave") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
+			if (!Resourcer::getResourcer()->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -938,7 +936,7 @@ bool Area::processObject(XMLNode node, int z)
 		}
 		else if (name == "onUse") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
+			if (!Resourcer::getResourcer()->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;

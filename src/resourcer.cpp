@@ -28,10 +28,17 @@
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
 
+static Resourcer* globalResourcer = NULL;
+
+Resourcer* Resourcer::getResourcer()
+{
+	return globalResourcer;
+}
+
 Resourcer::Resourcer(GameWindow* window)
 	: window(window)
 {
-	pythonSetResourcer(this);
+	globalResourcer = this;
 	pythonSetGlobal("resourcer", this);
 }
 

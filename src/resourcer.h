@@ -50,6 +50,9 @@ typedef boost::shared_ptr<std::string> StringRef;
 class Resourcer
 {
 public:
+	//! Get the Resourcer for the current World.
+	static Resourcer* getResourcer();
+
 	Resourcer(GameWindow* window);
 	~Resourcer();
 	bool init(char* argv0);

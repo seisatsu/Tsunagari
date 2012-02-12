@@ -49,8 +49,8 @@ typedef boost::shared_ptr<Area> AreaPtr;
 class Area
 {
 public:
-	Area(Resourcer* rc, Viewport* view, Player* player,
-	     Music* music, const std::string& filename);
+	Area(Viewport* view, Player* player, Music* music,
+	     const std::string& filename);
 	~Area();
 
 	//! Parse the file specified in the constructor, generating a full Area
@@ -155,7 +155,6 @@ private:
 	Door parseDoor(const std::string& dest);
 
 private:
-	Resourcer* rc;
 	Viewport* view;
 	Player* player;
 	Music* music;

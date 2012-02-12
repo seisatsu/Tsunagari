@@ -57,7 +57,7 @@ GameWindow::~GameWindow()
 bool GameWindow::init(char* argv0)
 {
 	rc.reset(new Resourcer(this));
-	world.reset(new World(this, rc.get()));
+	world.reset(new World(this));
 	return rc->init(argv0) && world->init();
 }
 
