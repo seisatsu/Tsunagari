@@ -10,6 +10,7 @@ CXX = g++
 
 # Warning flags to enable.
 WFLAGS = -Wall -Wextra -Wconversion
+WFLAGS += -Wno-long-long # Disable warnings in Python code.
 
 # Compiler and linker flags.
 CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
