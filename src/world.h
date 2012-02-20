@@ -41,7 +41,7 @@ public:
 	//! Get the currently open World.
 	static World* getWorld();
 
-	World(GameWindow* wnd);
+	World();
 	~World();
 
 	//! Initialize the world for use.
@@ -90,7 +90,6 @@ private:
 	//! fit on-screen.
 	Gosu::Transform getTransform();
 
-	GameWindow* wnd;
 	Viewport* view;
 	AreaPtr area;
 	boost::scoped_ptr<Music> music;

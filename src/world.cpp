@@ -21,8 +21,8 @@ World* World::getWorld()
 	return globalWorld;
 }
 
-World::World(GameWindow* wnd)
-	: wnd(wnd), player(NULL)
+World::World()
+	: player(NULL)
 {
 	globalWorld = this;
 }
@@ -43,15 +43,13 @@ bool World::init()
 	player.setPhase("down");
 
 	if (onLoadScript.size()) {
-		// XXX: Is it okay to not have a Player cast?
 		pythonSetGlobal("player", (Entity*)&player);
 		Resourcer::getResourcer()->runPythonScript(onLoadScript);
 	}
 
-	view = new Viewport(*wnd, viewport);
+	view = new Viewport(viewport);
 	view->trackEntity(&player);
 
-	wnd->setCaption(Gosu::widen(name));
 	AreaPtr area = getArea(entry.area);
 	if (!area)
 		return false;
@@ -71,7 +69,8 @@ void World::buttonUp(const Gosu::Button btn)
 
 void World::draw()
 {
-	Gosu::Graphics& graphics = wnd->graphics();
+	GameWindow& window = GameWindow::getWindow();
+	Gosu::Graphics& graphics = window.graphics();
 
 	drawLetterbox();
 	graphics.pushTransform(getTransform());
@@ -145,6 +144,7 @@ bool World::processDescriptor()
 	for (XMLNode node = root.childrenNode(); node; node = node.next()) {
 		if (node.is("name")) {
 			name = node.content();
+			GameWindow::getWindow().setCaption(Gosu::widen(name));
 		} else if (node.is("author")) {
 			author = node.content();
 		} else if (node.is("player")) {
@@ -214,7 +214,8 @@ void World::drawLetterbox()
 void World::drawRect(double x1, double x2, double y1, double y2,
                        Gosu::Color c, double z)
 {
-	wnd->graphics().drawQuad(
+	GameWindow& window = GameWindow::getWindow();
+	window.graphics().drawQuad(
 		x1, y1, c,
 		x2, y1, c,
 		x2, y2, c,

@@ -13,9 +13,8 @@
 #include "window.h"
 
 
-Viewport::Viewport(const GameWindow& window, icoord vsize)
-	: window(window),
-	  off(0, 0),
+Viewport::Viewport(icoord vsize)
+	: off(0, 0),
 	  virtRes(vsize.x, vsize.y),
 	  mode(TM_MANUAL),
 	  area(NULL)
@@ -54,6 +53,7 @@ rvec2 Viewport::getLetterboxOffset() const
 
 rvec2 Viewport::getScale() const
 {
+	const GameWindow& window = GameWindow::getWindow();
 	rvec2 letterbox = getLetterbox();
 	rvec2 physRes = rvec2(
 		(double)window.width(),
@@ -68,6 +68,7 @@ rvec2 Viewport::getScale() const
 
 rvec2 Viewport::getPhysRes() const
 {
+	const GameWindow& window = GameWindow::getWindow();
 	return rvec2(
 		(double)window.width(),
 		(double)window.height()

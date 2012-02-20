@@ -27,8 +27,6 @@ namespace Gosu {
 	class Song;
 }
 
-class GameWindow;
-
 using boost::shared_ptr;
 
 // We hand out and manage resources in these forms:
@@ -53,7 +51,7 @@ public:
 	//! Get the Resourcer for the current World.
 	static Resourcer* getResourcer();
 
-	Resourcer(GameWindow* window);
+	Resourcer();
 	~Resourcer();
 	bool init(char* argv0);
 
@@ -106,8 +104,6 @@ private:
 	std::string path(const std::string& entryName) const;
 
 private:
-	GameWindow* window;
-
 	// Caches that store processed, game-ready objects. Garbage collected.
 	Cache<ImageRef> images;
 	Cache<TiledImageRef> tiles;

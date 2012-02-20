@@ -35,8 +35,7 @@ Resourcer* Resourcer::getResourcer()
 	return globalResourcer;
 }
 
-Resourcer::Resourcer(GameWindow* window)
-	: window(window)
+Resourcer::Resourcer()
 {
 	globalResourcer = this;
 	pythonSetGlobal("resourcer", this);
@@ -79,7 +78,8 @@ ImageRef Resourcer::getImage(const std::string& name)
 		return ImageRef();
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
-	ImageRef result(new Gosu::Image(window->graphics(), bitmap, false));
+	ImageRef result(new Gosu::Image(
+		GameWindow::getWindow().graphics(), bitmap, false));
 
 	images.lifetimePut(name, result);
 	return result;
@@ -100,7 +100,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	TiledImageRef result(new TiledImage);
-	Gosu::imagesFromTiledBitmap(window->graphics(), bitmap,
+	Gosu::imagesFromTiledBitmap(GameWindow::getWindow().graphics(), bitmap,
 			(unsigned)w, (unsigned)h, tileable, *result.get());
 	img = *result.get();
 

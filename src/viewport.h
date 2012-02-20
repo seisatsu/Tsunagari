@@ -11,7 +11,6 @@
 #include "entity.h"
 
 class Area;
-class GameWindow;
 
 //! General control over where and how the map is rendered.
 /*!
@@ -20,7 +19,7 @@ class GameWindow;
 class Viewport
 {
 public:
-	Viewport(const GameWindow& window, icoord vsize);
+	Viewport(icoord vsize);
 	~Viewport();
 
 	void update(unsigned long dt);
@@ -73,7 +72,6 @@ private:
 		TM_FOLLOW_ENTITY
 	};
 
-	const GameWindow& window;
 	double aspectRatio;
 	rvec2 off;
 	rvec2 virtRes;

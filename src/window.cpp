@@ -26,7 +26,7 @@ namespace Gosu {
 
 static GameWindow* globalWindow = NULL;
 
-const GameWindow& GameWindow::getWindow()
+GameWindow& GameWindow::getWindow()
 {
 	return *globalWindow;
 }
@@ -56,8 +56,8 @@ GameWindow::~GameWindow()
 
 bool GameWindow::init(char* argv0)
 {
-	rc.reset(new Resourcer(this));
-	world.reset(new World(this));
+	rc.reset(new Resourcer());
+	world.reset(new World());
 	return rc->init(argv0) && world->init();
 }
 
