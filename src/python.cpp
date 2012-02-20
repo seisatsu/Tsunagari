@@ -34,6 +34,7 @@ static std::string moduleWhitelist[] = {
 	"__main__",
 	"math",
 	"sys",
+	"time",
 	"",
 	// TODO: save "os.urandom(n)" maybe?
 };
