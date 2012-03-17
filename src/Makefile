@@ -34,7 +34,7 @@ tsunagari: animation.o area.o audio.o cmd.o common.o entity.o log.o main.o \
 	   tile.o vec.o viewport.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
-%.world: %/*
+%.world:
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
 
 clean:
