@@ -159,6 +159,8 @@ protected:
 	//! True if currently moving between two Tiles in an Area. Only used in
 	//! TILE game mode.
 	bool moving;
+	/** Hack flag can be used to not stop the moving animation in-between tiles. */
+	bool stillMoving;
 
 	rcoord fromCoord;
 	Tile* fromTile;

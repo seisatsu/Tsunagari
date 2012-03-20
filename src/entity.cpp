@@ -33,6 +33,7 @@ Entity::Entity(Area* area)
 	: redraw(true),
 	  speedMul(1.0),
 	  moving(false),
+	  stillMoving(false),
 	  area(NULL),
 	  r(0.0, 0.0, 0.0)
 {
@@ -176,7 +177,9 @@ bool Entity::setPhase(const std::string& name)
 	if (it != phases.end()) {
 		Animation* newPhase = &it->second;
 		if (phase != newPhase) {
+			int now = GameWindow::getWindow().time();
 			phase = newPhase;
+			phase->startOver(now);
 			redraw = true;
 			return true;
 		}
@@ -219,7 +222,7 @@ void Entity::moveByTile(ivec2 delta)
 {
 	if (moving)
 		return;
-	setPhase(directionStr(setFacing(delta)));
+	setFacing(delta);
 
 	std::vector<icoord> tiles = frontTiles();
 	BOOST_FOREACH(const icoord& tile, tiles) {
@@ -227,6 +230,8 @@ void Entity::moveByTile(ivec2 delta)
 			preMove();
 			return;
 		}
+		else
+			setPhase(directionStr(facing));
 	}
 }
 
@@ -359,7 +364,7 @@ void Entity::postMove()
 	moving = false;
 
 	// Stop moving animation.
-	if (conf.moveMode != TURN)
+	if (conf.moveMode != TURN && !stillMoving)
 		setPhase(getFacing());
 
 	// Process triggers.

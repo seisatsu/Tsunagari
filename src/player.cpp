@@ -51,6 +51,7 @@ void Player::startMovement(ivec2 delta)
 		// TODO
 		break;
 	}
+	stillMoving = velocity;
 }
 
 void Player::stopMovement(ivec2 delta)
@@ -70,6 +71,7 @@ void Player::stopMovement(ivec2 delta)
 		// TODO
 		break;
 	}
+	stillMoving = velocity;
 }
 
 void Player::moveByTile(ivec2 delta)

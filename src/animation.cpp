@@ -13,15 +13,16 @@ Animation::Animation()
 	  img(NULL),
 	  animated(false),
 	  frameLen(0),
-	  animLen(0),
-	  frameShowing(0)
+	  animCycle(0),
+	  frameShowing(0),
+	  base(0)
 {
 }
 
 void Animation::addFrame(ImageRef frame)
 {
 	frames.push_back(frame);
-	animLen = frameLen * (int)frames.size();
+	animCycle = frameLen * (int)frames.size();
 	if (frames.size() == 1)
 		img = frame.get();
 	if (frames.size() > 1)
@@ -31,15 +32,22 @@ void Animation::addFrame(ImageRef frame)
 void Animation::setFrameLen(int milliseconds)
 {
 	frameLen = milliseconds;
-	animLen = frameLen * (int)frames.size();
+	animCycle = frameLen * (int)frames.size();
+}
+
+void Animation::startOver(int ms_now)
+{
+	base = ms_now;
+	frameShowing = 0;
+	img = frames[0].get();
 }
 
 bool Animation::needsRedraw(int milliseconds) const
 {
 	if (animated) {
-		int frame = (milliseconds % animLen) / frameLen;
-		if (frame != frameShowing)
-			return true;
+		int offset = milliseconds - base;
+		int frame = (offset % animCycle) / frameLen;
+		return frame != frameShowing;
 	}
 	return false;
 }
@@ -47,7 +55,8 @@ bool Animation::needsRedraw(int milliseconds) const
 void Animation::updateFrame(int milliseconds)
 {
 	if (animated) {
-		frameShowing = (milliseconds % animLen) / frameLen;
+		int offset = milliseconds - base;
+		int frameShowing = (offset % animCycle) / frameLen;
 		img = frames[frameShowing].get();
 	}
 }
