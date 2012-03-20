@@ -151,7 +151,7 @@ void Player::postMove()
 	}
 
 	vicoord tile = getTileCoords_vi();
-	Log::dev("Player", boost::str(
+	Log::info("Player", boost::str(
 		boost::format("location x:%d y:%d z:%.1f")
 		  % tile.x % tile.y % r.z)
 	);

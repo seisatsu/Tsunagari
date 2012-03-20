@@ -4,63 +4,42 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <iostream>
 #include "config.h"
 #include "log.h"
 
-//! Singleton enforcement.
-Log* Log::instance()
-{
-	static Log* inst = new Log;
-	return inst;
-}
+static verbosity_t verb = V_NORMAL;
 
-Log::Log()
+static std::string& chomp(std::string& str)
 {
-	mode = MESSAGE_MODE;
-}
-
-//! Specify mode setting.
-void Log::setMode(message_mode_t mode)
-{
-	Log* l = instance();
-	l->mode = mode;
-}
-
-/*
- * Give output to the "write" function if it is allowed to be sent in
- * the current mode.
- */
-void Log::err(std::string domain, std::string message)
-{
-	std::cerr << "Error [" << domain << "] - " << rtrim(message)
-	          << std::endl;
-}
-
-void Log::dev(std::string domain, std::string message)
-{
-	Log* l = instance();
-	if (l->mode == MM_DEBUG || l->mode == MM_DEVELOPER)
-		std::cerr << "Devel [" << domain << "] - " << rtrim(message)
-		          << std::endl;
-}
-
-void Log::dbg(std::string domain, std::string message)
-{
-	Log* l = instance();
-	if (l->mode == MM_DEBUG)
-		std::cerr << "Debug [" << domain << "] - " << rtrim(message)
-		          << std::endl;
-}
-
-void Log::blank()
-{
-	std::cerr << std::endl;
-}
-
-std::string& Log::rtrim(std::string& str)
-{
-	if (str[str.length()-1] == '\n')
-		str[str.length()-1] = '\0';
+	std::string::size_type notwhite = str.find_last_not_of(" \t\n\r");
+	str.erase(notwhite + 1);
 	return str;
+}
+
+void Log::setVerbosity(verbosity_t v)
+{
+	verb = v;
+}
+
+void Log::info(std::string domain, std::string msg)
+{
+	if (verb > V_NORMAL) {
+		std::cerr << "Info [" << domain << "] - "
+			<< chomp(msg) << std::endl;
+	}
+}
+
+void Log::err(std::string domain, std::string msg)
+{
+	if (verb > V_QUIET) {
+		std::cerr << "Error [" << domain << "] - "
+			<< chomp(msg) << std::endl;
+	}
+}
+
+void Log::fatal(std::string domain, std::string msg)
+{
+	std::cerr << "Fatal [" << domain << "] - " << chomp(msg) << std::endl;
 }
 

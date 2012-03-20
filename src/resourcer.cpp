@@ -55,7 +55,7 @@ bool Resourcer::init(char* argv0)
 
 	err = PHYSFS_mount(conf.worldFilename.c_str(), NULL, 0);
 	if (!err) {
-		Log::err("Resourcer", conf.worldFilename + ": could not open world");
+		Log::fatal("Resourcer", conf.worldFilename + ": could not open world");
 		return false;
 	}
 

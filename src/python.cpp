@@ -90,7 +90,7 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 			&level))
 		return NULL;
 	name = _name;
-	Log::dbg("Python", "import " + name);
+	Log::info("Python", "import " + name);
 
 	// Search whitelisted Python modules.
 	if (inWhitelist(name))
@@ -172,8 +172,9 @@ bool pythonInit()
 
 		pythonOverrideImportStatement();
 	} catch (bp::error_already_set) {
-		Log::err("Python", "An error occured while populating the "
+		Log::fatal("Python", "An error occured while populating the "
 			           "Python modules:");
+		Log::setVerbosity(V_NORMAL); // Assure message can be seen.
 		pythonErr();
 		return false;
 	}

@@ -16,9 +16,6 @@
 	/* Tsunagari XML DTD directory. */
 	#define DTD_DIRECTORY "./dtd/"
 
-	/* Error verbosity level. */
-	#define MESSAGE_MODE MM_DEBUG
-
 	/* Milliseconds of button down before starting persistent input in
 	   roguelike movement mode. -- Move to World Descriptor */
 	#define ROGUELIKE_PERSIST_DELAY_INIT 500

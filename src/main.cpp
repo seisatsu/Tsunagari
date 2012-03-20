@@ -13,6 +13,7 @@
 #include <string.h>
 #include <time.h>
 
+#include <boost/algorithm/string.hpp> // for iequals
 #include <boost/config.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/detail/config_file.hpp>
@@ -38,13 +39,6 @@ static void defaultsQuery()
 		<< CLIENT_CONF_FILE << std::endl;
 	std::cerr << "DTD_DIRECTORY:                          "
 		<< DTD_DIRECTORY << std::endl;
-	std::cerr << "MESSAGE_MODE:                           ";
-	if (MESSAGE_MODE == MM_DEBUG)
-		std::cerr << "MM_DEBUG" << std::endl;
-	else if (MESSAGE_MODE == MM_DEVELOPER)
-		std::cerr << "MM_DEVELOPER" << std::endl;
-	else
-		std::cerr << "MM_ERROR" << std::endl;
 	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           "
 		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
 	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    "
@@ -73,7 +67,7 @@ static bool parseConfig(const char* filename)
 
 	std::ifstream config(filename);
 	if (!config) {
-		Log::err(filename, "could not parse config");
+		Log::fatal(filename, "could not parse config");
 		return false;
 	}
 
@@ -81,33 +75,32 @@ static bool parseConfig(const char* filename)
 	std::map<std::string, std::string> parameters;
 	options.insert("*");
 
-	for (pod::config_file_iterator i(config, options), e ; i != e; ++i) {
+	for (pod::config_file_iterator i(config, options), e ; i != e; ++i)
 		parameters[i->string_key] = i->value[0];
-	}
 
 	if (parameters["engine.world"].empty()) {
-		Log::err(filename, "\"[engine] world\" option expected");
+		Log::fatal(filename, "\"[engine] world\" option expected");
 		return false;
 	}
 	else
 		conf.worldFilename = parameters["engine.world"];
 
 	if (parameters["window.width"].empty()) {
-		Log::err(filename, "\"[window] width\" option expected");
+		Log::fatal(filename, "\"[window] width\" option expected");
 		return false;
 	}
 	else
 		conf.windowSize.x = atoi(parameters["window.width"].c_str());
 
 	if (parameters["window.height"].empty()) {
-		Log::err(filename, "\"[window] height\" option expected");
+		Log::fatal(filename, "\"[window] height\" option expected");
 		return false;
 	}
 	else
 		conf.windowSize.y = atoi(parameters["window.height"].c_str());
 
 	if (parameters["window.fullscreen"].empty()) {
-		Log::err(filename, "\"[window] fullscreen\" option expected");
+		Log::fatal(filename, "\"[window] fullscreen\" option expected");
 		return false;
 	}
 	else
@@ -141,23 +134,18 @@ static bool parseConfig(const char* filename)
 		conf.cacheSize = atoi(parameters["cache.size"].c_str());
 	}
 
-	if (parameters["engine.loglevel"].empty())
-		conf.logLevel = MESSAGE_MODE;
-	else if (parameters["engine.loglevel"] == "error" ||
-	    parameters["engine.loglevel"] == "Error" ||
-	    parameters["engine.loglevel"] == "ERROR")
-		conf.logLevel = MM_SILENT;
-	else if (parameters["engine.loglevel"] == "devel" ||
-	    parameters["engine.loglevel"] == "Devel" ||
-	    parameters["engine.loglevel"] == "DEVEL")
-	conf.logLevel = MM_DEVELOPER;
-	else if (parameters["engine.loglevel"] == "debug" ||
-	    parameters["engine.loglevel"] == "Debug" ||
-	    parameters["engine.loglevel"] == "DEBUG")
-	conf.logLevel = MM_DEBUG;
+	std::string verbosity = parameters["engine.verbosity"];
+	conf.verbosity = V_NORMAL;
+	if (verbosity.empty())
+		;
+	else if (verbosity == "quiet")
+		conf.verbosity = V_QUIET;
+	else if (verbosity == "normal")
+		conf.verbosity = V_NORMAL;
+	else if (verbosity == "verbose")
+		conf.verbosity = V_VERBOSE;
 	else {
-		Log::err(filename, "unknown value for \"[engine] loglevel\", using default");
-		conf.logLevel = MESSAGE_MODE;
+		Log::err(filename, "unknown value for \"[engine] verbosity\", using default");
 	}
 
 	return true;
@@ -168,21 +156,22 @@ static bool parseCommandLine(int argc, char* argv[])
 {
 	CommandLineOptions cmd(argc, argv);
 
-	cmd.insert("-h", "--help", "", "Display this help message");
-	cmd.insert("-g", "--gameworld", "<world file>", "Game world to load");
-	cmd.insert("-c", "--config", "<config file>", "Client config file to use");
-	cmd.insert("-v", "--verbosity", "<error,devel,debug>", "Log message level");
-	cmd.insert("-t", "--cache-ttl", "<seconds>", "Cache time-to-live in seconds");
-	cmd.insert("-m", "--cache-size", "<megabytes>", "Cache size in megabytes");
-	cmd.insert("-s", "--size", "<WxH>", "Window dimensions");
-	cmd.insert("-f", "--fullscreen", "", "Run in fullscreen mode");
-	cmd.insert("-w", "--window", "", "Run in windowed mode");
-	cmd.insert("", "--no-audio", "", "Disable audio");
-	cmd.insert("-q", "--query", "", "Query compiled-in engine defaults");
-	cmd.insert("", "--version", "", "Print the engine version string");
+	cmd.insert("-h", "--help",       "",              "Display this help message");
+	cmd.insert("-g", "--gameworld",  "<world file>",  "Game world to load");
+	cmd.insert("-c", "--config",     "<config file>", "Client config file to use");
+	cmd.insert("-q", "--quiet",      "",              "Display only fatal errors");
+	cmd.insert("",   "--normal",     "",              "Display all errors");
+	cmd.insert("-v", "--verbose",    "",              "Display additional information");
+	cmd.insert("-t", "--cache-ttl",  "<seconds>",     "Cache time-to-live in seconds");
+	cmd.insert("-m", "--cache-size", "<megabytes>",   "Cache size in megabytes");
+	cmd.insert("-s", "--size",       "<WxH>",         "Window dimensions");
+	cmd.insert("-f", "--fullscreen", "",              "Run in fullscreen mode");
+	cmd.insert("-w", "--window",     "",              "Run in windowed mode");
+	cmd.insert("",   "--no-audio",   "",              "Disable audio");
+	cmd.insert("",   "--query",      "",              "Query compiled-in engine defaults");
+	cmd.insert("",   "--version",    "",              "Print the engine version string");
 
 	if (!cmd.parse()) {
-		Log::err(argv[0], "bad command line");
 		cmd.usage();
 		return false;
 	}
@@ -193,7 +182,7 @@ static bool parseCommandLine(int argc, char* argv[])
 	}
 
 	if (cmd.check("--version")) {
-		std::cerr << TSUNAGARI_RELEASE_VERSION << std::endl;
+		std::cout << TSUNAGARI_RELEASE_VERSION << std::endl;
 		return false;
 	}
 
@@ -210,18 +199,21 @@ static bool parseCommandLine(int argc, char* argv[])
 	if (cmd.check("--gameworld"))
 		conf.worldFilename = cmd.get("--gameworld");
 
-	if (cmd.check("--verbosity")) {
-		if (cmd.get("--verbosity") == "error")
-			conf.logLevel = MM_SILENT;
-		else if (cmd.get("--verbosity") == "devel")
-			conf.logLevel = MM_DEVELOPER;
-		else if (cmd.get("--verbosity") == "debug")
-			conf.logLevel = MM_DEBUG;
-		else {
-			Log::err(argv[0], "invalid argument for --verbosity");
-			return false;
-		}
+	int verbcount = 0;
+	if (cmd.check("--quiet")) {
+		conf.verbosity = V_QUIET;
+		verbcount++;
 	}
+	if (cmd.check("--normal")) {
+		conf.verbosity = V_NORMAL;
+		verbcount++;
+	}
+	if (cmd.check("--verbose")) {
+		conf.verbosity = V_VERBOSE;
+		verbcount++;
+	}
+	if (verbcount > 1)
+		Log::err("cmdline", "multiple verbosity flags on cmdline, using most verbose");
 
 	if (cmd.check("--no-audio"))
 		conf.audioEnabled = false;
@@ -241,7 +233,7 @@ static bool parseCommandLine(int argc, char* argv[])
 	if (cmd.check("--size")) {
 		std::vector<std::string> dim = splitStr(cmd.get("--size"), "x");
 		if (dim.size() != 2) {
-			Log::err(argv[0], "invalid argument for --size");
+			Log::fatal("cmdline", "invalid argument for --size");
 			return false;
 		}
 		conf.windowSize.x = atoi(dim[0].c_str());
@@ -249,7 +241,7 @@ static bool parseCommandLine(int argc, char* argv[])
 	}
 
 	if (cmd.check("--fullscreen") && cmd.check("--window")) {
-		Log::err(argv[0], "--fullscreen and --window mutually exclusive");
+		Log::fatal("cmdline", "--fullscreen and --window mutually exclusive");
 		return false;
 	}
 
@@ -302,15 +294,15 @@ int main(int argc, char** argv)
 	}
 	#endif
 
-	// Init various libraries we use.
-	libraries libs;
-
 	if (!parseConfig(CLIENT_CONF_FILE))
 		return 1;
 	if (!parseCommandLine(argc, argv))
 		return 1;
-	if (conf.logLevel)
-		Log::setMode(conf.logLevel);
+	if (conf.verbosity)
+		Log::setVerbosity(conf.verbosity);
+
+	// Init various libraries we use.
+	libraries libs;
 
 	GameWindow window;
 	if (!window.init(argv[0]))

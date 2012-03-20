@@ -28,7 +28,7 @@ public:
 		if (conf.cacheEnabled) {
 			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
-				Log::dbg("Cache", name + ": requested (cached)");
+				Log::info("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
 				// Set lastUsed to now because it won't be used
 				// by the time garbageCollect() gets to it.
@@ -37,7 +37,7 @@ public:
 				return entry.resource;
 			}
 		}
-		Log::dbg("Cache", name + ": requested");
+		Log::info("Cache", name + ": requested");
 		return T();
 	}
 
@@ -46,13 +46,13 @@ public:
 		if (conf.cacheEnabled) {
 			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
-				Log::dbg("Cache", name + ": requested (cached)");
+				Log::info("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
 				entry.lastUsed = IN_USE_NOW;
 				return entry.resource;
 			}
 		}
-		Log::dbg("Cache", name + ": requested");
+		Log::info("Cache", name + ": requested");
 		return T();
 	}
 
@@ -90,7 +90,7 @@ public:
 			if (unused) {
 				if (cache.lastUsed == IN_USE_NOW) {
 					cache.lastUsed = now;
-					//Log::dbg("Resourcer", name + ": unused");
+					//Log::info("Resourcer", name + ": unused");
 				}
 				else if (now < cache.lastUsed) {
 					// Handle time overflow.
@@ -98,7 +98,7 @@ public:
 				}
 				else if (now > cache.lastUsed + conf.cacheTTL*1000) {
 					dead.push_back(name);
-					Log::dbg("Cache", name + ": purged");
+					Log::info("Cache", name + ": purged");
 				}
 			}
 		}

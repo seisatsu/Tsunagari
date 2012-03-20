@@ -49,7 +49,7 @@ icube_t icube(int x1, int y1, int z1,
 //! Engine-wide user-confurable values.
 struct Conf {
 	std::string worldFilename;
-	message_mode_t logLevel;
+	verbosity_t verbosity;
 	movement_mode_t moveMode;
 	icoord windowSize;
 	bool fullscreen;
