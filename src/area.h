@@ -51,11 +51,11 @@ class Area
 public:
 	Area(Viewport* view, Player* player, Music* music,
 	     const std::string& filename);
-	~Area();
+	virtual ~Area();
 
 	//! Parse the file specified in the constructor, generating a full Area
 	//! object. Must be called before use.
-	bool init();
+	virtual bool init();
 
 	//! Prepare game state for this Area to be in focus.
 	void focus();
@@ -122,7 +122,7 @@ public:
 	rcoord virt2virt(vicoord virt) const;
 	vicoord virt2virt(rcoord virt) const;
 
-private:
+protected:
 	// Convert between virtual and physical map depths.
 	int depthIndex(double depth) const;
 	double indexDepth(int idx) const;
@@ -136,25 +136,7 @@ private:
 	void drawTile(const Tile& tile, int x, int y, double depth) const;
 	void drawEntities();
 
-
-	//! Allocate Tile objects for one layer of map.
-	void allocateMapLayer();
-
-	//! Parse an Area file.
-	bool processDescriptor();
-	bool processMapProperties(XMLNode node);
-	bool processTileSet(XMLNode node);
-	bool processTileType(XMLNode node, TiledImage& img, int id);
-	bool processLayer(XMLNode node);
-	bool processLayerProperties(XMLNode node, double* depth);
-	bool processLayerData(XMLNode node, int z);
-	bool processObjectGroup(XMLNode node);
-	bool processObjectGroupProperties(XMLNode node, double* depth);
-	bool processObject(XMLNode node, int z);
-	unsigned splitTileFlags(const std::string& strOfFlags);
-	Door parseDoor(const std::string& dest);
-
-private:
+protected:
 	Viewport* view;
 	Player* player;
 	Music* music;

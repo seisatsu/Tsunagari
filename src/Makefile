@@ -29,9 +29,9 @@ all: tsunagari $(TESTWORLD)
 depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
-tsunagari: animation.o area.o audio.o cmd.o common.o entity.o log.o main.o \
-	   music.o player.o python.o python_bindings.o resourcer.o \
-	   tile.o vec.o viewport.o window.o world.o xml.o
+tsunagari: animation.o area.o area-tmx.o audio.o cmd.o common.o entity.o log.o \
+	main.o music.o player.o python.o python_bindings.o resourcer.o tile.o \
+	vec.o viewport.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world:
@@ -50,6 +50,9 @@ clean:
 
 animation.o: animation.cpp animation.h audio.h cache.h common.h log.h \
  resourcer.h vec.h window.h xml.h
+area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h audio.h cache.h \
+ common.h config.h entity.h log.h music.h player.h python.h resourcer.h \
+ tile.h vec.h viewport.h window.h world.h xml.h
 area.o: animation.h area.cpp area.h audio.h cache.h common.h config.h \
  entity.h log.h music.h player.h python.h resourcer.h tile.h vec.h \
  viewport.h window.h world.h xml.h
@@ -83,7 +86,7 @@ viewport.o: animation.h area.h audio.h cache.h common.h config.h entity.h \
 window.o: animation.h area.h audio.h cache.h common.h config.h entity.h \
  log.h music.h player.h resourcer.h tile.h vec.h viewport.h window.cpp \
  window.h world.h xml.h
-world.o: animation.h area.h audio.h cache.h common.h config.h entity.h log.h \
- music.h player.h python.h resourcer.h tile.h vec.h viewport.h window.h \
- world.cpp world.h xml.h
+world.o: animation.h area-tmx.h area.h audio.h cache.h common.h config.h \
+ entity.h log.h music.h player.h python.h resourcer.h tile.h vec.h \
+ viewport.h window.h world.cpp world.h xml.h
 xml.o: common.h config.h log.h vec.h xml.cpp xml.h

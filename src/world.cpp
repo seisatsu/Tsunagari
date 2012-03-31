@@ -6,6 +6,7 @@
 
 #include <Gosu/Utility.hpp>
 
+#include "area-tmx.h"
 #include "common.h"
 #include "log.h"
 #include "python.h"
@@ -102,7 +103,7 @@ AreaPtr World::getArea(const std::string& filename, int flags)
 	}
 
 	AreaPtr newArea(
-		new Area(view, &player, music.get(), filename)
+		new AreaTMX(view, &player, music.get(), filename)
 	);
 
 	if (!newArea->init())
