@@ -43,8 +43,8 @@ private:
 	bool processObjectGroup(XMLNode node);
 	bool processObjectGroupProperties(XMLNode node, double* depth);
 	bool processObject(XMLNode node, int z);
-	unsigned splitTileFlags(const std::string& strOfFlags);
-	Door parseDoor(const std::string& dest);
+	bool splitTileFlags(const std::string& strOfFlags, unsigned* flags);
+	bool parseDoor(const std::string& dest, Door* door);
 };
 
 #endif

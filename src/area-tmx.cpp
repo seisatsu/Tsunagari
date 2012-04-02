@@ -260,7 +260,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
 		if (name == "flags") {
-			type.flags = splitTileFlags(value);
+			ASSERT(splitTileFlags(value, &type.flags));
 		}
 		else if (name == "onEnter") {
 			std::string filename = value;
@@ -399,11 +399,13 @@ bool AreaTMX::processLayerProperties(XMLNode node, double* depth)
   </properties>
 */
 
-	// FIXME: REQUIRE layer key.
+	bool layerFound = false;
+
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name  = child.attr("name");
 		std::string value = child.attr("value");
 		if (name == "layer") {
+			layerFound = true;
 			ASSERT(child.doubleAttr("value", depth));
 			if (depth2idx.find(*depth) != depth2idx.end()) {
 				Log::err(descriptor,
@@ -417,7 +419,9 @@ bool AreaTMX::processLayerProperties(XMLNode node, double* depth)
 		}
 	}
 
-	return true;
+	if (!layerFound)
+		Log::err(descriptor, "<layer> must have layer property");
+	return layerFound;
 }
 
 bool AreaTMX::processLayerData(XMLNode node, int z)
@@ -520,15 +524,15 @@ bool AreaTMX::processObjectGroupProperties(XMLNode node, double* depth)
    <property name="layer" value="0.0"/>
   </properties>
 */
+	bool layerFound = false;
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
 		if (name == "layer") {
+			layerFound = true;
 			ASSERT(child.doubleAttr("value", depth));
 			if (depth2idx.find(*depth) == depth2idx.end()) {
-				// FIXME: Refactor into function.
-				// Allocate a new layer.
 				dim.z++;
 				allocateMapLayer();
 
@@ -538,7 +542,10 @@ bool AreaTMX::processObjectGroupProperties(XMLNode node, double* depth)
 			}
 		}
 	}
-	return true;
+
+	if (!layerFound)
+		Log::err(descriptor, "<objectgroup> must have layer property");
+	return layerFound;
 }
 
 bool AreaTMX::processObject(XMLNode node, int z)
@@ -571,7 +578,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
 		if (name == "flags") {
-			flags = splitTileFlags(value);
+			ASSERT(splitTileFlags(value, &flags));
 		}
 		else if (name == "onEnter") {
 			std::string filename = value;
@@ -613,7 +620,9 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			flags |= hasOnUse;
 		}
 		else if (name == "door") {
-			door.reset(parseDoor(value));
+			Door door_;
+			parseDoor(value, &door_);
+			door.reset(door_);
 			flags |= npc_nowalk;
 		}
 		else if (name == "layermod") {
@@ -670,21 +679,22 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	return true;
 }
 
-// FIXME: It can fail, should return bool.
-unsigned AreaTMX::splitTileFlags(const std::string& strOfFlags)
+bool AreaTMX::splitTileFlags(const std::string& strOfFlags, unsigned* flags)
 {
 	std::vector<std::string> strs = splitStr(strOfFlags, ",");
 
-	unsigned flags = 0x0;
 	BOOST_FOREACH(const std::string& str, strs) {
 		if (str == "nowalk")
-			flags |= nowalk;
+			*flags |= nowalk;
+		else {
+			Log::err(descriptor, "invalid tile flag: " + str);
+			return false;
+		}
 	}
-	return flags;
+	return true;
 }
 
-// FIXME: It can fail, should return bool.
-Door AreaTMX::parseDoor(const std::string& dest)
+bool AreaTMX::parseDoor(const std::string& dest, Door* door)
 {
 
 /*
@@ -694,13 +704,21 @@ Door AreaTMX::parseDoor(const std::string& dest)
 
 	std::vector<std::string> strs = splitStr(dest, ",");
 
-	// TODO: verify the validity of the input string... it's coming from
-	// user land
-	Door door;
-	door.area = strs[0];
-	door.tile.x = atoi(strs[1].c_str());
-	door.tile.y = atoi(strs[2].c_str());
-	door.tile.z = atof(strs[3].c_str());
-	return door;
+	if (strs.size() != 4) {
+		Log::err(descriptor, "invalid door format");
+		return false;
+	}
+
+	if (!isInteger(strs[1]) || !isInteger(strs[2]) || !isInteger(strs[3])) {
+		Log::err(descriptor, "expected integer");
+		return false;
+	}
+
+	door->area = strs[0];
+	door->tile.x = atoi(strs[1].c_str());
+	door->tile.y = atoi(strs[2].c_str());
+	door->tile.z = atof(strs[3].c_str());
+
+	return true;
 }
 
