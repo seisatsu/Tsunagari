@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="16" tileheight="16">
  <properties>
   <property name="author" value="Michael D. Reiley"/>
   <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove 03"/>
  </properties>
- <tileset firstgid="1" name="forest.png" tilewidth="32" tileheight="32">
-  <image source="areas/tiles/forest.png" width="544" height="608"/>
+ <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/forest.png" width="272" height="304"/>
  </tileset>
  <layer name="Tiles(-0.2)" width="10" height="10">
   <properties>
@@ -333,57 +333,57 @@
   <properties>
    <property name="layer" value="0"/>
   </properties>
-  <object gid="94" x="32" y="320">
+  <object gid="94" x="16" y="160">
    <properties>
     <property name="door" value="areas/grove02.tmx,1,1,0"/>
    </properties>
   </object>
-  <object gid="76" x="0" y="128">
+  <object gid="76" x="0" y="64">
    <properties>
     <property name="door" value="areas/grove04.tmx,8,12,0"/>
    </properties>
   </object>
-  <object x="0" y="0" width="32" height="96">
+  <object x="0" y="0" width="16" height="48">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="0" y="128" width="32" height="192">
+  <object x="0" y="64" width="16" height="96">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="64" y="288" width="256" height="32">
+  <object x="32" y="144" width="128" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="96" y="224" width="64" height="32">
+  <object x="48" y="112" width="32" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="160" y="128" width="64" height="64">
+  <object x="80" y="64" width="32" height="32">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="96" y="32" width="192" height="64">
+  <object x="48" y="16" width="96" height="32">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="32" y="32" width="64" height="32">
+  <object x="16" y="16" width="32" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="256" y="96" width="64" height="192">
+  <object x="128" y="48" width="32" height="96">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="64" y="128" width="32" height="32">
+  <object x="32" y="64" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
