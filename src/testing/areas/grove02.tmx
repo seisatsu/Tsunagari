@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="16" tileheight="16">
  <properties>
   <property name="author" value="Michael D. Reiley"/>
   <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove 02"/>
   <property name="onLoad" value="areas/g02_load.py"/>
  </properties>
- <tileset firstgid="1" name="forest.png" tilewidth="32" tileheight="32">
-  <image source="areas/tiles/forest.png" width="544" height="608"/>
+ <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/forest.png" width="272" height="304"/>
  </tileset>
- <tileset firstgid="324" name="objects.png" tilewidth="32" tileheight="32">
-  <image source="areas/tiles/objects.png" width="224" height="224"/>
+ <tileset firstgid="324" name="objects.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/objects.png" width="112" height="112"/>
  </tileset>
  <layer name="Tiles(-0.2)" width="10" height="10">
   <properties>
@@ -444,58 +444,58 @@
   <properties>
    <property name="layer" value="0"/>
   </properties>
-  <object gid="76" x="288" y="288">
+  <object gid="76" x="144" y="144">
    <properties>
     <property name="door" value="areas/grove01.tmx,1,8,0"/>
    </properties>
   </object>
-  <object x="0" y="0" width="32" height="256">
+  <object x="0" y="0" width="16" height="128">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="64" y="0" width="256" height="64">
+  <object x="32" y="0" width="128" height="32">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="160" y="128" width="32" height="32">
+  <object x="128" y="64" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="128" y="160" width="64" height="32">
+  <object x="64" y="80" width="32" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="192" y="192" width="32" height="32">
+  <object x="96" y="96" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="288" y="64" width="32" height="192">
+  <object x="144" y="32" width="16" height="96">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="0" y="256" width="192" height="64">
+  <object x="0" y="128" width="96" height="32">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="192" y="288" width="128" height="32">
+  <object x="96" y="144" width="64" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="160" y="64" width="32" height="32">
+  <object x="80" y="32" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
     <property name="onUse" value="areas/g02_open_chest.py"/>
    </properties>
   </object>
-  <object gid="76" x="32" y="32">
+  <object gid="38" x="16" y="16">
    <properties>
     <property name="door" value="areas/grove03.tmx,1,8,0"/>
    </properties>
