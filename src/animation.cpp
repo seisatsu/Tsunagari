@@ -56,7 +56,7 @@ void Animation::updateFrame(int milliseconds)
 {
 	if (animated) {
 		int offset = milliseconds - base;
-		int frameShowing = (offset % animCycle) / frameLen;
+		frameShowing = (offset % animCycle) / frameLen;
 		img = frames[frameShowing].get();
 	}
 }
