@@ -6,10 +6,10 @@ def playSnd(filename):
 # Open the chest!
 if openedTheChest == False:
     openedTheChest = True
-    tile = area.getTile(5, 2, -0.05) # closed chest
-    tile2 = area.getTile(5, 1, -0.05) # closed chest, above
-    tile.type = area.getTileType(367) # change to open chest
-    tile2.type = area.getTileType(360) # change to open chest, above
-    area.requestRedraw()
+    tile = area.get_tile(5, 2, -0.05) # closed chest
+    tile2 = area.get_tile(5, 1, -0.05) # closed chest, above
+    tile.type = area.get_tile_type(367) # change to open chest
+    tile2.type = area.get_tile_type(360) # change to open chest, above
+    area.request_redraw()
     playSnd("sounds/door.oga") # unlocking sound
 
