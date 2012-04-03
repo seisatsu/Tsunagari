@@ -587,8 +587,8 @@ void exportEntity()
 {
 	boost::python::class_<Entity>("Entity", boost::python::no_init)
 		.add_property("animation", &Entity::getFacing, &Entity::setPhase)
-		.def("getTileCoords", &Entity::getTileCoords_vi)
-		.def("gotoRandomTile", &Entity::gotoRandomTile)
-		.def("setSpeed", &Entity::setSpeed);
+		.def("get_tile_coords", &Entity::getTileCoords_vi)
+		.def("goto_random_tile", &Entity::gotoRandomTile)
+		.def("set_speed", &Entity::setSpeed);
 }
 

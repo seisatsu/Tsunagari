@@ -286,9 +286,9 @@ std::string Resourcer::path(const std::string& entryName) const
 void exportResourcer()
 {
 	boost::python::class_<Resourcer>("Resourcer", boost::python::no_init)
-		.def("resourceExists", &Resourcer::resourceExists)
-		.def("runPythonScript", &Resourcer::runPythonScript)
-		.def("getSound", &Resourcer::getSample)
-		.def("getText", &Resourcer::getText);
+		.def("resource_exists", &Resourcer::resourceExists)
+		.def("run_python_script", &Resourcer::runPythonScript)
+		.def("get_sound", &Resourcer::getSample)
+		.def("get_text", &Resourcer::getText);
 }
 

@@ -388,18 +388,18 @@ void Area::drawEntities()
 void exportArea()
 {
 	boost::python::class_<Area>("Area", boost::python::no_init)
-		.def("requestRedraw", &Area::requestRedraw)
-		.def("getTile",
+		.def("request_redraw", &Area::requestRedraw)
+		.def("get_tile",
 		    static_cast<Tile& (Area::*) (int, int, double)>
 		    (&Area::getTile),
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
 		)
-		.def("inBounds",
+		.def("in_bounds",
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
-		.def("getTileType", &Area::getTileType,
+		.def("get_tile_type", &Area::getTileType,
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
