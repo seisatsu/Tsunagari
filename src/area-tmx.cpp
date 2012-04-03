@@ -324,7 +324,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 						"/frames for animated tile");
 					return false;
 				}
-				type.anim.addFrame(img[id-atoi(it->c_str())+1]);
+				type.anim.addFrame(img[atoi(it->c_str())-id-1]);
 			}
 		}
 		else if (name == "speed") {
