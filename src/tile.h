@@ -116,17 +116,15 @@ public:
 
 private:
 	//! Runs all scripts owned by this tile or its type.
-	void runScripts(Entity* entity,
-	                TileFlags flag, TileEventTrigger trigger);
+	void runScripts(Entity* entity, TileFlags flag,
+	                TileEventTrigger trigger);
 
 	//! Runs all scripts from a group that match the trigger.
-	void runScriptGroup(Entity* entity,
-	                    TileEventTrigger trigger,
+	void runScriptGroup(Entity* entity, TileEventTrigger trigger,
 	                    const std::vector<TileEvent>& events);
 
 	//! Runs a single script.
-	void runScript(Entity* entity,
-	               const std::string& script);
+	void runScript(Entity* entity, const std::string& script);
 };
 
 //! Contains the properties shared by all tiles of a certain type.

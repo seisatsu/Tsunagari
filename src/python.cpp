@@ -37,7 +37,6 @@ static std::string moduleWhitelist[] = {
 	"sys",
 	"time",
 	"",
-	// TODO: save "os.urandom(n)" maybe?
 };
 
 static bool inWhitelist(const std::string& name)
@@ -48,14 +47,6 @@ static bool inWhitelist(const std::string& name)
 	return false;
 }
 
-
-static void pythonUndefineBuiltin(const char* key)
-{
-	bp::object k(key);
-	PyDict_DelItem(dictBltin.ptr(), k.ptr());
-	if (PyErr_Occurred())
-		bp::throw_error_already_set();
-}
 
 static void pythonIncludeModule(const char* name)
 {
@@ -72,8 +63,7 @@ static void pythonSetDefaultEncoding(const char* enc)
 	}
 }
 
-//! Python will call this function when it tries to import a module. Things are
-//! a bit messy as we conform to the Python ABI.
+
 static PyObject*
 safeImport(PyObject*, PyObject* args, PyObject* kwds)
 {
@@ -113,42 +103,45 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	return NULL;
 }
 
-static void pythonOverrideImportStatement()
+static PyObject* nullExecfile(PyObject*, PyObject*)
 {
-	static PyMethodDef newImport[] = {
-		{"__import__", (PyCFunction)safeImport,
-		 METH_VARARGS | METH_KEYWORDS, ""},
-		{NULL, NULL, 0, NULL},
-	};
-
-	// InitModule doesn't remove existing modules, so we can use it to
-	// insert new methods into a pre-existing module.
-	PyObject* module = Py_InitModule("__builtin__", newImport);
-	if (!module) {
-		PyErr_Format(PyExc_SystemError,
-			"overriding __builtin__ module failed");
-		bp::throw_error_already_set();
-	}
+	PyErr_SetString(PyExc_RuntimeError,
+	             "file(): Tsunagari runs scripts in a sandbox and "
+	             "does not allow accessing the standard filesystem");
+	return NULL;
 }
 
-static void nullExecfile(std::string /* filename */)
+static PyObject* nullFile(PyObject*, PyObject*)
 {
-	Log::err("Python", "execfile(): Tsunagari runs scripts in a sandbox "
-	                   "and does not allow accessing the standard "
-			   "filesystem");
+	PyErr_SetString(PyExc_RuntimeError,
+	             "file(): Tsunagari runs scripts in a sandbox and "
+	             "does not allow accessing the standard filesystem");
+	return NULL;
 }
 
-static void nullFile(std::string /* filename */)
+static PyObject* nullOpen(PyObject*, PyObject*)
 {
-	Log::err("Python", "file(): Tsunagari runs scripts in a sandbox and "
-	                   "does not allow accessing the standard filesystem");
+	PyErr_SetString(PyExc_RuntimeError,
+	             "open(): Tsunagari runs scripts in a sandbox and "
+	             "does not allow accessing the standard filesystem");
+	return NULL;
 }
 
-static void nullOpen(std::string /* filename */)
+static PyObject* nullReload(PyObject*, PyObject*)
 {
-	Log::err("Python", "open(): Tsunagari runs scripts in a sandbox and "
-	                   "does not allow accessing the standard filesystem");
+	PyErr_SetString(PyExc_RuntimeError,
+	             "reload(): Tsunagari does not allow module reloading");
+	return NULL;
 }
+
+PyMethodDef nullMethods[] = {
+	{"__import__", (PyCFunction)safeImport, METH_VARARGS | METH_KEYWORDS, ""},
+	{"execfile", nullExecfile, METH_VARARGS, ""},
+	{"file", nullFile, METH_VARARGS, ""},
+	{"open", nullOpen, METH_VARARGS, ""},
+	{"reload", nullReload, METH_O, ""},
+	{NULL, NULL, 0, NULL},
+};
 
 bool pythonInit()
 {
@@ -165,12 +158,11 @@ bool pythonInit()
 		pythonIncludeModule("tsunagari");
 
 		// Hack in some rough safety. Disable external scripts and IO.
-		dictBltin["execfile"] = bp::make_function(nullExecfile);
-		dictBltin["file"] = bp::make_function(nullFile);
-		dictBltin["open"] = bp::make_function(nullOpen);
-		pythonUndefineBuiltin("reload"); // FIXME: Trouble with this one...
-
-		pythonOverrideImportStatement();
+		// InitModule doesn't remove existing modules, so we can use it to
+		// insert new methods into a pre-existing module.
+		PyObject* module = Py_InitModule("__builtin__", nullMethods);
+		if (module == NULL)
+			bp::throw_error_already_set();
 	} catch (bp::error_already_set) {
 		Log::fatal("Python", "An error occured while populating the "
 			           "Python modules:");

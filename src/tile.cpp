@@ -81,9 +81,9 @@ void Tile::setDoor(boost::optional<Door> d)
 	door = d;
 }
 
-void Tile::setWalkable(bool yes)
+void Tile::setWalkable(bool walkable)
 {
-	flags = (flags & ~nowalk) | nowalk * !yes;
+	flags = (flags & ~nowalk) | nowalk * !walkable;
 }
 
 bool Tile::getWalkable()
