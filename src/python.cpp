@@ -163,6 +163,10 @@ bool pythonInit()
 		PyObject* module = Py_InitModule("__builtin__", nullMethods);
 		if (module == NULL)
 			bp::throw_error_already_set();
+
+		// Restore the default SIGINT handler.
+		// Python messes with it. >:(
+		PyOS_setsig(SIGINT, SIG_DFL);
 	} catch (bp::error_already_set) {
 		Log::fatal("Python", "An error occured while populating the "
 			           "Python modules:");
