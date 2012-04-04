@@ -5,6 +5,7 @@
 *********************************/
 
 #include <algorithm> // for std::replace
+#include <signal.h> // for SIGINT and SIG_DFL
 #include <string.h> // for strrchr
 
 #include <boost/python.hpp>
