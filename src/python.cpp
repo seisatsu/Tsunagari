@@ -195,7 +195,10 @@ void pythonErr()
 		type = dot + 1;
 	char* value = PyString_AsString(pvalue);
 
-	Log::err("Python", std::string(type) + ": " + value);
+	std::string msg = type;
+	if (value)
+		msg.append(": ").append(value);
+	Log::err("Python", msg);
 }
 
 bp::object pythonGlobals()

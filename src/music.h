@@ -40,8 +40,19 @@ public:
 	Music();
 	~Music();
 
+	std::string getIntro();
+	std::string getLoop();
+
 	void setIntro(const std::string& filename);
 	void setLoop(const std::string& filename);
+
+	double getVolume();
+	void setVolume(double level);
+
+	bool getPaused();
+	void setPaused(bool p);
+
+	void stop();
 
 	void update();
 
@@ -52,6 +63,9 @@ private:
 
 	SongRef musicInst, introMusic, loopMusic;
 
+	double volume;
+	bool paused;
+
 	MUSIC_STATE state;
 
 	std::string newIntro;
@@ -59,6 +73,9 @@ private:
 	std::string curIntro;
 	std::string curLoop;
 };
+
+//! Register Music with Python.
+void exportMusic();
 
 #endif
 

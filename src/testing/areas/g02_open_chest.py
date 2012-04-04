@@ -12,4 +12,10 @@ if opened_the_chest == False:
     tile2.type = area.get_tile_type(360) # change to open chest, above
     area.request_redraw()
     play_snd("sounds/door.oga") # unlocking sound
+else:
+	# Activating the opened chest toggles music.
+	if Music.paused:
+		Music.paused = False
+	else:
+		Music.paused = True
 

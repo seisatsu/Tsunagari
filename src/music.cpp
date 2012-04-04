@@ -5,16 +5,30 @@
 *********************************/
 
 #include "music.h"
+#include "python.h"
 
 Music::Music()
-	: state(NOT_PLAYING)
+	: volume(1.0),
+	  paused(false),
+	  state(NOT_PLAYING)
 {
+	pythonSetGlobal("Music", this);
 }
 
 Music::~Music()
 {
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
+}
+
+std::string Music::getIntro()
+{
+	return newIntro;
+}
+
+std::string Music::getLoop()
+{
+	return newLoop;
 }
 
 void Music::setIntro(const std::string& filename)
@@ -30,7 +44,10 @@ void Music::setIntro(const std::string& filename)
 	}
 	if (newIntro != filename) {
 		newIntro = filename;
-		introMusic = filename.size() ? Resourcer::getResourcer()->getSong(filename) : SongRef();
+		// Optimize XXX: Don't load until played.
+		introMusic = filename.size() ?
+			Resourcer::getResourcer()->getSong(filename) :
+			SongRef();
 	}
 }
 
@@ -47,12 +64,56 @@ void Music::setLoop(const std::string& filename)
 	}
 	if (newLoop != filename) {
 		newLoop = filename;
-		loopMusic = filename.size() ? Resourcer::getResourcer()->getSong(filename) : SongRef();
+		// Optimize XXX: Don't load until played.
+		loopMusic = filename.size() ?
+			Resourcer::getResourcer()->getSong(filename) :
+			SongRef();
 	}
+}
+
+double Music::getVolume()
+{
+	return volume;
+}
+
+void Music::setVolume(double level)
+{
+	volume = level;
+	if (musicInst)
+		musicInst->changeVolume(level);
+}
+
+bool Music::getPaused()
+{
+	return paused;
+}
+
+void Music::setPaused(bool p)
+{
+	if (paused == p)
+		return;
+	paused = p;
+	if (musicInst) {
+		if (p)
+			musicInst->pause();
+		else
+			musicInst->play();
+	}
+}
+
+void Music::stop()
+{
+	paused = false;
+	if (musicInst)
+		musicInst->stop();
+	state = NOT_PLAYING;
 }
 
 void Music::update()
 {
+	if (paused)
+		return;
+
 	switch (state) {
 	case NOT_PLAYING:
 		if (musicInst && musicInst->playing())
@@ -95,6 +156,7 @@ void Music::playIntro()
 		musicInst->stop();
 	curIntro = newIntro;
 	introMusic->play(false);
+	introMusic->changeVolume(volume);
 	musicInst = introMusic;
 	setState(PLAYING_INTRO);
 }
@@ -105,6 +167,7 @@ void Music::playLoop()
 		musicInst->stop();
 	curLoop = newLoop;
 	loopMusic->play(true);
+	loopMusic->changeVolume(volume);
 	musicInst = loopMusic;
 	setState(PLAYING_LOOP);
 }
@@ -135,3 +198,13 @@ void Music::setState(MUSIC_STATE state)
 	this->state = state;
 }
 
+void exportMusic()
+{
+	boost::python::class_<Music>("MusicClass", boost::python::no_init)
+		.add_property("intro", &Music::getIntro, &Music::setIntro)
+		.add_property("loop", &Music::getLoop, &Music::setLoop)
+		.add_property("volume", &Music::getVolume, &Music::setVolume)
+		.add_property("paused", &Music::getPaused, &Music::setPaused)
+		.def("stop", &Music::stop)
+		;
+}

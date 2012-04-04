@@ -175,6 +175,7 @@ protected:
 	const std::string descriptor;
 	std::string musicIntro, musicLoop;
 	std::vector<std::string> onLoadScripts;
+	std::vector<std::string> onFocusScripts;
 	std::vector<std::string> onUpdateScripts;
 };
 

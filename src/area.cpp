@@ -67,6 +67,13 @@ void Area::focus()
 
 	music->setIntro(musicIntro);
 	music->setLoop(musicLoop);
+
+	if (onFocusScripts.size()) {
+		BOOST_FOREACH(const std::string& script, onFocusScripts) {
+			pythonSetGlobal("area", this);
+			Resourcer::getResourcer()->runPythonScript(script);
+		}
+	}
 }
 
 void Area::buttonDown(const Gosu::Button btn)

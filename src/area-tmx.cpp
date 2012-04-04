@@ -95,6 +95,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
   <property name="intro_music" value="arrive.ogg"/>
   <property name="main_music" value="wind.ogg"/>
   <property name="onLoad" value="wood_setup.py"/>
+  <property name="onFocus" value="wood_focus.py"/>
   <property name="onUpdate" value="wood_update.py"/>
   <property name="loop" value="xy"/>
  </properties>
@@ -118,6 +119,16 @@ bool AreaTMX::processMapProperties(XMLNode node)
 			std::string filename = value;
 			if (Resourcer::getResourcer()->resourceExists(filename)) {
 				onLoadScripts.push_back(filename);
+			}
+			else {
+				Log::err(descriptor,
+				  std::string("script not found: ") + filename);
+			}
+		}
+		else if (name == "onFocus") {
+			std::string filename = value;
+			if (Resourcer::getResourcer()->resourceExists(filename)) {
+				onFocusScripts.push_back(filename);
 			}
 			else {
 				Log::err(descriptor,
