@@ -1,2 +1,2 @@
-openedTheChest = False
+opened_the_chest = False
 

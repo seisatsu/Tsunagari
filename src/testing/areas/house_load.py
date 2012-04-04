@@ -1,2 +1,2 @@
-unlockedTheDoor = False
+unlocked_the_door = False
 
