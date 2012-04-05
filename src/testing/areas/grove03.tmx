@@ -273,12 +273,12 @@
   </object>
   <object x="0" y="48" width="16" height="16">
    <properties>
-    <property name="exit:left" value="areas/grove04.tmx,8,12,0"/>
+    <property name="exit:left" value="areas/grove04.tmx,9,12,0"/>
    </properties>
   </object>
   <object x="16" y="144" width="16" height="16">
    <properties>
-    <property name="exit:down" value="areas/grove02.tmx,1,1,0"/>
+    <property name="exit:down" value="areas/grove02.tmx,1,0,0"/>
    </properties>
   </object>
  </objectgroup>

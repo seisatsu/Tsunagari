@@ -335,12 +335,12 @@
   </properties>
   <object x="112" y="144" width="32" height="16">
    <properties>
-    <property name="exit:down" value="areas/grove01.tmx,7+,1,0"/>
+    <property name="exit:down" value="areas/grove01.tmx,7+,0,0"/>
    </properties>
   </object>
   <object x="16" y="144" width="32" height="16">
    <properties>
-    <property name="exit:down" value="areas/grove01.tmx,1+,1,0"/>
+    <property name="exit:down" value="areas/grove01.tmx,1+,0,0"/>
    </properties>
   </object>
   <object x="48" y="144" width="64" height="16">
@@ -523,6 +523,11 @@
   <object x="96" y="128" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="48" y="144" width="64" height="16">
+   <properties>
+    <property name="exit:down" value="areas/grove01.tmx,3+,0,0"/>
    </properties>
   </object>
  </objectgroup>

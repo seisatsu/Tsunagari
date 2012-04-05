@@ -519,12 +519,12 @@
   </object>
   <object x="0" y="64" width="16" height="64">
    <properties>
-    <property name="exit:left" value="areas/grove06.tmx,8,4+,0"/>
+    <property name="exit:left" value="areas/grove06.tmx,9,4+,0"/>
    </properties>
   </object>
   <object x="144" y="192" width="16" height="16">
    <properties>
-    <property name="exit:right" value="areas/grove03.tmx,1,3,0"/>
+    <property name="exit:right" value="areas/grove03.tmx,0,3,0"/>
    </properties>
   </object>
  </objectgroup>
