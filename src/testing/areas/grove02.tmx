@@ -390,7 +390,7 @@
   </object>
   <object x="144" y="128" width="16" height="16">
    <properties>
-    <property name="exit:right" value="areas/grove01.tmx,1,9,0"/>
+    <property name="exit:right" value="areas/grove01.tmx,0,8,0"/>
    </properties>
   </object>
  </objectgroup>

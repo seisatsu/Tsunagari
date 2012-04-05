@@ -7,6 +7,12 @@
  </properties>
  <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/forest.png" width="272" height="304"/>
+  <tile id="29">
+   <properties>
+    <property name="members" value="29,58"/>
+    <property name="speed" value="0.75"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="Tiles(-0.2)" width="10" height="10">
   <properties>
@@ -146,7 +152,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="6"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="33"/>
@@ -222,7 +228,7 @@
    <tile gid="278"/>
   </data>
  </layer>
- <objectgroup name="Prop(0)" width="10" height="10">
+ <objectgroup name="Prop(0)" width="10" height="10" visible="0">
   <properties>
    <property name="layer" value="0"/>
   </properties>
@@ -409,7 +415,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop(1)" width="10" height="10">
+ <objectgroup name="Prop(1)" width="10" height="10" visible="0">
   <properties>
    <property name="layer" value="1"/>
   </properties>
