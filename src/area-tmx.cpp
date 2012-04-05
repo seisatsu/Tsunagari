@@ -581,6 +581,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 
 	// Gather object properties now. Assign them to tiles later.
 	std::vector<std::string> onEnter, onLeave, onUse;
+	bool wwide, hwide; /* wide exit in dimensions: width, height */
 	boost::optional<Exit> exit;
 	boost::optional<int> layermod;
 	unsigned flags = 0x0;
@@ -622,7 +623,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		}
 		else if (name == "exit") {
 			Exit exit_;
-			parseExit(value, &exit_);
+			ASSERT(parseExit(value, &exit_, &wwide, &hwide));
 			exit.reset(exit_);
 			flags |= TILE_NOWALK_NPC;
 		}
@@ -668,8 +669,15 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			Tile& tile = map[z][Y][X];
 
 			tile.flags |= flags;
-			if (exit)
+			if (exit) {
 				tile.exit = exit;
+				int dx = X - x;
+				int dy = Y - y;
+				if (wwide)
+					tile.exit->tile.x += dx;
+				if (hwide)
+					tile.exit->tile.y += dy;
+			}
 			if (layermod)
 				tile.layermod = layermod;
 			tile.onEnter = onEnter;
@@ -696,7 +704,21 @@ bool AreaTMX::splitTileFlags(const std::string& strOfFlags, unsigned* flags)
 	return true;
 }
 
-bool AreaTMX::parseExit(const std::string& dest, Exit* exit)
+// FIXME: "1 2", " ", and "" are considered valid, " -3" not valid
+bool isIntegerOrPlus(const std::string& s)
+{
+	for (unsigned i = 0; i < s.size(); i++) {
+		char c = s[i];
+		if (isdigit(c) || isspace(c) || c == '+' ||
+				(c == '-' && i == 0))
+			continue;
+		return false;
+	}
+	return true;
+}
+
+bool AreaTMX::parseExit(const std::string& dest, Exit* exit,
+	bool* wwide, bool* hwide)
 {
 
 /*
@@ -707,19 +729,29 @@ bool AreaTMX::parseExit(const std::string& dest, Exit* exit)
 	std::vector<std::string> strs = splitStr(dest, ",");
 
 	if (strs.size() != 4) {
-		Log::err(descriptor, "invalid exit format");
+		Log::err(descriptor, "<exit />: invalid format");
 		return false;
 	}
 
-	if (!isInteger(strs[1]) || !isInteger(strs[2]) || !isInteger(strs[3])) {
-		Log::err(descriptor, "expected integer");
+	std::string area = strs[0],
+	            xstr = strs[1],
+	            ystr = strs[2],
+		    zstr = strs[3];
+
+	if (!isIntegerOrPlus(xstr) ||
+	    !isIntegerOrPlus(ystr) ||
+	    !isIntegerOrPlus(zstr)) {
+		Log::err(descriptor, "<exit />: invalid format");
 		return false;
 	}
 
-	exit->area = strs[0];
-	exit->tile.x = atoi(strs[1].c_str());
-	exit->tile.y = atoi(strs[2].c_str());
-	exit->tile.z = atof(strs[3].c_str());
+	exit->area = area;
+	exit->tile.x = atoi(xstr.c_str());
+	exit->tile.y = atoi(ystr.c_str());
+	exit->tile.z = atof(zstr.c_str());
+
+	*wwide = xstr.find('+') != std::string::npos;
+	*hwide = ystr.find('+') != std::string::npos;
 
 	return true;
 }
