@@ -527,7 +527,7 @@
   </object>
   <object x="48" y="144" width="64" height="16">
    <properties>
-    <property name="exit:down" value="areas/grove01.tmx,3+,0,0"/>
+    <property name="exit:down" value="areas/grove01.tmx,3+,0,1"/>
    </properties>
   </object>
  </objectgroup>

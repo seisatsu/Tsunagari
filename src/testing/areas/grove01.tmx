@@ -298,7 +298,7 @@
   </object>
   <object x="80" y="32" width="16" height="16">
    <properties>
-    <property name="exit" value="areas/grove_house.tmx,5,8,0"/>
+    <property name="exit" value="areas/grove_house.tmx,5,9,0"/>
    </properties>
   </object>
  </objectgroup>
@@ -409,7 +409,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop(1)" width="10" height="10" visible="0">
+ <objectgroup name="Prop(1)" width="10" height="10">
   <properties>
    <property name="layer" value="1"/>
   </properties>
@@ -440,7 +440,12 @@
   </object>
   <object x="48" y="0" width="64" height="16">
    <properties>
-    <property name="exit:up" value="areas/grove05.tmx,3+,8,0"/>
+    <property name="exit:up" value="areas/grove05.tmx,3+,9,1"/>
+   </properties>
+  </object>
+  <object x="96" y="48" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
    </properties>
   </object>
  </objectgroup>
