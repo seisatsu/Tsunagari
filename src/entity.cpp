@@ -250,8 +250,13 @@ void Entity::gotoRandomTile()
 	do {
 		pos = icoord(rand() % map.x, rand() % map.y, 0);
 		tile = &area->getTile(pos);
-	} while (tile->hasFlag(nowalk));
+	} while (tile->hasFlag(TILE_NOWALK));
 	setTileCoords(pos);
+}
+
+double Entity::getSpeed() const
+{
+	return speedMul;
 }
 
 void Entity::setSpeed(double multiplier)
@@ -261,6 +266,16 @@ void Entity::setSpeed(double multiplier)
 		double tilesPerSecond = area->getTileDimensions().x / 1000.0;
 		speed = baseSpeed * speedMul * tilesPerSecond;
 	}
+}
+
+Tile& Entity::getTile() const
+{
+	return area->getTile(getTileCoords_i());
+}
+
+Tile& Entity::getTile()
+{
+	return area->getTile(getTileCoords_i());
 }
 
 std::vector<icoord> Entity::frontTiles() const
@@ -287,11 +302,6 @@ void Entity::calcDoff()
 	doff.x = (area->getTileDimensions().x - imgw) / 2;
 	// Y-axis is aligned with bottom of tile.
 	doff.y = area->getTileDimensions().y - imgh - 1;
-}
-
-Tile& Entity::getTile() const
-{
-	return area->getTile(getTileCoords_i());
 }
 
 SampleRef Entity::getSound(const std::string& name) const
@@ -325,7 +335,7 @@ bool Entity::canMove(icoord dest)
 		return false;
 	destCoord = area->phys2virt_r(dest);
 	destTile = &area->getTile(dest);
-	return !destTile->hasFlag(nowalk);
+	return !destTile->hasFlag(TILE_NOWALK);
 }
 
 void Entity::preMove()
@@ -592,9 +602,19 @@ bool Entity::processScript(const XMLNode node)
 void exportEntity()
 {
 	boost::python::class_<Entity>("Entity", boost::python::no_init)
-		.add_property("animation", &Entity::getFacing, &Entity::setPhase)
-		.def("get_tile_coords", &Entity::getTileCoords_vi)
+		.add_property("animation",
+		    &Entity::getFacing, &Entity::setPhase)
+		.add_property("tile",
+		    make_function(
+		      static_cast<Tile& (Entity::*) ()> (&Entity::getTile),
+		      boost::python::return_value_policy<
+		        boost::python::reference_existing_object
+		      >()
+		    )
+		)
+		.add_property("coords", &Entity::getTileCoords_vi)
+		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)
 		.def("goto_random_tile", &Entity::gotoRandomTile)
-		.def("set_speed", &Entity::setSpeed);
+		;
 }
 

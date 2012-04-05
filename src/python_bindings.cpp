@@ -11,19 +11,17 @@
 #include "music.h" // for exportMusic
 #include "resourcer.h" // for exportResourcer
 #include "sound.h" // for exportSound
-#include "tile.h" // for export{Tile,TileType,Exit}
+#include "tile.h" // for exportTile
 #include "vec.h" // for exportVecs
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
 	exportArea();
 	exportEntity();
-	exportExit();
 	exportMusic();
 	exportResourcer();
 	exportSound();
 	exportTile();
-	exportTileType();
 	exportVecs();
 }
 

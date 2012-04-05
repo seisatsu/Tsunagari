@@ -53,6 +53,15 @@ bool AreaTMX::init()
 void AreaTMX::allocateMapLayer()
 {
 	map.push_back(grid_t(dim.y, row_t(dim.x)));
+	grid_t& grid = map[dim.z];
+	for (int y = 0; y < dim.y; y++) {
+		row_t& row = grid[y];
+		for (int x = 0; x < dim.x; x++) {
+			Tile& tile = row[x];
+			new (&tile) Tile(this, x, y, dim.z);
+		}
+	}
+	dim.z++;
 }
 
 bool AreaTMX::processDescriptor()
@@ -186,7 +195,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 		// Add TileType #0, a transparent tile type that fills map
 		// squares for sections of the map that don't exist.
 		TileType zero;
-		zero.flags = nowalk;
+		zero.flags = TILE_NOWALK;
 		tileTypes.push_back(zero);
 		// XXX: Paul 2011-11-13: This tiletype isn't directly used
 		//      anymore. Should we remove it?
@@ -286,11 +295,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 				         "script not found: " + filename);
 				continue;
 			}
-			TileEvent e;
-			e.trigger = onEnter;
-			e.script = filename;
-			type.events.push_back(e);
-			type.flags |= hasOnEnter;
+			type.onEnter.push_back(filename);
 		}
 		else if (name == "onLeave") {
 			std::string filename = value;
@@ -299,11 +304,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 				         "script not found: " + filename);
 				continue;
 			}
-			TileEvent e;
-			e.trigger = onLeave;
-			e.script = filename;
-			type.events.push_back(e);
-			type.flags |= hasOnLeave;
+			type.onLeave.push_back(filename);
 		}
 		else if (name == "onUse") {
 			std::string filename = value;
@@ -312,11 +313,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 				         "script not found: " + filename);
 				continue;
 			}
-			TileEvent e;
-			e.trigger = onUse;
-			e.script = filename;
-			type.events.push_back(e);
-			type.flags |= hasOnUse;
+			type.onUse.push_back(filename);
 		}
 		else if (name == "members") {
 			std::string memtemp;
@@ -354,7 +351,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 			int mod;
 			ASSERT(child.intAttr("value", &mod));
 			type.layermod.reset(mod);
-			type.flags |= npc_nowalk;
+			type.flags |= TILE_NOWALK_NPC;
 		}
 	}
 
@@ -392,7 +389,6 @@ bool AreaTMX::processLayer(XMLNode node)
 		return false;
 	}
 
-	dim.z++;
 	allocateMapLayer();
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
@@ -550,9 +546,7 @@ bool AreaTMX::processObjectGroupProperties(XMLNode node, double* depth)
 			layerFound = true;
 			ASSERT(child.doubleAttr("value", depth));
 			if (depth2idx.find(*depth) == depth2idx.end()) {
-				dim.z++;
 				allocateMapLayer();
-
 				depth2idx[*depth] = dim.z - 1;
 				idx2depth.push_back(*depth);
 				// Effectively idx2depth[dim.z - 1] = depth;
@@ -586,7 +580,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	Resourcer* rc = Resourcer::instance();
 
 	// Gather object properties now. Assign them to tiles later.
-	std::vector<TileEvent> events;
+	std::vector<std::string> onEnter, onLeave, onUse;
 	boost::optional<Exit> exit;
 	boost::optional<int> layermod;
 	unsigned flags = 0x0;
@@ -606,11 +600,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				         "script not found: " + filename);
 				continue;
 			}
-			TileEvent e;
-			e.trigger = onEnter;
-			e.script = filename;
-			events.push_back(e);
-			flags |= hasOnEnter;
+			onEnter.push_back(filename);
 		}
 		else if (name == "onLeave") {
 			std::string filename = value;
@@ -619,11 +609,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				         "script not found: " + filename);
 				continue;
 			}
-			TileEvent e;
-			e.trigger = onLeave;
-			e.script = filename;
-			events.push_back(e);
-			flags |= hasOnLeave;
+			onLeave.push_back(filename);
 		}
 		else if (name == "onUse") {
 			std::string filename = value;
@@ -632,23 +618,19 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				         "script not found: " + filename);
 				continue;
 			}
-			TileEvent e;
-			e.trigger = onUse;
-			e.script = filename;
-			events.push_back(e);
-			flags |= hasOnUse;
+			onUse.push_back(filename);
 		}
 		else if (name == "exit") {
 			Exit exit_;
 			parseExit(value, &exit_);
 			exit.reset(exit_);
-			flags |= npc_nowalk;
+			flags |= TILE_NOWALK_NPC;
 		}
 		else if (name == "layermod") {
 			int mod;
 			ASSERT(child.intAttr("value", &mod));
 			layermod.reset(mod);
-			flags |= npc_nowalk;
+			flags |= TILE_NOWALK_NPC;
 		}
 	}
 
@@ -690,8 +672,9 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				tile.exit = exit;
 			if (layermod)
 				tile.layermod = layermod;
-			BOOST_FOREACH(TileEvent& e, events)
-				tile.events.push_back(e);
+			tile.onEnter = onEnter;
+			tile.onLeave = onLeave;
+			tile.onUse = onUse;
 		}
 	}
 
@@ -704,7 +687,7 @@ bool AreaTMX::splitTileFlags(const std::string& strOfFlags, unsigned* flags)
 
 	BOOST_FOREACH(const std::string& str, strs) {
 		if (str == "nowalk")
-			*flags |= nowalk;
+			*flags |= TILE_NOWALK;
 		else {
 			Log::err(descriptor, "invalid tile flag: " + str);
 			return false;

@@ -400,7 +400,7 @@ void exportArea()
 {
 	boost::python::class_<Area>("Area", boost::python::no_init)
 		.def("request_redraw", &Area::requestRedraw)
-		.def("get_tile",
+		.def("tiles",
 		    static_cast<Tile& (Area::*) (int, int, double)>
 		    (&Area::getTile),
 		    boost::python::return_value_policy<

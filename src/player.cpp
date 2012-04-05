@@ -102,9 +102,10 @@ void Player::moveByTile(ivec2 delta)
 	destTile = &area->getTile(newCoord);
 
 	// Is anything player-specific preventing us from moving?
-	if (destTile->hasFlag(player_nowalk)) {
-		// The tile we're trying to move onto is set as player_nowalk.
-		// Turn to face the direction, but don't move.
+	if (destTile->hasFlag(TILE_NOWALK_PLAYER)) {
+		// The tile we're trying to move onto is set as
+		// TILE_NOWALK_PLAYER. Turn to face the direction, but don't
+		// move.
 		setPhase(directionStr(setFacing(delta)));
 		redraw = true;
 		return;

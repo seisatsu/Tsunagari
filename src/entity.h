@@ -85,17 +85,20 @@ public:
 	//! Move to a random Tile in the Area that is not designated 'nowalk'.
 	void gotoRandomTile();
 
+	double getSpeed() const;
+
 	//! Sets speed multiplier.
 	void setSpeed(double multiplier);
+
+	//! Get the Tile we are standing on.
+	Tile& getTile() const;
+	Tile& getTile();
 
 protected:
 	std::vector<icoord> frontTiles() const;
 
 	//! Calculate what the draw offset should be and saves it in 'doff'.
 	void calcDoff();
-
-	//! Get the Tile we are standing on.
-	Tile& getTile() const;
 
 	//! Retrieves a sound custom-defined within this Entity's descriptor
 	//! file.

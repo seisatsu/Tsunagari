@@ -11,8 +11,8 @@ def toggle_music():
 # Open the chest!
 if not opened_the_chest:
     opened_the_chest = True
-    tile = area.get_tile(5, 2, -0.05) # closed chest
-    tile2 = area.get_tile(5, 1, -0.05) # above the closed chest
+    tile = area.tiles(5, 2, -0.05) # closed chest
+    tile2 = tile.offset(0, -1) # above the closed chest
     tile.type = area.get_tile_type(367) # change to open chest, button half
     tile2.type = area.get_tile_type(360) # change to open chest, top half
     area.request_redraw()

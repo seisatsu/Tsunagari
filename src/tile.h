@@ -17,55 +17,38 @@
 #include "resourcer.h" // for TiledImage
 
 class Area;
-struct Exit;
 class Entity;
-class Tile;
-struct TileEvent;
 class TileType;
-
-//! List of possible triggers for tile events.
-/*!
-	Triggers describe the conditions for the activation of a
-	tile-bound event script funtion.
-*/
-enum TileEventTrigger {
-	onEnter,
-	onLeave,
-	onUse,
-	onExit
-};
 
 //! List of possible flags that can be attached to a tile.
 /*!
-	Flags are attached to tiles, and denote special behavior for
+	Flags are attached to tiles and denote special behavior for
 	the tile they are bound to.
-*/
-enum TileFlags {
-	// When changing TileFlags, be sure to make updates to
-	// Area::splitTileFlags().
-	nowalk        = 0x0001,
-	player_nowalk = 0x0002,
-	npc_nowalk    = 0x0004,
-	player_event  = 0x0008,
-	npc_event     = 0x0010,
-	temp_event    = 0x0020,
 
-	// Event flags, don't parse for these. We set them ourselves.
-	hasOnEnter    = 0x0100,
-	hasOnLeave    = 0x0200,
-	hasOnUse      = 0x0400
-};
-
-//! Stores info for an event attached to a tile.
-/*!
-	Events are attached to tiles, and parsed into this struct from a
-	TMX-format area descriptor file. The event is executed when the
-	condition for its trigger is met. The event function name and
-	the function's arguments are stored in argv.
+	see AreaTMX::splitTileFlags().
 */
-struct TileEvent {
-	TileEventTrigger trigger;
-	std::string script; // Filename.
+#define TILE_NOWALK        0x001
+#define TILE_NOWALK_PLAYER 0x002
+#define TILE_NOWALK_NPC    0x004
+
+/**
+ * Independant object that can manipulate a Tile's flags.
+ */
+class FlagManip
+{
+public:
+	FlagManip(unsigned* flags);
+
+	bool isNowalk() const;
+	bool isNowalkPlayer() const;
+	bool isNowalkNPC() const;
+
+	void setNowalk(bool nowalk);
+	void setNowalkPlayer(bool nowalk);
+	void setNowalkNPC(bool nowalk);
+
+private:
+	unsigned* flags;
 };
 
 //! Convenience trigger for inter-area teleportation.
@@ -92,39 +75,35 @@ struct Exit {
 class Tile
 {
 public:
-	Tile();
+	Tile(); // Should not be used. Wanted by std::containers.
+	Tile(Area* area, int x, int y, int z);
 
+	Area* area;
+	int x, y, z;
+	unsigned flags;
 	TileType* type;
-	std::vector<TileEvent> events;
+	std::vector<std::string> onEnter, onLeave, onUse;
 	boost::optional<Exit> exit;
 	boost::optional<double> layermod;
-	unsigned flags; //! Flags for each option in TileFlags enum.
 
 	//! Determines whether this tile or one of its parent types embodies a
 	//! flag.
 	bool hasFlag(unsigned flag) const;
+	FlagManip flagManip();
+
+	Tile& offset(int x, int y);
 
 	void onEnterScripts(Entity* triggeredBy);
 	void onLeaveScripts(Entity* triggeredBy);
 	void onUseScripts(Entity* triggeredBy);
 
-	boost::optional<Exit> getExit();
-	void setExit(boost::optional<Exit> d);
-
-	void setWalkable(bool b);
+	void setWalkable(bool walkable);
 	bool getWalkable();
 
 private:
-	//! Runs all scripts owned by this tile or its type.
-	void runScripts(Entity* entity, TileFlags flag,
-	                TileEventTrigger trigger);
-
-	//! Runs all scripts from a group that match the trigger.
-	void runScriptGroup(Entity* entity, TileEventTrigger trigger,
-	                    const std::vector<TileEvent>& events);
-
-	//! Runs a single script.
-	void runScript(Entity* entity, const std::string& script);
+	//! Runs scripts in a vector.
+	void runScripts(Entity* triggeredBy,
+		const std::vector<std::string>& events);
 };
 
 //! Contains the properties shared by all tiles of a certain type.
@@ -142,11 +121,13 @@ public:
 	//! Returns true if onscreen and we need to update our animation.
 	bool needsRedraw(const Area& area) const;
 
+	unsigned flags;
 	Animation anim; //! Graphics for tiles of this type.
-	std::vector<TileEvent> events;
+	std::vector<std::string> onEnter, onLeave, onUse;
 	std::vector<Tile*> allOfType;
 	boost::optional<double> layermod;
-	unsigned flags; //! Flags for each option in TileFlags enum.
+
+	FlagManip flagManip();
 
 private:
 	//! Returns true if any of the area's tiles within the specified range
@@ -155,8 +136,6 @@ private:
 };
 
 void exportTile();
-void exportTileType();
-void exportExit();
 
 #endif
 
