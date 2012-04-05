@@ -12,11 +12,11 @@
 #include "tile.h"
 #include "window.h"
 
-Door::Door()
+Exit::Exit()
 {
 }
 
-Door::Door(const std::string area, int x, int y, double z)
+Exit::Exit(const std::string area, int x, int y, double z)
 	: area(area), tile(x, y, z)
 {
 }
@@ -72,14 +72,14 @@ void Tile::runScript(Entity* entity, const std::string& script)
 	rc->runPythonScript(script);
 }
 
-boost::optional<Door> Tile::getDoor()
+boost::optional<Exit> Tile::getExit()
 {
-	return door;
+	return exit;
 }
 
-void Tile::setDoor(boost::optional<Door> d)
+void Tile::setExit(boost::optional<Exit> d)
 {
-	door = d;
+	exit = d;
 }
 
 void Tile::setWalkable(bool walkable)
@@ -135,7 +135,7 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 void exportTile()
 {
 	boost::python::class_<Tile>("Tile", boost::python::no_init)
-		.add_property("door", &Tile::getDoor, &Tile::setDoor)
+		.add_property("exit", &Tile::getExit, &Tile::setExit)
 		.add_property("walkable",
 		  &Tile::getWalkable, &Tile::setWalkable)
 		.def_readwrite("type", &Tile::type)
@@ -149,12 +149,12 @@ void exportTileType()
 	boost::python::class_<TileType>("TileType", boost::python::no_init);
 }
 
-void exportDoor()
+void exportExit()
 {
-	boost::python::class_<Door>("Door",
+	boost::python::class_<Exit>("Exit",
 	  boost::python::init<const std::string, int, int, double>())
-		.def_readwrite("area", &Door::area)
-		.def_readwrite("tile", &Door::tile);
-	boost::python::optional_<Door>();
+		.def_readwrite("area", &Exit::area)
+		.def_readwrite("tile", &Exit::tile);
+	boost::python::optional_<Exit>();
 }
 

@@ -373,9 +373,9 @@ void Entity::postMove()
 
 	// TODO: move teleportation here
 	/*
-	 * if (onDoor()) {
+	 * if (onExit()) {
 	 * 	leaveTile();
-	 * 	moveArea(getDoor());
+	 * 	moveArea(getExit());
 	 * 	postMoveScript();
 	 * 	enterTile();
 	 * }

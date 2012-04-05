@@ -136,19 +136,19 @@ void Player::postMove()
 {
 	Entity::postMove();
 
-	// Doors
-	const boost::optional<Door> door = destTile->door;
-	if (door) {
+	// Exits
+	const boost::optional<Exit> exit = destTile->exit;
+	if (exit) {
 		World* world = World::instance();
-		AreaPtr newArea = world->getArea(door->area);
+		AreaPtr newArea = world->getArea(exit->area);
 		if (newArea) {
-			world->focusArea(newArea, door->tile);
+			world->focusArea(newArea, exit->tile);
 		}
 		else {
-			// Roll back movement if door failed to open.
+			// Roll back movement if exit failed to open.
 			r = fromCoord;
-			Log::err("Door",
-			         door->area + ": failed to load properly");
+			Log::err("Exit",
+			         exit->area + ": failed to load properly");
 		}
 	}
 
