@@ -286,24 +286,14 @@
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="112" y="0" width="16" height="16">
+  <object x="112" y="0" width="32" height="16">
    <properties>
-    <property name="exit" value="areas/grove05.tmx,7,8,0"/>
+    <property name="exit" value="areas/grove05.tmx,7+,8,0"/>
    </properties>
   </object>
-  <object x="128" y="0" width="16" height="16">
+  <object x="16" y="0" width="32" height="16">
    <properties>
-    <property name="exit" value="areas/grove05.tmx,8,8,0"/>
-   </properties>
-  </object>
-  <object x="32" y="0" width="16" height="16">
-   <properties>
-    <property name="exit" value="areas/grove05.tmx,2,8,0"/>
-   </properties>
-  </object>
-  <object x="16" y="0" width="16" height="16">
-   <properties>
-    <property name="exit" value="areas/grove05.tmx,1,8,0"/>
+    <property name="exit" value="areas/grove05.tmx,1+,8,0"/>
    </properties>
   </object>
   <object type="Tile" x="32" y="48" width="32" height="16">
