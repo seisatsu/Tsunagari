@@ -16,14 +16,6 @@
 	/* Tsunagari XML DTD directory. */
 	#define DTD_DIRECTORY "./dtd/"
 
-	/* Milliseconds of button down before starting persistent input in
-	   roguelike movement mode. -- Move to World Descriptor */
-	#define ROGUELIKE_PERSIST_DELAY_INIT 500
-
-	/* Milliseconds between persistent input sends in roguelike movement
-	   mode. -- Move to World Descriptor */
-	#define ROGUELIKE_PERSIST_DELAY_CONSECUTIVE 100
-
 	/* Time to live in seconds for empty resource cache entries before they
 	   are deleted. */
 	#define CACHE_EMPTY_TTL 300

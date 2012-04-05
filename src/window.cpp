@@ -142,7 +142,7 @@ void GameWindow::handleKeyboardInput()
 		Gosu::Button btn = it->first;
 		keystate& state = it->second;
 
-		// If there is PERSIST_DELAY_CONSECUTIVE milliseconds of latency
+		// If there is persistCons milliseconds of latency
 		// between when a button is depressed and when we first look at
 		// it here, we'll incorrectly try to fire off a second round of
 		// input.
@@ -154,7 +154,7 @@ void GameWindow::handleKeyboardInput()
 		}
 
 		int delay = state.consecutive ?
-		    ROGUELIKE_PERSIST_DELAY_CONSECUTIVE : ROGUELIKE_PERSIST_DELAY_INIT;
+		    conf.persistCons : conf.persistInit;
 		if (now >= state.since + delay) {
 			state.since = now;
 			world->buttonDown(btn);

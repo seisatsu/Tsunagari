@@ -1,32 +1,27 @@
-<!ELEMENT world (name, author, version, player, type, entrypoint, viewport, input?, onLoad?, onAreaLoad?)>
+<!ELEMENT world (info, init, script?, input?)>
 
+<!ELEMENT info (name, author, version)>
 <!ELEMENT name (#PCDATA)>
-
 <!ELEMENT author (#PCDATA)>
-
 <!ELEMENT version (#PCDATA)>
 
+<!ELEMENT init (area, player, mode, coords, viewport)>
+<!ELEMENT area (#PCDATA)>
 <!ELEMENT player (#PCDATA)>
-
-<!ELEMENT type EMPTY>
-<!ATTLIST type locality (local | network) #REQUIRED
-               movement (turn | tile | notile) #REQUIRED>
-
-<!ELEMENT entrypoint EMPTY>
-<!ATTLIST entrypoint area  CDATA #REQUIRED
-                     x     CDATA #REQUIRED
-                     y     CDATA #REQUIRED
-                     layer CDATA #REQUIRED>
-
-<!ELEMENT input EMPTY>
-<!ATTLIST input persist-delay-init        CDATA #REQUIRED
-                persist-delay-consecutive CDATA #REQUIRED>
-
+<!ELEMENT mode (#PCDATA)>
+<!ELEMENT coords EMPTY>
+<!ATTLIST coords x     CDATA #REQUIRED
+                 y     CDATA #REQUIRED
+                 layer CDATA #REQUIRED>
 <!ELEMENT viewport EMPTY>
-<!ATTLIST viewport height CDATA #REQUIRED
-                   width  CDATA #REQUIRED>
+<!ATTLIST viewport width  CDATA #REQUIRED
+                   height CDATA #REQUIRED>
 
-<!ELEMENT onLoad (#PCDATA)>
+<!ELEMENT script (onInit?, onAreaInit?)>
+<!ELEMENT onInit (#PCDATA)>
+<!ELEMENT onAreaInit (#PCDATA)>
 
-<!ELEMENT onAreaLoad (#PCDATA)>
-
+<!ELEMENT input (persist?)>
+<!ELEMENT persist EMPTY>
+<!ATTLIST persist init CDATA #REQUIRED
+                  cons CDATA #REQUIRED>

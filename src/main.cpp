@@ -39,10 +39,6 @@ static void defaultsQuery()
 		<< CLIENT_CONF_FILE << std::endl;
 	std::cerr << "DTD_DIRECTORY:                          "
 		<< DTD_DIRECTORY << std::endl;
-	std::cerr << "ROGUELIKE_PERSIST_DELAY_INIT:           "
-		<< ROGUELIKE_PERSIST_DELAY_INIT << std::endl;
-	std::cerr << "ROGUELIKE_PERSIST_DELAY_CONSECUTIVE:    "
-		<< ROGUELIKE_PERSIST_DELAY_CONSECUTIVE << std::endl;
 	std::cerr << "CACHE_EMPTY_TTL:                        "
 		<< CACHE_EMPTY_TTL << std::endl;
 	std::cerr << "CACHE_MAX_SIZE:                         "

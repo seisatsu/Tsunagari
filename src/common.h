@@ -57,6 +57,8 @@ struct Conf {
 	bool cacheEnabled;
 	int cacheTTL;
 	int cacheSize;
+	int persistInit;
+	int persistCons;
 };
 extern Conf conf;
 

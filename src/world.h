@@ -77,6 +77,10 @@ public:
 
 private:
 	bool processDescriptor();
+	bool processInfo(XMLNode node);
+	bool processInit(XMLNode node);
+	bool processScript(XMLNode node);
+	bool processInput(XMLNode node);
 
 	//! Draws black borders around the screen to correct the aspect ratio.
 	void drawLetterbox();
@@ -94,6 +98,7 @@ private:
 	AreaPtr area;
 	boost::scoped_ptr<Music> music;
 	Player player;
+	Resourcer* rc;
 
 	typedef boost::unordered_map<std::string, AreaPtr> AreaMap;
 	AreaMap areas;
@@ -117,9 +122,10 @@ private:
 		std::string area;
 		vicoord coords;
 	};
-
+	
 	std::string name;
 	std::string author;
+	double version;
 	std::string playerentity;
 	WorldTypeLocality locality;
 	WorldEntry entry;

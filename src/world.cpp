@@ -15,6 +15,8 @@
 #include "world.h"
 #include "xml.h"
 
+#define ASSERT(x)  if (!(x)) return false
+
 static World* globalWorld = NULL;
 
 World* World::instance()
@@ -136,66 +138,114 @@ std::string World::getAreaLoadScript()
 
 bool World::processDescriptor()
 {
-	Resourcer* rc = Resourcer::instance();
-	XMLRef doc = rc->getXMLDoc("world.conf", "world.dtd");
-	if (!doc)
-		return false;
-	const XMLNode root = doc->root(); // <world>
-	if (!root)
-		return false;
+	XMLRef doc;
+	XMLNode root;
 
-	for (XMLNode node = root.childrenNode(); node; node = node.next()) {
+	Resourcer* rc = Resourcer::instance();
+	ASSERT(doc = rc->getXMLDoc("world.conf", "world.dtd"));
+	ASSERT(root = doc->root()); // <world>
+	
+	for (XMLNode child = root.childrenNode(); child; child = child.next()) {
+		if (child.is("info")) {
+			ASSERT(processInfo(child));
+		}
+		else if (child.is("init")) {
+			ASSERT(processInit(child));
+		}
+		else if (child.is("script")) {
+			ASSERT(processScript(child));
+		}
+		else if (child.is("input")) {
+			ASSERT(processInput(child));
+		}
+	}
+
+	return true;
+}
+
+bool World::processInfo(XMLNode node)
+{
+	for (node = node.childrenNode(); node; node = node.next()) {
 		if (node.is("name")) {
 			name = node.content();
 			GameWindow::getWindow().setCaption(Gosu::widen(name));
 		} else if (node.is("author")) {
 			author = node.content();
-		} else if (node.is("player")) {
-			playerentity = node.content();
-		} else if (node.is("type")) {
-			std::string str = node.attr("locality");
-			if (str == "local")
-				locality = LOCAL;
-			else if (str == "network")
-				locality = NETWORK;
+		} else if (node.is("version")) {
+			version = atof(node.content().c_str());
+		}
+	}
+	return true;
+}
 
-			str = node.attr("movement");
+bool World::processInit(XMLNode node)
+{
+	for (node = node.childrenNode(); node; node = node.next()) {
+		if (node.is("area")) {
+			entry.area = node.content();
+		}
+		else if (node.is("player")) {
+			playerentity = node.content();
+		}
+		else if (node.is("mode")) {
+			std::string str = node.content();
 			if (str == "turn")
 				conf.moveMode = TURN;
 			else if (str == "tile")
 				conf.moveMode = TILE;
 			else if (str == "notile")
 				conf.moveMode = NOTILE;
-		} else if (node.is("entrypoint")) {
-			entry.area = node.attr("area");
+		}
+		else if (node.is("coords")) {
 			if (!node.intAttr("x", &entry.coords.x) ||
 			    !node.intAttr("y", &entry.coords.y) ||
 			    !node.doubleAttr("z", &entry.coords.z))
 				return false;
-		} else if (node.is("viewport")) {
+		}
+		else if (node.is("viewport")) {
 			if (!node.intAttr("width", &viewport.x) ||
 			    !node.intAttr("height", &viewport.y))
 				return false;
-		} else if (node.is("onLoad")) {
+		}
+	}
+	return true;
+}
+
+bool World::processScript(XMLNode node)
+{
+	for (node = node.childrenNode(); node; node = node.next()) {
+		if (node.is("onInit")) {
 			std::string filename = node.content();
 			if (rc->resourceExists(filename)) {
 				onLoadScript = filename;
 			}
 			else {
 				Log::err("world.conf",
-				  std::string("script not found: ") + filename);
+					std::string("script not found: ") + filename);
 				return false;
 			}
-		} else if (node.is("onAreaLoad")) {
+		} else if (node.is("onAreaInit")) {
 			std::string filename = node.content();
 			if (rc->resourceExists(filename)) {
 				onAreaLoadScript = filename;
 			}
 			else {
 				Log::err("world.conf",
-				  std::string("script not found: ") + filename);
+					std::string("script not found: ") + filename);
 				return false;
 			}
+		}
+	}
+	return true;
+}
+
+bool World::processInput(XMLNode node)
+{
+	for (node = node.childrenNode(); node; node = node.next()) {
+		if (node.is("persist")) {
+			if (!node.intAttr("init", &conf.persistInit) ||
+				!node.intAttr("cons", &conf.persistCons))
+			    return false;
 		}
 	}
 	return true;
