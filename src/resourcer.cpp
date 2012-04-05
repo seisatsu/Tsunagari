@@ -12,7 +12,6 @@
 #include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <Gosu/Audio.hpp> // for Gosu::Sample
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
@@ -121,7 +120,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	BufferPtr buffer(read(name));
 	if (!buffer)
 		return SampleRef();
-	SampleRef result(new Sound(new Gosu::Sample(buffer->frontReader())));
+	SampleRef result(new Gosu::Sample(buffer->frontReader()));
 
 	sounds.lifetimePut(name, result);
 	return result;

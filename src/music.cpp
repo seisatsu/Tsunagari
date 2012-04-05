@@ -202,7 +202,7 @@ void Music::setState(MUSIC_STATE state)
 
 void exportMusic()
 {
-	boost::python::class_<Music>("MusicClass", boost::python::no_init)
+	boost::python::class_<Music>("MusicManager", boost::python::no_init)
 		.add_property("intro", &Music::getIntro, &Music::setIntro)
 		.add_property("loop", &Music::getLoop, &Music::setLoop)
 		.add_property("volume", &Music::getVolume, &Music::setVolume)
