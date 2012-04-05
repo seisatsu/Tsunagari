@@ -44,7 +44,8 @@ private:
 	bool processObjectGroupProperties(XMLNode node, double* depth);
 	bool processObject(XMLNode node, int z);
 	bool splitTileFlags(const std::string& strOfFlags, unsigned* flags);
-	bool parseExit(const std::string& dest, Exit* exit);
+	bool parseExit(const std::string& dest, Exit* exit,
+		bool* wwide, bool* hwide);
 };
 
 #endif
