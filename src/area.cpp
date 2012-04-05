@@ -71,7 +71,8 @@ void Area::focus()
 	if (onFocusScripts.size()) {
 		BOOST_FOREACH(const std::string& script, onFocusScripts) {
 			pythonSetGlobal("area", this);
-			Resourcer::getResourcer()->runPythonScript(script);
+			Resourcer* rc = Resourcer::instance();
+			rc->runPythonScript(script);
 		}
 	}
 }
@@ -137,7 +138,8 @@ void Area::update(unsigned long dt)
 	if (onUpdateScripts.size()) {
 		BOOST_FOREACH(const std::string& script, onUpdateScripts) {
 			pythonSetGlobal("area", this);
-			Resourcer::getResourcer()->runPythonScript(script);
+			Resourcer* rc = Resourcer::instance();
+			rc->runPythonScript(script);
 		}
 	}
 
@@ -147,7 +149,7 @@ void Area::update(unsigned long dt)
 
 AreaPtr Area::reset()
 {
-	World* world = World::getWorld();
+	World* world = World::instance();
 	AreaPtr newSelf = world->getArea(descriptor, GETAREA_ALWAYS_CREATE);
 	if (world->getFocusedArea().get() == this) {
 		vicoord c = player->getTileCoords_vi();
@@ -338,14 +340,16 @@ double Area::indexDepth(int idx) const
 
 void Area::runOnLoads()
 {
-	std::string onAreaLoadScript = World::getWorld()->getAreaLoadScript();
+	Resourcer* rc = Resourcer::instance();
+	World* world = World::instance();
+	std::string onAreaLoadScript = world->getAreaLoadScript();
 	if (onAreaLoadScript.size()) {
 		pythonSetGlobal("area", this);
-		Resourcer::getResourcer()->runPythonScript(onAreaLoadScript);
+		rc->runPythonScript(onAreaLoadScript);
 	}
 	BOOST_FOREACH(const std::string& script, onLoadScripts) {
 		pythonSetGlobal("area", this);
-		Resourcer::getResourcer()->runPythonScript(script);
+		rc->runPythonScript(script);
 	}
 }
 

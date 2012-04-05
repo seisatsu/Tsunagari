@@ -5,6 +5,7 @@
 *********************************/
 
 #include <boost/shared_ptr.hpp>
+#include <Gosu/Audio.hpp>
 
 #include "python.h"
 #include "sound.h"

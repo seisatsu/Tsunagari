@@ -49,7 +49,7 @@ class Resourcer
 {
 public:
 	//! Get the Resourcer for the current World.
-	static Resourcer* getResourcer();
+	static Resourcer* instance();
 
 	Resourcer();
 	~Resourcer();

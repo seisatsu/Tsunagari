@@ -33,6 +33,8 @@ std::string Music::getLoop()
 
 void Music::setIntro(const std::string& filename)
 {
+	Resourcer* rc = Resourcer::instance();
+
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
@@ -46,13 +48,14 @@ void Music::setIntro(const std::string& filename)
 		newIntro = filename;
 		// Optimize XXX: Don't load until played.
 		introMusic = filename.size() ?
-			Resourcer::getResourcer()->getSong(filename) :
-			SongRef();
+			rc->getSong(filename) : SongRef();
 	}
 }
 
 void Music::setLoop(const std::string& filename)
 {
+	Resourcer* rc = Resourcer::instance();
+
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
@@ -66,8 +69,7 @@ void Music::setLoop(const std::string& filename)
 		newLoop = filename;
 		// Optimize XXX: Don't load until played.
 		loopMusic = filename.size() ?
-			Resourcer::getResourcer()->getSong(filename) :
-			SongRef();
+			rc->getSong(filename) : SongRef();
 	}
 }
 

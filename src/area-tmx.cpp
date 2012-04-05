@@ -60,7 +60,8 @@ bool AreaTMX::processDescriptor()
 	XMLRef doc;
 	XMLNode root;
 
-	ASSERT(doc = Resourcer::getResourcer()->getXMLDoc(descriptor, "area.dtd"));
+	Resourcer* rc = Resourcer::instance();
+	ASSERT(doc = rc->getXMLDoc(descriptor, "area.dtd"));
 	ASSERT(root = doc->root()); // <map>
 
 	ASSERT(root.intAttr("width", &dim.x));
@@ -100,6 +101,8 @@ bool AreaTMX::processMapProperties(XMLNode node)
   <property name="loop" value="xy"/>
  </properties>
 */
+	Resourcer* rc = Resourcer::instance();
+
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
@@ -117,7 +120,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		}
 		else if (name == "onLoad") {
 			std::string filename = value;
-			if (Resourcer::getResourcer()->resourceExists(filename)) {
+			if (rc->resourceExists(filename)) {
 				onLoadScripts.push_back(filename);
 			}
 			else {
@@ -127,7 +130,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		}
 		else if (name == "onFocus") {
 			std::string filename = value;
-			if (Resourcer::getResourcer()->resourceExists(filename)) {
+			if (rc->resourceExists(filename)) {
 				onFocusScripts.push_back(filename);
 			}
 			else {
@@ -137,7 +140,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		}
 		else if (name == "onUpdate") {
 			std::string filename = value;
-			if (Resourcer::getResourcer()->resourceExists(filename)) {
+			if (rc->resourceExists(filename)) {
 				onUpdateScripts.push_back(filename);
 			}
 			else {
@@ -192,7 +195,8 @@ bool AreaTMX::processTileSet(XMLNode node)
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("image")) {
 			std::string source = child.attr("source");
-			Resourcer::getResourcer()->getTiledImage(img, source,
+			Resourcer* rc = Resourcer::instance();
+			rc->getTiledImage(img, source,
 				(unsigned)x, (unsigned)y, true);
 		}
 		else if (child.is("tile")) {
@@ -262,6 +266,8 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 	// The id has already been handled by processTileSet, so we don't have
 	// to worry about it.
 
+	Resourcer* rc = Resourcer::instance();
+
 	// Initialize a default TileType, we'll build on that.
 	TileType type(img);
 
@@ -275,7 +281,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 		}
 		else if (name == "onEnter") {
 			std::string filename = value;
-			if (!Resourcer::getResourcer()->resourceExists(filename)) {
+			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -288,7 +294,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 		}
 		else if (name == "onLeave") {
 			std::string filename = value;
-			if (!Resourcer::getResourcer()->resourceExists(filename)) {
+			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -301,7 +307,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 		}
 		else if (name == "onUse") {
 			std::string filename = value;
-			if (!Resourcer::getResourcer()->resourceExists(filename)) {
+			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -577,6 +583,8 @@ bool AreaTMX::processObject(XMLNode node, int z)
   </object>
 */
 
+	Resourcer* rc = Resourcer::instance();
+
 	// Gather object properties now. Assign them to tiles later.
 	std::vector<TileEvent> events;
 	boost::optional<Door> door;
@@ -593,7 +601,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		}
 		else if (name == "onEnter") {
 			std::string filename = value;
-			if (!Resourcer::getResourcer()->resourceExists(filename)) {
+			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -606,7 +614,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		}
 		else if (name == "onLeave") {
 			std::string filename = value;
-			if (!Resourcer::getResourcer()->resourceExists(filename)) {
+			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;
@@ -619,7 +627,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		}
 		else if (name == "onUse") {
 			std::string filename = value;
-			if (!Resourcer::getResourcer()->resourceExists(filename)) {
+			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
 				         "script not found: " + filename);
 				continue;

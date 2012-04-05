@@ -17,7 +17,7 @@
 
 static World* globalWorld = NULL;
 
-World* World::getWorld()
+World* World::instance()
 {
 	return globalWorld;
 }
@@ -45,7 +45,8 @@ bool World::init()
 
 	if (onLoadScript.size()) {
 		pythonSetGlobal("player", (Entity*)&player);
-		Resourcer::getResourcer()->runPythonScript(onLoadScript);
+		Resourcer* rc = Resourcer::instance();
+		rc->runPythonScript(onLoadScript);
 	}
 
 	view = new Viewport(viewport);
@@ -135,7 +136,8 @@ std::string World::getAreaLoadScript()
 
 bool World::processDescriptor()
 {
-	XMLRef doc = Resourcer::getResourcer()->getXMLDoc("world.conf", "world.dtd");
+	Resourcer* rc = Resourcer::instance();
+	XMLRef doc = rc->getXMLDoc("world.conf", "world.dtd");
 	if (!doc)
 		return false;
 	const XMLNode root = doc->root(); // <world>
@@ -176,7 +178,7 @@ bool World::processDescriptor()
 				return false;
 		} else if (node.is("onLoad")) {
 			std::string filename = node.content();
-			if (Resourcer::getResourcer()->resourceExists(filename)) {
+			if (rc->resourceExists(filename)) {
 				onLoadScript = filename;
 			}
 			else {
@@ -186,7 +188,7 @@ bool World::processDescriptor()
 			}
 		} else if (node.is("onAreaLoad")) {
 			std::string filename = node.content();
-			if (Resourcer::getResourcer()->resourceExists(filename)) {
+			if (rc->resourceExists(filename)) {
 				onAreaLoadScript = filename;
 			}
 			else {

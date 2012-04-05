@@ -4,10 +4,12 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
-#ifndef AUDIO_H
-#define AUDIO_H
+#ifndef SOUND_H
+#define SOUND_H
 
-#include <Gosu/Audio.hpp>
+namespace Gosu {
+	class Sample;
+}
 
 class Sound
 {

@@ -39,7 +39,7 @@ class World
 {
 public:
 	//! Get the currently open World.
-	static World* getWorld();
+	static World* instance();
 
 	World();
 	~World();

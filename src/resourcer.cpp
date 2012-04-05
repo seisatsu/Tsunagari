@@ -12,6 +12,7 @@
 #include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <Gosu/Audio.hpp> // for Gosu::Sample
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
@@ -30,7 +31,7 @@ typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
 static Resourcer* globalResourcer = NULL;
 
-Resourcer* Resourcer::getResourcer()
+Resourcer* Resourcer::instance()
 {
 	return globalResourcer;
 }

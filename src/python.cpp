@@ -91,8 +91,9 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	// Search Python scripts inside World.
 	std::replace(name.begin(), name.end(), '.', '/');
 	name += ".py";
-	if (Resourcer::getResourcer()->resourceExists(name)) {
-		Resourcer::getResourcer()->runPythonScript(name);
+	Resourcer* rc = Resourcer::instance();
+	if (rc->resourceExists(name)) {
+		rc->runPythonScript(name);
 		return modMain.ptr(); // We have to return a module...
 	}
 

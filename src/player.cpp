@@ -139,7 +139,7 @@ void Player::postMove()
 	// Doors
 	const boost::optional<Door> door = destTile->door;
 	if (door) {
-		World* world = World::getWorld();
+		World* world = World::instance();
 		AreaPtr newArea = world->getArea(door->area);
 		if (newArea) {
 			world->focusArea(newArea, door->tile);

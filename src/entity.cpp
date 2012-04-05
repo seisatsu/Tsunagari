@@ -384,19 +384,21 @@ void Entity::postMove()
 
 void Entity::tileExitScript()
 {
+	Resourcer* rc = Resourcer::instance();
 	const std::string& name = scripts["tileexit"];
 	if (name.size()) {
 		pythonSetGlobal("entity", this);
-		Resourcer::getResourcer()->runPythonScript(name);
+		rc->runPythonScript(name);
 	}
 }
 
 void Entity::tileEntryScript()
 {
+	Resourcer* rc = Resourcer::instance();
 	const std::string& name = scripts["tileentry"];
 	if (name.size()) {
 		pythonSetGlobal("entity", this);
-		Resourcer::getResourcer()->runPythonScript(name);
+		rc->runPythonScript(name);
 	}
 }
 
@@ -407,7 +409,8 @@ void Entity::tileEntryScript()
 
 bool Entity::processDescriptor()
 {
-	XMLRef doc = Resourcer::getResourcer()->getXMLDoc(descriptor, "entity.dtd");
+	Resourcer* rc = Resourcer::instance();
+	XMLRef doc = rc->getXMLDoc(descriptor, "entity.dtd");
 	if (!doc)
 		return false;
 	const XMLNode root = doc->root(); // <entity>
@@ -431,13 +434,14 @@ bool Entity::processDescriptor()
 
 bool Entity::processSprite(XMLNode node)
 {
+	Resourcer* rc = Resourcer::instance();
 	TiledImage tiles;
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
 			std::string imageSheet = node.content();
 			ASSERT(node.intAttr("tilewidth",  &imgw) &&
 			       node.intAttr("tileheight", &imgh));
-			ASSERT(Resourcer::getResourcer()->getTiledImage(tiles, imageSheet,
+			ASSERT(rc->getTiledImage(tiles, imageSheet,
 			       imgw, imgh, false));
 		} else if (node.is("phases")) {
 			ASSERT(processPhases(node.childrenNode(), tiles));
@@ -545,7 +549,8 @@ bool Entity::processSound(const XMLNode node)
 		return false;
 	}
 
-	SampleRef s = Resourcer::getResourcer()->getSample(filename);
+	Resourcer* rc = Resourcer::instance();
+	SampleRef s = rc->getSample(filename);
 	if (s)
 		sounds[name] = s;
 	return true;
@@ -571,7 +576,8 @@ bool Entity::processScript(const XMLNode node)
 		return false;
 	}
 
-	if (Resourcer::getResourcer()->resourceExists(filename)) {
+	Resourcer* rc = Resourcer::instance();
+	if (rc->resourceExists(filename)) {
 		scripts[trigger] = filename;
 		return true;
 	}

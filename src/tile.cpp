@@ -66,9 +66,10 @@ void Tile::runScriptGroup(Entity* entity, TileEventTrigger trigger,
 
 void Tile::runScript(Entity* entity, const std::string& script)
 {
+	Resourcer* rc = Resourcer::instance();
 	pythonSetGlobal("entity", entity);
 	pythonSetGlobal("tile", this);
-	Resourcer::getResourcer()->runPythonScript(script);
+	rc->runPythonScript(script);
 }
 
 boost::optional<Door> Tile::getDoor()
