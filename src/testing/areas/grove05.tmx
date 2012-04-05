@@ -335,12 +335,12 @@
   </properties>
   <object x="112" y="144" width="32" height="16">
    <properties>
-    <property name="exit" value="areas/grove01.tmx,7+,1,0"/>
+    <property name="exit:down" value="areas/grove01.tmx,7+,1,0"/>
    </properties>
   </object>
   <object x="16" y="144" width="32" height="16">
    <properties>
-    <property name="exit" value="areas/grove01.tmx,1+,1,0"/>
+    <property name="exit:down" value="areas/grove01.tmx,1+,1,0"/>
    </properties>
   </object>
   <object x="48" y="144" width="64" height="16">
@@ -496,4 +496,34 @@
    <tile gid="0"/>
   </data>
  </layer>
+ <objectgroup name="Prop(1)" width="10" height="10">
+  <properties>
+   <property name="layer" value="1"/>
+  </properties>
+  <object x="32" y="128" width="16" height="32">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="112" y="128" width="16" height="32">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="48" y="128" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="48" y="112" width="64" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="96" y="128" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

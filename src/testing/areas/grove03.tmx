@@ -222,6 +222,66 @@
    <tile gid="5"/>
   </data>
  </layer>
+ <objectgroup name="Prop(0)" width="10" height="10">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+  <object x="0" y="0" width="16" height="48">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="0" y="64" width="16" height="96">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="32" y="144" width="128" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="48" y="112" width="32" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="80" y="64" width="32" height="32">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="48" y="16" width="96" height="32">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="16" y="16" width="32" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="128" y="48" width="32" height="96">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="32" y="64" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="0" y="48" width="16" height="16">
+   <properties>
+    <property name="exit:left" value="areas/grove04.tmx,8,12,0"/>
+   </properties>
+  </object>
+  <object x="16" y="144" width="16" height="16">
+   <properties>
+    <property name="exit:down" value="areas/grove02.tmx,1,1,0"/>
+   </properties>
+  </object>
+ </objectgroup>
  <layer name="Tiles(0.1)" width="10" height="10">
   <properties>
    <property name="layer" value="0.1"/>
@@ -329,64 +389,4 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop(0)" width="10" height="10">
-  <properties>
-   <property name="layer" value="0"/>
-  </properties>
-  <object gid="94" x="16" y="160">
-   <properties>
-    <property name="exit" value="areas/grove02.tmx,1,1,0"/>
-   </properties>
-  </object>
-  <object gid="76" x="0" y="64">
-   <properties>
-    <property name="exit" value="areas/grove04.tmx,8,12,0"/>
-   </properties>
-  </object>
-  <object x="0" y="0" width="16" height="48">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="0" y="64" width="16" height="96">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="32" y="144" width="128" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="48" y="112" width="32" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="80" y="64" width="32" height="32">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="48" y="16" width="96" height="32">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="16" y="16" width="32" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="128" y="48" width="32" height="96">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="32" y="64" width="16" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
- </objectgroup>
 </map>

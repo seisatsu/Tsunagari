@@ -7,7 +7,7 @@
   <property name="onLoad" value="areas/g02_load.py"/>
  </properties>
  <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/forest.png" width="272" height="304"/>
+  <image source="tiles/forest.png" width="272" height="304"/>
  </tileset>
  <tileset firstgid="324" name="objects.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/objects.png" width="112" height="112"/>
@@ -333,6 +333,67 @@
    <tile gid="0"/>
   </data>
  </layer>
+ <objectgroup name="Prop(0)" width="10" height="10">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+  <object x="0" y="0" width="16" height="128">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="32" y="0" width="128" height="32">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="80" y="64" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="64" y="80" width="32" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="96" y="96" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="144" y="32" width="16" height="96">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="0" y="128" width="96" height="32">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="96" y="144" width="64" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="80" y="32" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+    <property name="onUse" value="areas/g02_open_chest.py"/>
+   </properties>
+  </object>
+  <object x="16" y="0" width="16" height="16">
+   <properties>
+    <property name="exit:up" value="areas/grove03.tmx,1,8,0"/>
+   </properties>
+  </object>
+  <object x="144" y="128" width="16" height="16">
+   <properties>
+    <property name="exit:right" value="areas/grove01.tmx,1,8,0"/>
+   </properties>
+  </object>
+ </objectgroup>
  <layer name="Tiles(0.1)" width="10" height="10">
   <properties>
    <property name="layer" value="0.1"/>
@@ -440,65 +501,4 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop(0)" width="10" height="10">
-  <properties>
-   <property name="layer" value="0"/>
-  </properties>
-  <object gid="76" x="144" y="144">
-   <properties>
-    <property name="exit" value="areas/grove01.tmx,1,8,0"/>
-   </properties>
-  </object>
-  <object x="0" y="0" width="16" height="128">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="32" y="0" width="128" height="32">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="80" y="64" width="16" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="64" y="80" width="32" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="96" y="96" width="16" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="144" y="32" width="16" height="96">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="0" y="128" width="96" height="32">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="96" y="144" width="64" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="80" y="32" width="16" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-    <property name="onUse" value="areas/g02_open_chest.py"/>
-   </properties>
-  </object>
-  <object gid="38" x="16" y="16">
-   <properties>
-    <property name="exit" value="areas/grove03.tmx,1,8,0"/>
-   </properties>
-  </object>
- </objectgroup>
 </map>

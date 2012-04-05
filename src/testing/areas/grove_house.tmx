@@ -342,6 +342,61 @@
    <tile gid="0"/>
   </data>
  </layer>
+ <objectgroup name="Prop(0)" width="10" height="10">
+  <properties>
+   <property name="layer" value="0"/>
+  </properties>
+  <object x="0" y="0" width="160" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="0" y="16" width="16" height="144">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="16" y="144" width="64" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="16" y="16" width="16" height="32">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="96" y="144" width="64" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="144" y="16" width="16" height="128">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="112" y="16" width="32" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="48" y="80" width="64" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="96" y="0" width="16" height="16">
+   <properties>
+    <property name="onUse" value="areas/house_switch.py"/>
+   </properties>
+  </object>
+  <object x="80" y="144" width="16" height="16">
+   <properties>
+    <property name="exit:down" value="areas/grove01.tmx,5,3,0"/>
+   </properties>
+  </object>
+ </objectgroup>
  <layer name="Tiles(0.1)" width="10" height="10">
   <properties>
    <property name="layer" value="0.1"/>
@@ -449,59 +504,4 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop(0)" width="10" height="10">
-  <properties>
-   <property name="layer" value="0"/>
-  </properties>
-  <object x="0" y="0" width="160" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="0" y="16" width="16" height="144">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="16" y="144" width="64" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="16" y="16" width="16" height="32">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="96" y="144" width="64" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="144" y="16" width="16" height="128">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="112" y="16" width="32" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object x="48" y="80" width="64" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
-  <object gid="7" x="80" y="160">
-   <properties>
-    <property name="exit" value="areas/grove01.tmx,5,3,0"/>
-   </properties>
-  </object>
-  <object x="96" y="0" width="16" height="16">
-   <properties>
-    <property name="onUse" value="areas/house_switch.py"/>
-   </properties>
-  </object>
- </objectgroup>
 </map>
