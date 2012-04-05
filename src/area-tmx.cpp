@@ -500,7 +500,7 @@ bool AreaTMX::processObjectGroup(XMLNode node)
     <property name="onEnter" value="speed(0.5)"/>
     <property name="onLeave" value="undo()"/>
     <property name="onUse" value="undo()"/>
-    <property name="door" value="grassfield.area,1,1,0"/>
+    <property name="exit" value="grassfield.area,1,1,0"/>
     <property name="flags" value="npc_nowalk"/>
    </properties>
   </object>
@@ -574,7 +574,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
     <property name="onEnter" value="speed(0.5)"/>
     <property name="onLeave" value="undo()"/>
     <property name="onUse" value="undo()"/>
-    <property name="door" value="grassfield.area,1,1,0"/>
+    <property name="exit" value="grassfield.area,1,1,0"/>
     <property name="flags" value="npc_nowalk"/>
    </properties>
   </object>
@@ -587,7 +587,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 
 	// Gather object properties now. Assign them to tiles later.
 	std::vector<TileEvent> events;
-	boost::optional<Door> door;
+	boost::optional<Exit> exit;
 	boost::optional<int> layermod;
 	unsigned flags = 0x0;
 
@@ -638,10 +638,10 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			events.push_back(e);
 			flags |= hasOnUse;
 		}
-		else if (name == "door") {
-			Door door_;
-			parseDoor(value, &door_);
-			door.reset(door_);
+		else if (name == "exit") {
+			Exit exit_;
+			parseExit(value, &exit_);
+			exit.reset(exit_);
 			flags |= npc_nowalk;
 		}
 		else if (name == "layermod") {
@@ -686,8 +686,8 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			Tile& tile = map[z][Y][X];
 
 			tile.flags |= flags;
-			if (door)
-				tile.door = door;
+			if (exit)
+				tile.exit = exit;
 			if (layermod)
 				tile.layermod = layermod;
 			BOOST_FOREACH(TileEvent& e, events)
@@ -713,7 +713,7 @@ bool AreaTMX::splitTileFlags(const std::string& strOfFlags, unsigned* flags)
 	return true;
 }
 
-bool AreaTMX::parseDoor(const std::string& dest, Door* door)
+bool AreaTMX::parseExit(const std::string& dest, Exit* exit)
 {
 
 /*
@@ -724,7 +724,7 @@ bool AreaTMX::parseDoor(const std::string& dest, Door* door)
 	std::vector<std::string> strs = splitStr(dest, ",");
 
 	if (strs.size() != 4) {
-		Log::err(descriptor, "invalid door format");
+		Log::err(descriptor, "invalid exit format");
 		return false;
 	}
 
@@ -733,10 +733,10 @@ bool AreaTMX::parseDoor(const std::string& dest, Door* door)
 		return false;
 	}
 
-	door->area = strs[0];
-	door->tile.x = atoi(strs[1].c_str());
-	door->tile.y = atoi(strs[2].c_str());
-	door->tile.z = atof(strs[3].c_str());
+	exit->area = strs[0];
+	exit->tile.x = atoi(strs[1].c_str());
+	exit->tile.y = atoi(strs[2].c_str());
+	exit->tile.z = atof(strs[3].c_str());
 
 	return true;
 }

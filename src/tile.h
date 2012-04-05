@@ -17,7 +17,7 @@
 #include "resourcer.h" // for TiledImage
 
 class Area;
-struct Door;
+struct Exit;
 class Entity;
 class Tile;
 struct TileEvent;
@@ -32,7 +32,7 @@ enum TileEventTrigger {
 	onEnter,
 	onLeave,
 	onUse,
-	door
+	onExit
 };
 
 //! List of possible flags that can be attached to a tile.
@@ -70,13 +70,13 @@ struct TileEvent {
 
 //! Convenience trigger for inter-area teleportation.
 /*!
-	Tiles with a door trigger attached can teleport the player to a
-	new area in the World. The Door struct contains the destination
+	Tiles with a exit trigger attached can teleport the player to a
+	new area in the World. The Exit struct contains the destination
 	area and coordinates.
 */
-struct Door {
-	Door();
-	Door(const std::string area, int x, int y, double z);
+struct Exit {
+	Exit();
+	Exit(const std::string area, int x, int y, double z);
 
 	std::string area;
 	vicoord tile;
@@ -96,7 +96,7 @@ public:
 
 	TileType* type;
 	std::vector<TileEvent> events;
-	boost::optional<Door> door;
+	boost::optional<Exit> exit;
 	boost::optional<double> layermod;
 	unsigned flags; //! Flags for each option in TileFlags enum.
 
@@ -108,8 +108,8 @@ public:
 	void onLeaveScripts(Entity* triggeredBy);
 	void onUseScripts(Entity* triggeredBy);
 
-	boost::optional<Door> getDoor();
-	void setDoor(boost::optional<Door> d);
+	boost::optional<Exit> getExit();
+	void setExit(boost::optional<Exit> d);
 
 	void setWalkable(bool b);
 	bool getWalkable();
@@ -156,7 +156,7 @@ private:
 
 void exportTile();
 void exportTileType();
-void exportDoor();
+void exportExit();
 
 #endif
 
