@@ -25,3 +25,4 @@
 <!ELEMENT persist EMPTY>
 <!ATTLIST persist init CDATA #REQUIRED
                   cons CDATA #REQUIRED>
+
