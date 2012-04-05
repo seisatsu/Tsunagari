@@ -14,9 +14,9 @@
 #include <libxml/parser.h>
 #include <Python.h>
 
-#include "audio.h"
 #include "cache.h"
 #include "common.h"
+#include "sound.h"
 #include "xml.h"
 
 namespace Gosu {

@@ -1,6 +1,6 @@
 /*********************************
 ** Tsunagari Tile Engine        **
-** audio.h                      **
+** sound.h                      **
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 

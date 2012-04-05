@@ -1,13 +1,13 @@
 /*********************************
 ** Tsunagari Tile Engine        **
-** audio.cpp                    **
+** sound.cpp                    **
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
 #include <boost/shared_ptr.hpp>
 
 #include "python.h"
-#include "audio.h"
+#include "sound.h"
 
 Sound::Sound(Gosu::Sample* source)
 	: source(source)
