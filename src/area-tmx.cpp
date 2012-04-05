@@ -581,8 +581,8 @@ bool AreaTMX::processObject(XMLNode node, int z)
 
 	// Gather object properties now. Assign them to tiles later.
 	std::vector<std::string> onEnter, onLeave, onUse;
-	bool wwide, hwide; /* wide exit in dimensions: width, height */
-	boost::optional<Exit> exit;
+	bool wwide[5], hwide[5]; /* wide exit in dimensions: width, height */
+	boost::scoped_ptr<Exit> exit[5];
 	boost::optional<int> layermod;
 	unsigned flags = 0x0;
 
@@ -622,10 +622,25 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			onUse.push_back(filename);
 		}
 		else if (name == "exit") {
-			Exit exit_;
-			ASSERT(parseExit(value, &exit_, &wwide, &hwide));
-			exit.reset(exit_);
+			exit[EXIT_NORMAL].reset(new Exit);
+			ASSERT(parseExit(value, exit[EXIT_NORMAL].get(), &wwide[EXIT_NORMAL], &hwide[EXIT_NORMAL]));
 			flags |= TILE_NOWALK_NPC;
+		}
+		else if (name == "exit:up") {
+			exit[EXIT_UP].reset(new Exit);
+			ASSERT(parseExit(value, exit[EXIT_UP].get(), &wwide[EXIT_UP], &hwide[EXIT_UP]));
+		}
+		else if (name == "exit:down") {
+			exit[EXIT_DOWN].reset(new Exit);
+			ASSERT(parseExit(value, exit[EXIT_DOWN].get(), &wwide[EXIT_DOWN], &hwide[EXIT_DOWN]));
+		}
+		else if (name == "exit:left") {
+			exit[EXIT_LEFT].reset(new Exit);
+			ASSERT(parseExit(value, exit[EXIT_LEFT].get(), &wwide[EXIT_LEFT], &hwide[EXIT_LEFT]));
+		}
+		else if (name == "exit:right") {
+			exit[EXIT_RIGHT].reset(new Exit);
+			ASSERT(parseExit(value, exit[EXIT_RIGHT].get(), &wwide[EXIT_RIGHT], &hwide[EXIT_RIGHT]));
 		}
 		else if (name == "layermod") {
 			int mod;
@@ -652,15 +667,16 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		h = 1;
 
 		// We don't actually use the object gid. It is supposed to
-		// indicate which tile our object is rendered as, but, for
+		// indicate which tile our object is rendered as, but for
 		// Tsunagari, tile objects are always transparent and reveal
 		// the tile below.
 	}
 	else {
 		// This is one of Tiled's "Objects". It has a width and height.
 		ASSERT(node.intAttr("width", &w));
-		ASSERT(node.intAttr("height", &h)); w /= tileDim.x; h /=
-		tileDim.y;
+		ASSERT(node.intAttr("height", &h));
+		w /= tileDim.x;
+		h /= tileDim.y;
 	}
 
 	// We know which Tiles are being talked about now... yay
@@ -669,14 +685,16 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			Tile& tile = map[z][Y][X];
 
 			tile.flags |= flags;
-			if (exit) {
-				tile.exit = exit;
-				int dx = X - x;
-				int dy = Y - y;
-				if (wwide)
-					tile.exit->tile.x += dx;
-				if (hwide)
-					tile.exit->tile.y += dy;
+			for (int i = 0; i < 5; i++) {
+				if (exit[i]) {
+					tile.exits[i] = new Exit(*exit[i].get());
+					int dx = X - x;
+					int dy = Y - y;
+					if (wwide[i])
+						tile.exits[i]->coord.x += dx;
+					if (hwide[i])
+						tile.exits[i]->coord.y += dy;
+				}
 			}
 			if (layermod)
 				tile.layermod = layermod;
@@ -746,9 +764,9 @@ bool AreaTMX::parseExit(const std::string& dest, Exit* exit,
 	}
 
 	exit->area = area;
-	exit->tile.x = atoi(xstr.c_str());
-	exit->tile.y = atoi(ystr.c_str());
-	exit->tile.z = atof(zstr.c_str());
+	exit->coord.x = atoi(xstr.c_str());
+	exit->coord.y = atoi(ystr.c_str());
+	exit->coord.z = atof(zstr.c_str());
 
 	*wwide = xstr.find('+') != std::string::npos;
 	*hwide = ystr.find('+') != std::string::npos;

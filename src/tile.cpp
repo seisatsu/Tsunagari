@@ -53,7 +53,7 @@ Exit::Exit()
 }
 
 Exit::Exit(const std::string area, int x, int y, double z)
-	: area(area), tile(x, y, z)
+	: area(area), coord(x, y, z)
 {
 }
 
@@ -65,6 +65,7 @@ Tile::Tile()
 Tile::Tile(Area* area, int x, int y, int z)
 	: area(area), x(x), y(y), z(z), flags(0x0), type(NULL)
 {
+	memset(exits, 0, sizeof(exits));
 }
 
 bool Tile::hasFlag(unsigned flag) const
@@ -80,6 +81,40 @@ FlagManip Tile::flagManip()
 Tile& Tile::offset(int x, int y)
 {
 	return area->getTile(this->x + x, this->y + y, z);
+}
+
+Exit* Tile::getNormalExit()
+{
+	return exits[EXIT_NORMAL];
+}
+
+void Tile::setNormalExit(Exit* exit)
+{
+	exits[EXIT_NORMAL] = exit;
+}
+
+Exit* Tile::exitAt(int x, int y)
+{
+	switch (x) {
+	case -1:
+		return y == 0 ? exits[EXIT_LEFT] : NULL;
+	case 0:
+		switch (y) {
+		case -1:
+			return exits[EXIT_UP];
+		case 0:
+			return exits[EXIT_NORMAL];
+		case 1:
+			return exits[EXIT_DOWN];
+		default:
+			return NULL;
+		}
+		break;
+	case 1:
+		return y == 0 ? exits[EXIT_RIGHT] : NULL;
+	default:
+		return NULL;
+	}
 }
 
 void Tile::onEnterScripts(Entity* triggeredBy)
@@ -186,7 +221,15 @@ void exportTile()
 		.def_readonly("y", &Tile::y)
 		.def_readonly("z", &Tile::z)
 		.def_readwrite("type", &Tile::type)
-		.def_readwrite("exit", &Tile::exit)
+		.add_property("exit",
+		    make_function(
+		      static_cast<Exit* (Tile::*) ()> (&Tile::getNormalExit),
+		      boost::python::return_value_policy<
+		        boost::python::reference_existing_object
+		      >()
+		    ),
+		    &Tile::setNormalExit
+		)
 		.add_property("walkable",
 			&Tile::getWalkable, &Tile::setWalkable)
 		.add_property("flags", &Tile::flagManip)
@@ -208,8 +251,7 @@ void exportTile()
 			const std::string, int, int, double
 		>())
 		.def_readwrite("area", &Exit::area)
-		.def_readwrite("tile", &Exit::tile)
+		.def_readwrite("coord", &Exit::coord)
 		;
-	boost::python::optional_<Exit>();
 }
 

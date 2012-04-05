@@ -92,15 +92,18 @@ void Player::moveByTile(ivec2 delta)
 	icoord newCoord = getTileCoords_i();
 	newCoord += icoord(delta.x, delta.y, 0);
 
+	/*
 	// The tile is off the map. Turn to face the direction, but don't move.
 	if (!area->inBounds(newCoord)) {
 		setPhase(directionStr(setFacing(delta)));
 		redraw = true;
 		return;
 	}
+	*/
 
 	destTile = &area->getTile(newCoord);
 
+	/*
 	// Is anything player-specific preventing us from moving?
 	if (destTile->hasFlag(TILE_NOWALK_PLAYER)) {
 		// The tile we're trying to move onto is set as
@@ -110,6 +113,7 @@ void Player::moveByTile(ivec2 delta)
 		redraw = true;
 		return;
 	}
+	*/
 
 	Entity::moveByTile(delta);
 }
@@ -138,18 +142,40 @@ void Player::postMove()
 	Entity::postMove();
 
 	// Exits
-	const boost::optional<Exit> exit = destTile->exit;
-	if (exit) {
-		World* world = World::instance();
-		AreaPtr newArea = world->getArea(exit->area);
-		if (newArea) {
-			world->focusArea(newArea, exit->tile);
+	if (destTile) {
+		const Exit* exit = destTile->exits[EXIT_NORMAL];
+		if (exit) {
+			World* world = World::instance();
+			AreaPtr newArea = world->getArea(exit->area);
+			if (newArea) {
+				world->focusArea(newArea, exit->coord);
+			}
+			else {
+				// Roll back movement if exit failed to open.
+				r = fromCoord;
+				Log::err("Exit",
+					 exit->area + ": failed to load properly");
+			}
 		}
-		else {
-			// Roll back movement if exit failed to open.
-			r = fromCoord;
-			Log::err("Exit",
-			         exit->area + ": failed to load properly");
+	}
+	if (fromTile) {
+		icoord delta = area->virt2phys(destCoord);
+		delta -= area->virt2phys(fromCoord);
+		if (delta.z == 0) {
+			Exit* exit = area->getTile(area->virt2phys(fromCoord)).exitAt(delta.x, delta.y);
+			if (exit) {
+				World* world = World::instance();
+				AreaPtr newArea = world->getArea(exit->area);
+				if (newArea) {
+					world->focusArea(newArea, exit->coord);
+				}
+				else {
+					// Roll back movement if exit failed to open.
+					r = fromCoord;
+					Log::err("Exit",
+						 exit->area + ": failed to load properly");
+				}
+			}
 		}
 	}
 

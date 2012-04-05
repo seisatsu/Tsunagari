@@ -330,12 +330,23 @@ const std::string& Entity::directionStr(ivec2 facing) const
 
 bool Entity::canMove(icoord dest)
 {
-	if (!area->inBounds(dest))
+	bool can = false, inBounds;
+	icoord delta = dest;
+	delta -= getTileCoords_i();
+	can = can || (inBounds = area->inBounds(dest));
+	can = can || (delta.z == 0 && getTile().exitAt(delta.x, delta.y));
+	if (!can)
 		// The tile is off the map.
 		return false;
 	destCoord = area->phys2virt_r(dest);
-	destTile = &area->getTile(dest);
-	return !destTile->hasFlag(TILE_NOWALK);
+	if (inBounds) {
+		destTile = &area->getTile(dest);
+		return !destTile->hasFlag(TILE_NOWALK);
+	}
+	else {
+		destTile = NULL;
+		return true;
+	}
 }
 
 void Entity::preMove()
@@ -378,8 +389,10 @@ void Entity::postMove()
 		setPhase(getFacing());
 
 	// Process triggers.
-	destTile->onEnterScripts(this);
-	tileEntryScript();
+	if (destTile) {
+		destTile->onEnterScripts(this);
+		tileEntryScript();
+	}
 
 	// TODO: move teleportation here
 	/*

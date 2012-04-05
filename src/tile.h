@@ -31,6 +31,14 @@ class TileType;
 #define TILE_NOWALK_PLAYER 0x002
 #define TILE_NOWALK_NPC    0x004
 
+enum ExitDirections {
+	EXIT_NORMAL,
+	EXIT_UP,
+	EXIT_DOWN,
+	EXIT_LEFT,
+	EXIT_RIGHT
+};
+
 /**
  * Independant object that can manipulate a Tile's flags.
  */
@@ -62,7 +70,7 @@ struct Exit {
 	Exit(const std::string area, int x, int y, double z);
 
 	std::string area;
-	vicoord tile;
+	vicoord coord;
 };
 
 //! Contains properties unique to this tile.
@@ -83,7 +91,7 @@ public:
 	unsigned flags;
 	TileType* type;
 	std::vector<std::string> onEnter, onLeave, onUse;
-	boost::optional<Exit> exit;
+	Exit* exits[5];
 	boost::optional<double> layermod;
 
 	//! Determines whether this tile or one of its parent types embodies a
@@ -92,6 +100,10 @@ public:
 	FlagManip flagManip();
 
 	Tile& offset(int x, int y);
+
+	Exit* getNormalExit();
+	void setNormalExit(Exit* exit);
+	Exit* exitAt(int x, int y);
 
 	void onEnterScripts(Entity* triggeredBy);
 	void onLeaveScripts(Entity* triggeredBy);
