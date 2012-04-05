@@ -6,8 +6,8 @@
   <property name="name" value="Grove House"/>
   <property name="onLoad" value="areas/house_load.py"/>
  </properties>
- <tileset firstgid="1" name="indoors.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/indoors.png" width="112" height="192"/>
+ <tileset firstgid="1" name="inexits.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/inexits.png" width="112" height="192"/>
   <tile id="13">
    <properties>
     <property name="members" value="13,20"/>
@@ -495,7 +495,7 @@
   </object>
   <object gid="7" x="80" y="160">
    <properties>
-    <property name="door" value="areas/grove01.tmx,5,3,0"/>
+    <property name="exit" value="areas/grove01.tmx,5,3,0"/>
    </properties>
   </object>
   <object x="96" y="0" width="16" height="16">

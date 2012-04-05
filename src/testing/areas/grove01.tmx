@@ -14,7 +14,7 @@
   </properties>
   <data>
    <tile gid="76"/>
-   <tile gid="76"/>
+   <tile gid="94"/>
    <tile gid="76"/>
    <tile gid="44"/>
    <tile gid="44"/>
@@ -121,7 +121,7 @@
   </properties>
   <data>
    <tile gid="5"/>
-   <tile gid="94"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -268,12 +268,12 @@
   </object>
   <object gid="10" x="80" y="48">
    <properties>
-    <property name="door" value="areas/grove_house.tmx,5,8,0"/>
+    <property name="exit" value="areas/grove_house.tmx,5,8,0"/>
    </properties>
   </object>
   <object gid="76" x="0" y="144">
    <properties>
-    <property name="door" value="areas/grove02.tmx,8,8,0"/>
+    <property name="exit" value="areas/grove02.tmx,8,8,0"/>
    </properties>
   </object>
   <object type="Tile" x="128" y="48" width="16" height="16">
@@ -288,22 +288,22 @@
   </object>
   <object x="112" y="0" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove05.tmx,7,8,0"/>
+    <property name="exit" value="areas/grove05.tmx,7,8,0"/>
    </properties>
   </object>
   <object x="128" y="0" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove05.tmx,8,8,0"/>
+    <property name="exit" value="areas/grove05.tmx,8,8,0"/>
    </properties>
   </object>
   <object x="32" y="0" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove05.tmx,2,8,0"/>
+    <property name="exit" value="areas/grove05.tmx,2,8,0"/>
    </properties>
   </object>
   <object x="16" y="0" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove05.tmx,1,8,0"/>
+    <property name="exit" value="areas/grove05.tmx,1,8,0"/>
    </properties>
   </object>
   <object type="Tile" x="32" y="48" width="32" height="16">

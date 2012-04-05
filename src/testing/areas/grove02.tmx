@@ -446,7 +446,7 @@
   </properties>
   <object gid="76" x="144" y="144">
    <properties>
-    <property name="door" value="areas/grove01.tmx,1,8,0"/>
+    <property name="exit" value="areas/grove01.tmx,1,8,0"/>
    </properties>
   </object>
   <object x="0" y="0" width="16" height="128">
@@ -497,7 +497,7 @@
   </object>
   <object gid="38" x="16" y="16">
    <properties>
-    <property name="door" value="areas/grove03.tmx,1,8,0"/>
+    <property name="exit" value="areas/grove03.tmx,1,8,0"/>
    </properties>
   </object>
  </objectgroup>

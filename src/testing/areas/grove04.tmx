@@ -261,7 +261,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="128"/>
-   <tile gid="5"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -271,7 +271,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="1"/>
-   <tile gid="22"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -281,7 +281,7 @@
    <tile gid="180"/>
    <tile gid="0"/>
    <tile gid="18"/>
-   <tile gid="39"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="141"/>
    <tile gid="0"/>
@@ -291,7 +291,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="35"/>
-   <tile gid="56"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -301,7 +301,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="52"/>
-   <tile gid="22"/>
+   <tile gid="5"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -636,7 +636,7 @@
   </properties>
   <object gid="76" x="144" y="208">
    <properties>
-    <property name="door" value="areas/grove03.tmx,1,3,0"/>
+    <property name="exit" value="areas/grove03.tmx,1,3,0"/>
    </properties>
   </object>
   <object x="32" y="272" width="16" height="16">
@@ -694,11 +694,6 @@
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="0" y="0" width="16" height="320">
-   <properties>
-    <property name="flags" value="nowalk"/>
-   </properties>
-  </object>
   <object x="48" y="32" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
@@ -722,6 +717,21 @@
   <object x="112" y="304" width="32" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="0" y="128" width="16" height="192">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="0" y="0" width="16" height="64">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="0" y="64" width="16" height="64">
+   <properties>
+    <property name="exit" value="areas/grove06.tmx,8,4+,0"/>
    </properties>
   </object>
  </objectgroup>

@@ -335,22 +335,22 @@
   </properties>
   <object x="112" y="144" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove01.tmx,7,1,0"/>
+    <property name="exit" value="areas/grove01.tmx,7,1,0"/>
    </properties>
   </object>
   <object x="128" y="144" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove01.tmx,8,1,0"/>
+    <property name="exit" value="areas/grove01.tmx,8,1,0"/>
    </properties>
   </object>
   <object x="32" y="144" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove01.tmx,2,1,0"/>
+    <property name="exit" value="areas/grove01.tmx,2,1,0"/>
    </properties>
   </object>
   <object x="16" y="144" width="16" height="16">
    <properties>
-    <property name="door" value="areas/grove01.tmx,1,1,0"/>
+    <property name="exit" value="areas/grove01.tmx,1,1,0"/>
    </properties>
   </object>
   <object x="48" y="144" width="64" height="16">
