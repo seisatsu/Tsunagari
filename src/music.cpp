@@ -85,7 +85,7 @@ void Music::setVolume(double level)
 		musicInst->changeVolume(level);
 }
 
-bool Music::getPaused()
+bool Music::isPaused()
 {
 	return paused;
 }
@@ -206,7 +206,7 @@ void exportMusic()
 		.add_property("intro", &Music::getIntro, &Music::setIntro)
 		.add_property("loop", &Music::getLoop, &Music::setLoop)
 		.add_property("volume", &Music::getVolume, &Music::setVolume)
-		.add_property("paused", &Music::getPaused, &Music::setPaused)
+		.add_property("paused", &Music::isPaused, &Music::setPaused)
 		.def("stop", &Music::stop)
 		;
 }

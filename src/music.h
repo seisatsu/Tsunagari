@@ -49,7 +49,7 @@ public:
 	double getVolume();
 	void setVolume(double level);
 
-	bool getPaused();
+	bool isPaused();
 	void setPaused(bool p);
 
 	void stop();

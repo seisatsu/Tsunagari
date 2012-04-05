@@ -6,34 +6,103 @@
 
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
-#include <Gosu/Audio.hpp>
 
 #include "python.h"
 #include "python_optional.h"
 #include "resourcer.h"
 #include "sound.h"
 
+SoundInstance::SoundInstance(Gosu::SampleInstance inst)
+	: inst(inst), volume(1.0), pan(0.0), speed(1.0)
+{
+}
+
+
+bool SoundInstance::isPlaying()
+{
+	return inst.playing();
+}
+
+void SoundInstance::stop()
+{
+	inst.stop();
+}
+
+
+bool SoundInstance::isPaused()
+{
+	return inst.paused();
+}
+
+void SoundInstance::setPaused(bool paused)
+{
+	if (paused)
+		inst.pause();
+	else
+		inst.resume();
+}
+
+
+double SoundInstance::getVolume()
+{
+	return volume;
+}
+
+void SoundInstance::setVolume(double volume)
+{
+	this->volume = volume;
+	inst.changeVolume(volume);
+}
+
+
+double SoundInstance::getPan()
+{
+	return pan;
+}
+
+void SoundInstance::setPan(double pan)
+{
+	this->pan = pan;
+	inst.changePan(pan);
+}
+
+
+double SoundInstance::getSpeed()
+{
+	return speed;
+}
+
+void SoundInstance::setSpeed(double speed)
+{
+	this->speed = speed;
+	inst.changeSpeed(speed);
+}
+
+
+
+
 Sound::Sound(Gosu::Sample* source)
 	: source(source)
 {
 }
 
-void Sound::play()
+SoundInstance Sound::play()
 {
-	source->play();
+	SoundInstance inst(source->play());
+	return inst;
 }
 
 // Helper class for Python.
 class SoundManager
 {
 public:
-	boost::optional<Gosu::SampleInstance> play(const std::string& path);
+	boost::optional<SoundInstance> play(const std::string& path);
 };
 
-boost::optional<Gosu::SampleInstance> SoundManager::play(const std::string& path)
+boost::optional<SoundInstance> SoundManager::play(const std::string& path)
 {
 	Resourcer* rc;
-	boost::optional<Gosu::SampleInstance> instance;
+	boost::optional<SoundInstance> instance;
 	SampleRef sample;
 
 	rc = Resourcer::instance();
@@ -45,18 +114,16 @@ boost::optional<Gosu::SampleInstance> SoundManager::play(const std::string& path
 
 void exportSound()
 {
-	boost::python::class_<Gosu::SampleInstance>
+	boost::python::class_<SoundInstance>
 		("SoundInstance", boost::python::no_init)
-		.def("playing", &Gosu::SampleInstance::playing)
-		.def("paused", &Gosu::SampleInstance::paused)
-		.def("pause", &Gosu::SampleInstance::pause)
-		.def("resume", &Gosu::SampleInstance::resume)
-		.def("stop", &Gosu::SampleInstance::stop)
-		// setVolume
-		// setPan
-		// setSpeed
+		.add_property("paused", &SoundInstance::isPaused, &SoundInstance::setPaused)
+		.add_property("volume", &SoundInstance::getVolume, &SoundInstance::setVolume)
+		.add_property("pan", &SoundInstance::getPan, &SoundInstance::setPan)
+		.add_property("speed", &SoundInstance::getSpeed, &SoundInstance::setSpeed)
+		.def("playing", &SoundInstance::isPlaying)
+		.def("stop", &SoundInstance::stop)
 		;
-	boost::python::optional_<Gosu::SampleInstance>();
+	boost::python::optional_<SoundInstance>();
 	boost::python::class_<SoundManager>
 		("SoundManager", boost::python::no_init)
 		.def("play", &SoundManager::play)

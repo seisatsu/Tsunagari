@@ -7,15 +7,38 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-namespace Gosu {
-	class Sample;
-}
+#include <Gosu/Audio.hpp>
+
+class SoundInstance
+{
+public:
+	SoundInstance(Gosu::SampleInstance inst);
+
+	bool isPlaying();
+	void stop();
+
+	bool isPaused();
+	void setPaused(bool paused);
+
+	double getVolume();
+	void setVolume(double volume);
+
+	double getPan();
+	void setPan(double pan);
+
+	double getSpeed();
+	void setSpeed(double speed);
+
+private:
+	Gosu::SampleInstance inst;
+	double volume, pan, speed;
+};
 
 class Sound
 {
 public:
 	Sound(Gosu::Sample* source);
-	void play();
+	SoundInstance play();
 
 private:
 	Gosu::Sample* source;

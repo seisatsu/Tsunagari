@@ -120,7 +120,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	BufferPtr buffer(read(name));
 	if (!buffer)
 		return SampleRef();
-	SampleRef result(new Gosu::Sample(buffer->frontReader()));
+	SampleRef result(new Sound(new Gosu::Sample(buffer->frontReader())));
 
 	sounds.lifetimePut(name, result);
 	return result;
