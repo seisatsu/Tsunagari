@@ -5,8 +5,10 @@
 def toggle_music():
     if Music.paused:
         Music.paused = False
+        print 'Unpausing music!'
     else:
         Music.paused = True
+        print 'Pausing music!'
 
 # Open the chest!
 if not opened_the_chest:
