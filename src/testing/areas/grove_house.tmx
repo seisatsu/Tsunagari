@@ -403,6 +403,11 @@
     <property name="on_use" value="areas/house_armor.py"/>
    </properties>
   </object>
+  <object x="32" y="0" width="16" height="16">
+   <properties>
+    <property name="on_use" value="areas/ouch.py"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="Tiles(0.1)" width="10" height="10">
   <properties>
