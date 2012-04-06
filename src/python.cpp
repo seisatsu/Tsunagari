@@ -202,7 +202,7 @@ std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
 	}
 }
 
-std::string extractException2(PyObject* exc, PyObject* val, PyObject* tb)
+std::string extractException2(PyObject* exc, PyObject* val, PyObject*)
 {
 	char* type = PyExceptionClass_Name(exc);
 	char* dot = strrchr(type, '.');

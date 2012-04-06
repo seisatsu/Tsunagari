@@ -119,8 +119,11 @@ public:
 
 	Tile& offset(int x, int y);
 
+	double getZ();
+
 	Exit* getNormalExit();
 	void setNormalExit(Exit exit);
+
 	Exit* exitAt(ivec2 dir);
 	boost::optional<double> layermodAt(ivec2 dir);
 

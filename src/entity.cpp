@@ -435,6 +435,7 @@ void Entity::tileExitScript()
 	const std::string& name = scripts["tileexit"];
 	if (name.size()) {
 		pythonSetGlobal("Entity", this);
+		pythonSetGlobal("Tile", &getTile());
 		rc->runPythonScript(name);
 	}
 }
@@ -445,6 +446,7 @@ void Entity::tileEntryScript()
 	const std::string& name = scripts["tileentry"];
 	if (name.size()) {
 		pythonSetGlobal("Entity", this);
+		pythonSetGlobal("Tile", &getTile());
 		rc->runPythonScript(name);
 	}
 }

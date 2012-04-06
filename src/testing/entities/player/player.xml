@@ -76,6 +76,7 @@
 	</sounds>
 	
 	<scripts>
+		<!-- <script trigger="tileentry">entities/player/ping.py</script> -->
 	</scripts>
 </entity>
 

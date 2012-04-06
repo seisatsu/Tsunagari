@@ -155,6 +155,12 @@ Tile& Tile::offset(int x, int y)
 	return area->getTile(this->x + x, this->y + y, z);
 }
 
+double Tile::getZ()
+{
+	vicoord vi = area->phys2virt_vi(icoord(x, y, z));
+	return vi.z;
+}
+
 Exit* Tile::getNormalExit()
 {
 	return exits[EXIT_NORMAL];
@@ -253,7 +259,7 @@ void exportTile()
 		.def_readonly("area", &Tile::area)
 		.def_readonly("x", &Tile::x)
 		.def_readonly("y", &Tile::y)
-		.def_readonly("z", &Tile::z)
+		.add_property("z", &Tile::getZ)
 		.add_property("exit",
 		    make_function(
 		      static_cast<Exit* (Tile::*) ()> (&Tile::getNormalExit),

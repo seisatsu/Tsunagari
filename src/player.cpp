@@ -128,13 +128,6 @@ void Player::postMove()
 	if (exit)
 		takeExit(exit);
 
-	// Log
-	vicoord tile = getTileCoords_vi();
-	Log::info("Player", boost::str(
-		boost::format("location x:%d y:%d z:%.1f")
-		  % tile.x % tile.y % r.z)
-	);
-
 	// If we have a velocity, keep moving.
 	if (conf.moveMode == TILE && velocity)
 		moveByTile(velocity);

@@ -1,0 +1,1 @@
+print "Info [Player] - location x:%d y:%d z:%.1f" % (Tile.x, Tile.y, Tile.z)
