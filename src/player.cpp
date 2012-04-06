@@ -34,6 +34,7 @@ void removeValue(Cont* c, ValueType v)
 Player::Player(Area* area)
 	: Entity(area), velocity(0, 0)
 {
+	nowalkFlags |= TILE_NOWALK_PLAYER;
 }
 
 void Player::startMovement(ivec2 delta)
@@ -79,41 +80,15 @@ void Player::moveByTile(ivec2 delta)
 	if (moving)
 		// Support queueing moves?
 		return;
+	setFacing(delta);
 
 	// Left CTRL allows changing facing, but disallows movement.
 	const GameWindow& window = GameWindow::getWindow();
 	if (window.input().down(Gosu::kbLeftControl)) {
-		setPhase(directionStr(setFacing(delta)));
+		setPhase(directionStr(facing));
 		redraw = true;
 		return;
 	}
-
-	// FIXME: use frontTiles()
-	icoord newCoord = getTileCoords_i();
-	newCoord += icoord(delta.x, delta.y, 0);
-
-	/*
-	// The tile is off the map. Turn to face the direction, but don't move.
-	if (!area->inBounds(newCoord)) {
-		setPhase(directionStr(setFacing(delta)));
-		redraw = true;
-		return;
-	}
-	*/
-
-//	destTile = &area->getTile(newCoord);
-
-	/*
-	// Is anything player-specific preventing us from moving?
-	if (destTile->hasFlag(TILE_NOWALK_PLAYER)) {
-		// The tile we're trying to move onto is set as
-		// TILE_NOWALK_PLAYER. Turn to face the direction, but don't
-		// move.
-		setPhase(directionStr(setFacing(delta)));
-		redraw = true;
-		return;
-	}
-	*/
 
 	Entity::moveByTile(delta);
 }
@@ -134,50 +109,26 @@ void Player::preMove()
 	SampleRef step = getSound("step");
 	if (step)
 		step->play();
-
 }
 
 void Player::postMove()
 {
 	Entity::postMove();
 
-	// Exits
+	// Normal exit
 	if (destTile) {
-		const Exit* exit = destTile->exits[EXIT_NORMAL];
-		if (exit) {
-			World* world = World::instance();
-			AreaPtr newArea = world->getArea(exit->area);
-			if (newArea) {
-				world->focusArea(newArea, exit->coords);
-			}
-			else {
-				// Roll back movement if exit failed to open.
-				r = fromCoord;
-				Log::err("Exit",
-					 exit->area + ": failed to load properly");
-			}
-		}
+		Exit* exit = destTile->exits[EXIT_NORMAL];
+		if (exit)
+			takeExit(exit);
 	}
 
-	icoord delta = area->virt2phys(destCoord);
-	delta -= area->virt2phys(fromCoord);
-	if (delta.z == 0) {
-		Exit* exit = area->getTile(area->virt2phys(fromCoord)).exitAt(ivec2(delta.x, delta.y));
-		if (exit) {
-			World* world = World::instance();
-			AreaPtr newArea = world->getArea(exit->area);
-			if (newArea) {
-				world->focusArea(newArea, exit->coords);
-			}
-			else {
-				// Roll back movement if exit failed to open.
-				r = fromCoord;
-				Log::err("Exit",
-					 exit->area + ": failed to load properly");
-			}
-		}
-	}
+	// Side exit
+	ivec2 dxy(deltaCoord.x, deltaCoord.y);
+	Exit* exit = fromTile->exitAt(dxy);
+	if (exit)
+		takeExit(exit);
 
+	// Log
 	vicoord tile = getTileCoords_vi();
 	Log::info("Player", boost::str(
 		boost::format("location x:%d y:%d z:%.1f")
@@ -189,3 +140,16 @@ void Player::postMove()
 		moveByTile(velocity);
 }
 
+void Player::takeExit(Exit* exit)
+{
+	World* world = World::instance();
+	AreaPtr newArea = world->getArea(exit->area);
+	if (newArea) {
+		world->focusArea(newArea, exit->coords);
+	}
+	else {
+		// Roll back movement if exit failed to open.
+		r = fromCoord;
+		Log::err("Exit", exit->area + ": failed to load properly");
+	}
+}

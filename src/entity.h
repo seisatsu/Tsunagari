@@ -114,6 +114,8 @@ protected:
 	//! Returns true if we can move in the desired direction.
 	virtual bool canMove(icoord delta);
 
+	bool nowalked(Tile& t);
+
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove();
 
@@ -162,12 +164,15 @@ protected:
 	//! True if currently moving between two Tiles in an Area. Only used in
 	//! TILE game mode.
 	bool moving;
-	/** Hack flag can be used to not stop the moving animation in-between tiles. */
+	/** Hack flag can be used to not stop the moving animation in-between
+	 * tiles. */
 	bool stillMoving;
+	unsigned nowalkFlags;
 
+	vicoord deltaCoord;
 	rcoord fromCoord;
-	Tile* fromTile;
 	rcoord destCoord;
+	Tile* fromTile;
 	Tile* destTile;
 
 	//! Pointer to Area this Entity is located on.

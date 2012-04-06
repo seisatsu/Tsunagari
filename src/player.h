@@ -35,7 +35,9 @@ protected:
 	void preMove();
 	void postMove();
 
+	void takeExit(Exit* exit);
 private:
+
 	//! Stores intent to move continuously in some direction.
 	ivec2 velocity;
 

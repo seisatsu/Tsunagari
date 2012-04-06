@@ -34,6 +34,7 @@ Entity::Entity(Area* area)
 	  speedMul(1.0),
 	  moving(false),
 	  stillMoving(false),
+	  nowalkFlags(TILE_NOWALK),
 	  area(NULL),
 	  r(0.0, 0.0, 0.0)
 {
@@ -250,7 +251,7 @@ void Entity::gotoRandomTile()
 	do {
 		pos = icoord(rand() % map.x, rand() % map.y, 0);
 		tile = &area->getTile(pos);
-	} while (tile->hasFlag(TILE_NOWALK));
+	} while (nowalked(*tile));
 	setTileCoords(pos);
 }
 
@@ -325,18 +326,18 @@ const std::string& Entity::directionStr(ivec2 facing) const
 
 bool Entity::canMove(icoord dest)
 {
-	bool can = false, inBounds;
+	bool inBounds;
 	icoord delta = dest;
 	delta -= getTileCoords_i();
-	can = can || (inBounds = area->inBounds(dest));
-	can = can || (delta.z == 0 && getTile().exitAt(ivec2(delta.x, delta.y)));
-	if (!can)
+	ivec2 dxy(delta.x, delta.y);
+	if (!(inBounds = area->inBounds(dest)) &&
+	    !(delta.z == 0 && getTile().exitAt(dxy)))
 		// The tile is off the map.
 		return false;
 	destCoord = area->phys2virt_r(dest);
 	if (inBounds) {
 		destTile = &area->getTile(dest);
-		return !destTile->hasFlag(TILE_NOWALK);
+		return !nowalked(*destTile);
 	}
 	else {
 		destTile = NULL;
@@ -344,10 +345,32 @@ bool Entity::canMove(icoord dest)
 	}
 }
 
+bool Entity::nowalked(Tile& t)
+{
+	if (nowalkFlags & TILE_NOWALK) {
+		if (t.hasFlag(TILE_NOWALK))
+			return true;
+	}
+	if (nowalkFlags & TILE_NOWALK_PLAYER) {
+		if (t.hasFlag(TILE_NOWALK_PLAYER))
+			return true;
+	}
+	if (nowalkFlags & TILE_NOWALK_NPC) {
+		if (t.hasFlag(TILE_NOWALK_NPC))
+			return true;
+	}
+	return false;
+}
+
 void Entity::preMove()
 {
 	fromCoord = r;
 	fromTile = &getTile();
+
+	rcoord d = destCoord;
+	d -= fromCoord;
+	deltaCoord = area->virt2virt(d);
+
 	moving = true;
 
 	// Set z right away so that we're on-level with the square we're
