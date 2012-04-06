@@ -207,6 +207,13 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 }
 
 
+
+Exit pythonNewExit(std::string area, int x, int y, double z)
+{
+	return Exit(area, x, y, z);
+}
+
+
 void exportTile()
 {
 	boost::python::class_<FlagManip>
@@ -256,5 +263,6 @@ void exportTile()
 		.def_readwrite("area", &Exit::area)
 		.def_readwrite("coord", &Exit::coord)
 		;
+	pythonAddFunction("newExit", pythonNewExit);
 }
 
