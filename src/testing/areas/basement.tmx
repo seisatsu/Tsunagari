@@ -2,13 +2,14 @@
 <map version="1.0" orientation="orthogonal" width="6" height="6" tilewidth="16" tileheight="16">
  <properties>
   <property name="author" value="Michael D. Reiley"/>
+  <property name="color_overlay" value="0,0,0,239"/>
   <property name="name" value="Basement"/>
  </properties>
- <tileset firstgid="1" name="indoors_dark.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/indoors_dark.png" width="112" height="192"/>
+ <tileset firstgid="1" name="indoors.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/indoors.png" width="112" height="192"/>
  </tileset>
- <tileset firstgid="85" name="objects_dark.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/objects_dark.png" width="112" height="112"/>
+ <tileset firstgid="85" name="objects.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/objects.png" width="112" height="112"/>
  </tileset>
  <layer name="Tiles(-0.3)" width="6" height="6">
   <properties>

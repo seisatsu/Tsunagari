@@ -4,6 +4,8 @@
   <property name="author" value="Michael D. Reiley"/>
   <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove 01"/>
+  <property name="onLoad" value="areas/g01_load.py"/>
+  <property name="onUpdate" value="areas/g01_update.py"/>
  </properties>
  <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/forest.png" width="272" height="304"/>

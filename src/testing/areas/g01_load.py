@@ -1,0 +1,2 @@
+drinking = False
+
