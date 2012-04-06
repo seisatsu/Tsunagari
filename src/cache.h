@@ -28,7 +28,7 @@ public:
 		if (conf.cacheEnabled) {
 			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
-				Log::info("Cache", name + ": requested (cached)");
+				// Log::info("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
 				// Set lastUsed to now because it won't be used
 				// by the time garbageCollect() gets to it.
@@ -46,7 +46,7 @@ public:
 		if (conf.cacheEnabled) {
 			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
-				Log::info("Cache", name + ": requested (cached)");
+				// Log::info("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
 				entry.lastUsed = IN_USE_NOW;
 				return entry.resource;
