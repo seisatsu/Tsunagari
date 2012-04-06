@@ -124,7 +124,7 @@ AreaPtr World::getFocusedArea()
 
 void World::focusArea(AreaPtr area, vicoord playerPos)
 {
-	Log::info("World", area->getDescriptor() + ": focused");
+	// Log::info("World", area->getDescriptor() + ": focused");
 	this->area = area;
 	player.setArea(area.get());
 	player.setTileCoords(playerPos);

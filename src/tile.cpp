@@ -36,6 +36,15 @@ static int ivec2_to_dir(ivec2 v)
 	}
 }
 
+static Exit pythonNewExit(std::string area, int x, int y, double z)
+{
+	return Exit(area, x, y, z);
+}
+
+
+/*
+ * FLAGMANIP
+ */
 FlagManip::FlagManip(unsigned* flags)
 	: flags(flags)
 {
@@ -82,6 +91,9 @@ Exit::Exit(const std::string area, int x, int y, double z)
 }
 
 
+/*
+ * TILEBASE
+ */
 TileBase::TileBase()
 	: parent(NULL), flags(0x0)
 {
@@ -97,7 +109,7 @@ FlagManip TileBase::flagManip()
 	return FlagManip(&flags);
 }
 
-TileType* TileBase::getType()
+TileType* TileBase::getType() const
 {
 	return (TileType*)parent;
 }
@@ -139,6 +151,10 @@ void TileBase::runScripts(Entity* triggeredBy,
 	}
 }
 
+
+/*
+ * TILE
+ */
 Tile::Tile()
 {
 }
@@ -161,7 +177,7 @@ double Tile::getZ()
 	return vi.z;
 }
 
-Exit* Tile::getNormalExit()
+Exit* Tile::getNormalExit() const
 {
 	return exits[EXIT_NORMAL];
 }
@@ -174,18 +190,22 @@ void Tile::setNormalExit(Exit exit)
 	*norm = new Exit(exit);
 }
 
-Exit* Tile::exitAt(ivec2 dir)
+Exit* Tile::exitAt(ivec2 dir) const
 {
 	int idx = ivec2_to_dir(dir);
 	return idx == -1 ? NULL : exits[idx];
 }
 
-boost::optional<double> Tile::layermodAt(ivec2 dir)
+boost::optional<double> Tile::layermodAt(ivec2 dir) const
 {
 	int idx = ivec2_to_dir(dir);
 	return idx == -1 ? boost::optional<double>() : layermods[idx];
 }
 
+
+/*
+ * TILETYPE
+ */
 TileType::TileType()
 	: TileBase()
 {
@@ -198,36 +218,10 @@ TileType::TileType(TiledImage& img)
 	img.pop_front();
 }
 
-bool TileType::needsRedraw(const Area& area) const
+bool TileType::needsRedraw() const
 {
 	const int millis = GameWindow::getWindow().time();
-	return anim.needsRedraw(millis) &&
-	       visibleIn(area, area.visibleTiles());
-}
-
-bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
-{
-	for (int z = tiles.z1; z != tiles.z2; z++) {
-		for (int y = tiles.y1; y != tiles.y2; y++) {
-			for (int x = tiles.x1; x != tiles.x2; x++) {
-				icoord pos(x, y, z);
-				// Do this check before passing _tiles_ to fn.
-				if (area.inBounds(pos)) {
-					const Tile& tile = area.getTile(pos);
-					if (tile.parent == this)
-						return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
-
-
-Exit pythonNewExit(std::string area, int x, int y, double z)
-{
-	return Exit(area, x, y, z);
+	return anim.needsRedraw(millis);
 }
 
 
@@ -247,8 +241,8 @@ void exportTile()
 		.add_property("flags", &TileBase::flagManip)
 		.add_property("type",
 		    make_function(
-		      static_cast<TileType* (TileBase::*) ()>
-		      (&TileBase::getType),
+		      static_cast<TileType* (TileBase::*) () const>
+		        (&TileBase::getType),
 		      return_value_policy<reference_existing_object>()),
 		    &TileBase::setType)
 		.def("onEnterScripts", &TileBase::onEnterScripts)
@@ -262,7 +256,8 @@ void exportTile()
 		.add_property("z", &Tile::getZ)
 		.add_property("exit",
 		    make_function(
-		      static_cast<Exit* (Tile::*) ()> (&Tile::getNormalExit),
+		      static_cast<Exit* (Tile::*) () const>
+		        (&Tile::getNormalExit),
 		      return_value_policy<reference_existing_object>()),
 		    &Tile::setNormalExit)
 		.def("offset", &Tile::offset,

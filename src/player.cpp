@@ -78,7 +78,6 @@ void Player::stopMovement(ivec2 delta)
 void Player::moveByTile(ivec2 delta)
 {
 	if (moving)
-		// Support queueing moves?
 		return;
 	setFacing(delta);
 
@@ -115,14 +114,14 @@ void Player::postMove()
 {
 	Entity::postMove();
 
-	// Normal exit
+	// Normal exit.
 	if (destTile) {
 		Exit* exit = destTile->exits[EXIT_NORMAL];
 		if (exit)
 			takeExit(exit);
 	}
 
-	// Side exit
+	// Side exit.
 	ivec2 dxy(deltaCoord.x, deltaCoord.y);
 	Exit* exit = fromTile->exitAt(dxy);
 	if (exit)

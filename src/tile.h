@@ -86,7 +86,7 @@ public:
 	bool hasFlag(unsigned flag) const;
 	FlagManip flagManip();
 
-	TileType* getType();
+	TileType* getType() const;
 	void setType(TileType* type);
 
 	void onEnterScripts(Entity* triggeredBy);
@@ -121,11 +121,11 @@ public:
 
 	double getZ();
 
-	Exit* getNormalExit();
+	Exit* getNormalExit() const;
 	void setNormalExit(Exit exit);
 
-	Exit* exitAt(ivec2 dir);
-	boost::optional<double> layermodAt(ivec2 dir);
+	Exit* exitAt(ivec2 dir) const;
+	boost::optional<double> layermodAt(ivec2 dir) const;
 
 public:
 	Area* area;
@@ -147,12 +147,7 @@ public:
 	TileType(TiledImage& img);
 
 	//! Returns true if onscreen and we need to update our animation.
-	bool needsRedraw(const Area& area) const;
-
-private:
-	//! Returns true if any of the area's tiles within the specified range
-	//! are of this type.
-	bool visibleIn(const Area& area, const icube_t& tiles) const;
+	bool needsRedraw() const;
 
 public:
 	Animation anim; //! Graphics for tiles of this type.
