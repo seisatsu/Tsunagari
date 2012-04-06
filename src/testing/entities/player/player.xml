@@ -13,56 +13,56 @@
 			<phase name="right" pos="4" />
 			<phase name="down-right" pos="7" />
 
-			<phase name="moving up" speed="4">
+			<phase name="moving up" speed="6">
 				<member pos="0" />
 				<member pos="1" />
 				<member pos="2" />
 				<member pos="1" />
 			</phase>
 
-			<phase name="moving up-right" speed="4">
+			<phase name="moving up-right" speed="6">
 				<member pos="0" />
 				<member pos="1" />
 				<member pos="2" />
 				<member pos="1" />
 			</phase>
 
-			<phase name="moving right" speed="4">
+			<phase name="moving right" speed="6">
 				<member pos="3" />
 				<member pos="4" />
 				<member pos="5" />
 				<member pos="4" />
 			</phase>
 
-			<phase name="moving down-right" speed="4">
+			<phase name="moving down-right" speed="6">
 				<member pos="6" />
 				<member pos="7" />
 				<member pos="8" />
 				<member pos="7" />
 			</phase>
 
-			<phase name="moving down" speed="4">
+			<phase name="moving down" speed="6">
 				<member pos="6" />
 				<member pos="7" />
 				<member pos="8" />
 				<member pos="7" />
 			</phase>
 
-			<phase name="moving down-left" speed="4">
+			<phase name="moving down-left" speed="6">
 				<member pos="6" />
 				<member pos="7" />
 				<member pos="8" />
 				<member pos="7" />
 			</phase>
 
-			<phase name="moving left" speed="4">
+			<phase name="moving left" speed="6">
 				<member pos="9" />
 				<member pos="10" />
 				<member pos="11" />
 				<member pos="10" />
 			</phase>
 
-			<phase name="moving up-left" speed="4">
+			<phase name="moving up-left" speed="6">
 				<member pos="0" />
 				<member pos="1" />
 				<member pos="2" />

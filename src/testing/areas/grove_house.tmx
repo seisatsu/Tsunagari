@@ -379,6 +379,7 @@
   <object x="128" y="16" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
+    <property name="onUse" value="areas/house_book.py"/>
    </properties>
   </object>
   <object x="48" y="80" width="64" height="16">
