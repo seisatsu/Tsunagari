@@ -33,6 +33,7 @@ static bp::object dictMain, dictBltin;
 static std::string moduleWhitelist[] = {
 	"__builtin__",
 	"__main__",
+	"__future__",
 	"math",
 	"random",
 	"sys",
