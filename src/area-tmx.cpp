@@ -108,6 +108,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
   <property name="onFocus" value="wood_focus.py"/>
   <property name="onUpdate" value="wood_update.py"/>
   <property name="loop" value="xy"/>
+  <property name="color_overlay" value="255,255,255,127"/>
  </properties>
 */
 	Resourcer* rc = Resourcer::instance();
@@ -160,6 +161,11 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		else if (name == "loop") {
 			loopX = value.find('x') != std::string::npos;
 			loopY = value.find('y') != std::string::npos;
+		}
+		else if (name == "color_overlay") {
+			Gosu::Color::Channel r, g, b, a;
+			ASSERT(parseRGBA(value, &r, &g, &b, &a));
+			colorOverlay = Gosu::Color(a, r, g, b);
 		}
 	}
 
@@ -786,6 +792,39 @@ bool AreaTMX::parseExit(const std::string& dest, Exit* exit,
 
 	*wwide = xstr.find('+') != std::string::npos;
 	*hwide = ystr.find('+') != std::string::npos;
+
+	return true;
+}
+
+bool AreaTMX::parseRGBA(const std::string& str,
+	Gosu::Color::Channel* r,
+	Gosu::Color::Channel* g,
+	Gosu::Color::Channel* b,
+	Gosu::Color::Channel* a)
+{
+	std::vector<std::string> strs = splitStr(str, ",");
+
+	if (strs.size() != 4) {
+		Log::err(descriptor, "invalid RGBA format");
+		return false;
+	}
+
+	Gosu::Color::Channel* channels[] = { r, g, b, a };
+
+	for (int i = 0; i < 4; i++) {
+		std::string s = strs[i];
+		if (!isInteger(s)) {
+			Log::err(descriptor, "invalid RGBA format");
+			return false;
+		}
+		int v = atoi(s.c_str());
+		if (!(0 <= v && v < 256)) {
+			Log::err(descriptor,
+				"RGBA values must be between 0 and 255");
+			return false;
+		}
+		*channels[i] = (Gosu::Color::Channel)v;
+	}
 
 	return true;
 }

@@ -46,6 +46,11 @@ private:
 	bool splitTileFlags(const std::string& strOfFlags, unsigned* flags);
 	bool parseExit(const std::string& dest, Exit* exit,
 		bool* wwide, bool* hwide);
+	bool parseRGBA(const std::string& str,
+		Gosu::Color::Channel* r,
+		Gosu::Color::Channel* g,
+		Gosu::Color::Channel* b,
+		Gosu::Color::Channel* a);
 };
 
 #endif
