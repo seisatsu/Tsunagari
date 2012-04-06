@@ -215,8 +215,9 @@ Exit pythonNewExit(std::string area, int x, int y, double z)
 
 void exportTile()
 {
-	boost::python::class_<FlagManip>
-		("FlagManipulator", boost::python::no_init)
+	using namespace boost::python;
+
+	class_<FlagManip> ("FlagManipulator", no_init)
 		.add_property("nowalk",
 			&FlagManip::isNowalk, &FlagManip::setNowalk)
 		.add_property("nowalk_player",
@@ -224,50 +225,33 @@ void exportTile()
 		.add_property("nowalk_npc",
 			&FlagManip::isNowalkNPC, &FlagManip::setNowalkNPC)
 		;
-	boost::python::class_<TileBase>
-		("TileBase", boost::python::no_init)
+	class_<TileBase> ("TileBase", no_init)
 		.add_property("flags", &TileBase::flagManip)
 		.add_property("type",
 		    make_function(
 		      static_cast<TileType* (TileBase::*) ()>
 		      (&TileBase::getType),
-		      boost::python::return_value_policy<
-		        boost::python::reference_existing_object
-		      >()
-		    ),
-		    &TileBase::setType
-		)
+		      return_value_policy<reference_existing_object>()),
+		    &TileBase::setType)
 		.def("onEnterScripts", &TileBase::onEnterScripts)
 		.def("onLeaveScripts", &TileBase::onLeaveScripts)
 		.def("onUseScripts", &TileBase::onUseScripts)
 		;
-	boost::python::class_<Tile, boost::python::bases<TileBase> >
-		("Tile", boost::python::no_init)
+	class_<Tile, bases<TileBase> > ("Tile", no_init)
 		.def_readonly("x", &Tile::x)
 		.def_readonly("y", &Tile::y)
 		.def_readonly("z", &Tile::z)
 		.add_property("exit",
 		    make_function(
 		      static_cast<Exit* (Tile::*) ()> (&Tile::getNormalExit),
-		      boost::python::return_value_policy<
-		        boost::python::reference_existing_object
-		      >()
-		    ),
-		    &Tile::setNormalExit
-		)
+		      return_value_policy<reference_existing_object>()),
+		    &Tile::setNormalExit)
 		.def("offset", &Tile::offset,
-		    boost::python::return_value_policy<
-		      boost::python::reference_existing_object
-		    >()
-		)
+		    return_value_policy<reference_existing_object>())
 		;
-	boost::python::class_<TileType, boost::python::bases<TileBase> >
-		("TileType", boost::python::no_init)
+	class_<TileType, bases<TileBase> > ("TileType", no_init)
 		;
-	boost::python::class_<Exit>
-		("Exit", boost::python::init<
-			const std::string, int, int, double
-		>())
+	class_<Exit> ("Exit", no_init)
 		.def_readwrite("area", &Exit::area)
 		.def_readwrite("coord", &Exit::coord)
 		;
