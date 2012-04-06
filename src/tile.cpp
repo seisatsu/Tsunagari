@@ -12,6 +12,30 @@
 #include "tile.h"
 #include "window.h"
 
+static int ivec2_to_dir(ivec2 v)
+{
+	switch (v.x) {
+	case -1:
+		return v.y == 0 ? EXIT_LEFT : -1;
+	case 0:
+		switch (v.y) {
+		case -1:
+			return EXIT_UP;
+		case 0:
+			return EXIT_NORMAL;
+		case 1:
+			return EXIT_DOWN;
+		default:
+			return -1;
+		}
+		break;
+	case 1:
+		return v.y == 0 ? EXIT_RIGHT : -1;
+	default:
+		return -1;
+	}
+}
+
 FlagManip::FlagManip(unsigned* flags)
 	: flags(flags)
 {
@@ -123,6 +147,7 @@ Tile::Tile(Area* area, int x, int y, int z)
 	: TileBase(), area(area), x(x), y(y), z(z)
 {
 	memset(exits, 0, sizeof(exits));
+	memset(layermods, 0, sizeof(layermods));
 }
 
 Tile& Tile::offset(int x, int y)
@@ -143,30 +168,17 @@ void Tile::setNormalExit(Exit exit)
 	*norm = new Exit(exit);
 }
 
-Exit* Tile::exitAt(int x, int y)
+Exit* Tile::exitAt(ivec2 dir)
 {
-	switch (x) {
-	case -1:
-		return y == 0 ? exits[EXIT_LEFT] : NULL;
-	case 0:
-		switch (y) {
-		case -1:
-			return exits[EXIT_UP];
-		case 0:
-			return exits[EXIT_NORMAL];
-		case 1:
-			return exits[EXIT_DOWN];
-		default:
-			return NULL;
-		}
-		break;
-	case 1:
-		return y == 0 ? exits[EXIT_RIGHT] : NULL;
-	default:
-		return NULL;
-	}
+	int idx = ivec2_to_dir(dir);
+	return idx == -1 ? NULL : exits[idx];
 }
 
+boost::optional<double> Tile::layermodAt(ivec2 dir)
+{
+	int idx = ivec2_to_dir(dir);
+	return idx == -1 ? boost::optional<double>() : layermods[idx];
+}
 
 TileType::TileType()
 	: TileBase()
@@ -238,6 +250,7 @@ void exportTile()
 		.def("onUseScripts", &TileBase::onUseScripts)
 		;
 	class_<Tile, bases<TileBase> > ("Tile", no_init)
+		.def_readonly("area", &Tile::area)
 		.def_readonly("x", &Tile::x)
 		.def_readonly("y", &Tile::y)
 		.def_readonly("z", &Tile::z)

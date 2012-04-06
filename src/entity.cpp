@@ -281,18 +281,13 @@ Tile& Entity::getTile()
 std::vector<icoord> Entity::frontTiles() const
 {
 	std::vector<icoord> tiles;
-	icoord normal = getTileCoords_i();
-	normal += icoord(facing.x, facing.y, 0);
-	tiles.push_back(normal);
+	icoord dest = getTileCoords_i();
+	dest += icoord(facing.x, facing.y, 0);
 
-	// If we are on a tile with the layermod property, we have access to
-	// tiles on the new layer, too.
-	const boost::optional<double> layermod = getTile().layermod;
-	if (layermod) {
-		icoord mod = area->virt2phys(
-			vicoord(normal.x, normal.y, *layermod));
-		tiles.push_back(mod);
-	}
+	boost::optional<double> layermod = getTile().layermodAt(facing);
+	if (layermod)
+		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
+	tiles.push_back(dest);
 	return tiles;
 }
 
@@ -334,7 +329,7 @@ bool Entity::canMove(icoord dest)
 	icoord delta = dest;
 	delta -= getTileCoords_i();
 	can = can || (inBounds = area->inBounds(dest));
-	can = can || (delta.z == 0 && getTile().exitAt(delta.x, delta.y));
+	can = can || (delta.z == 0 && getTile().exitAt(ivec2(delta.x, delta.y)));
 	if (!can)
 		// The tile is off the map.
 		return false;
@@ -383,6 +378,12 @@ void Entity::preMove()
 void Entity::postMove()
 {
 	moving = false;
+
+	if (destTile) {
+		boost::optional<double> layermod = getTile().layermods[EXIT_NORMAL];
+		if (layermod)
+			r.z = *layermod;
+	}
 
 	// Stop moving animation.
 	if (conf.moveMode != TURN && !stillMoving)

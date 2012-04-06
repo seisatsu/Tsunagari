@@ -31,7 +31,8 @@ class TileType;
 #define TILE_NOWALK_PLAYER 0x002
 #define TILE_NOWALK_NPC    0x004
 
-enum ExitDirections {
+// Indexes into Exit and layermod arrays found in class Tile.
+enum ExitDirection {
 	EXIT_NORMAL,
 	EXIT_UP,
 	EXIT_DOWN,
@@ -120,13 +121,14 @@ public:
 
 	Exit* getNormalExit();
 	void setNormalExit(Exit exit);
-	Exit* exitAt(int x, int y);
+	Exit* exitAt(ivec2 dir);
+	boost::optional<double> layermodAt(ivec2 dir);
 
 public:
 	Area* area;
 	int x, y, z;
 	Exit* exits[5];
-	boost::optional<double> layermod;
+	boost::optional<double> layermods[5];
 };
 
 //! Contains the properties shared by all tiles of a certain type.

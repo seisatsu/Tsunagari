@@ -162,7 +162,7 @@ void Player::postMove()
 		icoord delta = area->virt2phys(destCoord);
 		delta -= area->virt2phys(fromCoord);
 		if (delta.z == 0) {
-			Exit* exit = area->getTile(area->virt2phys(fromCoord)).exitAt(delta.x, delta.y);
+			Exit* exit = area->getTile(area->virt2phys(fromCoord)).exitAt(ivec2(delta.x, delta.y));
 			if (exit) {
 				World* world = World::instance();
 				AreaPtr newArea = world->getArea(exit->area);

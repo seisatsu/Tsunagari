@@ -574,10 +574,11 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	Resourcer* rc = Resourcer::instance();
 
 	// Gather object properties now. Assign them to tiles later.
-	std::vector<std::string> onEnter, onLeave, onUse;
 	bool wwide[5], hwide[5]; /* wide exit in dimensions: width, height */
+
+	std::vector<std::string> onEnter, onLeave, onUse;
 	boost::scoped_ptr<Exit> exit[5];
-	boost::optional<int> layermod;
+	boost::optional<double> layermods[5];
 	unsigned flags = 0x0;
 
 	XMLNode child = node.childrenNode(); // <properties>
@@ -637,10 +638,30 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			ASSERT(parseExit(value, exit[EXIT_RIGHT].get(), &wwide[EXIT_RIGHT], &hwide[EXIT_RIGHT]));
 		}
 		else if (name == "layermod") {
-			int mod;
-			ASSERT(child.intAttr("value", &mod));
-			layermod.reset(mod);
+			double mod;
+			ASSERT(child.doubleAttr("value", &mod));
+			layermods[EXIT_NORMAL].reset(mod);
 			flags |= TILE_NOWALK_NPC;
+		}
+		else if (name == "layermod:up") {
+			double mod;
+			ASSERT(child.doubleAttr("value", &mod));
+			layermods[EXIT_UP].reset(mod);
+		}
+		else if (name == "layermod:down") {
+			double mod;
+			ASSERT(child.doubleAttr("value", &mod));
+			layermods[EXIT_DOWN].reset(mod);
+		}
+		else if (name == "layermod:left") {
+			double mod;
+			ASSERT(child.doubleAttr("value", &mod));
+			layermods[EXIT_LEFT].reset(mod);
+		}
+		else if (name == "layermod:right") {
+			double mod;
+			ASSERT(child.doubleAttr("value", &mod));
+			layermods[EXIT_RIGHT].reset(mod);
 		}
 	}
 
@@ -690,8 +711,9 @@ bool AreaTMX::processObject(XMLNode node, int z)
 						tile.exits[i]->coord.y += dy;
 				}
 			}
-			if (layermod)
-				tile.layermod = layermod;
+			for (int i = 0; i < 5; i++)
+				if (layermods[i])
+					tile.layermods[i] = layermods[i];
 			tile.onEnter = onEnter;
 			tile.onLeave = onLeave;
 			tile.onUse = onUse;

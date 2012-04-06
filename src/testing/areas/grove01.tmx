@@ -421,7 +421,7 @@
   </properties>
   <object x="96" y="32" width="16" height="16">
    <properties>
-    <property name="layermod" value="0"/>
+    <property name="layermod:down" value="0"/>
    </properties>
   </object>
   <object x="32" y="0" width="16" height="48">
