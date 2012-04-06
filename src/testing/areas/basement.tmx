@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="10" height="6" tilewidth="16" tileheight="16">
+<map version="1.0" orientation="orthogonal" width="6" height="6" tilewidth="16" tileheight="16">
  <properties>
   <property name="author" value="Michael D. Reiley"/>
-  <property name="main_music" value="music/A_Travellers_Tale.oga"/>
-  <property name="name" value="Secret Room"/>
+  <property name="name" value="Basement"/>
  </properties>
- <tileset firstgid="1" name="indoors.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/indoors.png" width="112" height="192"/>
-  <tile id="41">
-   <properties>
-    <property name="members" value="41,48"/>
-    <property name="speed" value="1.5"/>
-   </properties>
-  </tile>
+ <tileset firstgid="1" name="indoors_dark.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/indoors_dark.png" width="112" height="192"/>
  </tileset>
- <layer name="Tiles(-0.3)" width="10" height="6">
+ <tileset firstgid="85" name="objects_dark.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/objects_dark.png" width="112" height="112"/>
+ </tileset>
+ <layer name="Tiles(-0.3)" width="6" height="6">
   <properties>
    <property name="layer" value="-0.3"/>
   </properties>
@@ -50,30 +46,6 @@
    <tile gid="7"/>
    <tile gid="7"/>
    <tile gid="7"/>
-   <tile gid="48"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
-   <tile gid="7"/>
    <tile gid="7"/>
    <tile gid="7"/>
    <tile gid="7"/>
@@ -81,7 +53,7 @@
    <tile gid="7"/>
   </data>
  </layer>
- <layer name="Tiles(-0.2)" width="10" height="6">
+ <layer name="Tiles(-0.2)" width="6" height="6">
   <properties>
    <property name="layer" value="-0.2"/>
   </properties>
@@ -91,56 +63,32 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
    <tile gid="31"/>
    <tile gid="36"/>
+   <tile gid="103"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="107"/>
+   <tile gid="106"/>
    <tile gid="38"/>
    <tile gid="36"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="122"/>
+   <tile gid="38"/>
+   <tile gid="36"/>
+   <tile gid="4"/>
+   <tile gid="5"/>
+   <tile gid="6"/>
    <tile gid="0"/>
    <tile gid="38"/>
    <tile gid="36"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="1"/>
-   <tile gid="2"/>
-   <tile gid="3"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="38"/>
-   <tile gid="36"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="8"/>
-   <tile gid="9"/>
-   <tile gid="10"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="11"/>
+   <tile gid="12"/>
+   <tile gid="13"/>
+   <tile gid="122"/>
    <tile gid="38"/>
    <tile gid="43"/>
-   <tile gid="44"/>
-   <tile gid="44"/>
-   <tile gid="44"/>
-   <tile gid="0"/>
    <tile gid="44"/>
    <tile gid="44"/>
    <tile gid="44"/>
@@ -148,28 +96,12 @@
    <tile gid="45"/>
   </data>
  </layer>
- <layer name="Tiles(-0.1)" width="10" height="6">
+ <layer name="Tiles(-0.1)" width="6" height="6">
   <properties>
    <property name="layer" value="-0.1"/>
   </properties>
   <data>
    <tile gid="0"/>
-   <tile gid="42"/>
-   <tile gid="16"/>
-   <tile gid="46"/>
-   <tile gid="47"/>
-   <tile gid="46"/>
-   <tile gid="47"/>
-   <tile gid="50"/>
-   <tile gid="42"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="23"/>
-   <tile gid="53"/>
-   <tile gid="54"/>
-   <tile gid="53"/>
-   <tile gid="54"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -185,24 +117,16 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="34"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="41"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="26"/>
-   <tile gid="27"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -215,57 +139,57 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop(0)" width="10" height="6">
+ <objectgroup name="Prop(0)" width="6" height="6">
   <properties>
    <property name="layer" value="0"/>
   </properties>
-  <object x="0" y="0" width="16" height="96">
+  <object x="0" y="0" width="96" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="16" y="80" width="48" height="16">
+  <object x="0" y="80" width="96" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="80" y="80" width="80" height="16">
+  <object x="0" y="16" width="16" height="64">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="144" y="0" width="16" height="80">
+  <object x="64" y="64" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="16" y="0" width="128" height="16">
+  <object x="80" y="16" width="16" height="64">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="32" y="16" width="80" height="16">
+  <object x="16" y="16" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="128" y="64" width="16" height="16">
+  <object x="48" y="16" width="32" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="64" y="80" width="16" height="16">
+  <object x="64" y="32" width="16" height="16">
    <properties>
-    <property name="exit" value="areas/grove_house.tmx,4,0,0"/>
+    <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="16" y="48" width="16" height="16">
+  <object x="64" y="48" width="16" height="16">
    <properties>
-    <property name="exit" value="areas/basement.tmx,3,3,0"/>
+    <property name="exit" value="areas/secret_room.tmx,1,3,0"/>
    </properties>
   </object>
  </objectgroup>
- <layer name="Tiles(0.1)" width="10" height="6">
+ <layer name="Tiles(0.1)" width="6" height="6">
   <properties>
    <property name="layer" value="0.1"/>
   </properties>
@@ -286,30 +210,6 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="19"/>
-   <tile gid="20"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
