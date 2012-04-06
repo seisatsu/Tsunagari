@@ -148,7 +148,7 @@ void Player::postMove()
 			World* world = World::instance();
 			AreaPtr newArea = world->getArea(exit->area);
 			if (newArea) {
-				world->focusArea(newArea, exit->coord);
+				world->focusArea(newArea, exit->coords);
 			}
 			else {
 				// Roll back movement if exit failed to open.
@@ -167,7 +167,7 @@ void Player::postMove()
 				World* world = World::instance();
 				AreaPtr newArea = world->getArea(exit->area);
 				if (newArea) {
-					world->focusArea(newArea, exit->coord);
+					world->focusArea(newArea, exit->coords);
 				}
 				else {
 					// Roll back movement if exit failed to open.

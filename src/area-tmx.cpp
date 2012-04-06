@@ -706,9 +706,9 @@ bool AreaTMX::processObject(XMLNode node, int z)
 					int dx = X - x;
 					int dy = Y - y;
 					if (wwide[i])
-						tile.exits[i]->coord.x += dx;
+						tile.exits[i]->coords.x += dx;
 					if (hwide[i])
-						tile.exits[i]->coord.y += dy;
+						tile.exits[i]->coords.y += dy;
 				}
 			}
 			for (int i = 0; i < 5; i++)
@@ -780,9 +780,9 @@ bool AreaTMX::parseExit(const std::string& dest, Exit* exit,
 	}
 
 	exit->area = area;
-	exit->coord.x = atoi(xstr.c_str());
-	exit->coord.y = atoi(ystr.c_str());
-	exit->coord.z = atof(zstr.c_str());
+	exit->coords.x = atoi(xstr.c_str());
+	exit->coords.y = atoi(ystr.c_str());
+	exit->coords.z = atof(zstr.c_str());
 
 	*wwide = xstr.find('+') != std::string::npos;
 	*hwide = ystr.find('+') != std::string::npos;
