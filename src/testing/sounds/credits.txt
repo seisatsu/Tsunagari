@@ -1,3 +1,4 @@
 door.oga - Sampled from http://www.freesound.org/people/pagancow/sounds/15419/
 rockfall.oga - Sampled from http://www.freesound.org/people/Benboncan/sounds/60085/
+metal_clank.oga - http://www.freesound.org/people/farbin/sounds/36631/
 

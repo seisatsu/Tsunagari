@@ -376,7 +376,7 @@
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="112" y="16" width="32" height="16">
+  <object x="128" y="16" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
@@ -394,6 +394,12 @@
   <object x="80" y="144" width="16" height="16">
    <properties>
     <property name="exit:down" value="areas/grove01.tmx,5,3,0"/>
+   </properties>
+  </object>
+  <object x="112" y="16" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+    <property name="onUse" value="areas/house_armor.py"/>
    </properties>
   </object>
  </objectgroup>
