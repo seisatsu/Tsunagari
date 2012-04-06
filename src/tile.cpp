@@ -88,9 +88,12 @@ Exit* Tile::getNormalExit()
 	return exits[EXIT_NORMAL];
 }
 
-void Tile::setNormalExit(Exit* exit)
+void Tile::setNormalExit(Exit exit)
 {
-	exits[EXIT_NORMAL] = exit;
+	Exit** norm = &exits[EXIT_NORMAL];
+	if (*norm)
+		delete *norm;
+	*norm = new Exit(exit);
 }
 
 Exit* Tile::exitAt(int x, int y)

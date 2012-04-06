@@ -102,7 +102,7 @@ public:
 	Tile& offset(int x, int y);
 
 	Exit* getNormalExit();
-	void setNormalExit(Exit* exit);
+	void setNormalExit(Exit exit);
 	Exit* exitAt(int x, int y);
 
 	void onEnterScripts(Entity* triggeredBy);
