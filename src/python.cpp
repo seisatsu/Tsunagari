@@ -185,13 +185,9 @@ void pythonFinalize()
 	Py_Finalize();
 }
 
-std::string extractException()
+std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
 {
 	using namespace boost::python;
-
-	PyObject *exc, *val, *tb;
-	PyErr_Fetch(&exc, &val, &tb);
-	PyErr_NormalizeException(&exc, &val, &tb);
 
 	handle<> hexc(exc), hval(allow_null(val)), htb(allow_null(tb));
 	if (!hval) {
@@ -206,11 +202,28 @@ std::string extractException()
 	}
 }
 
+std::string extractException2(PyObject* exc, PyObject* val, PyObject* tb)
+{
+	char* type = PyExceptionClass_Name(exc);
+	char* dot = strrchr(type, '.');
+	if (dot)
+		type = dot + 1;
+	char* value = PyString_AsString(val);
+
+	std::string msg = type;
+	if (value)
+		msg.append(": ").append(value);
+	return msg;
+}
+
 void pythonErr()
 {
 	// Something bad happened. Error is already set in Python.
-	std::string msg = extractException();
-	Log::err("Python", msg);
+	PyObject* exc, *val, *tb;
+	PyErr_Fetch(&exc, &val, &tb);
+	PyErr_NormalizeException(&exc, &val, &tb);
+
+	Log::err("Python", extractException(exc, val, tb));
 }
 
 bp::object pythonGlobals()
