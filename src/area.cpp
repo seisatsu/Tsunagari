@@ -381,7 +381,7 @@ void Area::drawTiles() const
 
 void Area::drawTile(const Tile& tile, int x, int y, double depth) const
 {
-	const TileType* type = tile.type;
+	const TileType* type = (TileType*)tile.parent;
 	if (type) {
 		const Gosu::Image* img = type->anim.frame();
 		if (img)

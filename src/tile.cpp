@@ -58,24 +58,71 @@ Exit::Exit(const std::string area, int x, int y, double z)
 }
 
 
+TileBase::TileBase()
+	: parent(NULL), flags(0x0)
+{
+}
+
+bool TileBase::hasFlag(unsigned flag) const
+{
+	return flags & flag || (parent && parent->hasFlag(flag));
+}
+
+FlagManip TileBase::flagManip()
+{
+	return FlagManip(&flags);
+}
+
+TileType* TileBase::getType()
+{
+	return (TileType*)parent;
+}
+
+void TileBase::setType(TileType* type)
+{
+	parent = type;
+}
+
+void TileBase::onEnterScripts(Entity* triggeredBy)
+{
+	runScripts(triggeredBy, onEnter);
+	if (parent)
+		parent->onEnterScripts(triggeredBy);
+}
+
+void TileBase::onLeaveScripts(Entity* triggeredBy)
+{
+	runScripts(triggeredBy, onLeave);
+	if (parent)
+		parent->onLeaveScripts(triggeredBy);
+}
+
+void TileBase::onUseScripts(Entity* triggeredBy)
+{
+	runScripts(triggeredBy, onUse);
+	if (parent)
+		parent->onUseScripts(triggeredBy);
+}
+
+void TileBase::runScripts(Entity* triggeredBy,
+                      const std::vector<std::string>& events)
+{
+	BOOST_FOREACH(const std::string& script, events) {
+		Resourcer* rc = Resourcer::instance();
+		pythonSetGlobal("entity", triggeredBy);
+		pythonSetGlobal("tile", this);
+		rc->runPythonScript(script);
+	}
+}
+
 Tile::Tile()
 {
 }
 
 Tile::Tile(Area* area, int x, int y, int z)
-	: area(area), x(x), y(y), z(z), flags(0x0), type(NULL)
+	: TileBase(), area(area), x(x), y(y), z(z)
 {
 	memset(exits, 0, sizeof(exits));
-}
-
-bool Tile::hasFlag(unsigned flag) const
-{
-	return flags & flag || (type && type->flags & flag);
-}
-
-FlagManip Tile::flagManip()
-{
-	return FlagManip(&flags);
 }
 
 Tile& Tile::offset(int x, int y)
@@ -120,57 +167,14 @@ Exit* Tile::exitAt(int x, int y)
 	}
 }
 
-void Tile::onEnterScripts(Entity* triggeredBy)
-{
-	runScripts(triggeredBy, onEnter);
-	if (type)
-		runScripts(triggeredBy, type->onEnter);
-}
-
-void Tile::onLeaveScripts(Entity* triggeredBy)
-{
-	runScripts(triggeredBy, onLeave);
-	if (type)
-		runScripts(triggeredBy, type->onLeave);
-}
-
-void Tile::onUseScripts(Entity* triggeredBy)
-{
-	runScripts(triggeredBy, onUse);
-	if (type)
-		runScripts(triggeredBy, type->onUse);
-}
-
-void Tile::runScripts(Entity* triggeredBy,
-                      const std::vector<std::string>& events)
-{
-	BOOST_FOREACH(const std::string& script, events) {
-		Resourcer* rc = Resourcer::instance();
-		pythonSetGlobal("entity", triggeredBy);
-		pythonSetGlobal("tile", this);
-		rc->runPythonScript(script);
-	}
-}
-
-void Tile::setWalkable(bool walkable)
-{
-	flags = (flags & ~TILE_NOWALK) | TILE_NOWALK * !walkable;
-}
-
-bool Tile::getWalkable()
-{
-	return !hasFlag(TILE_NOWALK);
-}
-
-
 
 TileType::TileType()
-	: flags(0x0)
+	: TileBase()
 {
 }
 
 TileType::TileType(TiledImage& img)
-	: flags(0x0)
+	: TileBase()
 {
 	anim.addFrame(img.front());
 	img.pop_front();
@@ -183,11 +187,6 @@ bool TileType::needsRedraw(const Area& area) const
 	       visibleIn(area, area.visibleTiles());
 }
 
-FlagManip TileType::flagManip()
-{
-	return FlagManip(&flags);
-}
-
 bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 {
 	for (int z = tiles.z1; z != tiles.z2; z++) {
@@ -197,7 +196,7 @@ bool TileType::visibleIn(const Area& area, const icube_t& tiles) const
 				// Do this check before passing _tiles_ to fn.
 				if (area.inBounds(pos)) {
 					const Tile& tile = area.getTile(pos);
-					if (tile.type == this)
+					if (tile.parent == this)
 						return true;
 				}
 			}
@@ -225,12 +224,28 @@ void exportTile()
 		.add_property("nowalk_npc",
 			&FlagManip::isNowalkNPC, &FlagManip::setNowalkNPC)
 		;
-	boost::python::class_<Tile>
+	boost::python::class_<TileBase>
+		("TileBase", boost::python::no_init)
+		.add_property("flags", &TileBase::flagManip)
+		.add_property("type",
+		    make_function(
+		      static_cast<TileType* (TileBase::*) ()>
+		      (&TileBase::getType),
+		      boost::python::return_value_policy<
+		        boost::python::reference_existing_object
+		      >()
+		    ),
+		    &TileBase::setType
+		)
+		.def("onEnterScripts", &TileBase::onEnterScripts)
+		.def("onLeaveScripts", &TileBase::onLeaveScripts)
+		.def("onUseScripts", &TileBase::onUseScripts)
+		;
+	boost::python::class_<Tile, boost::python::bases<TileBase> >
 		("Tile", boost::python::no_init)
 		.def_readonly("x", &Tile::x)
 		.def_readonly("y", &Tile::y)
 		.def_readonly("z", &Tile::z)
-		.def_readwrite("type", &Tile::type)
 		.add_property("exit",
 		    make_function(
 		      static_cast<Exit* (Tile::*) ()> (&Tile::getNormalExit),
@@ -240,21 +255,14 @@ void exportTile()
 		    ),
 		    &Tile::setNormalExit
 		)
-		.add_property("walkable",
-			&Tile::getWalkable, &Tile::setWalkable)
-		.add_property("flags", &Tile::flagManip)
 		.def("offset", &Tile::offset,
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
 		    >()
 		)
-		.def("onEnterScripts", &Tile::onEnterScripts)
-		.def("onLeaveScripts", &Tile::onLeaveScripts)
-		.def("onUseScripts", &Tile::onUseScripts)
 		;
-	boost::python::class_<TileType>
+	boost::python::class_<TileType, boost::python::bases<TileBase> >
 		("TileType", boost::python::no_init)
-		.add_property("flags", &Tile::flagManip)
 		;
 	boost::python::class_<Exit>
 		("Exit", boost::python::init<

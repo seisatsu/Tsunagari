@@ -347,12 +347,6 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 			int len = (int)(1000.0/hertz);
 			type.anim.setFrameLen(len);
 		}
-		else if (name == "layermod") {
-			int mod;
-			ASSERT(child.intAttr("value", &mod));
-			type.layermod.reset(mod);
-			type.flags |= TILE_NOWALK_NPC;
-		}
 	}
 
 	tileTypes.push_back(type);
@@ -470,7 +464,7 @@ bool AreaTMX::processLayerData(XMLNode node, int z)
 				TileType& type = tileTypes[gid];
 				Tile& tile = map[z][y][x];
 				type.allOfType.push_back(&tile);
-				tile.type = &type;
+				tile.parent = &type;
 			}
 
 			if (++x == dim.x) {

@@ -65,12 +65,42 @@ private:
 	new area in the World. The Exit struct contains the destination
 	area and coordinates.
 */
-struct Exit {
+class Exit {
+public:
 	Exit();
 	Exit(const std::string area, int x, int y, double z);
 
+public:
 	std::string area;
 	vicoord coord;
+};
+
+class TileBase
+{
+public:
+	TileBase();
+
+	//! Determines whether this tile or one of its parent types embodies a
+	//! flag.
+	bool hasFlag(unsigned flag) const;
+	FlagManip flagManip();
+
+	TileType* getType();
+	void setType(TileType* type);
+
+	void onEnterScripts(Entity* triggeredBy);
+	void onLeaveScripts(Entity* triggeredBy);
+	void onUseScripts(Entity* triggeredBy);
+
+private:
+	//! Runs scripts in a vector.
+	void runScripts(Entity* triggeredBy,
+		const std::vector<std::string>& events);
+
+public:
+	TileBase* parent;
+	unsigned flags;
+	std::vector<std::string> onEnter, onLeave, onUse;
 };
 
 //! Contains properties unique to this tile.
@@ -80,24 +110,11 @@ struct Exit {
 	tiles of the same type, these properties will only apply to one
 	tile.
 */
-class Tile
+class Tile : public TileBase
 {
 public:
 	Tile(); // Should not be used. Wanted by std::containers.
 	Tile(Area* area, int x, int y, int z);
-
-	Area* area;
-	int x, y, z;
-	unsigned flags;
-	TileType* type;
-	std::vector<std::string> onEnter, onLeave, onUse;
-	Exit* exits[5];
-	boost::optional<double> layermod;
-
-	//! Determines whether this tile or one of its parent types embodies a
-	//! flag.
-	bool hasFlag(unsigned flag) const;
-	FlagManip flagManip();
 
 	Tile& offset(int x, int y);
 
@@ -105,17 +122,11 @@ public:
 	void setNormalExit(Exit exit);
 	Exit* exitAt(int x, int y);
 
-	void onEnterScripts(Entity* triggeredBy);
-	void onLeaveScripts(Entity* triggeredBy);
-	void onUseScripts(Entity* triggeredBy);
-
-	void setWalkable(bool walkable);
-	bool getWalkable();
-
-private:
-	//! Runs scripts in a vector.
-	void runScripts(Entity* triggeredBy,
-		const std::vector<std::string>& events);
+public:
+	Area* area;
+	int x, y, z;
+	Exit* exits[5];
+	boost::optional<double> layermod;
 };
 
 //! Contains the properties shared by all tiles of a certain type.
@@ -124,7 +135,7 @@ private:
 	certain type. As opposed to local properties for a single tile,
 	all tiles of this type will share the defined characteristics.
 */
-class TileType
+class TileType : public TileBase
 {
 public:
 	TileType();
@@ -133,18 +144,14 @@ public:
 	//! Returns true if onscreen and we need to update our animation.
 	bool needsRedraw(const Area& area) const;
 
-	unsigned flags;
-	Animation anim; //! Graphics for tiles of this type.
-	std::vector<std::string> onEnter, onLeave, onUse;
-	std::vector<Tile*> allOfType;
-	boost::optional<double> layermod;
-
-	FlagManip flagManip();
-
 private:
 	//! Returns true if any of the area's tiles within the specified range
 	//! are of this type.
 	bool visibleIn(const Area& area, const icube_t& tiles) const;
+
+public:
+	Animation anim; //! Graphics for tiles of this type.
+	std::vector<Tile*> allOfType;
 };
 
 void exportTile();
