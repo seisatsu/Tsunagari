@@ -9,8 +9,10 @@
 
 // In this file.
 #include <boost/python/errors.hpp>
+#include <boost/python/import.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/ptr.hpp>
+#include <boost/python/scope.hpp>
 
 // For bindings.
 #include <boost/python/class.hpp>
@@ -39,6 +41,19 @@ void pythonSetGlobal(const char* name, T pointer)
 	try {
 		pythonGlobals()[name] = boost::python::ptr(pointer);
 	} catch (boost::python::error_already_set) {
+		pythonErr();
+	}
+}
+
+template<class Fn>
+void pythonAddFunction(const char* name, Fn fn)
+{
+	using namespace boost::python;
+
+	try {
+		scope bltins(import("__builtin__"));
+		def(name, fn);
+	} catch (error_already_set) {
 		pythonErr();
 	}
 }

@@ -101,7 +101,7 @@ void Player::moveByTile(ivec2 delta)
 	}
 	*/
 
-	destTile = &area->getTile(newCoord);
+//	destTile = &area->getTile(newCoord);
 
 	/*
 	// Is anything player-specific preventing us from moving?
