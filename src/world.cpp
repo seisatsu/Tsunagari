@@ -215,7 +215,7 @@ bool World::processInit(XMLNode node)
 bool World::processScript(XMLNode node)
 {
 	for (node = node.childrenNode(); node; node = node.next()) {
-		if (node.is("onInit")) {
+		if (node.is("on_init")) {
 			std::string filename = node.content();
 			if (rc->resourceExists(filename)) {
 				onLoadScript = filename;
@@ -225,7 +225,7 @@ bool World::processScript(XMLNode node)
 					std::string("script not found: ") + filename);
 				return false;
 			}
-		} else if (node.is("onAreaInit")) {
+		} else if (node.is("on_area_init")) {
 			std::string filename = node.content();
 			if (rc->resourceExists(filename)) {
 				onAreaLoadScript = filename;

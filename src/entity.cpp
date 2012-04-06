@@ -486,8 +486,8 @@ bool Entity::processSprite(XMLNode node)
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
 			std::string imageSheet = node.content();
-			ASSERT(node.intAttr("tilewidth",  &imgw) &&
-			       node.intAttr("tileheight", &imgh));
+			ASSERT(node.intAttr("tile_width",  &imgw) &&
+			       node.intAttr("tile_height", &imgh));
 			ASSERT(rc->getTiledImage(tiles, imageSheet,
 			       imgw, imgh, false));
 		} else if (node.is("phases")) {

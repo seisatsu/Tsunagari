@@ -17,7 +17,7 @@
 <!ATTLIST viewport width  CDATA #REQUIRED
                    height CDATA #REQUIRED>
 
-<!ELEMENT script (onInit?, onAreaInit?)>
+<!ELEMENT script (on_init?, on_area_init?)>
 <!ELEMENT onInit (#PCDATA)>
 <!ELEMENT onAreaInit (#PCDATA)>
 

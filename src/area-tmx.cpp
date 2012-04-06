@@ -128,7 +128,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		else if (name == "main_music") {
 			musicLoop = value;
 		}
-		else if (name == "onLoad") {
+		else if (name == "on_load") {
 			std::string filename = value;
 			if (rc->resourceExists(filename)) {
 				onLoadScripts.push_back(filename);
@@ -138,7 +138,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
 				  std::string("script not found: ") + filename);
 			}
 		}
-		else if (name == "onFocus") {
+		else if (name == "on_focus") {
 			std::string filename = value;
 			if (rc->resourceExists(filename)) {
 				onFocusScripts.push_back(filename);
@@ -148,7 +148,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
 				  std::string("script not found: ") + filename);
 			}
 		}
-		else if (name == "onUpdate") {
+		else if (name == "on_update") {
 			std::string filename = value;
 			if (rc->resourceExists(filename)) {
 				onUpdateScripts.push_back(filename);
@@ -294,7 +294,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 		if (name == "flags") {
 			ASSERT(splitTileFlags(value, &type.flags));
 		}
-		else if (name == "onEnter") {
+		else if (name == "on_enter") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
@@ -303,7 +303,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 			}
 			type.onEnter.push_back(filename);
 		}
-		else if (name == "onLeave") {
+		else if (name == "on_leave") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
@@ -312,7 +312,7 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 			}
 			type.onLeave.push_back(filename);
 		}
-		else if (name == "onUse") {
+		else if (name == "on_use") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
@@ -595,7 +595,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		if (name == "flags") {
 			ASSERT(splitTileFlags(value, &flags));
 		}
-		else if (name == "onEnter") {
+		else if (name == "on_enter") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
@@ -604,7 +604,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			}
 			onEnter.push_back(filename);
 		}
-		else if (name == "onLeave") {
+		else if (name == "on_leave") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,
@@ -613,7 +613,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			}
 			onLeave.push_back(filename);
 		}
-		else if (name == "onUse") {
+		else if (name == "on_use") {
 			std::string filename = value;
 			if (!rc->resourceExists(filename)) {
 				Log::err(descriptor,

@@ -5,8 +5,8 @@
 <!ELEMENT sprite (sheet, phases)>
 
 <!ELEMENT sheet (#PCDATA)>
-<!ATTLIST sheet tilewidth  CDATA #REQUIRED
-                tileheight CDATA #REQUIRED>
+<!ATTLIST sheet tile_width  CDATA #REQUIRED
+                tile_height CDATA #REQUIRED>
 
 <!ELEMENT phases (phase+)>
 
