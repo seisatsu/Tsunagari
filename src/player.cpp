@@ -158,23 +158,22 @@ void Player::postMove()
 			}
 		}
 	}
-	if (fromTile) {
-		icoord delta = area->virt2phys(destCoord);
-		delta -= area->virt2phys(fromCoord);
-		if (delta.z == 0) {
-			Exit* exit = area->getTile(area->virt2phys(fromCoord)).exitAt(ivec2(delta.x, delta.y));
-			if (exit) {
-				World* world = World::instance();
-				AreaPtr newArea = world->getArea(exit->area);
-				if (newArea) {
-					world->focusArea(newArea, exit->coords);
-				}
-				else {
-					// Roll back movement if exit failed to open.
-					r = fromCoord;
-					Log::err("Exit",
-						 exit->area + ": failed to load properly");
-				}
+
+	icoord delta = area->virt2phys(destCoord);
+	delta -= area->virt2phys(fromCoord);
+	if (delta.z == 0) {
+		Exit* exit = area->getTile(area->virt2phys(fromCoord)).exitAt(ivec2(delta.x, delta.y));
+		if (exit) {
+			World* world = World::instance();
+			AreaPtr newArea = world->getArea(exit->area);
+			if (newArea) {
+				world->focusArea(newArea, exit->coords);
+			}
+			else {
+				// Roll back movement if exit failed to open.
+				r = fromCoord;
+				Log::err("Exit",
+					 exit->area + ": failed to load properly");
 			}
 		}
 	}
