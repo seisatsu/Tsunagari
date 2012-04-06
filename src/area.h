@@ -99,7 +99,11 @@ public:
 	ivec3 getDimensions() const;
 	//! Return the pixel dimensions of a Tile graphic.
 	ivec2 getTileDimensions() const;
+	//! Returns a physical cubic range of Tiles that could be visible
+	//! on-screen.
+	icube_t visibleTileBounds() const;
 	//! Returns a physical cubic range of Tiles that are visible on-screen.
+	//! Takes actual map size into account.
 	icube_t visibleTiles() const;
 
 	//! Returns true if a Tile exists at the specified coordinate.

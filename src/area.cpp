@@ -4,6 +4,7 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <algorithm>
 #include <math.h>
 #include <vector>
 
@@ -121,9 +122,17 @@ bool Area::needsRedraw() const
 		return true;
 
 	// Do any on-screen tile types need to update their animations?
-	BOOST_FOREACH(const TileType& type, tileTypes)
-		if (type.needsRedraw(*this))
-			return true;
+	const icube_t tiles = visibleTiles();
+	for (int z = tiles.z1; z < tiles.z2; z++) {
+		for (int y = tiles.y1; y < tiles.y2; y++) {
+			for (int x = tiles.x1; x < tiles.x2; x++) {
+				const Tile& tile = getTile(x, y, z);
+				const TileType* type = tile.getType();
+				if (type && type->needsRedraw())
+					return true;
+			}
+		}
+	}
 	return false;
 }
 
@@ -249,7 +258,7 @@ ivec2 Area::getTileDimensions() const
 	return tileDim;
 }
 
-icube_t Area::visibleTiles() const
+icube_t Area::visibleTileBounds() const
 {
 	rvec2 screen = view->getVirtRes();
 	rvec2 off = view->getMapOffset();
@@ -260,6 +269,20 @@ icube_t Area::visibleTiles() const
 	int y2 = (int)ceil((screen.y + off.y) / tileDim.y);
 
 	return icube(x1, y1, 0, x2, y2, dim.z);
+}
+
+icube_t Area::visibleTiles() const
+{
+	icube_t cube = visibleTileBounds();
+	if (!loopX) {
+		cube.x1 = std::max(cube.x1, 0);
+		cube.x2 = std::min(cube.x2, dim.x);
+	}
+	if (!loopY) {
+		cube.y1 = std::max(cube.y1, 0);
+		cube.y2 = std::min(cube.y2, dim.y);
+	}
+	return cube;
 }
 
 bool Area::inBounds(int x, int y, int z) const
@@ -391,13 +414,8 @@ void Area::drawTiles() const
 		double depth = idx2depth[z];
 		for (int y = tiles.y1; y < tiles.y2; y++) {
 			for (int x = tiles.x1; x < tiles.x2; x++) {
-				int tx = x, ty = y, tz = z;
-				if (loopX)
-					tx = wrap(0, tx, dim.x);
-				if (loopY)
-					ty = wrap(0, ty, dim.y);
-				if (inBounds(tx, ty, tz))
-					drawTile(map[tz][ty][tx], x, y, depth);
+				const Tile& tile = getTile(x, y, z);
+				drawTile(tile, x, y, depth);
 			}
 		}
 	}
