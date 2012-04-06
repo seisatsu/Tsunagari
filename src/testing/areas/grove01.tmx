@@ -415,7 +415,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Prop(1)" width="10" height="10" visible="0">
+ <objectgroup name="Prop(1)" width="10" height="10">
   <properties>
    <property name="layer" value="1"/>
   </properties>
@@ -447,11 +447,6 @@
   <object x="48" y="0" width="64" height="16">
    <properties>
     <property name="exit:up" value="areas/grove05.tmx,3+,9,1"/>
-   </properties>
-  </object>
-  <object x="96" y="48" width="16" height="16">
-   <properties>
-    <property name="flags" value="nowalk"/>
    </properties>
   </object>
  </objectgroup>
