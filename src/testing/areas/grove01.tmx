@@ -228,7 +228,7 @@
    <tile gid="278"/>
   </data>
  </layer>
- <objectgroup name="Prop(0)" width="10" height="10" visible="0">
+ <objectgroup name="Prop(0)" width="10" height="10">
   <properties>
    <property name="layer" value="0"/>
   </properties>
@@ -270,6 +270,7 @@
   <object type="Tile" x="128" y="48" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
+    <property name="onUse" value="areas/g01_well.py"/>
    </properties>
   </object>
   <object type="Tile" x="48" y="128" width="16" height="16">

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 
 int pythonRandInt(int min, int max);
+double pythonRandFloat(double min, double max);
 void exportRandom();
 
 #endif

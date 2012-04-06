@@ -1,3 +1,3 @@
 snd = Sound.play("sounds/book.oga") # book sound
-snd.speed = 1.0 + (float(randint(-3, 3)) / 10)
+snd.speed = 1.0 + randfloat(-0.3, 0.3)
 
