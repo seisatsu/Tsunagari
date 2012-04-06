@@ -14,6 +14,8 @@
 #include "tile.h" // for exportTile
 #include "vec.h" // for exportVecs
 
+#include "python_random.h" // for exportRandom
+
 BOOST_PYTHON_MODULE(tsunagari)
 {
 	exportArea();
@@ -23,6 +25,7 @@ BOOST_PYTHON_MODULE(tsunagari)
 	exportSound();
 	exportTile();
 	exportVecs();
+	exportRandom();
 }
 
 // *sigh* If only it weren't static.

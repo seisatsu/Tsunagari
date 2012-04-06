@@ -289,6 +289,8 @@ int main(int argc, char** argv)
 		freopen("CONOUT$","wb",stderr);
 	}
 	#endif
+	
+	srand(unsigned(time(NULL)));
 
 	if (!parseConfig(CLIENT_CONF_FILE))
 		return 1;
