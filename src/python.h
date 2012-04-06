@@ -8,6 +8,7 @@
 #define PYTHON_H
 
 // In this file.
+#include <boost/python/def.hpp>
 #include <boost/python/errors.hpp>
 #include <boost/python/import.hpp>
 #include <boost/python/object.hpp>
