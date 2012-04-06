@@ -73,7 +73,7 @@ public:
 
 public:
 	std::string area;
-	vicoord coord;
+	vicoord coords;
 };
 
 class TileBase

@@ -77,7 +77,7 @@ Exit::Exit()
 }
 
 Exit::Exit(const std::string area, int x, int y, double z)
-	: area(area), coord(x, y, z)
+	: area(area), coords(x, y, z)
 {
 }
 
@@ -266,7 +266,7 @@ void exportTile()
 		;
 	class_<Exit> ("Exit", no_init)
 		.def_readwrite("area", &Exit::area)
-		.def_readwrite("coord", &Exit::coord)
+		.def_readwrite("coords", &Exit::coords)
 		;
 	pythonAddFunction("newExit", pythonNewExit);
 }
