@@ -31,6 +31,7 @@ static std::string directions[][3] = {
 
 Entity::Entity(Area* area)
 	: redraw(true),
+	  phase(NULL),
 	  speedMul(1.0),
 	  moving(false),
 	  stillMoving(false),
@@ -155,7 +156,6 @@ void Entity::updateTile(unsigned long dt)
 		if (-1e-10 < dy && dy < 1e-10)
 			dy = 0.0;
 
-		// Save state of partial pixel travel in double.
 		r.x += dx * traveled;
 		r.y += dy * traveled;
 	}
