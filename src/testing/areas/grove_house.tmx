@@ -4,7 +4,7 @@
   <property name="author" value="Michael D. Reiley"/>
   <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove House"/>
-  <property name="onLoad" value="areas/house_load.py"/>
+  <property name="on_load" value="areas/house_load.py"/>
  </properties>
  <tileset firstgid="1" name="indoors.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/indoors.png" width="112" height="192"/>
@@ -379,7 +379,7 @@
   <object x="128" y="16" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
-    <property name="onUse" value="areas/house_book.py"/>
+    <property name="on_use" value="areas/house_book.py"/>
    </properties>
   </object>
   <object x="48" y="80" width="64" height="16">
@@ -389,7 +389,7 @@
   </object>
   <object x="96" y="0" width="16" height="16">
    <properties>
-    <property name="onUse" value="areas/house_switch.py"/>
+    <property name="on_use" value="areas/house_switch.py"/>
    </properties>
   </object>
   <object x="80" y="144" width="16" height="16">
@@ -400,7 +400,7 @@
   <object x="112" y="16" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
-    <property name="onUse" value="areas/house_armor.py"/>
+    <property name="on_use" value="areas/house_armor.py"/>
    </properties>
   </object>
  </objectgroup>

@@ -18,8 +18,8 @@
                    height CDATA #REQUIRED>
 
 <!ELEMENT script (on_init?, on_area_init?)>
-<!ELEMENT onInit (#PCDATA)>
-<!ELEMENT onAreaInit (#PCDATA)>
+<!ELEMENT on_init (#PCDATA)>
+<!ELEMENT on_area_init (#PCDATA)>
 
 <!ELEMENT input (persist?)>
 <!ELEMENT persist EMPTY>

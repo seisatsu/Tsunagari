@@ -2,7 +2,7 @@
 <entity>
 	<speed>2</speed> <!-- movement speed in tiles per second -->
 	<sprite>
-		<sheet tilewidth="16" tileheight="18">entities/player/player.png</sheet>
+		<sheet tile_width="16" tile_height="18">entities/player/player.png</sheet>
 		<phases>
 			<phase name="down" pos="7" />
 			<phase name="down-left" pos="7" />

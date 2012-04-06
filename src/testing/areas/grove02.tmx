@@ -4,7 +4,7 @@
   <property name="author" value="Michael D. Reiley"/>
   <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove 02"/>
-  <property name="onLoad" value="areas/g02_load.py"/>
+  <property name="on_load" value="areas/g02_load.py"/>
  </properties>
  <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/forest.png" width="272" height="304"/>
@@ -380,7 +380,7 @@
   <object x="80" y="32" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
-    <property name="onUse" value="areas/g02_open_chest.py"/>
+    <property name="on_use" value="areas/g02_open_chest.py"/>
    </properties>
   </object>
   <object x="16" y="0" width="16" height="16">
