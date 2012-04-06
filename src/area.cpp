@@ -39,6 +39,7 @@ Area::Area(Viewport* view,
 	: view(view),
 	  player(player),
 	  music(music),
+	  colorOverlay(0, 0, 0, 0),
 	  dim(0, 0, 0),
 	  tileDim(0, 0),
 	  loopX(false), loopY(false),
@@ -108,6 +109,7 @@ void Area::draw()
 	updateTileAnimations();
 	drawTiles();
 	drawEntities();
+	drawColorOverlay();
 	redraw = false;
 }
 
@@ -156,6 +158,28 @@ AreaPtr Area::reset()
 		world->focusArea(newSelf, c);
 	}
 	return newSelf;
+}
+
+void Area::setColorOverlay(int r, int g, int b, int a)
+{
+	using namespace Gosu;
+
+	if (0 <= r && r < 256 &&
+	    0 <= g && g < 256 &&
+	    0 <= b && b < 256 &&
+	    0 <= a && a < 256) {
+		Color::Channel ac = (Color::Channel)a;
+		Color::Channel rc = (Color::Channel)r;
+		Color::Channel gc = (Color::Channel)g;
+		Color::Channel bc = (Color::Channel)b;
+		colorOverlay = Color(ac, rc, gc, bc);
+		redraw = true;
+	}
+	else {
+		PyErr_Format(PyExc_ValueError,
+			"Area::color_overlay() arguments must be "
+			"between 0 and 255");
+	}
 }
 
 
@@ -395,6 +419,22 @@ void Area::drawEntities()
 	player->draw();
 }
 
+void Area::drawColorOverlay()
+{
+	if (colorOverlay.alpha() != 0) {
+		GameWindow& window = GameWindow::getWindow();
+		Gosu::Color c = colorOverlay;
+		int x = window.width();
+		int y = window.height();
+		window.graphics().drawQuad(
+			0, 0, c,
+			x, 0, c,
+			x, y, c,
+			0, y, c,
+			750
+		);
+	}
+}
 
 void exportArea()
 {
@@ -415,6 +455,8 @@ void exportArea()
 		      boost::python::reference_existing_object
 		    >()
 		)
-		.def("reset", &Area::reset);
+		.def("reset", &Area::reset)
+		.def("color_overlay", &Area::setColorOverlay)
+		;
 }
 

@@ -76,7 +76,7 @@ void World::draw()
 	GameWindow& window = GameWindow::getWindow();
 	Gosu::Graphics& graphics = window.graphics();
 
-	// drawLetterbox(); // Superceeded by drawAreaBorders
+	drawLetterbox();
 	drawAreaBorders();
 	graphics.pushTransform(getTransform());
 	area->draw();
@@ -252,7 +252,6 @@ bool World::processInput(XMLNode node)
 	return true;
 }
 
-/*
 void World::drawLetterbox()
 {
 	rvec2 sz = view->getPhysRes();
@@ -265,7 +264,6 @@ void World::drawLetterbox()
 	drawRect(0, lb.x, 0, sz.y, black, 1000);
 	drawRect(sz.x - lb.x, sz.x, 0, sz.y, black, 1000);
 }
-*/
 
 void World::drawAreaBorders()
 {
@@ -285,13 +283,13 @@ void World::drawAreaBorders()
 
 	if (!loopX && physScroll.x > 0) {
 		// Boxes on left-right.
-		drawRect(0, physScroll.x, 0, sz.y, black, 1000);
-		drawRect(sz.x - physScroll.x, sz.x, 0, sz.y, black, 1000);
+		drawRect(0, physScroll.x, 0, sz.y, black, 500);
+		drawRect(sz.x - physScroll.x, sz.x, 0, sz.y, black, 500);
 	}
 	if (!loopY && physScroll.y > 0) {
 		// Boxes on top-bottom.
-		drawRect(0, sz.x, 0, physScroll.y, black, 1000);
-		drawRect(0, sz.x, sz.y - physScroll.y, sz.y, black, 1000);
+		drawRect(0, sz.x, 0, physScroll.y, black, 500);
+		drawRect(0, sz.x, sz.y - physScroll.y, sz.y, black, 500);
 	}
 }
 

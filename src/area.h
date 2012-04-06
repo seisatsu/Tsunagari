@@ -15,6 +15,8 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <Gosu/Color.hpp>
+
 #include "common.h"
 #include "config.h"
 #include "music.h"
@@ -81,6 +83,8 @@ public:
 	//! it. The Player's location is preserved.
 	AreaPtr reset();
 
+	void setColorOverlay(int r, int g, int b, int a);
+
 	const Tile& getTile(int x, int y, int z) const; /* phys */
 	const Tile& getTile(int x, int y, double z) const; /* virt */
 	const Tile& getTile(icoord phys) const;
@@ -135,12 +139,13 @@ protected:
 	void drawTiles() const;
 	void drawTile(const Tile& tile, int x, int y, double depth) const;
 	void drawEntities();
+	void drawColorOverlay();
 
 protected:
 	Viewport* view;
 	Player* player;
 	Music* music;
-
+	Gosu::Color colorOverlay;
 
 	typedef std::vector<Tile> row_t;
 	typedef std::vector<row_t> grid_t;
