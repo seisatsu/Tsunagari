@@ -83,7 +83,9 @@ private:
 	bool processInput(XMLNode node);
 
 	//! Draws black borders around the screen to correct the aspect ratio.
-	void drawLetterbox();
+//	void drawLetterbox(); // Superceeded by drawAreaBorders
+	//! Draws black borders around the Area if the Area doesn't fit in the Viewport.
+	void drawAreaBorders();
 
 	//! Draws a rectangle on the screen of the specified color. Coordinates
 	//! are in pixels.

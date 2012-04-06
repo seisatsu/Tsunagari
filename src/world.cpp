@@ -76,7 +76,8 @@ void World::draw()
 	GameWindow& window = GameWindow::getWindow();
 	Gosu::Graphics& graphics = window.graphics();
 
-	drawLetterbox();
+	// drawLetterbox(); // Superceeded by drawAreaBorders
+	drawAreaBorders();
 	graphics.pushTransform(getTransform());
 	area->draw();
 	graphics.popTransform();
@@ -144,7 +145,7 @@ bool World::processDescriptor()
 	Resourcer* rc = Resourcer::instance();
 	ASSERT(doc = rc->getXMLDoc("world.conf", "world.dtd"));
 	ASSERT(root = doc->root()); // <world>
-	
+
 	for (XMLNode child = root.childrenNode(); child; child = child.next()) {
 		if (child.is("info")) {
 			ASSERT(processInfo(child));
@@ -251,6 +252,7 @@ bool World::processInput(XMLNode node)
 	return true;
 }
 
+/*
 void World::drawLetterbox()
 {
 	rvec2 sz = view->getPhysRes();
@@ -262,6 +264,35 @@ void World::drawLetterbox()
 	drawRect(0, sz.x, sz.y - lb.y, sz.y, black, 1000);
 	drawRect(0, lb.x, 0, sz.y, black, 1000);
 	drawRect(sz.x - lb.x, sz.x, 0, sz.y, black, 1000);
+}
+*/
+
+void World::drawAreaBorders()
+{
+	Gosu::Color black = Gosu::Color::BLACK;
+	rvec2 sz = view->getPhysRes();
+	rvec2 scale = view->getScale();
+	rvec2 virtScroll = view->getMapOffset();
+	rvec2 padding = view->getLetterboxOffset();
+
+	rvec2 physScroll = virtScroll;
+	physScroll *= scale;
+	physScroll += padding;
+	physScroll *= -1;
+
+	bool loopX = area->loopsInX();
+	bool loopY = area->loopsInY();
+
+	if (!loopX && physScroll.x > 0) {
+		// Boxes on left-right.
+		drawRect(0, physScroll.x, 0, sz.y, black, 1000);
+		drawRect(sz.x - physScroll.x, sz.x, 0, sz.y, black, 1000);
+	}
+	if (!loopY && physScroll.y > 0) {
+		// Boxes on top-bottom.
+		drawRect(0, sz.x, 0, physScroll.y, black, 1000);
+		drawRect(0, sz.x, sz.y - physScroll.y, sz.y, black, 1000);
+	}
 }
 
 void World::drawRect(double x1, double x2, double y1, double y2,
