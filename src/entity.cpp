@@ -410,7 +410,7 @@ void Entity::tileExitScript()
 	Resourcer* rc = Resourcer::instance();
 	const std::string& name = scripts["tileexit"];
 	if (name.size()) {
-		pythonSetGlobal("entity", this);
+		pythonSetGlobal("Entity", this);
 		rc->runPythonScript(name);
 	}
 }
@@ -420,7 +420,7 @@ void Entity::tileEntryScript()
 	Resourcer* rc = Resourcer::instance();
 	const std::string& name = scripts["tileentry"];
 	if (name.size()) {
-		pythonSetGlobal("entity", this);
+		pythonSetGlobal("Entity", this);
 		rc->runPythonScript(name);
 	}
 }

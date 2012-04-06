@@ -109,8 +109,8 @@ void TileBase::runScripts(Entity* triggeredBy,
 {
 	BOOST_FOREACH(const std::string& script, events) {
 		Resourcer* rc = Resourcer::instance();
-		pythonSetGlobal("entity", triggeredBy);
-		pythonSetGlobal("tile", this);
+		pythonSetGlobal("Entity", triggeredBy);
+		pythonSetGlobal("Tile", this);
 		rc->runPythonScript(script);
 	}
 }

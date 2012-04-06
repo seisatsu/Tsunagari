@@ -38,7 +38,7 @@ Resourcer* Resourcer::instance()
 Resourcer::Resourcer()
 {
 	globalResourcer = this;
-	pythonSetGlobal("resourcer", this);
+	pythonSetGlobal("Resourcer", this);
 }
 
 Resourcer::~Resourcer()
@@ -288,7 +288,6 @@ void exportResourcer()
 	boost::python::class_<Resourcer>("Resourcer", boost::python::no_init)
 		.def("resource_exists", &Resourcer::resourceExists)
 		.def("run_python_script", &Resourcer::runPythonScript)
-		.def("get_sound", &Resourcer::getSample)
 		.def("get_text", &Resourcer::getText);
 }
 

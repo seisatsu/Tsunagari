@@ -46,7 +46,7 @@ bool World::init()
 	player.setPhase("down");
 
 	if (onLoadScript.size()) {
-		pythonSetGlobal("player", (Entity*)&player);
+		pythonSetGlobal("Player", (Entity*)&player);
 		Resourcer* rc = Resourcer::instance();
 		rc->runPythonScript(onLoadScript);
 	}
