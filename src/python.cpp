@@ -37,6 +37,7 @@ static std::string moduleWhitelist[] = {
 	"random",
 	"sys",
 	"time",
+	"traceback",
 	"",
 };
 
@@ -81,12 +82,13 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 			&level))
 		return NULL;
 	name = _name;
-	Log::info("Python", "import " + name);
 
 	// Search whitelisted Python modules.
 	if (inWhitelist(name))
 		return PyImport_ImportModuleLevel(_name, globals, locals,
 			fromList, level);
+
+	Log::info("Python", "import " + name);
 
 	// Search Python scripts inside World.
 	std::replace(name.begin(), name.end(), '.', '/');
@@ -184,21 +186,31 @@ void pythonFinalize()
 	Py_Finalize();
 }
 
+std::string extractException()
+{
+	using namespace boost::python;
+
+	PyObject *exc, *val, *tb;
+	PyErr_Fetch(&exc, &val, &tb);
+	PyErr_NormalizeException(&exc, &val, &tb);
+
+	handle<> hexc(exc), hval(allow_null(val)), htb(allow_null(tb));
+	if (!hval) {
+		return extract<std::string>(str(hexc));
+	}
+	else {
+		object traceback(import("traceback"));
+		object format_exception(traceback.attr("format_exception"));
+		object formatted_list(format_exception(hexc, hval, htb));
+		object formatted(str("").join(formatted_list));
+		return extract<std::string>(formatted);
+	}
+}
+
 void pythonErr()
 {
 	// Something bad happened. Error is already set in Python.
-	PyObject *ptype, *pvalue, *ptraceback;
-	PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-
-	char* type = PyExceptionClass_Name(ptype);
-	char* dot = strrchr(type, '.');
-	if (dot)
-		type = dot + 1;
-	char* value = PyString_AsString(pvalue);
-
-	std::string msg = type;
-	if (value)
-		msg.append(": ").append(value);
+	std::string msg = extractException();
 	Log::err("Python", msg);
 }
 
