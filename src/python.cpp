@@ -221,6 +221,13 @@ void pythonErr()
 	// Something bad happened. Error is already set in Python.
 	PyObject* exc, *val, *tb;
 	PyErr_Fetch(&exc, &val, &tb);
+
+	if (!exc) {
+		Log::err("Python",
+			"pythonErr() called, but no exception thrown");
+		return;
+	}
+
 	PyErr_NormalizeException(&exc, &val, &tb);
 
 	Log::err("Python", extractException(exc, val, tb));
