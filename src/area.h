@@ -14,6 +14,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/python/tuple.hpp>
 
 #include <Gosu/Color.hpp>
 
@@ -21,7 +22,6 @@
 #include "config.h"
 #include "music.h"
 #include "player.h"
-#include "resourcer.h"
 #include "tile.h"
 #include "viewport.h"
 #include "xml.h"
@@ -115,7 +115,7 @@ public:
 	bool loopsInX() const;
 	bool loopsInY() const;
 
-	const std::string& getDescriptor() const;
+	const std::string getDescriptor() const;
 
 
 	// Convert between virtual and physical map coordinates. Physical
@@ -129,6 +129,9 @@ public:
 	icoord virt2phys(rcoord virt) const;
 	rcoord virt2virt(vicoord virt) const;
 	vicoord virt2virt(rcoord virt) const;
+
+	// For Python interface.
+	boost::python::tuple pyGetDimensions();
 
 protected:
 	// Convert between virtual and physical map depths.

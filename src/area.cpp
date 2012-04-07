@@ -319,7 +319,7 @@ bool Area::loopsInY() const
 	return loopY;
 }
 
-const std::string& Area::getDescriptor() const
+const std::string Area::getDescriptor() const
 {
 	return descriptor;
 }
@@ -454,17 +454,29 @@ void Area::drawColorOverlay()
 	}
 }
 
+boost::python::tuple Area::pyGetDimensions()
+{
+	using namespace boost::python;
+
+	list zs;
+	BOOST_FOREACH(double dep, idx2depth) {
+		zs.append(dep);
+	}
+	return boost::python::make_tuple(dim.x, dim.y, zs);
+}
+
 void exportArea()
 {
 	boost::python::class_<Area>("Area", boost::python::no_init)
+		.add_property("descriptor", &Area::getDescriptor)
+		.add_property("dimensions", &Area::pyGetDimensions)
 		.def("request_redraw", &Area::requestRedraw)
 		.def("tiles",
 		    static_cast<Tile& (Area::*) (int, int, double)>
 		    (&Area::getTile),
 		    boost::python::return_value_policy<
 		      boost::python::reference_existing_object
-		    >()
-		)
+		    >())
 		.def("in_bounds",
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
