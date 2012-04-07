@@ -82,7 +82,7 @@ void Player::moveByTile(ivec2 delta)
 	setFacing(delta);
 
 	// Left CTRL allows changing facing, but disallows movement.
-	const GameWindow& window = GameWindow::getWindow();
+	const GameWindow& window = GameWindow::instance();
 	if (window.input().down(Gosu::kbLeftControl)) {
 		setPhase(directionStr(facing));
 		redraw = true;

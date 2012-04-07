@@ -32,7 +32,7 @@ public:
 				CacheEntry& entry = it->second;
 				// Set lastUsed to now because it won't be used
 				// by the time garbageCollect() gets to it.
-				int now = GameWindow::getWindow().time();
+				int now = GameWindow::instance().time();
 				entry.lastUsed = now;
 				return entry.resource;
 			}
@@ -62,7 +62,7 @@ public:
 			return;
 		CacheEntry entry;
 		entry.resource = data;
-		int now = GameWindow::getWindow().time();
+		int now = GameWindow::instance().time();
 		entry.lastUsed = now;
 		map[name] = entry;
 	}
@@ -81,7 +81,7 @@ public:
 	{
 		if (!conf.cacheEnabled)
 			return;
-		int now = GameWindow::getWindow().time();
+		int now = GameWindow::instance().time();
 		std::vector<std::string> dead;
 		BOOST_FOREACH(typename CacheMap::value_type& i, map) {
 			const std::string& name = i.first;

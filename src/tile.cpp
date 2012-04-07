@@ -220,7 +220,7 @@ TileType::TileType(TiledImage& img)
 
 bool TileType::needsRedraw() const
 {
-	const int millis = GameWindow::getWindow().time();
+	const int millis = GameWindow::instance().time();
 	return anim.needsRedraw(millis);
 }
 

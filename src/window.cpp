@@ -26,7 +26,7 @@ namespace Gosu {
 
 static GameWindow* globalWindow = NULL;
 
-GameWindow& GameWindow::getWindow()
+GameWindow& GameWindow::instance()
 {
 	return *globalWindow;
 }

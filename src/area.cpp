@@ -402,7 +402,7 @@ void Area::runOnLoads()
 
 void Area::updateTileAnimations()
 {
-	const int millis = GameWindow::getWindow().time();
+	const int millis = GameWindow::instance().time();
 	BOOST_FOREACH(TileType& type, tileTypes)
 		type.anim.updateFrame(millis);
 }
@@ -440,7 +440,7 @@ void Area::drawEntities()
 void Area::drawColorOverlay()
 {
 	if (colorOverlay.alpha() != 0) {
-		GameWindow& window = GameWindow::getWindow();
+		GameWindow& window = GameWindow::instance();
 		Gosu::Color c = colorOverlay;
 		int x = window.width();
 		int y = window.height();

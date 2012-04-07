@@ -79,7 +79,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	ImageRef result(new Gosu::Image(
-		GameWindow::getWindow().graphics(), bitmap, false));
+		GameWindow::instance().graphics(), bitmap, false));
 
 	images.lifetimePut(name, result);
 	return result;
@@ -100,7 +100,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 	Gosu::Bitmap bitmap;
 	Gosu::loadImageFile(bitmap, buffer->frontReader());
 	TiledImageRef result(new TiledImage);
-	Gosu::imagesFromTiledBitmap(GameWindow::getWindow().graphics(), bitmap,
+	Gosu::imagesFromTiledBitmap(GameWindow::instance().graphics(), bitmap,
 			(unsigned)w, (unsigned)h, tileable, *result.get());
 	img = *result.get();
 

@@ -31,7 +31,7 @@ class World;
 class GameWindow : public Gosu::Window
 {
 public:
-	static GameWindow& getWindow();
+	static GameWindow& instance();
 
 	//! GameWindow Constructor
 	GameWindow();

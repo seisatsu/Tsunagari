@@ -73,7 +73,7 @@ void World::buttonUp(const Gosu::Button btn)
 
 void World::draw()
 {
-	GameWindow& window = GameWindow::getWindow();
+	GameWindow& window = GameWindow::instance();
 	Gosu::Graphics& graphics = window.graphics();
 
 	drawLetterbox();
@@ -169,7 +169,7 @@ bool World::processInfo(XMLNode node)
 	for (node = node.childrenNode(); node; node = node.next()) {
 		if (node.is("name")) {
 			name = node.content();
-			GameWindow::getWindow().setCaption(Gosu::widen(name));
+			GameWindow::instance().setCaption(Gosu::widen(name));
 		} else if (node.is("author")) {
 			author = node.content();
 		} else if (node.is("version")) {
@@ -296,7 +296,7 @@ void World::drawAreaBorders()
 void World::drawRect(double x1, double x2, double y1, double y2,
                        Gosu::Color c, double z)
 {
-	GameWindow& window = GameWindow::getWindow();
+	GameWindow& window = GameWindow::instance();
 	window.graphics().drawQuad(
 		x1, y1, c,
 		x2, y1, c,

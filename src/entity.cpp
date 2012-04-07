@@ -60,7 +60,7 @@ bool Entity::init(const std::string& descriptor)
 
 void Entity::draw()
 {
-	int millis = GameWindow::getWindow().time();
+	int millis = GameWindow::instance().time();
 	phase->updateFrame(millis);
 	phase->frame()->draw(doff.x + r.x, doff.y + r.y, r.z);
 	redraw = false;
@@ -68,7 +68,7 @@ void Entity::draw()
 
 bool Entity::needsRedraw() const
 {
-	int millis = GameWindow::getWindow().time();
+	int millis = GameWindow::instance().time();
 	return redraw || phase->needsRedraw(millis);
 }
 
@@ -178,7 +178,7 @@ bool Entity::setPhase(const std::string& name)
 	if (it != phases.end()) {
 		Animation* newPhase = &it->second;
 		if (phase != newPhase) {
-			int now = GameWindow::getWindow().time();
+			int now = GameWindow::instance().time();
 			phase = newPhase;
 			phase->startOver(now);
 			redraw = true;
