@@ -17,8 +17,11 @@ public:
 	//! Start the timer.
 	void start();
 
-	//! Stop the timer.
-	void stop();
+	//! Check if the timer is running.
+	bool isRunning();
+
+	//! Set whether the timer is running.
+	void setRunning(bool running);
 
 	//! Reset the timer to zero.
 	void reset();

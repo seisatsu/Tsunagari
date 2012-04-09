@@ -23,15 +23,20 @@ Timer::Timer()
 {
 }
 
-void Timer::start()
+bool Timer::isRunning()
 {
-		running = true;
-		prev_time = Gosu::milliseconds();
+	return running;
 }
 
-void Timer::stop()
+void Timer::setRunning(bool running)
 {
-		running = false;
+	if (running == true) {
+		this->running = true;
+		prev_time = Gosu::milliseconds();
+	}
+
+	else
+		this->running = false;
 }
 
 void Timer::reset()
@@ -61,8 +66,7 @@ void exportTimer()
 	using namespace boost::python;
 
 	class_<Timer> ("Timer", no_init)
-		.def("start", &Timer::start)
-		.def("stop", &Timer::stop)
+		.add_property("running", &Timer::isRunning, &Timer::setRunning)
 		.def("reset", &Timer::reset)
 		.def("count", &Timer::count)
 		;
