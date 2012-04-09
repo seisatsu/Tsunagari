@@ -116,39 +116,6 @@ void CommandLineOptions::usageSize(int* optmaxlen, int* argmaxlen)
 
 void CommandLineOptions::usagePrintShort()
 {
-	// This is semi-broken.
-
-	/*unsigned int opt;
-	size_t usagecurrlen = 0;
-
-	fprintf(stderr, "Usage: %s", argv[0]);
-	usagecurrlen += (std::string("Usage: ") + argv[0]).size();
-
-	for (opt = 0; opt < OptionsList.size(); opt++) {
-		usagecurrlen += 3;
-		if (!OptionsList[opt]->shortopt.empty())
-			usagecurrlen += OptionsList[opt]->shortopt.size() + 1;
-		usagecurrlen += OptionsList[opt]->longopt.size();
-		if (!OptionsList[opt]->argument.empty())
-			usagecurrlen += OptionsList[opt]->argument.size() + 1;
-
-		if (usagecurrlen > 60) {
-			fprintf(stderr, "\n  ");
-			usagecurrlen = 0;
-		}
-
-		fprintf(stderr, " [");
-		if (!OptionsList[opt]->shortopt.empty())
-			fprintf(stderr, "%s|",
-			    OptionsList[opt]->shortopt.c_str());
-		fprintf(stderr, "%s", OptionsList[opt]->longopt.c_str());
-		if (!OptionsList[opt]->argument.empty())
-			fprintf(stderr, " %s]",
-			    OptionsList[opt]->argument.c_str());
-		else
-			fprintf(stderr, "]");
-	}*/
-
 	fprintf(stderr, "Usage: %s [OPTIONS]", argv[0]);
 }
 

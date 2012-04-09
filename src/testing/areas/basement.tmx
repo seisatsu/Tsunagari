@@ -11,6 +11,9 @@
  <tileset firstgid="85" name="objects.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/objects.png" width="112" height="112"/>
  </tileset>
+ <tileset firstgid="134" name="indoors_2.png" tilewidth="16" tileheight="16">
+  <image source="areas/tiles/indoors_2.png" width="176" height="192"/>
+ </tileset>
  <layer name="Tiles(-0.3)" width="6" height="6">
   <properties>
    <property name="layer" value="-0.3"/>
@@ -66,7 +69,7 @@
    <tile gid="30"/>
    <tile gid="31"/>
    <tile gid="36"/>
-   <tile gid="103"/>
+   <tile gid="259"/>
    <tile gid="0"/>
    <tile gid="107"/>
    <tile gid="106"/>
@@ -78,15 +81,15 @@
    <tile gid="122"/>
    <tile gid="38"/>
    <tile gid="36"/>
-   <tile gid="4"/>
-   <tile gid="5"/>
-   <tile gid="6"/>
+   <tile gid="200"/>
+   <tile gid="201"/>
+   <tile gid="202"/>
    <tile gid="0"/>
    <tile gid="38"/>
    <tile gid="36"/>
-   <tile gid="11"/>
-   <tile gid="12"/>
-   <tile gid="13"/>
+   <tile gid="211"/>
+   <tile gid="212"/>
+   <tile gid="213"/>
    <tile gid="122"/>
    <tile gid="38"/>
    <tile gid="43"/>
@@ -196,7 +199,7 @@
   </properties>
   <data>
    <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="248"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
