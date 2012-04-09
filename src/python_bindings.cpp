@@ -15,6 +15,7 @@
 #include "vec.h" // for exportVecs
 
 #include "python_random.h" // for exportRandom
+#include "python_timer.h" // for exportTimer
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
@@ -26,6 +27,7 @@ BOOST_PYTHON_MODULE(tsunagari)
 	exportTile();
 	exportVecs();
 	exportRandom();
+	exportTimer();
 }
 
 // *sigh* If only it weren't static.
