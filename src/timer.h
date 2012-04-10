@@ -1,11 +1,11 @@
 /****************************
 ** Tsunagari Tile Engine   **
-** python_timer.h          **
+** timer.h                 **
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
-#ifndef PYTHON_TIMER_H
-#define PYTHON_TIMER_H
+#ifndef TIMER_H
+#define TIMER_H
 
 // Note: This could glitch if run for several hours.
 
@@ -13,9 +13,6 @@
 class Timer {
 public:
 	Timer();
-
-	//! Start the timer.
-	void start();
 
 	//! Check if the timer is running.
 	bool isRunning();

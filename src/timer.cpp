@@ -1,13 +1,13 @@
 /****************************
 ** Tsunagari Tile Engine   **
-** python_timer.cpp        **
+** timer.cpp               **
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
 #include <Gosu/Timing.hpp>
 
 #include "python.h"
-#include "python_timer.h"
+#include "timer.h"
 
 static Timer pythonNewTimer()
 {
@@ -52,7 +52,7 @@ double Timer::count()
 		if (millis > prev_time)
 			prev_count = prev_count + (millis - prev_time);
 
-		else
+		else // Gosu::milliseconds() has overflowed; compensate.
 			prev_count = prev_count + (prev_time - millis);
 
 		prev_time = millis;

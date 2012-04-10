@@ -1,18 +1,18 @@
 /****************************
 ** Tsunagari Tile Engine   **
-** python_random.cpp       **
+** random.cpp              **
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
 #include "python.h"
-#include "python_random.h"
+#include "random.h"
 
-int pythonRandInt(int min, int max)
+int randInt(int min, int max)
 {
 	return rand() % (max-min) + min;
 }
 
-double pythonRandFloat(double min, double max)
+double randFloat(double min, double max)
 {
         int i = rand();
         double d = (double)i / RAND_MAX;
@@ -22,7 +22,7 @@ double pythonRandFloat(double min, double max)
 void exportRandom()
 {
 	using namespace boost::python;
-	pythonAddFunction("randint", pythonRandInt);
-	pythonAddFunction("randfloat", pythonRandFloat);
+	pythonAddFunction("randint", randInt);
+	pythonAddFunction("randfloat", randFloat);
 }
 
