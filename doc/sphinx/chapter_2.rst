@@ -58,14 +58,14 @@ Example World.conf (from Testing World)
 That looks a little complicated. Let's break it down:
 
 * The very first line is an instruction to the XML parser, which gives information about how the file should be processed. This line should be at the top of every XML file in the game world, and probably shouldn't be modified.
-* The ``<world> </world>`` tags state that this file is a world descriptor. These are required at the beginning and end of world.conf.
-* The ``<info> </info>`` tags denote the info section of world.conf. This section is required, and contains general information about the game world.
+* The ``<world> </world>`` tags state that this file is a world descriptor. These are **required** at the beginning and end of world.conf.
+* The ``<info> </info>`` tags denote the info section of world.conf. This section is **required**, and contains general information about the game world.
 
    * ``<name>Testing World</name>`` states that the name of the game world is "Testing World".
    * ``<author>OmegaSDG</author>`` states that this game world was written by "OmegaSDG".
    * ``<version>1</version>`` tells Tsunagari the version of the game world. This value isn't used yet, but is still required.
 
-* The ``<init> </init>`` tags denote the init section of world.conf. This section is required, and contains information used for initializing the game.
+* The ``<init> </init>`` tags denote the init section of world.conf. This section is **required**, and contains information used for initializing the game.
 
    * ``<area>areas/grove01.tmx</area>`` gives the location of the starting area inside the world file. This area loads first, and the player is inserted here when the game starts.
    * ``<player>entities/player/player.xml</player>`` gives the location of the player entity descriptor, which is described in a later section.
@@ -73,12 +73,12 @@ That looks a little complicated. Let's break it down:
    * ``<coords x="5" y="3" layer="0" />`` states that the player will be inserted into the starting area at tile coordinates 5 by 3, on layer 0.
    * ``<viewport width="160" height="160" />`` states that the game window will scale to show at most 160 pixels of width and 160 pixels of height for each area. If the game's tiles are 16x16 pixels, then the window will show an area of 10 tiles by 10 tiles.
 
-* The ``<script> </script>`` tags denote the script section of world.conf. This section is optional, and contains the locations of event scripts to be run at certain times.
+* The ``<script> </script>`` tags denote the script section of world.conf. This section is **optional**, and contains the locations of event scripts to be run at certain times.
 
    * ``<on_init>init.py</on_init>`` gives the location of an event script to be run when the game is first started.
    * ``<on_area_init>everyArea.py</on_area_init>`` gives the location of an event script to be run when each area is loaded.
 
-* The ``<input> </input>`` tags denote the input section of world.conf. This section is optional, and contains input handling settings.
+* The ``<input> </input>`` tags denote the input section of world.conf. This section is **optional**, and contains input handling settings.
 
    * ``<persist init="300" cons="100" />`` states that in "turn" mode, when a direction button is held for 300 milliseconds, the player should continue to move in that direction every 100 milliseconds until the button is released. This value is required in "turn" mode only.
 
