@@ -7,7 +7,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-// Note: This could glitch if run for several hours.
+// Note: This will break if run long enough for the counter to overflow.
 
 //! A timer class for timing Python events.
 class Timer {

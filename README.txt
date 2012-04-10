@@ -11,7 +11,7 @@ ________                                _________________    ________
 Tsunagari Tile Engine
 <http://tileengine.org/>
 
-Alpha Preview Release 4 "Akatsuki" Revision 1
+Alpha Preview Release 4 "Akatsuki" Revision 2
 
 Note:
 	Compiling requires Jamer's Gosu fork (retro branch).
