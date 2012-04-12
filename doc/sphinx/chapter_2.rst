@@ -85,6 +85,20 @@ That looks a little complicated. Let's break it down:
 Tile and Sprite Sheets
 ======================
 
+Tile and sprite sheets are PNG (or JPEG) image files containing either tile graphics or sprite frames. Both kinds of sheets follow the same format, and are in fact interchangeable, differing only in context. The sub-images in a sheet are referenced by their position in the sheet, starting at zero and counting left-to-right, then up-to-down. Sheets use the alpha channel instead of a predetermined background color to denote transparency.
+
+As an example, this is the player sprite sheet for Tsunagari's testing world. The sheet contains twelve 16x18 pixel frames, which correspond to the player's direction and movement. It has been enlarged at %400 to increase clarity.
+
+.. image:: _static/figure_sheet.png
+   :align: center
+
+To illustrate sheet positioning, here is the same sheet overlayed on a numbered chart to show sheet coordinates as they are referenced by the Tsunagari Tile Engine.
+
+.. image:: _static/figure_sheet_numbered.png
+   :align: center
+
+Tile sheets are used to insert tile graphics in the Tiled Map Editor, and sprite sheets are used in entity descriptors when defining player and entity graphics phases.
+
 Player Entity Descriptor
 ========================
 
