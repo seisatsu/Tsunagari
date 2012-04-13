@@ -120,7 +120,7 @@ void exportSound()
 		.add_property("volume", &SoundInstance::getVolume, &SoundInstance::setVolume)
 		.add_property("pan", &SoundInstance::getPan, &SoundInstance::setPan)
 		.add_property("speed", &SoundInstance::getSpeed, &SoundInstance::setSpeed)
-		.def("playing", &SoundInstance::isPlaying)
+		.add_property("playing", &SoundInstance::isPlaying)
 		.def("stop", &SoundInstance::stop)
 		;
 	boost::python::optional_<SoundInstance>();
