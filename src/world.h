@@ -125,7 +125,7 @@ private:
 		std::string area;
 		vicoord coords;
 	};
-	
+
 	std::string name;
 	std::string author;
 	double version;
