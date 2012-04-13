@@ -269,6 +269,6 @@ void exportTile()
 		.def_readwrite("area", &Exit::area)
 		.def_readwrite("coords", &Exit::coords)
 		;
-	pythonAddFunction("newExit", pythonNewExit);
+	pythonAddFunction("new_exit", pythonNewExit);
 }
 

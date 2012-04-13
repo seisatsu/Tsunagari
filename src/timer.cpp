@@ -71,6 +71,6 @@ void exportTimer()
 		.def("reset", &Timer::reset)
 		;
 
-	pythonAddFunction("newTimer", pythonNewTimer);
+	pythonAddFunction("new_timer", pythonNewTimer);
 }
 
