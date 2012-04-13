@@ -15,8 +15,8 @@ if not opened_the_chest:
     opened_the_chest = True
     tile = Area.tile(5, 2, -0.05) # closed chest
     tile2 = tile.offset(0, -1) # above the closed chest
-    tile.type = Area.get_tile_type(367) # change to open chest, button half
-    tile2.type = Area.get_tile_type(360) # change to open chest, top half
+    tile.type = Area.tile_type(367) # change to open chest, button half
+    tile2.type = Area.tile_type(360) # change to open chest, top half
     Area.redraw()
     Sound.play("sounds/door.oga") # unlocking sound
 else:

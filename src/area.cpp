@@ -476,7 +476,7 @@ void exportArea()
 		.def("in_bounds",
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
-		.def("get_tile_type", &Area::getTileType,
+		.def("tile_type", &Area::getTileType,
 		    return_value_policy<reference_existing_object>())
 		.def("color_overlay", &Area::setColorOverlay)
 		;
