@@ -77,13 +77,16 @@ public:
 	void setTileCoords(vicoord virt);
 
 
+	//! Indicates whether we are in the middle of transitioning between tiles.
+	bool isMoving();
+
 	//! Initiate a movement within the Area.
 	void moveByTile(int x, int y);
 	void moveByTile(ivec2 delta);
 
-	//! Indicates whether we are in the middle of transitioning between tiles.
-	bool isMoving();
 
+	//! Gets the Entity's current Area.
+	Area* getArea();
 
 	//! Specifies the Area object this entity will ask when looking for
 	//! nearby Tiles. Doesn't change x,y,z position.

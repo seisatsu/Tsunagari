@@ -228,6 +228,11 @@ void Entity::setTileCoords(vicoord virt)
 	r = area->virt2virt(virt);
 }
 
+bool Entity::isMoving()
+{
+	return moving || stillMoving;
+}
+
 void Entity::moveByTile(int x, int y)
 {
 	moveByTile(ivec2(x, y));
@@ -250,9 +255,9 @@ void Entity::moveByTile(ivec2 delta)
 	}
 }
 
-bool Entity::isMoving()
+Area* Entity::getArea()
 {
-	return moving || stillMoving;
+	return area;
 }
 
 void Entity::setArea(Area* a)
@@ -653,6 +658,9 @@ void exportEntity()
 	class_<Entity>("Entity", no_init)
 		.add_property("animation",
 		    &Entity::getFacing, &Entity::setPhase)
+		.add_property("area", make_function(
+		    static_cast<Area* (Entity::*) ()> (&Entity::getArea),
+		    return_value_policy<reference_existing_object>()))
 		.add_property("tile", make_function(
 		    static_cast<Tile& (Entity::*) ()> (&Entity::getTile),
 		    return_value_policy<reference_existing_object>()))
