@@ -7,9 +7,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <string>
-#include <vector>
-
 #include "log.h" // for message_mode_t
 #include "vec.h" // for icoord
 
@@ -61,23 +58,6 @@ struct Conf {
 	int persistCons;
 };
 extern Conf conf;
-
-//! Return a bool from a "true"/"false" string.
-bool parseBool(const std::string& s);
-
-//! Split a string by a delimiter.
-std::vector<std::string> splitStr(std::string str,
-	const std::string& delimiter);
-
-//! Convert an integer to a representative string.
-std::string itostr(int in);
-
-//! Returns true if the string contains only digits, whitespace, and minus.
-bool isInteger(const std::string& s);
-
-//! Returns true if the string contains only digits, whitespace, minus, and
-//! period.
-bool isDecimal(const std::string& s);
 
 template<class T>
 T wrap(T min, T value, T max)

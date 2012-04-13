@@ -21,11 +21,11 @@
 #include <libxml/parser.h>
 #include <boost/scoped_ptr.hpp>
 
-#include "common.h"
 #include "config.h"
 #include "cmd.h"
 #include "log.h"
 #include "python.h"
+#include "string.h"
 #include "window.h"
 
 #ifdef _WINDOWS

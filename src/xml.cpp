@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "common.h"
 #include "config.h"
 #include "log.h"
+#include "string.h"
 #include "xml.h"
 
 

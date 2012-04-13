@@ -15,11 +15,11 @@
 #include <Gosu/Timing.hpp>
 
 #include "area-tmx.h"
-#include "common.h"
 #include "entity.h"
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"
+#include "string.h"
 #include "tile.h"
 #include "window.h"
 #include "world.h"

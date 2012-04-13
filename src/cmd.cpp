@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #include "cmd.h"
-#include "common.h"
+#include "string.h"
 
 CommandLineOptions::CommandLineOptions(int argc, char** argv) :
 	argc(argc), argv(argv)
