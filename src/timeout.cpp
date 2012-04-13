@@ -12,17 +12,28 @@
 
 static std::list<Timeout*> timeouts;
 
-static Timeout* pythonSetTimeout(boost::python::object callback, int milliseconds)
+static Timeout* pythonSetTimeout(boost::python::object callback, int delay)
 {
-	Timeout* t = new Timeout(callback, milliseconds);
-	timeouts.push_back(t);
+	int now = GameWindow::instance().time();
+	int end = now + delay;
+
+	// Insert sorted by resolution time.
+	std::list<Timeout*>::iterator it;
+	for (it = timeouts.begin(); it != timeouts.end(); it++) {
+		Timeout* t = *it;
+		if (end < t->readyTime())
+			break;
+	}
+
+	Timeout* t = new Timeout(callback, delay);
+	timeouts.insert(it, t);
 	return t;
 }
 
-Timeout::Timeout(boost::python::object callback, int milliseconds)
+Timeout::Timeout(boost::python::object callback, int delay)
 	: callback(callback),
 	  start(GameWindow::instance().time()),
-	  duration(milliseconds),
+	  delay(delay),
 	  active(true)
 {
 }
@@ -39,7 +50,12 @@ bool Timeout::isActive()
 
 bool Timeout::ready(int now)
 {
-	return now > start + duration;
+	return now > start + delay;
+}
+
+int Timeout::readyTime()
+{
+	return start + delay;
 }
 
 void Timeout::execute()
@@ -53,12 +69,8 @@ void Timeout::execute()
 
 void updateTimeouts()
 {
-	bool next = true;
-
-	if (!timeouts.size())
-		return;
-
 	int now = GameWindow::instance().time();
+	bool next = true;
 
 	while (next && timeouts.size()) {
 		Timeout* t = timeouts.front();
@@ -85,9 +97,7 @@ void exportTimeout()
 		.def("cancel", &Timeout::cancel)
 		;
 
-	pythonAddFunction("timeout", make_function(
-		pythonSetTimeout,
-		return_value_policy<reference_existing_object>()
-	));
+	pythonAddFunction("timeout", make_function(pythonSetTimeout,
+		return_value_policy<reference_existing_object>()));
 }
 
