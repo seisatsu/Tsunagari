@@ -245,9 +245,9 @@ void exportTile()
 		        (&TileBase::getType),
 		      return_value_policy<reference_existing_object>()),
 		    &TileBase::setType)
-		.def("onEnterScripts", &TileBase::onEnterScripts)
-		.def("onLeaveScripts", &TileBase::onLeaveScripts)
-		.def("onUseScripts", &TileBase::onUseScripts)
+		.def("onenter_scripts", &TileBase::onEnterScripts)
+		.def("onleave_scripts", &TileBase::onLeaveScripts)
+		.def("onuse_scripts", &TileBase::onUseScripts)
 		;
 	class_<Tile, bases<TileBase> > ("Tile", no_init)
 		.def_readonly("area", &Tile::area)
