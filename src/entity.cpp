@@ -203,6 +203,15 @@ vicoord Entity::getTileCoords_vi() const
 	return area->virt2virt(r);
 }
 
+void Entity::setTileCoords(int x, int y)
+{
+	vicoord virt(x, y, r.z);
+	if (!area->inBounds(virt))
+		return;
+	redraw = true;
+	r = area->virt2virt(virt);
+}
+
 void Entity::setTileCoords(icoord phys)
 {
 	if (!area->inBounds(phys))
@@ -655,6 +664,8 @@ void exportEntity()
 		.add_property("coords", &Entity::getTileCoords_vi)
 		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)
 		.def("goto_random_tile", &Entity::gotoRandomTile)
+		.def("teleport", static_cast<void (Entity::*) (int,int)>
+		    (&Entity::setTileCoords))
 		;
 }
 

@@ -71,6 +71,7 @@ public:
 	vicoord getTileCoords_vi() const;
 
 	//! Set location within Area.
+	void setTileCoords(int x, int y);
 	void setTileCoords(icoord phys);
 	void setTileCoords(vicoord virt);
 
