@@ -393,6 +393,7 @@ void Entity::preMove()
 
 	if (conf.moveMode == TURN) {
 		// Movement is instantaneous.
+		redraw = true;
 		r = destCoord;
 		postMove();
 	}
@@ -409,7 +410,7 @@ void Entity::postMove()
 	}
 
 	// Stop moving animation.
-	if (conf.moveMode != TURN && !stillMoving)
+	if (!stillMoving)
 		setPhase(getFacing());
 
 	// Process triggers.
