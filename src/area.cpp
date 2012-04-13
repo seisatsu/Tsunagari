@@ -130,7 +130,7 @@ bool Area::needsRedraw() const
 		return true;
 
 	// Do any on-screen tile types need to update their animations?
-	const icube_t tiles = visibleTiles();
+	const icube tiles = visibleTiles();
 	for (int z = tiles.z1; z < tiles.z2; z++) {
 		for (int y = tiles.y1; y < tiles.y2; y++) {
 			for (int x = tiles.x1; x < tiles.x2; x++) {
@@ -266,7 +266,7 @@ ivec2 Area::getTileDimensions() const
 	return tileDim;
 }
 
-icube_t Area::visibleTileBounds() const
+icube Area::visibleTileBounds() const
 {
 	rvec2 screen = view->getVirtRes();
 	rvec2 off = view->getMapOffset();
@@ -279,9 +279,9 @@ icube_t Area::visibleTileBounds() const
 	return icube(x1, y1, 0, x2, y2, dim.z);
 }
 
-icube_t Area::visibleTiles() const
+icube Area::visibleTiles() const
 {
-	icube_t cube = visibleTileBounds();
+	icube cube = visibleTileBounds();
 	if (!loopX) {
 		cube.x1 = std::max(cube.x1, 0);
 		cube.x2 = std::min(cube.x2, dim.x);
@@ -417,7 +417,7 @@ void Area::updateTileAnimations()
 
 void Area::drawTiles() const
 {
-	const icube_t tiles = visibleTiles();
+	const icube tiles = visibleTiles();
 	for (int z = tiles.z1; z < tiles.z2; z++) {
 		double depth = idx2depth[z];
 		for (int y = tiles.y1; y < tiles.y2; y++) {

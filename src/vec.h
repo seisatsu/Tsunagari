@@ -22,16 +22,13 @@ struct vicoord
 	double z;
 };
 
-//! 3D cube type.
-struct icube_t {
-	int x1, x2;
-	int y1, y2;
-	int z1, z2;
-};
+struct icube {
+	icube(int x1, int y1, int z1, int x2, int y2, int z2)
+		: x1(x1), y1(y1), z1(z1), x2(x2), y2(y2), z2(z2) {}
 
-//! cube_t constructor.
-icube_t icube(int x1, int y1, int z1,
-              int x2, int y2, int z2);
+	int x1, y1, z1;
+	int x2, y2, z2;
+};
 
 template<class T>
 class vec2

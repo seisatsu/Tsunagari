@@ -18,7 +18,6 @@
 
 #include <Gosu/Color.hpp>
 
-#include "common.h"
 #include "config.h"
 #include "music.h"
 #include "player.h"
@@ -101,10 +100,10 @@ public:
 	ivec2 getTileDimensions() const;
 	//! Returns a physical cubic range of Tiles that could be visible
 	//! on-screen.
-	icube_t visibleTileBounds() const;
+	icube visibleTileBounds() const;
 	//! Returns a physical cubic range of Tiles that are visible on-screen.
 	//! Takes actual map size into account.
-	icube_t visibleTiles() const;
+	icube visibleTiles() const;
 
 	//! Returns true if a Tile exists at the specified coordinate.
 	bool inBounds(int x, int y, int z) const; /* phys */
