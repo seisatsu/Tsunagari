@@ -16,6 +16,7 @@
 #include "timer.h"
 #include "timeout.h"
 #include "vec.h"
+#include "world.h"
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
@@ -29,6 +30,7 @@ BOOST_PYTHON_MODULE(tsunagari)
 	exportTimeout();
 	exportTimer();
 	exportVecs();
+	exportWorld();
 }
 
 // *sigh* If only it weren't static.

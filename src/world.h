@@ -10,10 +10,9 @@
 #include <string>
 #include <vector>
 
-#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
-#include "area.h" // for AreaPtr
 #include "common.h"
 #include "player.h"
 #include "viewport.h"
@@ -26,8 +25,6 @@ class Area;
 class Music;
 class Resourcer;
 class GameWindow;
-
-#define GETAREA_ALWAYS_CREATE 0x01
 
 /**
  * Top class holding all data necessary to create a game. Such a collection of
@@ -61,16 +58,16 @@ public:
 	void update(unsigned long dt);
 
 	//! Create a new Area object, loading from the appropriate files. If
-	//! the Area has already been loaded previously, return that instance
-	//! unless flags contains ALREA_ALWAYS_CREATE.
-	AreaPtr getArea(const std::string& filename, int flags = 0);
+	//! the Area has already been loaded previously, return that instance.
+	Area* getArea(const std::string& filename);
 
 	//! Returns the currently focused Area.
-	AreaPtr getFocusedArea();
+	Area* getFocusedArea();
 
 	//! Switch the game to a new Area, moving the player to the specified
 	//! position in the Area.
-	void focusArea(AreaPtr area, vicoord playerPos);
+	void focusArea(Area* area, int x, int y, double z);
+	void focusArea(Area* area, vicoord playerPos);
 
 	//! Get name of script to be run on every Area load.
 	std::string getAreaLoadScript();
@@ -98,12 +95,12 @@ private:
 	Gosu::Transform getTransform();
 
 	Viewport* view;
-	AreaPtr area;
-	boost::scoped_ptr<Music> music;
+	Area* area;
+	boost::shared_ptr<Music> music;
 	Player player;
 	Resourcer* rc;
 
-	typedef boost::unordered_map<std::string, AreaPtr> AreaMap;
+	typedef boost::unordered_map<std::string, Area*> AreaMap;
 	AreaMap areas;
 
 	//! WorldTypeLocality XML Storage Enum
@@ -136,6 +133,8 @@ private:
 	std::string onAreaLoadScript;
 	icoord viewport;
 };
+
+void exportWorld();
 
 #endif
 

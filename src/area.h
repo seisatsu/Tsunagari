@@ -39,8 +39,6 @@ class Resourcer;
 class Sprite;
 class World;
 
-typedef boost::shared_ptr<Area> AreaPtr;
-
 //! An Area represents one map, or screen, in a Tsunagari World.
 /*!
 	The Area class handles the parsing of TMX-format Area descriptor files,
@@ -77,10 +75,6 @@ public:
 	//! Update the game state within this Area as if dt milliseconds had
 	//! passed since the last call. Updates Entities and runs scripts.
 	void update(unsigned long dt);
-
-	//! Creates a new Area based off the same descriptor file and focuses
-	//! it. The Player's location is preserved.
-	AreaPtr reset();
 
 	void setColorOverlay(int r, int g, int b, int a);
 

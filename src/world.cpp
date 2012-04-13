@@ -29,6 +29,7 @@ World::World()
 	: player(NULL)
 {
 	globalWorld = this;
+	pythonSetGlobal("World", this);
 }
 
 World::~World()
@@ -55,7 +56,7 @@ bool World::init()
 	view = new Viewport(viewport);
 	view->trackEntity(&player);
 
-	AreaPtr area = getArea(entry.area);
+	Area* area = getArea(entry.area);
 	if (!area)
 		return false;
 	focusArea(area, entry.coords);
@@ -91,45 +92,41 @@ bool World::needsRedraw() const
 
 void World::update(unsigned long dt)
 {
-	// Prevent the Area from being deleted during this function call.
-	// Otherwise if it accesses its member variables and we've overwritten
-	// the memory, bad things happen.
-	boost::shared_ptr<Area> safe(area);
-
 	area->update(dt);
 	updateTimeouts();
 }
 
-AreaPtr World::getArea(const std::string& filename, int flags)
+Area* World::getArea(const std::string& filename)
 {
-	if ((flags & GETAREA_ALWAYS_CREATE) == 0) {
-		AreaMap::iterator entry = areas.find(filename);
-		if (entry != areas.end())
-			return entry->second;
-	}
+	AreaMap::iterator entry = areas.find(filename);
+	if (entry != areas.end())
+		return entry->second;
 
-	AreaPtr newArea(
-		new AreaTMX(view, &player, music.get(), filename)
-	);
+	Area* newArea = new AreaTMX(view, &player, music.get(), filename);
 
 	if (!newArea->init())
-		newArea = AreaPtr();
+		newArea = NULL;
 	areas[filename] = newArea;
 	return newArea;
 }
 
-AreaPtr World::getFocusedArea()
+Area* World::getFocusedArea()
 {
 	return area;
 }
 
-void World::focusArea(AreaPtr area, vicoord playerPos)
+void World::focusArea(Area* area, int x, int y, double z)
+{
+	focusArea(area, vicoord(x, y, z));
+}
+
+void World::focusArea(Area* area, vicoord playerPos)
 {
 	// Log::info("World", area->getDescriptor() + ": focused");
 	this->area = area;
-	player.setArea(area.get());
+	player.setArea(area);
 	player.setTileCoords(playerPos);
-	view->setArea(area.get());
+	view->setArea(area);
 	area->focus();
 }
 
@@ -320,5 +317,18 @@ Gosu::Transform World::getTransform()
 		scale.y * -scroll.y - padding.y, 0, 1
 	} };
 	return t;
+}
+
+void exportWorld()
+{
+	using namespace boost::python;
+
+	class_<World> ("World", no_init)
+		.def("area", &World::getArea,
+			return_value_policy<reference_existing_object>())
+		.def("focus",
+			static_cast<void (World::*) (Area*,int,int,double)>
+			(&World::focusArea))
+		;
 }
 

@@ -135,7 +135,7 @@ void Player::postMove()
 void Player::takeExit(Exit* exit)
 {
 	World* world = World::instance();
-	AreaPtr newArea = world->getArea(exit->area);
+	Area* newArea = world->getArea(exit->area);
 	if (newArea) {
 		world->focusArea(newArea, exit->coords);
 	}

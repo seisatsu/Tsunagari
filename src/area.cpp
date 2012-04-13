@@ -166,17 +166,6 @@ void Area::update(unsigned long dt)
 	music->update();
 }
 
-AreaPtr Area::reset()
-{
-	World* world = World::instance();
-	AreaPtr newSelf = world->getArea(descriptor, GETAREA_ALWAYS_CREATE);
-	if (world->getFocusedArea().get() == this) {
-		vicoord c = player->getTileCoords_vi();
-		world->focusArea(newSelf, c);
-	}
-	return newSelf;
-}
-
 void Area::setColorOverlay(int r, int g, int b, int a)
 {
 	using namespace Gosu;
@@ -489,7 +478,6 @@ void exportArea()
 		    (&Area::inBounds))
 		.def("get_tile_type", &Area::getTileType,
 		    return_value_policy<reference_existing_object>())
-		.def("reset", &Area::reset)
 		.def("color_overlay", &Area::setColorOverlay)
 		;
 }
