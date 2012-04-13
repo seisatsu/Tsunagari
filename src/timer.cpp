@@ -67,8 +67,8 @@ void exportTimer()
 
 	class_<Timer> ("Timer", no_init)
 		.add_property("running", &Timer::isRunning, &Timer::setRunning)
+		.add_property("count", &Timer::count)
 		.def("reset", &Timer::reset)
-		.def("count", &Timer::count)
 		;
 
 	pythonAddFunction("newTimer", pythonNewTimer);
