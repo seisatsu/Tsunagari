@@ -31,7 +31,7 @@ depend:
 
 tsunagari: animation.o area.o area-tmx.o sound.o cmd.o common.o entity.o log.o \
 	main.o music.o player.o python.o python-bindings.o random.o resourcer.o \
-	string.o tile.o timer.o vec.o viewport.o window.o world.o xml.o
+	string.o tile.o timer.o timeout.o vec.o viewport.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
 %.world:
@@ -71,7 +71,7 @@ player.o: animation.h area.h cache.h common.h config.h entity.h log.h \
  window.h world.h xml.h
 python-bindings.o: animation.h area.h cache.h common.h config.h entity.h \
  log.h music.h player.h python-bindings.cpp random.h resourcer.h sound.h \
- tile.h timer.h vec.h viewport.h window.h xml.h
+ tile.h timeout.h timer.h vec.h viewport.h window.h xml.h
 python.o: cache.h common.h log.h python-bindings.h python.cpp python.h \
  resourcer.h sound.h vec.h window.h xml.h
 random.o: python.h random.cpp random.h
@@ -83,8 +83,9 @@ string.o: string.cpp string.h
 tile.o: animation.h area.h cache.h common.h config.h entity.h log.h music.h \
  player.h python-optional.h python.h resourcer.h sound.h tile.cpp tile.h \
  vec.h viewport.h window.h xml.h
+timeout.o: common.h log.h python.h timeout.cpp timeout.h vec.h window.h
 timer.o: python.h timer.cpp timer.h
-vec.o: common.h log.h python.h vec.cpp vec.h
+vec.o: vec.cpp vec.h
 viewport.o: animation.h area.h cache.h common.h config.h entity.h log.h \
  music.h player.h resourcer.h sound.h tile.h vec.h viewport.cpp viewport.h \
  window.h xml.h
@@ -92,6 +93,6 @@ window.o: animation.h area.h cache.h common.h config.h entity.h log.h \
  music.h player.h resourcer.h sound.h tile.h vec.h viewport.h window.cpp \
  window.h world.h xml.h
 world.o: animation.h area-tmx.h area.h cache.h common.h config.h entity.h \
- log.h music.h player.h python.h resourcer.h sound.h tile.h vec.h viewport.h \
- window.h world.cpp world.h xml.h
+ log.h music.h player.h python.h resourcer.h sound.h tile.h timeout.h vec.h \
+ viewport.h window.h world.cpp world.h xml.h
 xml.o: config.h log.h string.h xml.cpp xml.h

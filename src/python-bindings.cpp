@@ -6,27 +6,29 @@
 
 #include <boost/python/module.hpp>
 
-#include "area.h" // for exportArea
-#include "entity.h" // for exportEntity
-#include "music.h" // for exportMusic
-#include "random.h" // for exportRandom
-#include "resourcer.h" // for exportResourcer
-#include "sound.h" // for exportSound
-#include "tile.h" // for exportTile
-#include "timer.h" // for exportTimer
-#include "vec.h" // for exportVecs
+#include "area.h"
+#include "entity.h"
+#include "music.h"
+#include "random.h"
+#include "resourcer.h"
+#include "sound.h"
+#include "tile.h"
+#include "timer.h"
+#include "timeout.h"
+#include "vec.h"
 
 BOOST_PYTHON_MODULE(tsunagari)
 {
 	exportArea();
 	exportEntity();
 	exportMusic();
+	exportRandom();
 	exportResourcer();
 	exportSound();
 	exportTile();
-	exportVecs();
-	exportRandom();
+	exportTimeout();
 	exportTimer();
+	exportVecs();
 }
 
 // *sigh* If only it weren't static.

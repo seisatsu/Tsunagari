@@ -11,6 +11,7 @@
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"
+#include "timeout.h"
 #include "window.h"
 #include "world.h"
 #include "xml.h"
@@ -96,6 +97,7 @@ void World::update(unsigned long dt)
 	boost::shared_ptr<Area> safe(area);
 
 	area->update(dt);
+	updateTimeouts();
 }
 
 AreaPtr World::getArea(const std::string& filename, int flags)
