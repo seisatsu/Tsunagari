@@ -4,17 +4,27 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
-#include "common.h"
-#include "python.h"
+#include <boost/python.hpp>
+
 #include "vec.h"
 
-using boost::python::class_;
-using boost::python::init;
-using boost::python::other;
-using boost::python::self;
+struct vicoord_to_python_tuple
+{
+	static PyObject* convert(const vicoord& c)
+	{
+		using namespace boost::python;
+
+		object tuple = make_tuple(c.x, c.y, c.z);
+		return incref(tuple.ptr());
+	}
+};
 
 void exportVecs()
 {
+	using namespace boost::python;
+
+	to_python_converter<vicoord, vicoord_to_python_tuple>();
+
 	class_<icoord>("icoord", init<int, int, int>())
 		.def_readwrite("x", &icoord::x)
 		.def_readwrite("y", &icoord::y)
@@ -31,9 +41,5 @@ void exportVecs()
 		.def(self -= other<rcoord>())
 		.def(self *= other<rcoord>())
 		.def(self /= other<rcoord>());
-	class_<vicoord>("vicoord", init<int, int, double>())
-		.def_readwrite("x", &vicoord::x)
-		.def_readwrite("y", &vicoord::y)
-		.def_readwrite("z", &vicoord::z);
 }
 

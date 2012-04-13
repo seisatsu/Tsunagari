@@ -479,7 +479,7 @@ void exportArea()
 	class_<Area>("Area", no_init)
 		.add_property("descriptor", &Area::getDescriptor)
 		.add_property("dimensions", &Area::pyGetDimensions)
-		.def("request_redraw", &Area::requestRedraw)
+		.def("redraw", &Area::requestRedraw)
 		.def("tiles",
 		    static_cast<Tile& (Area::*) (int, int, double)>
 		    (&Area::getTile),

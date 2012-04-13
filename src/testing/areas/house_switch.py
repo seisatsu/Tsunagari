@@ -9,6 +9,6 @@ if unlocked_the_door == False:
     tile = Area.tiles(4, 0, -0.2) # closed exit on north wall, graphics layer
     tile.type = Area.get_tile_type(66) # change to open exit
 
-    Area.request_redraw()
+    Area.redraw()
     Sound.play("sounds/door.oga") # unlocking sound
 
