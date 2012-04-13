@@ -8,7 +8,7 @@
 
 #include "area.h"
 #include "python.h"
-#include "python_optional.h"
+#include "python-optional.h"
 #include "tile.h"
 #include "window.h"
 

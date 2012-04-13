@@ -1,6 +1,6 @@
 /****************************
 ** Tsunagari Tile Engine   **
-** python_bindings.cpp     **
+** python-bindings.cpp     **
 ** Copyright 2012 OmegaSDG **
 ****************************/
 

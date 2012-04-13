@@ -12,7 +12,7 @@
 
 #include "log.h"
 #include "python.h"
-#include "python_bindings.h" // for pythonInitBindings
+#include "python-bindings.h" // for pythonInitBindings
 #include "resourcer.h"
 
 // Include libpython after everything else so it doesn't mess with Windows'

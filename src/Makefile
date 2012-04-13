@@ -30,7 +30,7 @@ depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
 tsunagari: animation.o area.o area-tmx.o sound.o cmd.o common.o entity.o log.o \
-	main.o music.o player.o python.o python_bindings.o random.o resourcer.o \
+	main.o music.o player.o python.o python-bindings.o random.o resourcer.o \
 	string.o tile.o timer.o vec.o viewport.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
@@ -69,19 +69,19 @@ music.o: cache.h common.h log.h music.cpp music.h python.h resourcer.h \
 player.o: animation.h area.h cache.h common.h config.h entity.h log.h \
  music.h player.cpp player.h resourcer.h sound.h tile.h vec.h viewport.h \
  window.h world.h xml.h
-python.o: cache.h common.h log.h python.cpp python.h python_bindings.h \
- resourcer.h sound.h vec.h window.h xml.h
-python_bindings.o: animation.h area.h cache.h common.h config.h entity.h \
- log.h music.h player.h python_bindings.cpp random.h resourcer.h sound.h \
+python-bindings.o: animation.h area.h cache.h common.h config.h entity.h \
+ log.h music.h player.h python-bindings.cpp random.h resourcer.h sound.h \
  tile.h timer.h vec.h viewport.h window.h xml.h
+python.o: cache.h common.h log.h python-bindings.h python.cpp python.h \
+ resourcer.h sound.h vec.h window.h xml.h
 random.o: python.h random.cpp random.h
 resourcer.o: cache.h common.h config.h log.h python.h resourcer.cpp \
  resourcer.h sound.h vec.h window.h xml.h
-sound.o: cache.h common.h log.h python.h python_optional.h resourcer.h \
+sound.o: cache.h common.h log.h python-optional.h python.h resourcer.h \
  sound.cpp sound.h vec.h window.h xml.h
 string.o: string.cpp string.h
 tile.o: animation.h area.h cache.h common.h config.h entity.h log.h music.h \
- player.h python.h python_optional.h resourcer.h sound.h tile.cpp tile.h \
+ player.h python-optional.h python.h resourcer.h sound.h tile.cpp tile.h \
  vec.h viewport.h window.h xml.h
 timer.o: python.h timer.cpp timer.h
 vec.o: common.h log.h python.h vec.cpp vec.h

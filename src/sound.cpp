@@ -8,7 +8,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "python.h"
-#include "python_optional.h"
+#include "python-optional.h"
 #include "resourcer.h"
 #include "sound.h"
 
