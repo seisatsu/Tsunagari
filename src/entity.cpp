@@ -228,6 +228,11 @@ void Entity::setTileCoords(vicoord virt)
 	r = area->virt2virt(virt);
 }
 
+void Entity::moveByTile(int x, int y)
+{
+	moveByTile(ivec2(x, y));
+}
+
 void Entity::moveByTile(ivec2 delta)
 {
 	if (moving)
@@ -243,6 +248,11 @@ void Entity::moveByTile(ivec2 delta)
 		else
 			setPhase(directionStr(facing));
 	}
+}
+
+bool Entity::isMoving()
+{
+	return moving || stillMoving;
 }
 
 void Entity::setArea(Area* a)
@@ -663,7 +673,10 @@ void exportEntity()
 		)
 		.add_property("coords", &Entity::getTileCoords_vi)
 		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)
+		.add_property("moving", &Entity::isMoving)
 		.def("goto_random_tile", &Entity::gotoRandomTile)
+		.def("move", static_cast<void (Entity::*) (int,int)>
+		    (&Entity::moveByTile))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::setTileCoords))
 		;

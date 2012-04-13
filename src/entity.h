@@ -76,7 +76,10 @@ public:
 	void setTileCoords(vicoord virt);
 
 	//! Initiate a movement within the Area.
+	void moveByTile(int x, int y);
 	void moveByTile(ivec2 delta);
+
+	bool isMoving();
 
 	//! Specifies the Area object this entity will ask when looking for
 	//! nearby Tiles. Doesn't change x,y,z position.
