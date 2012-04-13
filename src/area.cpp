@@ -33,6 +33,14 @@
          account.
 */
 
+template<class T>
+static T wrap(T min, T value, T max)
+{
+	while (value < min)
+		value += max;
+	return value % max;
+}
+
 Area::Area(Viewport* view,
            Player* player,
            Music* music,

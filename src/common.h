@@ -33,13 +33,5 @@ struct Conf {
 };
 extern Conf conf;
 
-template<class T>
-T wrap(T min, T value, T max)
-{
-	while (value < min)
-		value += max;
-	return value % max;
-}
-
 #endif
 
