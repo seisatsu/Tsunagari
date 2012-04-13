@@ -262,18 +262,6 @@ void Entity::setArea(Area* a)
 	setSpeed(speedMul); // Calculate new speed based on tile size.
 }
 
-void Entity::gotoRandomTile()
-{
-	const icoord map = area->getDimensions();
-	icoord pos;
-	Tile* tile;
-	do {
-		pos = icoord(rand() % map.x, rand() % map.y, 0);
-		tile = &area->getTile(pos);
-	} while (nowalked(*tile));
-	setTileCoords(pos);
-}
-
 double Entity::getSpeed() const
 {
 	return speedMul;
@@ -660,21 +648,17 @@ bool Entity::processScript(const XMLNode node)
 
 void exportEntity()
 {
-	boost::python::class_<Entity>("Entity", boost::python::no_init)
+	using namespace boost::python;
+
+	class_<Entity>("Entity", no_init)
 		.add_property("animation",
 		    &Entity::getFacing, &Entity::setPhase)
-		.add_property("tile",
-		    make_function(
-		      static_cast<Tile& (Entity::*) ()> (&Entity::getTile),
-		      boost::python::return_value_policy<
-		        boost::python::reference_existing_object
-		      >()
-		    )
-		)
+		.add_property("tile", make_function(
+		    static_cast<Tile& (Entity::*) ()> (&Entity::getTile),
+		    return_value_policy<reference_existing_object>()))
 		.add_property("coords", &Entity::getTileCoords_vi)
 		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)
 		.add_property("moving", &Entity::isMoving)
-		.def("goto_random_tile", &Entity::gotoRandomTile)
 		.def("move", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::moveByTile))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>

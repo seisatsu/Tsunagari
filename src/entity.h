@@ -62,6 +62,7 @@ public:
 	//! different.
 	bool setPhase(const std::string& name);
 
+
 	//! The offset from the upper-left of the Area to the upper-left of the
 	//! Tile the Entity is standing on.
 	rcoord getPixelCoord() const;
@@ -75,24 +76,26 @@ public:
 	void setTileCoords(icoord phys);
 	void setTileCoords(vicoord virt);
 
+
 	//! Initiate a movement within the Area.
 	void moveByTile(int x, int y);
 	void moveByTile(ivec2 delta);
 
+	//! Indicates whether we are in the middle of transitioning between tiles.
 	bool isMoving();
+
 
 	//! Specifies the Area object this entity will ask when looking for
 	//! nearby Tiles. Doesn't change x,y,z position.
 	void setArea(Area* area);
 
 
-	//! Move to a random Tile in the Area that is not designated 'nowalk'.
-	void gotoRandomTile();
-
+	//! Gets speed multiplier.
 	double getSpeed() const;
 
 	//! Sets speed multiplier.
 	void setSpeed(double multiplier);
+
 
 	//! Get the Tile we are standing on.
 	Tile& getTile() const;
