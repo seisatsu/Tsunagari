@@ -65,7 +65,7 @@ entity.o: animation.h area.h cache.h common.h config.h entity.cpp entity.h \
  window.h xml.h
 log.o: config.h log.cpp log.h
 main.o: clientconf.h common.h config.h log.h main.cpp python.h string.h \
- vec.h window.h
+ window.h
 music.o: cache.h common.h log.h music.cpp music.h python.h resourcer.h \
  sound.h vec.h window.h xml.h
 player.o: animation.h area.h cache.h common.h config.h entity.h log.h \
