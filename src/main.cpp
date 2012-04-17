@@ -4,23 +4,17 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
-#include <stdarg.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <string>
-#include <string.h>
+#include <stdlib.h>
 #include <time.h>
 
-#include <boost/algorithm/string.hpp> // for iequals
 #include <libxml/parser.h>
-#include <boost/scoped_ptr.hpp>
 
 #include "clientconf.h"
 #include "config.h"
 #include "common.h"
 #include "log.h"
 #include "python.h"
-#include "string.h"
 #include "window.h"
 
 #ifdef _WINDOWS
