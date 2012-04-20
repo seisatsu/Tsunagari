@@ -12,7 +12,6 @@
 
 #include "clientconf.h"
 #include "config.h"
-#include "common.h"
 #include "log.h"
 #include "python.h"
 #include "window.h"
@@ -64,6 +63,8 @@ int main(int argc, char** argv)
 	if (!parseConfig(CLIENT_CONF_FILE))
 		return 1;
 	if (!parseCommandLine(argc, argv))
+		return 1;
+	if (!conf.validate(CLIENT_CONF_FILE))
 		return 1;
 	if (conf.verbosity)
 		Log::setVerbosity(conf.verbosity);

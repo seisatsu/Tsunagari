@@ -7,7 +7,6 @@
 #include <Gosu/Utility.hpp>
 
 #include "area-tmx.h"
-#include "common.h"
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"

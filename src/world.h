@@ -13,7 +13,6 @@
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
-#include "common.h"
 #include "player.h"
 #include "viewport.h"
 

@@ -15,7 +15,6 @@
 #include <Python.h>
 
 #include "cache.h"
-#include "common.h"
 #include "sound.h"
 #include "xml.h"
 

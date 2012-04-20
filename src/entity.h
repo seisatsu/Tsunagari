@@ -14,7 +14,6 @@
 #include <libxml/parser.h>
 
 #include "tile.h" // for enum TileEventTrigger
-#include "common.h"
 #include "resourcer.h"
 
 class Animation;

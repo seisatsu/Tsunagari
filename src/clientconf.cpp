@@ -12,11 +12,46 @@
 #include <boost/program_options/detail/config_file.hpp>
 #include <boost/program_options/parsers.hpp>
 
+#include "clientconf.h"
 #include "cmd.h"
-#include "common.h"
 #include "config.h"
-#include "log.h"
 #include "string.h"
+
+Conf conf; // Project-wide global configuration.
+
+Conf::Conf()
+{
+	worldFilename = "";
+	windowSize.x = 0;
+	windowSize.y = 0;
+}
+
+// Check for missing required configuration variables.
+bool Conf::validate(const char* filename)
+{
+	bool good_conf = true;
+
+	if (conf.worldFilename == "") {
+		Log::fatal(filename, "\"[engine] world\" option or equivalent command line option expected.");
+		good_conf = false;
+	}
+	if (!conf.windowSize.x) {
+		Log::fatal(filename, "\"[window] width\" option or equivalent command line option expected.");
+		good_conf = false;
+	}
+	if (!conf.windowSize.y) {
+		Log::fatal(filename, "\"[window] height\" option or equivalent command line option expected.");
+		good_conf = false;
+	}
+	if (!conf.fullscreen_opt_set) {
+		Log::fatal(filename, "\"[window] fullscreen\" option or equivalent command line option expected.");
+		good_conf = false;
+	}
+	if (good_conf)
+		return true;
+	else
+		return false;
+}
 
 /* Output compiled-in engine defaults. */
 static void defaultsQuery()
@@ -60,33 +95,19 @@ bool parseConfig(const char* filename)
 	for (pod::config_file_iterator i(config, options), e ; i != e; ++i)
 		parameters[i->string_key] = i->value[0];
 
-	if (parameters["engine.world"].empty()) {
-		Log::fatal(filename, "\"[engine] world\" option expected");
-		return false;
-	}
-	else
+	if (!parameters["engine.world"].empty())
 		conf.worldFilename = parameters["engine.world"];
 
-	if (parameters["window.width"].empty()) {
-		Log::fatal(filename, "\"[window] width\" option expected");
-		return false;
-	}
-	else
+	if (!parameters["window.width"].empty())
 		conf.windowSize.x = atoi(parameters["window.width"].c_str());
 
-	if (parameters["window.height"].empty()) {
-		Log::fatal(filename, "\"[window] height\" option expected");
-		return false;
-	}
-	else
+	if (!parameters["window.height"].empty())
 		conf.windowSize.y = atoi(parameters["window.height"].c_str());
 
-	if (parameters["window.fullscreen"].empty()) {
-		Log::fatal(filename, "\"[window] fullscreen\" option expected");
-		return false;
-	}
-	else
+	if (!parameters["window.fullscreen"].empty()) {
+		conf.fullscreen_opt_set = true;
 		conf.fullscreen = parseBool(parameters["window.fullscreen"]);
+	}
 
 	if (parameters["audio.enabled"].size())
 		conf.audioEnabled = parseBool(parameters["audio.enabled"]);
@@ -215,7 +236,7 @@ bool parseCommandLine(int argc, char* argv[])
 	if (cmd.check("--size")) {
 		std::vector<std::string> dim = splitStr(cmd.get("--size"), "x");
 		if (dim.size() != 2) {
-			Log::fatal("cmdline", "invalid argument for --size");
+			Log::fatal("cmdline", "invalid argument for -s/--size");
 			return false;
 		}
 		conf.windowSize.x = atoi(dim[0].c_str());
@@ -223,15 +244,19 @@ bool parseCommandLine(int argc, char* argv[])
 	}
 
 	if (cmd.check("--fullscreen") && cmd.check("--window")) {
-		Log::fatal("cmdline", "--fullscreen and --window mutually exclusive");
+		Log::fatal("cmdline", "-f/--fullscreen and -w/--window mutually exclusive");
 		return false;
 	}
 
-	if (cmd.check("--fullscreen"))
+	if (cmd.check("--fullscreen")) {
 		conf.fullscreen = true;
+		conf.fullscreen_opt_set = true;
+	}
 
-	if (cmd.check("--window"))
+	if (cmd.check("--window")) {
 		conf.fullscreen = false;
+		conf.fullscreen_opt_set = true;
+	}
 
 	return true;
 }

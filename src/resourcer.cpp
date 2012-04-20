@@ -17,7 +17,6 @@
 #include <Gosu/IO.hpp>
 #include <physfs.h>
 
-#include "common.h"
 #include "config.h"
 #include "log.h"
 #include "python.h"

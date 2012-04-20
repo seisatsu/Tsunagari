@@ -13,7 +13,6 @@
 #include <boost/optional.hpp>
 
 #include "animation.h"
-#include "common.h"
 #include "resourcer.h" // for TiledImage
 
 class Area;

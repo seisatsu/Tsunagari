@@ -14,8 +14,6 @@
 #include <boost/scoped_ptr.hpp>
 #include <Gosu/Window.hpp> // for Gosu::Window
 
-#include "common.h"
-
 namespace Gosu {
 	class Button;
 }

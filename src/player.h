@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include "common.h"
 #include "entity.h"
 
 class Area;
