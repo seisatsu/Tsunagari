@@ -19,12 +19,13 @@ LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
 	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
 
 # Name of testing world.
+BASEDATA = base.zip
 TESTWORLD = testing.world
 
 
 ### --- MAIN SECTION --- ###
 
-all: tsunagari $(TESTWORLD)
+all: tsunagari $(BASEDATA) $(TESTWORLD)
 
 depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
@@ -35,11 +36,14 @@ tsunagari: animation.o area.o area-tmx.o clientconf.o cmd.o entity.o log.o \
 	world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
 
+%.zip:
+	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
+
 %.world:
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
 
 clean:
-	$(RM) tsunagari *.o $(TESTWORLD)
+	$(RM) tsunagari *.o $(BASEDATA) $(TESTWORLD)
 
 
 ### --- DEPENDS SECTION --- ###

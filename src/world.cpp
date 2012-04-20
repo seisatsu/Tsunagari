@@ -25,7 +25,7 @@ World* World::instance()
 }
 
 World::World()
-	: player(NULL)
+	: music(new Music()), player(NULL)
 {
 	globalWorld = this;
 	pythonSetGlobal("World", this);
@@ -40,8 +40,6 @@ bool World::init()
 	if (!processDescriptor()) // Try to load in descriptor.
 		return false;
 
-	music.reset(new Music());
-
 	if (!player.init(playerentity))
 		return false;
 	player.setPhase("down");
@@ -52,7 +50,7 @@ bool World::init()
 		rc->runPythonScript(onLoadScript);
 	}
 
-	view = new Viewport(viewport);
+	view.reset(new Viewport(viewport));
 	view->trackEntity(&player);
 
 	Area* area = getArea(entry.area);
@@ -101,7 +99,7 @@ Area* World::getArea(const std::string& filename)
 	if (entry != areas.end())
 		return entry->second;
 
-	Area* newArea = new AreaTMX(view, &player, music.get(), filename);
+	Area* newArea = new AreaTMX(view.get(), &player, music.get(), filename);
 
 	if (!newArea->init())
 		newArea = NULL;
@@ -157,7 +155,7 @@ bool World::processDescriptor()
 			ASSERT(processInput(child));
 		}
 	}
-	
+
 	if (conf.moveMode == TURN &&
 	   (conf.persistInit == 0 || conf.persistCons == 0)) {
 		Log::fatal("world.conf", "\"input->persist\" option required in TURN mode.");

@@ -49,12 +49,29 @@ bool Resourcer::init(char* argv0)
 {
 	int err;
 	err = PHYSFS_init(argv0);
-	if (!err)
-		return false;
+	return err != 0;
+}
 
-	err = PHYSFS_mount(conf.worldFilename.c_str(), NULL, 0);
+bool Resourcer::prependPath(std::string path)
+{
+	int err;
+
+	err = PHYSFS_mount(path.c_str(), NULL, 0);
 	if (!err) {
-		Log::fatal("Resourcer", conf.worldFilename + ": could not open world");
+		Log::fatal("Resourcer", path + ": could not open archive");
+		return false;
+	}
+
+	return true;
+}
+
+bool Resourcer::appendPath(std::string path)
+{
+	int err;
+
+	err = PHYSFS_mount(path.c_str(), NULL, 1);
+	if (!err) {
+		Log::fatal("Resourcer", path + ": could not open archive");
 		return false;
 	}
 

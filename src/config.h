@@ -10,6 +10,9 @@
 #define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP4 Revision 2"
 
 // === Default Configuration Settings ===
+	/* Base data file. */
+	#define BASE_ZIP "./base.zip"
+
 	/* Tsunagari config file. */
 	#define CLIENT_CONF_FILE "./client.ini"
 

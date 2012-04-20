@@ -93,7 +93,7 @@ private:
 	//! fit on-screen.
 	Gosu::Transform getTransform();
 
-	Viewport* view;
+	boost::shared_ptr<Viewport> view;
 	Area* area;
 	boost::shared_ptr<Music> music;
 	Player player;

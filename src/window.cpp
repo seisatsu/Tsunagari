@@ -58,7 +58,21 @@ bool GameWindow::init(char* argv0)
 {
 	rc.reset(new Resourcer());
 	world.reset(new World());
-	return rc->init(argv0) && world->init();
+	if (!rc->init(argv0))
+	       return false;
+
+	if (!rc->appendPath(BASE_ZIP))
+		return false;
+	if (rc->resourceExists("init.py"))
+		rc->runPythonScript("init.py");
+	else {
+		Log::fatal(BASE_ZIP, "couldn't find init.py");
+		return false;
+	}
+
+	if (!rc->appendPath(conf.worldFilename))
+		return false;
+	return world->init();
 }
 
 int GameWindow::width() const
