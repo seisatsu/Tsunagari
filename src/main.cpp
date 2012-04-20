@@ -10,7 +10,7 @@
 
 #include <libxml/parser.h>
 
-#include "clientconf.h"
+#include "client-conf.h"
 #include "config.h"
 #include "log.h"
 #include "python.h"

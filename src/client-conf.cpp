@@ -1,6 +1,6 @@
 /****************************
 ** Tsunagari Tile Engine   **
-** clientconf.cpp          **
+** client-conf.cpp         **
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
@@ -12,7 +12,7 @@
 #include <boost/program_options/detail/config_file.hpp>
 #include <boost/program_options/parsers.hpp>
 
-#include "clientconf.h"
+#include "client-conf.h"
 #include "cmd.h"
 #include "config.h"
 #include "string.h"

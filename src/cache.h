@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "clientconf.h"
+#include "client-conf.h"
 #include "log.h"
 #include "window.h"
 

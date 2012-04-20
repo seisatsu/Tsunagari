@@ -1,6 +1,6 @@
 /****************************
 ** Tsunagari Tile Engine   **
-** clientconf.h            **
+** client-conf.h           **
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
