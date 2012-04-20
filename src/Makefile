@@ -19,8 +19,8 @@ LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
 	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
 
 # Name of testing world.
-BASEDATA = base.zip
-TESTWORLD = testing.world
+BASEDATA = ../data/base.zip
+TESTWORLD = ../data/testing.world
 
 
 ### --- MAIN SECTION --- ###

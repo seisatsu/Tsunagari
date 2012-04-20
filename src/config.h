@@ -11,13 +11,13 @@
 
 // === Default Configuration Settings ===
 	/* Base data file. */
-	#define BASE_ZIP "./base.zip"
+	#define BASE_ZIP "../data/base.zip"
 
 	/* Tsunagari config file. */
 	#define CLIENT_CONF_FILE "./client.ini"
 
 	/* Tsunagari XML DTD directory. */
-	#define DTD_DIRECTORY "./dtd/"
+	#define DTD_DIRECTORY "../data/dtd/"
 
 	/* Time to live in seconds for empty resource cache entries before they
 	   are deleted. */
