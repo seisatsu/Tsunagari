@@ -24,6 +24,8 @@ Conf::Conf()
 	worldFilename = "";
 	windowSize.x = 0;
 	windowSize.y = 0;
+	persistInit = 0;
+	persistCons = 0;
 }
 
 // Check for missing required configuration variables.

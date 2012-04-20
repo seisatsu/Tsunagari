@@ -157,6 +157,12 @@ bool World::processDescriptor()
 			ASSERT(processInput(child));
 		}
 	}
+	
+	if (conf.moveMode == TURN &&
+	   (conf.persistInit == 0 || conf.persistCons == 0)) {
+		Log::fatal("world.conf", "\"input->persist\" option required in TURN mode.");
+		return false;
+	}
 
 	return true;
 }
