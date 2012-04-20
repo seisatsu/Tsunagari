@@ -34,19 +34,19 @@ bool Conf::validate(const char* filename)
 	bool good_conf = true;
 
 	if (conf.worldFilename == "") {
-		Log::fatal(filename, "\"[engine] world\" option or equivalent command line option expected.");
+		Log::fatal(filename, "\"[engine] world\" option or equivalent command line option expected");
 		good_conf = false;
 	}
 	if (!conf.windowSize.x) {
-		Log::fatal(filename, "\"[window] width\" option or equivalent command line option expected.");
+		Log::fatal(filename, "\"[window] width\" option or equivalent command line option expected");
 		good_conf = false;
 	}
 	if (!conf.windowSize.y) {
-		Log::fatal(filename, "\"[window] height\" option or equivalent command line option expected.");
+		Log::fatal(filename, "\"[window] height\" option or equivalent command line option expected");
 		good_conf = false;
 	}
 	if (!conf.fullscreen_opt_set) {
-		Log::fatal(filename, "\"[window] fullscreen\" option or equivalent command line option expected.");
+		Log::fatal(filename, "\"[window] fullscreen\" option or equivalent command line option expected");
 		good_conf = false;
 	}
 	if (good_conf)
