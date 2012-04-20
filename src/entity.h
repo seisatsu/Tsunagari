@@ -103,6 +103,10 @@ public:
 	Tile& getTile() const;
 	Tile& getTile();
 
+
+	//! Exempt ourselves from TILE_NOWALK et al.
+	FlagManip exemptManip();
+
 protected:
 	std::vector<icoord> frontTiles() const;
 
@@ -177,6 +181,7 @@ protected:
 	 * tiles. */
 	bool stillMoving;
 	unsigned nowalkFlags;
+	unsigned nowalkExempt;
 
 	vicoord deltaCoord;
 	rcoord fromCoord;
