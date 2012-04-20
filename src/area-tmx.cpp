@@ -38,6 +38,8 @@ AreaTMX::AreaTMX(Viewport* view,
            const std::string& descriptor)
 	: Area(view, player, music, descriptor)
 {
+	// Add TileType #0. Not used, but Tiled's gids start from 1.
+	gids.push_back(NULL);
 }
 
 AreaTMX::~AreaTMX()
@@ -184,6 +186,7 @@ bool AreaTMX::processTileSet(XMLNode node)
  </tileset>
 */
 
+	TileSet* set;
 	TiledImage img;
 	int x, y;
 
@@ -197,25 +200,21 @@ bool AreaTMX::processTileSet(XMLNode node)
 	}
 	tileDim = ivec2(x, y);
 
-	if (tileTypes.empty()) {
-		// Add TileType #0, a transparent tile type that fills map
-		// squares for sections of the map that don't exist.
-		TileType zero;
-		zero.flags = TILE_NOWALK;
-		tileTypes.push_back(zero);
-		// XXX: Paul 2011-11-13: This tiletype isn't directly used
-		//      anymore. Should we remove it?
-	}
-
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("image")) {
 			std::string source = child.attr("source");
+			int width, height;
+			ASSERT(child.intAttr("width", &width) &&
+			       child.intAttr("height", &height));
+			width /= tileDim.x;
+			height /= tileDim.y;
+			tileSets[source] = TileSet(width, height);
+			set = &tileSets[source];
 			Resourcer* rc = Resourcer::instance();
 			rc->getTiledImage(img, source,
 				(unsigned)x, (unsigned)y, true);
 		}
 		else if (child.is("tile")) {
-			// FIXME: Ensure img
 			if (img.empty()) {
 				Log::err(descriptor,
 				  "Tile processed before tileset image loaded");
@@ -225,7 +224,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 			int id;
 			ASSERT(child.intAttr("id", &id));
 
-			if (id < 0 || (int)tileTypes.size() +
+			if (id < 0 || (int)gids.size() +
 			              (int)img.size() <= id) {
 				Log::err(descriptor, "tile type id is invalid");
 				return false;
@@ -235,30 +234,41 @@ bool AreaTMX::processTileSet(XMLNode node)
 			// tile from the image rather than in terms of the gid
 			// number, which has an extra type, #0, pushing back
 			// all other types by one.
-			int gid = id + 1;
+			size_t gid = id + 1;
 
-			if ((int)tileTypes.size() > gid) {
+			if (gid < gids.size()) {
 				Log::err(descriptor,
 					"tile types must be sorted by id");
 				return false;
 			}
 
 			// Undeclared types have default properties.
-			while ((int)tileTypes.size() < gid)
-				tileTypes.push_back(TileType(img));
+			while (gid > gids.size()) {
+				TileType* type = new TileType(img);
+				set->add(type);
+				gids.push_back(type);
+			}
+
+			// Initialize a default TileType, we'll build on that.
+			TileType* type = new TileType(img);
+			set->add(type);
+			gids.push_back(type);
 
 			// Handle this (explicitly declared) type.
-			ASSERT(processTileType(child, img, id));
+			ASSERT(processTileType(child, *type, img, id));
 		}
 	}
 
 	// Handle remaining anonymous items.
-	while (img.size())
-		tileTypes.push_back(TileType(img));
+	while (img.size()) {
+		TileType* type = new TileType(img);
+		set->add(type);
+		gids.push_back(type);
+	}
 	return true;
 }
 
-bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
+bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int id)
 {
 
 /*
@@ -282,9 +292,6 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 	// to worry about it.
 
 	Resourcer* rc = Resourcer::instance();
-
-	// Initialize a default TileType, we'll build on that.
-	TileType type(img);
 
 	XMLNode child = node.childrenNode(); // <properties>
 	for (child = child.childrenNode(); child; child = child.next()) {
@@ -355,7 +362,6 @@ bool AreaTMX::processTileType(XMLNode node, TiledImage& img, int id)
 		}
 	}
 
-	tileTypes.push_back(type);
 	return true;
 }
 
@@ -459,7 +465,7 @@ bool AreaTMX::processLayerData(XMLNode node, int z)
 			int gid;
 			ASSERT(child.intAttr("gid", &gid));
 
-			if (gid < 0 || (int)tileTypes.size() <= gid) {
+			if (gid < 0 || (int)gids.size() <= gid) {
 				Log::err(descriptor, "invalid tile gid");
 				return false;
 			}
@@ -467,10 +473,10 @@ bool AreaTMX::processLayerData(XMLNode node, int z)
 			// A gid of zero means there is no tile at this
 			// position on this layer.
 			if (gid > 0) {
-				TileType& type = tileTypes[gid];
+				TileType* type = gids[gid];
 				Tile& tile = map[z][y][x];
-				type.allOfType.push_back(&tile);
-				tile.parent = &type;
+				type->allOfType.push_back(&tile);
+				tile.parent = type;
 			}
 
 			if (++x == dim.x) {

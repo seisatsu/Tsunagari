@@ -86,7 +86,9 @@ public:
 	Tile& getTile(int x, int y, double z); /* virt */
 	Tile& getTile(icoord phys);
 	Tile& getTile(vicoord virt);
-	TileType& getTileType(int idx);
+	TileType& getGid(int idx);
+	TileSet& getTileSet(std::string imagePath);
+	TileSet& pyGetTileSet(std::string imagePath);
 
 	//! Return the dimensions of the Tile matrix.
 	ivec3 getDimensions() const;
@@ -161,8 +163,8 @@ protected:
 	//! same size.
 	ivec2 tileDim;
 
-	//! Properties shared by all tiles of a type.
-	std::vector<TileType> tileTypes;
+	std::map<std::string, TileSet> tileSets;
+	std::vector<TileType*> gids; // FIXME: only exist in AreaTMX
 
 	//! Maps virtual float-point depths to an index in our map array.
 	boost::unordered_map<double, int> depth2idx;

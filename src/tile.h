@@ -153,6 +153,27 @@ public:
 	std::vector<Tile*> allOfType;
 };
 
+class TileSet
+{
+public:
+	TileSet();
+	TileSet(int width, int height);
+
+	void add(TileType* type);
+	TileType& get(int x, int y);
+	int getWidth() const;
+	int getHeight() const;
+
+	//! Throws a Python exception if out of bounds.
+	TileType& pyGet(int x, int y);
+
+private:
+	size_t idx(int x, int y) const;
+
+	std::vector<TileType*> types;
+	int width, height;
+};
+
 void exportTile();
 
 #endif

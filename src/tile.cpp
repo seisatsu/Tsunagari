@@ -9,6 +9,7 @@
 #include "area.h"
 #include "python.h"
 #include "python-optional.h"
+#include "string.h"
 #include "tile.h"
 #include "window.h"
 
@@ -224,7 +225,61 @@ bool TileType::needsRedraw() const
 	return anim.needsRedraw(millis);
 }
 
+/*
+ * TILESET
+ */
+TileSet::TileSet()
+{
+}
 
+TileSet::TileSet(int width, int height)
+	: width(width), height(height)
+{
+}
+
+void TileSet::add(TileType* type)
+{
+	types.push_back(type);
+}
+
+TileType& TileSet::get(int x, int y)
+{
+	size_t i = idx(x, y);
+	if (i > types.size())
+		Log::fatal("TileSet", "index " + itostr((int)i) + " out of bounds");
+	return *types[i];
+}
+
+int TileSet::getWidth() const
+{
+	return height;
+}
+
+int TileSet::getHeight() const
+{
+	return width;
+}
+
+TileType& TileSet::pyGet(int x, int y)
+{
+	size_t i = idx(x, y);
+	if (i > types.size()) {
+		PyErr_SetString(PyExc_IndexError,
+			"TileSet::at(): x, y index out of range");
+		boost::python::throw_error_already_set();
+	}
+	return *types[i];
+}
+
+size_t TileSet::idx(int x, int y) const
+{
+	return y * width + x;
+}
+
+
+/*
+ * PYTHON
+ */
 void exportTile()
 {
 	using namespace boost::python;
@@ -264,6 +319,12 @@ void exportTile()
 		    return_value_policy<reference_existing_object>())
 		;
 	class_<TileType, bases<TileBase> > ("TileType", no_init)
+		;
+	class_<TileSet> ("TileSet", no_init)
+		.add_property("width", &TileSet::getWidth)
+		.add_property("height", &TileSet::getHeight)
+		.def("at", &TileSet::pyGet,
+		    return_value_policy<reference_existing_object>())
 		;
 	class_<Exit> ("Exit", no_init)
 		.def_readwrite("area", &Exit::area)

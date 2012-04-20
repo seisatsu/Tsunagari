@@ -237,9 +237,30 @@ Tile& Area::getTile(vicoord virt)
 	return getTile(virt2phys(virt));
 }
 
-TileType& Area::getTileType(int idx)
+TileType& Area::getGid(int idx)
 {
-	return tileTypes[idx];
+	return *gids[idx];
+}
+
+TileSet& Area::getTileSet(std::string imagePath)
+{
+	std::map<std::string, TileSet>::iterator it;
+	it = tileSets.find(imagePath);
+	if (it == tileSets.end())
+		Log::fatal("Area", "tileset " + imagePath + " not found");
+	return tileSets[imagePath];
+}
+
+TileSet& Area::pyGetTileSet(std::string imagePath)
+{
+	std::map<std::string, TileSet>::iterator it;
+	it = tileSets.find(imagePath);
+	if (it == tileSets.end()) {
+		PyErr_SetString(PyExc_KeyError,
+			("Area::tileset(): key \"" + imagePath + "\" not found").c_str());
+		boost::python::throw_error_already_set();
+	}
+	return tileSets[imagePath];
 }
 
 
@@ -399,8 +420,10 @@ void Area::runOnLoads()
 void Area::updateTileAnimations()
 {
 	const int millis = GameWindow::instance().time();
-	BOOST_FOREACH(TileType& type, tileTypes)
-		type.anim.updateFrame(millis);
+	BOOST_FOREACH(TileType* type, gids) {
+		if (type) // First gid == NULL.
+			type->anim.updateFrame(millis);
+	}
 }
 
 void Area::drawTiles() const
@@ -468,6 +491,8 @@ void exportArea()
 		.add_property("descriptor", &Area::getDescriptor)
 		.add_property("dimensions", &Area::pyGetDimensions)
 		.def("redraw", &Area::requestRedraw)
+		.def("tileset", &Area::pyGetTileSet,
+		    return_value_policy<reference_existing_object>())
 		.def("tile",
 		    static_cast<Tile& (Area::*) (int, int, double)>
 		    (&Area::getTile),
@@ -475,8 +500,6 @@ void exportArea()
 		.def("in_bounds",
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
-		.def("tile_type", &Area::getTileType,
-		    return_value_policy<reference_existing_object>())
 		.def("color_overlay", &Area::setColorOverlay)
 		;
 }

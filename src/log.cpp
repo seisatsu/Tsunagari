@@ -25,7 +25,7 @@ void Log::setVerbosity(verbosity_t v)
 void Log::info(std::string domain, std::string msg)
 {
 	if (verb > V_NORMAL) {
-		std::cerr << "Info [" << domain << "] - "
+		std::cout << "Info [" << domain << "] - "
 			<< chomp(msg) << std::endl;
 	}
 }

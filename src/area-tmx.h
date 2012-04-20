@@ -36,7 +36,7 @@ private:
 	bool processDescriptor();
 	bool processMapProperties(XMLNode node);
 	bool processTileSet(XMLNode node);
-	bool processTileType(XMLNode node, TiledImage& img, int id);
+	bool processTileType(XMLNode node, TileType& type, TiledImage& img, int id);
 	bool processLayer(XMLNode node);
 	bool processLayerProperties(XMLNode node, double* depth);
 	bool processLayerData(XMLNode node, int z);
