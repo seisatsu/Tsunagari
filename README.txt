@@ -13,10 +13,6 @@ Tsunagari Tile Engine
 
 Alpha Preview Release 4 "Akatsuki" Revision 2
 
-Note:
-	Compiling requires Jamer's Gosu fork (retro branch).
-	https://github.com/jamer/gosu/tree/retro
-
 -----
 
 Tsunagari is a tiled game engine inspired by the cult classic game Yume Nikki. 
