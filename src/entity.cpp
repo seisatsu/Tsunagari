@@ -291,6 +291,11 @@ Tile& Entity::getTile()
 	return area->getTile(getTileCoords_i());
 }
 
+FlagManip Entity::exemptManip()
+{
+	return FlagManip(&nowalkExempt);
+}
+
 std::vector<icoord> Entity::frontTiles() const
 {
 	std::vector<icoord> tiles;
@@ -359,15 +364,17 @@ bool Entity::canMove(icoord dest)
 
 bool Entity::nowalked(Tile& t)
 {
-	if (nowalkFlags & TILE_NOWALK) {
+	unsigned flags = nowalkFlags & ~nowalkExempt;
+
+	if (flags & TILE_NOWALK) {
 		if (t.hasFlag(TILE_NOWALK))
 			return true;
 	}
-	if (nowalkFlags & TILE_NOWALK_PLAYER) {
+	if (flags & TILE_NOWALK_PLAYER) {
 		if (t.hasFlag(TILE_NOWALK_PLAYER))
 			return true;
 	}
-	if (nowalkFlags & TILE_NOWALK_NPC) {
+	if (flags & TILE_NOWALK_NPC) {
 		if (t.hasFlag(TILE_NOWALK_NPC))
 			return true;
 	}
@@ -667,6 +674,7 @@ void exportEntity()
 		.add_property("coords", &Entity::getTileCoords_vi)
 		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)
 		.add_property("moving", &Entity::isMoving)
+		.add_property("exempt", &Entity::exemptManip)
 		.def("move", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::moveByTile))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
