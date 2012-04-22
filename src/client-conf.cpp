@@ -100,6 +100,9 @@ bool parseConfig(const char* filename)
 	if (!parameters["engine.world"].empty())
 		conf.worldFilename = parameters["engine.world"];
 
+	if (!parameters["engine.datapath"].empty())
+		conf.dataPath = splitStr(parameters["engine.datapath"], ",");
+
 	if (!parameters["window.width"].empty())
 		conf.windowSize.x = atoi(parameters["window.width"].c_str());
 
@@ -161,20 +164,21 @@ bool parseCommandLine(int argc, char* argv[])
 {
 	CommandLineOptions cmd(argc, argv);
 
-	cmd.insert("-h", "--help",       "",              "Display this help message");
-	cmd.insert("-g", "--gameworld",  "<world file>",  "Game world to load");
-	cmd.insert("-c", "--config",     "<config file>", "Client config file to use");
-	cmd.insert("-q", "--quiet",      "",              "Display only fatal errors");
-	cmd.insert("",   "--normal",     "",              "Display all errors");
-	cmd.insert("-v", "--verbose",    "",              "Display additional information");
-	cmd.insert("-t", "--cache-ttl",  "<seconds>",     "Cache time-to-live in seconds");
-	cmd.insert("-m", "--cache-size", "<megabytes>",   "Cache size in megabytes");
-	cmd.insert("-s", "--size",       "<WxH>",         "Window dimensions");
-	cmd.insert("-f", "--fullscreen", "",              "Run in fullscreen mode");
-	cmd.insert("-w", "--window",     "",              "Run in windowed mode");
-	cmd.insert("",   "--no-audio",   "",              "Disable audio");
-	cmd.insert("",   "--query",      "",              "Query compiled-in engine defaults");
-	cmd.insert("",   "--version",    "",              "Print the engine version string");
+	cmd.insert("-h", "--help",       "",                "Display this help message");
+	cmd.insert("-g", "--gameworld",  "<world file>",    "Game world to load");
+	cmd.insert("-c", "--config",     "<config file>",   "Client config file to use");
+	cmd.insert("-p", "--datapath",   "<file,file,...>", "Prepend zips to data path");
+	cmd.insert("-q", "--quiet",      "",                "Display only fatal errors");
+	cmd.insert("",   "--normal",     "",                "Display all errors");
+	cmd.insert("-v", "--verbose",    "",                "Display additional information");
+	cmd.insert("-t", "--cache-ttl",  "<seconds>",       "Cache time-to-live in seconds");
+	cmd.insert("-m", "--cache-size", "<megabytes>",     "Cache size in megabytes");
+	cmd.insert("-s", "--size",       "<WxH>",           "Window dimensions");
+	cmd.insert("-f", "--fullscreen", "",                "Run in fullscreen mode");
+	cmd.insert("-w", "--window",     "",                "Run in windowed mode");
+	cmd.insert("",   "--no-audio",   "",                "Disable audio");
+	cmd.insert("",   "--query",      "",                "Query compiled-in engine defaults");
+	cmd.insert("",   "--version",    "",                "Print the engine version string");
 
 	if (!cmd.parse()) {
 		cmd.usage();
@@ -200,6 +204,9 @@ bool parseCommandLine(int argc, char* argv[])
 		if (!parseConfig(cmd.get("--config").c_str()))
 			return false;
 	}
+
+	if (cmd.check("--datapath"))
+		conf.dataPath = splitStr(cmd.get("--datapath"), ",");
 
 	if (cmd.check("--gameworld"))
 		conf.worldFilename = cmd.get("--gameworld");

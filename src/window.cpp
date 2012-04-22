@@ -4,6 +4,7 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <boost/foreach.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Graphics
 #include <Gosu/Timing.hpp>
 #include <Gosu/Utility.hpp>
@@ -60,6 +61,17 @@ bool GameWindow::init(char* argv0)
 	world.reset(new World());
 	if (!rc->init(argv0))
 	       return false;
+
+	BOOST_FOREACH(std::string pathname, conf.dataPath) {
+		if (!rc->prependPath(pathname))
+			return false;
+		if (rc->resourceExists("init.py"))
+			rc->runPythonScript("init.py");
+		else {
+			Log::fatal(pathname, "couldn't find init.py");
+			return false;
+		}
+	}
 
 	if (!rc->appendPath(BASE_ZIP))
 		return false;

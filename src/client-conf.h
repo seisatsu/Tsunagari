@@ -4,6 +4,8 @@
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
+#include <vector>
+
 #include "log.h"
 #include "vec.h"
 
@@ -20,6 +22,7 @@ struct Conf {
 	bool validate(const char* filename);
 
 	std::string worldFilename;
+	std::vector<std::string> dataPath;
 	verbosity_t verbosity;
 	movement_mode_t moveMode;
 	icoord windowSize;
