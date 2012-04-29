@@ -44,6 +44,8 @@ void exportVecs()
 	// typedef'd to ivec3 and rvec3, already registered
 	/* to_python_converter<icoord, vec3_to_python_tuple<icoord> >(); */
 	/* to_python_converter<rcoord, vec3_to_python_tuple<rcoord> >(); */
+
+	// Not really a vec3, but we just need ::x, ::y, ::z members.
 	to_python_converter<vicoord, vec3_to_python_tuple<vicoord> >();
 }
 

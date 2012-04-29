@@ -72,12 +72,6 @@ public:
 	std::string getAreaLoadScript();
 
 private:
-	bool processDescriptor();
-	bool processInfo(XMLNode node);
-	bool processInit(XMLNode node);
-	bool processScript(XMLNode node);
-	bool processInput(XMLNode node);
-
 	//! Draws black borders around the screen to correct the aspect ratio.
 	void drawLetterbox();
 	//! Draws black borders around the Area if the Area doesn't fit in the
@@ -92,6 +86,12 @@ private:
 	//! Returns an affine transformation that will zoom and pan the Area to
 	//! fit on-screen.
 	Gosu::Transform getTransform();
+
+	bool processDescriptor();
+	bool processInfo(XMLNode node);
+	bool processInit(XMLNode node);
+	bool processScript(XMLNode node);
+	bool processInput(XMLNode node);
 
 	boost::shared_ptr<Viewport> view;
 	Area* area;

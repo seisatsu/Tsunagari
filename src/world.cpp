@@ -132,6 +132,71 @@ std::string World::getAreaLoadScript()
 	return onAreaLoadScript;
 }
 
+void World::drawLetterbox()
+{
+	rvec2 sz = view->getPhysRes();
+	rvec2 lb = rvec2(0.0, 0.0) - view->getLetterboxOffset();
+	Gosu::Color black = Gosu::Color::BLACK;
+
+	drawRect(0, sz.x, 0, lb.y, black, 1000);
+	drawRect(0, sz.x, sz.y - lb.y, sz.y, black, 1000);
+	drawRect(0, lb.x, 0, sz.y, black, 1000);
+	drawRect(sz.x - lb.x, sz.x, 0, sz.y, black, 1000);
+}
+
+void World::drawAreaBorders()
+{
+	Gosu::Color black = Gosu::Color::BLACK;
+	rvec2 sz = view->getPhysRes();
+	rvec2 scale = view->getScale();
+	rvec2 virtScroll = view->getMapOffset();
+	rvec2 padding = view->getLetterboxOffset();
+
+	rvec2 physScroll = -1 * virtScroll * scale + padding;
+
+	bool loopX = area->loopsInX();
+	bool loopY = area->loopsInY();
+
+	if (!loopX && physScroll.x > 0) {
+		// Boxes on left-right.
+		drawRect(0, physScroll.x, 0, sz.y, black, 500);
+		drawRect(sz.x - physScroll.x, sz.x, 0, sz.y, black, 500);
+	}
+	if (!loopY && physScroll.y > 0) {
+		// Boxes on top-bottom.
+		drawRect(0, sz.x, 0, physScroll.y, black, 500);
+		drawRect(0, sz.x, sz.y - physScroll.y, sz.y, black, 500);
+	}
+}
+
+void World::drawRect(double x1, double x2, double y1, double y2,
+                       Gosu::Color c, double z)
+{
+	GameWindow& window = GameWindow::instance();
+	window.graphics().drawQuad(
+		x1, y1, c,
+		x2, y1, c,
+		x2, y2, c,
+		x1, y2, c,
+		z
+	);
+}
+
+Gosu::Transform World::getTransform()
+{
+	rvec2 scale = view->getScale();
+	rvec2 scroll = view->getMapOffset();
+	rvec2 padding = view->getLetterboxOffset();
+	Gosu::Transform t = { {
+		scale.x, 0,       0, 0,
+		0,       scale.y, 0, 0,
+		0,       0,       1, 0,
+		scale.x * -scroll.x - padding.x,
+		scale.y * -scroll.y - padding.y, 0, 1
+	} };
+	return t;
+}
+
 bool World::processDescriptor()
 {
 	XMLRef doc;
@@ -251,71 +316,6 @@ bool World::processInput(XMLNode node)
 		}
 	}
 	return true;
-}
-
-void World::drawLetterbox()
-{
-	rvec2 sz = view->getPhysRes();
-	rvec2 lb = rvec2(0.0, 0.0) - view->getLetterboxOffset();
-	Gosu::Color black = Gosu::Color::BLACK;
-
-	drawRect(0, sz.x, 0, lb.y, black, 1000);
-	drawRect(0, sz.x, sz.y - lb.y, sz.y, black, 1000);
-	drawRect(0, lb.x, 0, sz.y, black, 1000);
-	drawRect(sz.x - lb.x, sz.x, 0, sz.y, black, 1000);
-}
-
-void World::drawAreaBorders()
-{
-	Gosu::Color black = Gosu::Color::BLACK;
-	rvec2 sz = view->getPhysRes();
-	rvec2 scale = view->getScale();
-	rvec2 virtScroll = view->getMapOffset();
-	rvec2 padding = view->getLetterboxOffset();
-
-	rvec2 physScroll = -1 * virtScroll * scale + padding;
-
-	bool loopX = area->loopsInX();
-	bool loopY = area->loopsInY();
-
-	if (!loopX && physScroll.x > 0) {
-		// Boxes on left-right.
-		drawRect(0, physScroll.x, 0, sz.y, black, 500);
-		drawRect(sz.x - physScroll.x, sz.x, 0, sz.y, black, 500);
-	}
-	if (!loopY && physScroll.y > 0) {
-		// Boxes on top-bottom.
-		drawRect(0, sz.x, 0, physScroll.y, black, 500);
-		drawRect(0, sz.x, sz.y - physScroll.y, sz.y, black, 500);
-	}
-}
-
-void World::drawRect(double x1, double x2, double y1, double y2,
-                       Gosu::Color c, double z)
-{
-	GameWindow& window = GameWindow::instance();
-	window.graphics().drawQuad(
-		x1, y1, c,
-		x2, y1, c,
-		x2, y2, c,
-		x1, y2, c,
-		z
-	);
-}
-
-Gosu::Transform World::getTransform()
-{
-	rvec2 scale = view->getScale();
-	rvec2 scroll = view->getMapOffset();
-	rvec2 padding = view->getLetterboxOffset();
-	Gosu::Transform t = { {
-		scale.x, 0,       0, 0,
-		0,       scale.y, 0, 0,
-		0,       0,       1, 0,
-		scale.x * -scroll.x - padding.x,
-		scale.y * -scroll.y - padding.y, 0, 1
-	} };
-	return t;
 }
 
 void exportWorld()
