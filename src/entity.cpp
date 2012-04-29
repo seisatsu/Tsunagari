@@ -168,11 +168,11 @@ void Entity::updateNoTile(unsigned long)
 void Entity::onUpdateScripts()
 {
 	BOOST_FOREACH(boost::python::object& fn, updateListenerFns) {
-		pythonSetGlobal("entity", this);
+		pythonSetGlobal("Entity", this);
 		try {
 			fn();
 		} catch (boost::python::error_already_set) {
-			Log::err("Python", "entity.onUpdateScripts():");
+			Log::err("Python", "Entity.onUpdateScripts():");
 			pythonErr();
 		}
 	}
