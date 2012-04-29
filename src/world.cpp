@@ -75,11 +75,13 @@ void World::draw()
 	GameWindow& window = GameWindow::instance();
 	Gosu::Graphics& graphics = window.graphics();
 
-	drawLetterbox();
-	drawAreaBorders();
+	pushLetterbox();
 	graphics.pushTransform(getTransform());
+
 	area->draw();
+
 	graphics.popTransform();
+	popLetterbox();
 }
 
 bool World::needsRedraw() const
@@ -119,7 +121,6 @@ void World::focusArea(Area* area, int x, int y, double z)
 
 void World::focusArea(Area* area, vicoord playerPos)
 {
-	// Log::info("World", area->getDescriptor() + ": focused");
 	this->area = area;
 	player.setArea(area);
 	player.setTileCoords(playerPos);
@@ -132,22 +133,18 @@ std::string World::getAreaLoadScript()
 	return onAreaLoadScript;
 }
 
-void World::drawLetterbox()
+void World::pushLetterbox()
 {
-	rvec2 sz = view->getPhysRes();
-	rvec2 lb = rvec2(0.0, 0.0) - view->getLetterboxOffset();
-	Gosu::Color black = Gosu::Color::BLACK;
+	GameWindow& w = GameWindow::instance();
+	Gosu::Graphics& g = w.graphics();
 
-	drawRect(0, sz.x, 0, lb.y, black, 1000);
-	drawRect(0, sz.x, sz.y - lb.y, sz.y, black, 1000);
-	drawRect(0, lb.x, 0, sz.y, black, 1000);
-	drawRect(sz.x - lb.x, sz.x, 0, sz.y, black, 1000);
-}
-
-void World::drawAreaBorders()
-{
-	Gosu::Color black = Gosu::Color::BLACK;
+	// Aspect ratio correction.
 	rvec2 sz = view->getPhysRes();
+	rvec2 lb = -1 * view->getLetterboxOffset();
+
+	g.beginClipping(lb.x, lb.y, sz.x - 2 * lb.x, sz.y - 2 * lb.y);
+
+	// Map bounds.
 	rvec2 scale = view->getScale();
 	rvec2 virtScroll = view->getMapOffset();
 	rvec2 padding = view->getLetterboxOffset();
@@ -159,14 +156,18 @@ void World::drawAreaBorders()
 
 	if (!loopX && physScroll.x > 0) {
 		// Boxes on left-right.
-		drawRect(0, physScroll.x, 0, sz.y, black, 500);
-		drawRect(sz.x - physScroll.x, sz.x, 0, sz.y, black, 500);
+		g.beginClipping(physScroll.x, 0, sz.x - 2 * physScroll.x, sz.x);
 	}
 	if (!loopY && physScroll.y > 0) {
 		// Boxes on top-bottom.
-		drawRect(0, sz.x, 0, physScroll.y, black, 500);
-		drawRect(0, sz.x, sz.y - physScroll.y, sz.y, black, 500);
+		g.beginClipping(0, physScroll.y, sz.x, sz.y - 2 * physScroll.y);
 	}
+}
+
+void World::popLetterbox()
+{
+	GameWindow& w = GameWindow::instance();
+	w.graphics().endClipping();
 }
 
 void World::drawRect(double x1, double x2, double y1, double y2,

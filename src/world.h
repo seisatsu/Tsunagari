@@ -73,10 +73,10 @@ public:
 
 private:
 	//! Draws black borders around the screen to correct the aspect ratio.
-	void drawLetterbox();
 	//! Draws black borders around the Area if the Area doesn't fit in the
 	//! Viewport.
-	void drawAreaBorders();
+	void pushLetterbox();
+	void popLetterbox();
 
 	//! Draws a rectangle on the screen of the specified color. Coordinates
 	//! are in pixels.
