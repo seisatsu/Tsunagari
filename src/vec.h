@@ -174,6 +174,151 @@ public:
 };
 
 template<class T>
+vec2<T> operator+(const vec2<T>& a, const vec2<T>& b)
+{
+	vec2<T> c;
+	c.x = a.x + b.x;
+	c.y = a.y + b.y;
+	return c;
+}
+
+template<class T>
+vec3<T> operator+(const vec3<T>& a, const vec3<T>& b)
+{
+	vec3<T> c;
+	c.x = a.x + b.x;
+	c.y = a.y + b.y;
+	c.z = a.z + b.z;
+	return c;
+}
+
+template<class T>
+vec2<T> operator-(const vec2<T>& a, const vec2<T>& b)
+{
+	vec2<T> c;
+	c.x = a.x - b.x;
+	c.y = a.y - b.y;
+	return c;
+}
+
+template<class T>
+vec3<T> operator-(const vec3<T>& a, const vec3<T>& b)
+{
+	vec3<T> c;
+	c.x = a.x - b.x;
+	c.y = a.y - b.y;
+	c.z = a.z - b.z;
+	return c;
+}
+
+template<class T>
+vec2<T> operator*(const vec2<T>& a, const vec2<T>& b)
+{
+	vec2<T> c;
+	c.x = a.x * b.x;
+	c.y = a.y * b.y;
+	return c;
+}
+
+template<class T>
+vec3<T> operator*(const vec3<T>& a, const vec3<T>& b)
+{
+	vec3<T> c;
+	c.x = a.x * b.x;
+	c.y = a.y * b.y;
+	c.z = a.z * b.z;
+	return c;
+}
+
+template<class T, class CO>
+vec2<T> operator*(const vec2<T>& a, CO co)
+{
+	vec2<T> c;
+	c.x = a.x * (T)co;
+	c.y = a.y * (T)co;
+	return c;
+}
+
+template<class T, class CO>
+vec3<T> operator*(const vec3<T>& a, CO co)
+{
+	vec3<T> c;
+	c.x = a.x * (T)co;
+	c.y = a.y * (T)co;
+	c.z = a.z * (T)co;
+	return c;
+}
+
+template<class T, class CO>
+vec2<T> operator*(CO co, const vec2<T>& a)
+{
+	return a * co;
+}
+
+template<class T, class CO>
+vec3<T> operator*(CO co, const vec3<T>& a)
+{
+	return a * co;
+}
+
+template<class T>
+vec2<T> operator/(const vec2<T>& a, const vec2<T>& b)
+{
+	vec2<T> c;
+	c.x = a.x / b.x;
+	c.y = a.y / b.y;
+	return c;
+}
+
+template<class T>
+vec3<T> operator/(const vec3<T>& a, const vec3<T>& b)
+{
+	vec3<T> c;
+	c.x = a.x / b.x;
+	c.y = a.y / b.y;
+	c.z = a.z / b.z;
+	return c;
+}
+
+template<class T, class CO>
+vec2<T> operator/(const vec2<T>& a, CO co)
+{
+	vec2<T> c;
+	c.x = a.x / (T)co;
+	c.y = a.y / (T)co;
+	return c;
+}
+
+template<class T, class CO>
+vec3<T> operator/(const vec3<T>& a, CO co)
+{
+	vec3<T> c;
+	c.x = a.x / (T)co;
+	c.y = a.y / (T)co;
+	c.z = a.z / (T)co;
+	return c;
+}
+
+template<class T, class CO>
+vec2<T> operator/(CO co, const vec2<T>& a)
+{
+	vec2<T> c;
+	c.x = (T)co / a.x;
+	c.y = (T)co / a.y;
+	return c;
+}
+
+template<class T, class CO>
+vec3<T> operator/(CO co, const vec3<T>& a)
+{
+	vec3<T> c;
+	c.x = (T)co / a.x;
+	c.y = (T)co / a.y;
+	c.z = (T)co / a.z;
+	return c;
+}
+
+template<class T>
 bool operator==(const vec2<T>& a, const vec2<T>& b)
 {
 	return a.x == b.x && a.y == b.y;

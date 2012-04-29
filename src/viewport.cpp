@@ -150,10 +150,7 @@ rvec2 Viewport::offsetForPt(rvec2 pt) const
 
 rvec2 Viewport::centerOn(rvec2 pt) const
 {
-	return rvec2(
-		pt.x - virtRes.x/2,
-		pt.y - virtRes.y/2
-	);
+	return pt - virtRes / 2;
 }
 
 rvec2 Viewport::boundToArea(rvec2 pt) const
@@ -190,10 +187,6 @@ rvec2 Viewport::addLetterboxOffset(rvec2 pt) const
 {
 	rvec2 physRes = getPhysRes();
 	rvec2 letterbox = getLetterbox();
-	rvec2 lbOff = letterbox;
-	lbOff /= 2;
-	lbOff *= physRes;
-	pt -= lbOff;
-	return pt;
+	return pt - letterbox * physRes / 2;
 }
 

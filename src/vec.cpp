@@ -8,13 +8,26 @@
 
 #include "vec.h"
 
-struct vicoord_to_python_tuple
+template<class T>
+struct vec2_to_python_tuple
 {
-	static PyObject* convert(const vicoord& c)
+	static PyObject* convert(const T& v)
 	{
 		using namespace boost::python;
 
-		object tuple = make_tuple(c.x, c.y, c.z);
+		object tuple = make_tuple(v.x, v.y);
+		return incref(tuple.ptr());
+	}
+};
+
+template<class T>
+struct vec3_to_python_tuple
+{
+	static PyObject* convert(const T& v)
+	{
+		using namespace boost::python;
+
+		object tuple = make_tuple(v.x, v.y, v.z);
 		return incref(tuple.ptr());
 	}
 };
@@ -23,23 +36,14 @@ void exportVecs()
 {
 	using namespace boost::python;
 
-	to_python_converter<vicoord, vicoord_to_python_tuple>();
+	to_python_converter<ivec2, vec2_to_python_tuple<ivec2> >();
+	to_python_converter<rvec2, vec2_to_python_tuple<rvec2> >();
 
-	class_<icoord>("icoord", init<int, int, int>())
-		.def_readwrite("x", &icoord::x)
-		.def_readwrite("y", &icoord::y)
-		.def_readwrite("z", &icoord::z)
-		.def(self += other<icoord>())
-		.def(self -= other<icoord>())
-		.def(self *= other<icoord>())
-		.def(self /= other<icoord>());
-	class_<rcoord>("rcoord", init<double, double, double>())
-		.def_readwrite("x", &rcoord::x)
-		.def_readwrite("y", &rcoord::y)
-		.def_readwrite("z", &rcoord::z)
-		.def(self += other<rcoord>())
-		.def(self -= other<rcoord>())
-		.def(self *= other<rcoord>())
-		.def(self /= other<rcoord>());
+	to_python_converter<ivec3, vec3_to_python_tuple<ivec3> >();
+	to_python_converter<rvec3, vec3_to_python_tuple<rvec3> >();
+	// typedef'd to ivec3 and rvec3, already registered
+	/* to_python_converter<icoord, vec3_to_python_tuple<icoord> >(); */
+	/* to_python_converter<rcoord, vec3_to_python_tuple<rcoord> >(); */
+	to_python_converter<vicoord, vec3_to_python_tuple<vicoord> >();
 }
 

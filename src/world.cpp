@@ -256,8 +256,7 @@ bool World::processInput(XMLNode node)
 void World::drawLetterbox()
 {
 	rvec2 sz = view->getPhysRes();
-	rvec2 lb = rvec2(0.0, 0.0);
-	lb -= view->getLetterboxOffset();
+	rvec2 lb = rvec2(0.0, 0.0) - view->getLetterboxOffset();
 	Gosu::Color black = Gosu::Color::BLACK;
 
 	drawRect(0, sz.x, 0, lb.y, black, 1000);
@@ -274,10 +273,7 @@ void World::drawAreaBorders()
 	rvec2 virtScroll = view->getMapOffset();
 	rvec2 padding = view->getLetterboxOffset();
 
-	rvec2 physScroll = virtScroll;
-	physScroll *= scale;
-	physScroll += padding;
-	physScroll *= -1;
+	rvec2 physScroll = -1 * virtScroll * scale + padding;
 
 	bool loopX = area->loopsInX();
 	bool loopY = area->loopsInY();
