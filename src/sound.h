@@ -7,12 +7,13 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#include <boost/optional.hpp>
 #include <Gosu/Audio.hpp>
 
 class SoundInstance
 {
 public:
-	SoundInstance(Gosu::SampleInstance inst);
+	SoundInstance(boost::optional<Gosu::SampleInstance> inst);
 
 	bool isPlaying();
 	void stop();
@@ -30,7 +31,7 @@ public:
 	void setSpeed(double speed);
 
 private:
-	Gosu::SampleInstance inst;
+	boost::optional<Gosu::SampleInstance> inst;
 	double volume, pan, speed;
 };
 

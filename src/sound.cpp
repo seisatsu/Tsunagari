@@ -4,15 +4,13 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
-#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "python.h"
-#include "python-optional.h"
 #include "resourcer.h"
 #include "sound.h"
 
-SoundInstance::SoundInstance(Gosu::SampleInstance inst)
+SoundInstance::SoundInstance(boost::optional<Gosu::SampleInstance> inst)
 	: inst(inst), volume(1.0), pan(0.0), speed(1.0)
 {
 }
@@ -20,26 +18,29 @@ SoundInstance::SoundInstance(Gosu::SampleInstance inst)
 
 bool SoundInstance::isPlaying()
 {
-	return inst.playing();
+	return inst && inst->playing();
 }
 
 void SoundInstance::stop()
 {
-	inst.stop();
+	if (inst)
+	       inst->stop();
 }
 
 
 bool SoundInstance::isPaused()
 {
-	return inst.paused();
+	return inst ? inst->paused() : false;
 }
 
 void SoundInstance::setPaused(bool paused)
 {
-	if (paused)
-		inst.pause();
-	else
-		inst.resume();
+	if (inst) {
+		if (paused)
+			inst->pause();
+		else
+			inst->resume();
+	}
 }
 
 
@@ -51,7 +52,8 @@ double SoundInstance::getVolume()
 void SoundInstance::setVolume(double volume)
 {
 	this->volume = volume;
-	inst.changeVolume(volume);
+	if (inst)
+		inst->changeVolume(volume);
 }
 
 
@@ -63,7 +65,8 @@ double SoundInstance::getPan()
 void SoundInstance::setPan(double pan)
 {
 	this->pan = pan;
-	inst.changePan(pan);
+	if (inst)
+		inst->changePan(pan);
 }
 
 
@@ -75,7 +78,8 @@ double SoundInstance::getSpeed()
 void SoundInstance::setSpeed(double speed)
 {
 	this->speed = speed;
-	inst.changeSpeed(speed);
+	if (inst)
+		inst->changeSpeed(speed);
 }
 
 
@@ -88,42 +92,44 @@ Sound::Sound(Gosu::Sample* source)
 
 SoundInstance Sound::play()
 {
-	SoundInstance inst(source->play());
-	return inst;
+	return SoundInstance(source->play());
 }
 
 // Helper class for Python.
 class SoundManager
 {
 public:
-	boost::optional<SoundInstance> play(const std::string& path);
+	SoundInstance play(const std::string& path);
 };
 
-boost::optional<SoundInstance> SoundManager::play(const std::string& path)
+SoundInstance SoundManager::play(const std::string& path)
 {
 	Resourcer* rc;
-	boost::optional<SoundInstance> instance;
 	SampleRef sample;
 
 	rc = Resourcer::instance();
 	sample = rc->getSample(path);
 	if (sample)
-		instance.reset(sample->play());
-	return instance;
+		return sample->play();
+	else
+		return SoundInstance(NULL);
 }
 
 void exportSound()
 {
 	boost::python::class_<SoundInstance>
 		("SoundInstance", boost::python::no_init)
-		.add_property("paused", &SoundInstance::isPaused, &SoundInstance::setPaused)
-		.add_property("volume", &SoundInstance::getVolume, &SoundInstance::setVolume)
-		.add_property("pan", &SoundInstance::getPan, &SoundInstance::setPan)
-		.add_property("speed", &SoundInstance::getSpeed, &SoundInstance::setSpeed)
+		.add_property("paused",
+		    &SoundInstance::isPaused, &SoundInstance::setPaused)
+		.add_property("volume",
+		    &SoundInstance::getVolume, &SoundInstance::setVolume)
+		.add_property("pan",
+		    &SoundInstance::getPan, &SoundInstance::setPan)
+		.add_property("speed",
+		    &SoundInstance::getSpeed, &SoundInstance::setSpeed)
 		.add_property("playing", &SoundInstance::isPlaying)
 		.def("stop", &SoundInstance::stop)
 		;
-	boost::python::optional_<SoundInstance>();
 	boost::python::class_<SoundManager>
 		("SoundManager", boost::python::no_init)
 		.def("play", &SoundManager::play)
