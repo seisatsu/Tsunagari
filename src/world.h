@@ -98,6 +98,7 @@ private:
 	boost::shared_ptr<Music> music;
 	Player player;
 	Resourcer* rc;
+	int clips;
 
 	typedef boost::unordered_map<std::string, Area*> AreaMap;
 	AreaMap areas;

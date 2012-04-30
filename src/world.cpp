@@ -25,7 +25,7 @@ World* World::instance()
 }
 
 World::World()
-	: music(new Music())
+	: music(new Music()), clips(0)
 {
 	globalWorld = this;
 	pythonSetGlobal("World", this);
@@ -143,6 +143,7 @@ void World::pushLetterbox()
 	rvec2 lb = -1 * view->getLetterboxOffset();
 
 	g.beginClipping(lb.x, lb.y, sz.x - 2 * lb.x, sz.y - 2 * lb.y);
+	clips++;
 
 	// Map bounds.
 	rvec2 scale = view->getScale();
@@ -157,17 +158,20 @@ void World::pushLetterbox()
 	if (!loopX && physScroll.x > 0) {
 		// Boxes on left-right.
 		g.beginClipping(physScroll.x, 0, sz.x - 2 * physScroll.x, sz.x);
+		clips++;
 	}
 	if (!loopY && physScroll.y > 0) {
 		// Boxes on top-bottom.
 		g.beginClipping(0, physScroll.y, sz.x, sz.y - 2 * physScroll.y);
+		clips++;
 	}
 }
 
 void World::popLetterbox()
 {
 	GameWindow& w = GameWindow::instance();
-	w.graphics().endClipping();
+	for (; clips; clips--)
+		w.graphics().endClipping();
 }
 
 void World::drawRect(double x1, double x2, double y1, double y2,
