@@ -61,6 +61,9 @@ bool GameWindow::init(char* argv0)
 	world.reset(new World());
 	if (!rc->init(argv0))
 	       return false;
+	       
+	bool cacheEnabled = conf.cacheEnabled;
+	conf.cacheEnabled = false;
 
 	BOOST_FOREACH(std::string pathname, conf.dataPath) {
 		if (!rc->prependPath(pathname))
@@ -81,6 +84,8 @@ bool GameWindow::init(char* argv0)
 		Log::fatal(BASE_ZIP, "couldn't find init.py");
 		return false;
 	}
+	
+	conf.cacheEnabled = cacheEnabled;
 
 	if (!rc->appendPath(conf.worldFilename))
 		return false;

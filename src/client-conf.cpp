@@ -28,7 +28,7 @@ Conf::Conf()
 	persistCons = 0;
 }
 
-// Check for missing required configuration variables.
+//! Check for missing required configuration variables.
 bool Conf::validate(const char* filename)
 {
 	bool good_conf = true;
@@ -159,7 +159,7 @@ bool parseConfig(const char* filename)
 	return true;
 }
 
-/* Parse and process command line options and arguments. */
+//! Parse and process command line options and arguments.
 bool parseCommandLine(int argc, char* argv[])
 {
 	CommandLineOptions cmd(argc, argv);
