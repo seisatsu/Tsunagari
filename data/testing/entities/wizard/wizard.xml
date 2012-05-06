@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <entity>
-	<speed>2</speed> <!-- movement speed in tiles per second -->
+	<speed>1</speed> <!-- movement speed in tiles per second -->
 	<sprite>
 		<sheet tile_width="16" tile_height="18">entities/wizard/wizard.png</sheet>
 		<phases>

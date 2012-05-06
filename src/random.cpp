@@ -9,14 +9,14 @@
 
 int randInt(int min, int max)
 {
-	return rand() % (max-min) + min;
+	return rand() % ((max+1)-min) + min;
 }
 
 double randFloat(double min, double max)
 {
         int i = rand();
         double d = (double)i / RAND_MAX;
-        return d * (max - min) + min;
+        return d * (max-min) + min;
 }
 
 void exportRandom()
