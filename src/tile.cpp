@@ -293,7 +293,7 @@ void exportTile()
 			&FlagManip::isNowalkNPC, &FlagManip::setNowalkNPC)
 		;
 	class_<TileBase> ("TileBase", no_init)
-		.add_property("flags", &TileBase::flagManip)
+		.add_property("flag", &TileBase::flagManip)
 		.add_property("type",
 		    make_function(
 		      static_cast<TileType* (TileBase::*) () const>
