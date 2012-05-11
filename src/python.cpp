@@ -34,7 +34,6 @@ static std::string moduleWhitelist[] = {
 	"__builtin__",
 	"__main__",
 	"math",
-	"sys",
 	"time",
 	"traceback",
 	"",
