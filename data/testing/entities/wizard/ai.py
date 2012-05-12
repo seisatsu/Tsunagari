@@ -32,5 +32,6 @@ def wizard_ai_do_move():
 		else:
 			Entity.move(0, 1)
 
-	print "Python: Wizard AI: moving! [%d %d %f]" % Entity.coords
+	print "Python: Wizard AI: moving! [%d %d %.1f]" % Entity.coords
 
+wizard_ai()

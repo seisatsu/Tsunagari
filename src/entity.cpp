@@ -6,6 +6,7 @@
 
 #include <math.h>
 
+#include <boost/algorithm/string.hpp> // for iequals
 #include <boost/foreach.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
@@ -105,7 +106,7 @@ static double angleFromXY(double x, double y)
 
 void Entity::update(unsigned long dt)
 {
-	onUpdateScripts();
+	updateScripts();
 	switch (conf.moveMode) {
 	case TURN:
 		updateTurn(dt);
@@ -163,19 +164,6 @@ void Entity::updateTile(unsigned long dt)
 void Entity::updateNoTile(unsigned long)
 {
 	// TODO
-}
-
-void Entity::onUpdateScripts()
-{
-	BOOST_FOREACH(boost::python::object& fn, updateListenerFns) {
-		pythonSetGlobal("Entity", this);
-		try {
-			fn();
-		} catch (boost::python::error_already_set) {
-			Log::err("Python", "Entity.onUpdateScripts():");
-			pythonErr();
-		}
-	}
 }
 
 const std::string Entity::getFacing() const
@@ -300,11 +288,6 @@ void Entity::setSpeed(double multiplier)
 		double tilesPerSecond = area->getTileDimensions().x / 1000.0;
 		speed = baseSpeed * speedMul * tilesPerSecond;
 	}
-}
-
-void Entity::addOnUpdateListener(boost::python::object callable)
-{
-	updateListenerFns.push_back(callable);
 }
 
 Tile& Entity::getTile() const
@@ -475,25 +458,30 @@ void Entity::postMove()
 	 */
 }
 
-void Entity::tileExitScript()
+void Entity::updateScripts()
 {
-	Resourcer* rc = Resourcer::instance();
-	const std::string& name = scripts["tileexit"];
-	if (name.size()) {
+	BOOST_FOREACH(ScriptInst& script, updateHooks) {
 		pythonSetGlobal("Entity", this);
 		pythonSetGlobal("Tile", &getTile());
-		rc->runPythonScript(name);
+		script.invoke();
+	}
+}
+
+void Entity::tileExitScript()
+{
+	BOOST_FOREACH(ScriptInst& script, tileExitHooks) {
+		pythonSetGlobal("Entity", this);
+		pythonSetGlobal("Tile", &getTile());
+		script.invoke();
 	}
 }
 
 void Entity::tileEntryScript()
 {
-	Resourcer* rc = Resourcer::instance();
-	const std::string& name = scripts["tileentry"];
-	if (name.size()) {
+	BOOST_FOREACH(ScriptInst& script, tileEntryHooks) {
 		pythonSetGlobal("Entity", this);
 		pythonSetGlobal("Tile", &getTile());
-		rc->runPythonScript(name);
+		script.invoke();
 	}
 }
 
@@ -672,15 +660,36 @@ bool Entity::processScript(const XMLNode node)
 	}
 
 	Resourcer* rc = Resourcer::instance();
-	if (rc->resourceExists(filename)) {
-		scripts[trigger] = filename;
-		return true;
-	}
-	else {
+	if (!rc->resourceExists(filename)) {
 		Log::err(descriptor,
 		         std::string("script not found: ") + filename);
 		return false;
 	}
+
+	if (!addScript(trigger, filename)) {
+		Log::err(descriptor,
+			std::string("unrecognized script trigger: ") + trigger);
+		return false;
+	}
+
+	return true;
+}
+
+bool Entity::addScript(const std::string& trigger, const std::string& filename)
+{
+	if (boost::iequals(trigger, "on_update")) {
+		updateHooks.push_back(ScriptInst(filename));
+		return true;
+	}
+	if (boost::equals(trigger, "on_tile_entry")) {
+		tileEntryHooks.push_back(ScriptInst(filename));
+		return true;
+	}
+	if (boost::iequals(trigger, "on_tile_exit")) {
+		tileExitHooks.push_back(ScriptInst(filename));
+		return true;
+	}
+	return false;
 }
 
 
@@ -710,7 +719,6 @@ void exportEntity()
 		    (&Entity::moveByTile))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::setTileCoords))
-		.def("add_on_update_listener", &Entity::addOnUpdateListener)
 		.def("move",
 		    static_cast<void (Entity::*) (int,int)>
 		      (&Entity::moveByTile));

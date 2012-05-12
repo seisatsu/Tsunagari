@@ -74,6 +74,7 @@
 	</sounds>
 
 	<scripts>
+		<script trigger="onUpdate">entities/wizard/ai.py</script>
 	</scripts>
 </entity>
 
