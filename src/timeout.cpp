@@ -12,10 +12,10 @@
 
 static std::list<Timeout*> timeouts;
 
-static Timeout* pythonSetTimeout(boost::python::object callback, int delay)
+static Timeout* pythonSetTimeout(boost::python::object callback, float delay)
 {
 	int now = GameWindow::instance().time();
-	int end = now + delay;
+	int end = now + (int)(1000 * delay);
 
 	// Insert sorted by resolution time.
 	std::list<Timeout*>::iterator it;
