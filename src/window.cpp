@@ -76,12 +76,12 @@ bool GameWindow::init(char* argv0)
 		}
 	}
 
-	if (!rc->appendPath(BASE_ZIP))
+	if (!rc->appendPath(BASE_ZIP_PATH))
 		return false;
 	if (rc->resourceExists("init.py"))
 		rc->runPythonScript("init.py");
 	else {
-		Log::fatal(BASE_ZIP, "couldn't find init.py");
+		Log::fatal(BASE_ZIP_PATH, "couldn't find init.py");
 		return false;
 	}
 	

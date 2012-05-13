@@ -60,11 +60,11 @@ int main(int argc, char** argv)
 	}
 	#endif
 
-	if (!parseConfig(CLIENT_CONF_FILE))
+	if (!parseConfig(CLIENT_CONF_PATH))
 		return 1;
 	if (!parseCommandLine(argc, argv))
 		return 1;
-	if (!conf.validate(CLIENT_CONF_FILE))
+	if (!conf.validate(CLIENT_CONF_PATH))
 		return 1;
 	if (conf.verbosity)
 		Log::setVerbosity(conf.verbosity);

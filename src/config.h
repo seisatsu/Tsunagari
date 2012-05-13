@@ -7,27 +7,33 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+/* Release version. */
 #define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP4 Revision 2"
 
-// === Default Configuration Settings ===
-	/* Base data file. */
-	#define BASE_ZIP "../data/base.zip"
-
+// === Required Data Paths ===
 	/* Tsunagari config file. */
-	#define CLIENT_CONF_FILE "./client.ini"
+	#define CLIENT_CONF_PATH "./client.ini"
+
+	/* Base data file. */
+	#define BASE_ZIP_PATH "../data/base.zip"
 
 	/* Tsunagari XML DTD directory. */
-	#define DTD_DIRECTORY "../data/dtd/"
-
-	/* Time to live in seconds for empty resource cache entries before they
-	   are deleted. */
-	#define CACHE_EMPTY_TTL 300
-
-	/* Maximum size in megabytes for the resource cache. */
-	#define CACHE_MAX_SIZE 100
+	#define XML_DTD_PATH "../data/dtd/"
 // ===
 
-// === Platform Specifics ===
+// === Client.ini Default Values ===
+	#define DEF_ENGINE_WORLD		"../data/testing.world"
+	#define DEF_ENGINE_VERBOSITY	"verbose"
+	#define DEF_WINDOW_WIDTH		640
+	#define DEF_WINDOW_HEIGHT		480
+	#define DEF_WINDOW_FULLSCREEN	false
+	#define DEF_AUDIO_ENABLED		true
+	#define DEF_CACHE_ENABLED		true
+	#define DEF_CACHE_TTL			300
+	#define DEF_CACHE_SIZE			100
+// ===
+
+// === Cross-Platform Fixes ===
 	/* Windows check. */
 	#if defined(_Windows) && !defined(_WINDOWS)
 		#define _WINDOWS 1
@@ -42,7 +48,7 @@
 		#define snprintf _snprintf
 	#endif
 
-	/* Fix NAN constant. */
+	/* Fix NAN constant for VisualC++. */
 	#ifdef _MSC_VER
 		#ifndef NAN
 		    static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
@@ -50,7 +56,7 @@
 		#endif
 	#endif
 
-	/* Fix PI declaration. */
+	/* Fix PI declaration for VisualC++. */
 	#ifndef M_PI
 		#define M_PI 3.14159265358979323846
 		#define M_PI_2 1.57079632679489661923

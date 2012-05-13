@@ -216,7 +216,7 @@ XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
 	const std::string data = readStringFromDisk(name);
 	if (data.size()) {
 		const std::string p = path(name);
-		const std::string dtdPath = std::string(DTD_DIRECTORY) +
+		const std::string dtdPath = std::string(XML_DTD_PATH) +
 			"/" + dtdFile;
 		doc->init(p, data, dtdPath); // Ignore return value?
 	}

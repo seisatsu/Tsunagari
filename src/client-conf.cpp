@@ -58,14 +58,30 @@ bool Conf::validate(const char* filename)
 /* Output compiled-in engine defaults. */
 static void defaultsQuery()
 {
-	std::cerr << "CLIENT_CONF_FILE:                       "
-		<< CLIENT_CONF_FILE << std::endl;
-	std::cerr << "DTD_DIRECTORY:                          "
-		<< DTD_DIRECTORY << std::endl;
-	std::cerr << "CACHE_EMPTY_TTL:                        "
-		<< CACHE_EMPTY_TTL << std::endl;
-	std::cerr << "CACHE_MAX_SIZE:                         "
-		<< CACHE_MAX_SIZE << std::endl;
+	std::cerr << "CLIENT_CONF_PATH:                    "
+		<< CLIENT_CONF_PATH << std::endl;
+	std::cerr << "BASE_ZIP_PATH:                       "
+		<< BASE_ZIP_PATH << std::endl;
+	std::cerr << "XML_DTD_PATH:                        "
+		<< XML_DTD_PATH << std::endl;
+	std::cerr << "DEF_ENGINE_WORLD:                    "
+		<< DEF_ENGINE_WORLD << std::endl;
+	std::cerr << "DEF_ENGINE_VERBOSITY:                "
+		<< DEF_ENGINE_VERBOSITY << std::endl;
+	std::cerr << "DEF_WINDOW_WIDTH:                    "
+		<< DEF_WINDOW_WIDTH << std::endl;
+	std::cerr << "DEF_WINDOW_HEIGHT:                   "
+		<< DEF_WINDOW_HEIGHT << std::endl;
+	std::cerr << "DEF_WINDOW_FULLSCREEN:               "
+		<< DEF_WINDOW_FULLSCREEN << std::endl;
+	std::cerr << "DEF_AUDIO_ENABLED:                   "
+		<< DEF_AUDIO_ENABLED << std::endl;
+	std::cerr << "DEF_CACHE_ENABLED:                   "
+		<< DEF_CACHE_ENABLED << std::endl;
+	std::cerr << "DEF_CACHE_TTL:                       "
+		<< DEF_CACHE_TTL << std::endl;
+	std::cerr << "DEF_CACHE_SIZE:                      "
+		<< DEF_CACHE_SIZE << std::endl;
 }
 
 /**
@@ -82,7 +98,7 @@ bool parseConfig(const char* filename)
 {
 	namespace pod = boost::program_options::detail;
 
-	conf.cacheEnabled = CACHE_EMPTY_TTL && CACHE_MAX_SIZE;
+	conf.cacheEnabled = DEF_CACHE_TTL && DEF_CACHE_SIZE;
 
 	std::ifstream config(filename);
 	if (!config) {
@@ -127,7 +143,7 @@ bool parseConfig(const char* filename)
 	}
 
 	if (parameters["cache.ttl"].empty())
-		conf.cacheTTL = CACHE_EMPTY_TTL;
+		conf.cacheTTL = DEF_CACHE_TTL;
 	else {
 		if (atoi(parameters["cache.ttl"].c_str()) == 0)
 			conf.cacheEnabled = 0;
@@ -135,7 +151,7 @@ bool parseConfig(const char* filename)
 	}
 
 	if (parameters["cache.size"].empty())
-		conf.cacheSize = CACHE_MAX_SIZE;
+		conf.cacheSize = DEF_CACHE_SIZE;
 	else {
 		if (atoi(parameters["cache.size"].c_str()) == 0)
 			conf.cacheEnabled = 0;
