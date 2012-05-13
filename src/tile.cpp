@@ -241,6 +241,11 @@ void TileSet::add(TileType* type)
 	types.push_back(type);
 }
 
+void TileSet::set(int idx, TileType* type)
+{
+	types[idx] = type;
+}
+
 TileType& TileSet::get(int x, int y)
 {
 	size_t i = idx(x, y);

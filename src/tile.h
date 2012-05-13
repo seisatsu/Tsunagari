@@ -160,6 +160,7 @@ public:
 	TileSet(int width, int height);
 
 	void add(TileType* type);
+	void set(int idx, TileType* type);
 	TileType& get(int x, int y);
 	int getWidth() const;
 	int getHeight() const;

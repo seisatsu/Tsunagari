@@ -188,46 +188,59 @@ bool AreaTMX::processTileSet(XMLNode node)
 
 	TileSet* set;
 	TiledImage img;
-	int x, y;
+	int tilex, tiley;
+	int firstGid;
 
-	ASSERT(node.intAttr("tilewidth", &x));
-	ASSERT(node.intAttr("tileheight", &y));
+	ASSERT(node.intAttr("tilewidth", &tilex));
+	ASSERT(node.intAttr("tileheight", &tiley));
+	ASSERT(node.intAttr("firstgid", &firstGid));
 
-	if (tileDim && tileDim != ivec2(x, y)) {
+	if (tileDim && tileDim != ivec2(tilex, tiley)) {
 		Log::err(descriptor,
 			"<tileset>'s width/height contradict earlier <layer>");
 		return false;
 	}
-	tileDim = ivec2(x, y);
+	tileDim = ivec2(tilex, tiley);
 
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		if (child.is("image")) {
+			int pixelw, pixelh;
+			ASSERT(child.intAttr("width", &pixelw) &&
+			       child.intAttr("height", &pixelh));
+			int width = pixelw / tileDim.x;
+			int height = pixelh / tileDim.y;
+
 			std::string source = child.attr("source");
-			int width, height;
-			ASSERT(child.intAttr("width", &width) &&
-			       child.intAttr("height", &height));
-			width /= tileDim.x;
-			height /= tileDim.y;
 			tileSets[source] = TileSet(width, height);
 			set = &tileSets[source];
-			Resourcer* rc = Resourcer::instance();
-			rc->getTiledImage(img, source,
-				(unsigned)x, (unsigned)y, true);
 
-			// Initialize default array of default tile types.
-			for (size_t i = 0; i < img.size(); i++) {
-				TileType* type = new TileType(img[i]);
+			// Load tileset image.
+			Resourcer* rc = Resourcer::instance();
+			bool found = rc->getTiledImage(img, source,
+				(unsigned)tilex, (unsigned)tiley, true);
+			if (!found) {
+				Log::err(descriptor, "tileset image not found");
+				return false;
+			}
+
+			// Initialize "vanilla" tile type array.
+			BOOST_FOREACH(ImageRef& tileImg, img) {
+				TileType* type = new TileType(tileImg);
 				set->add(type);
 				gids.push_back(type);
 			}
 		}
 		else if (child.is("tile")) {
+			// Handle an explicitly declared "non-vanilla" type.
+
 			if (img.empty()) {
 				Log::err(descriptor,
-				  "Tile processed before tileset image loaded");
+				  "Tile type processed before tileset image loaded");
 				return false;
 			}
 
+			// "id" is 0-based index of a tile in the current
+			// tileset, if the tileset were a flat array.
 			int id;
 			ASSERT(child.intAttr("id", &id));
 
@@ -236,21 +249,15 @@ bool AreaTMX::processTileSet(XMLNode node)
 				return false;
 			}
 
-			// Type ids are given with offset given in terms of
-			// tile from the image rather than in terms of the gid
-			// number, which has an extra type, #0, pushing back
-			// all other types by one.
-			size_t gid = id + 1;
-
 			// Initialize a default TileType, we'll build on that.
 			TileType* type = new TileType(img[id]);
-			set->add(type);
-
-			delete gids[gid];
-			gids[gid] = type;
-
-			// Handle this (explicitly declared) type.
 			ASSERT(processTileType(child, *type, img, id));
+
+			// "gid" is the global area-wide id of the tile.
+			size_t gid = id + firstGid;
+			delete gids[gid]; // "vanilla" type
+			gids[gid] = type;
+			set->set(id, type);
 		}
 	}
 
@@ -335,8 +342,8 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int
 			// Add frames to our animation.
 			// We already have one from TileType's constructor.
 			for (it = members.begin()+1; it < members.end(); it++) {
-				int idx = atoi(it->c_str()) - 1;
-				if (idx < 0 || img.size() <= idx) {
+				int idx = atoi(it->c_str());
+				if (idx < 0 || (int)img.size() <= idx) {
 					Log::err(descriptor, "frame index out "
 						"of range for animated tile");
 					return false;

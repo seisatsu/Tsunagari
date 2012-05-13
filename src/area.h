@@ -167,8 +167,8 @@ protected:
 	//! same size.
 	ivec2 tileDim;
 
-	std::map<std::string, TileSet> tileSets;
-	std::vector<TileType*> gids; // FIXME: only exist in AreaTMX
+	typedef std::map<std::string, TileSet> tilesets_t;
+	tilesets_t tileSets;
 
 	//! Maps virtual float-point depths to an index in our map array.
 	boost::unordered_map<double, int> depth2idx;
