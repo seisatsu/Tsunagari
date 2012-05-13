@@ -195,6 +195,7 @@
   <object x="32" y="16" width="16" height="16">
    <properties>
     <property name="exit" value="areas/cave01.tmx,6,9,0"/>
+    <property name="on_enter" value="areas/basement_hole.py"/>
    </properties>
   </object>
  </objectgroup>

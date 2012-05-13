@@ -3,6 +3,8 @@
  <properties>
   <property name="author" value="Michael D. Reiley"/>
   <property name="name" value="Cave 01"/>
+  <property name="on_load" value="areas/cave_load.py"/>
+  <property name="on_update" value="areas/cave_fall.py"/>
  </properties>
  <tileset firstgid="1" name="cave.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/cave.png" width="256" height="336"/>
