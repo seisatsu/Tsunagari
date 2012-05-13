@@ -28,6 +28,7 @@ namespace bp = boost::python;
 static bp::object modMain, modBltin;
 static bp::object dictMain, dictBltin;
 
+int inPythonScript = 0;
 
 //! List of known safe Python modules allowed for importing.
 static std::string moduleWhitelist[] = {
@@ -272,8 +273,10 @@ bool pythonExec(PyCodeObject* code)
 {
 	if (!code)
 		return false;
+	inPythonScript++;
 	PyObject* globals = dictMain.ptr();
 	PyObject* result = PyEval_EvalCode(code, globals, globals);
+	inPythonScript--;
 	if (!result)
 		pythonErr();
 	return result;

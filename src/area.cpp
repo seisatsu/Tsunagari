@@ -256,19 +256,6 @@ TileSet& Area::getTileSet(std::string imagePath)
 	return tileSets[imagePath];
 }
 
-TileSet& Area::pyGetTileSet(std::string imagePath)
-{
-	std::map<std::string, TileSet>::iterator it;
-	it = tileSets.find(imagePath);
-	if (it == tileSets.end()) {
-		PyErr_SetString(PyExc_KeyError,
-			("Area::tileset(): key \"" + imagePath + "\" not found").c_str());
-		boost::python::throw_error_already_set();
-	}
-	return tileSets[imagePath];
-}
-
-
 
 ivec3 Area::getDimensions() const
 {
@@ -536,18 +523,6 @@ boost::python::tuple Area::pyGetDimensions()
 	return make_tuple(dim.x, dim.y, zs);
 }
 
-Entity* Area::pySpawnEntity(const std::string& descriptor,
-	int x, int y, double z, const std::string& phase)
-{
-	Entity* e = spawnEntity(descriptor, x, y, z, phase);
-	if (!e) {
-		PyErr_SetString(PyExc_RuntimeError,
-	             "new_entity(): fail to create entity");
-		boost::python::throw_error_already_set();
-	}
-	return e;
-}
-
 void exportArea()
 {
 	using namespace boost::python;
@@ -556,7 +531,7 @@ void exportArea()
 		.add_property("descriptor", &Area::getDescriptor)
 		.add_property("dimensions", &Area::pyGetDimensions)
 		.def("redraw", &Area::requestRedraw)
-		.def("tileset", &Area::pyGetTileSet,
+		.def("tileset", &Area::getTileSet,
 		    return_value_policy<reference_existing_object>())
 		.def("tile",
 		    static_cast<Tile& (Area::*) (int, int, double)>
@@ -566,7 +541,7 @@ void exportArea()
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
 		.def("color_overlay", &Area::setColorOverlay)
-		.def("new_entity", &Area::pySpawnEntity,
+		.def("new_entity", &Area::spawnEntity,
 		    return_value_policy<reference_existing_object>())
 		;
 }

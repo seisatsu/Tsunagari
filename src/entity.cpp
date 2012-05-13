@@ -169,8 +169,11 @@ void Entity::onUpdateScripts()
 	BOOST_FOREACH(boost::python::object& fn, updateListenerFns) {
 		pythonSetGlobal("Entity", this);
 		try {
+			inPythonScript++;
 			fn();
+			inPythonScript--;
 		} catch (boost::python::error_already_set) {
+			inPythonScript--;
 			Log::err("Python", "Entity.onUpdateScripts():");
 			pythonErr();
 		}

@@ -62,8 +62,11 @@ int Timeout::readyTime()
 void Timeout::execute()
 {
 	try {
+		inPythonScript++;
 		callback();
+		inPythonScript--;
 	} catch (boost::python::error_already_set) {
+		inPythonScript--;
 		pythonErr();
 	}
 }

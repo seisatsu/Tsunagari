@@ -21,6 +21,8 @@
 #include <boost/python/other.hpp>
 #include <boost/python/self.hpp>
 
+extern int inPythonScript;
+
 //! Initialize Python libraries for use.
 bool pythonInit();
 

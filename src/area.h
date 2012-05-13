@@ -89,7 +89,6 @@ public:
 	Tile& getTile(vicoord virt);
 	TileType& getGid(int idx);
 	TileSet& getTileSet(std::string imagePath);
-	TileSet& pyGetTileSet(std::string imagePath);
 
 	//! Return the dimensions of the Tile matrix.
 	ivec3 getDimensions() const;
@@ -132,8 +131,6 @@ public:
 
 	// For Python interface.
 	boost::python::tuple pyGetDimensions();
-	Entity* pySpawnEntity(const std::string& descriptor,
-		int x, int y, double z, const std::string& phase);
 
 protected:
 	// Convert between virtual and physical map depths.
