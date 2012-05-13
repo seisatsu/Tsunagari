@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <math.h>
+#include <stdlib.h> // for exit(1) on fatal
 #include <vector>
 
 #include <boost/foreach.hpp>
@@ -251,8 +252,10 @@ TileSet& Area::getTileSet(std::string imagePath)
 {
 	std::map<std::string, TileSet>::iterator it;
 	it = tileSets.find(imagePath);
-	if (it == tileSets.end())
+	if (it == tileSets.end()) {
 		Log::fatal("Area", "tileset " + imagePath + " not found");
+		exit(1);
+	}
 	return tileSets[imagePath];
 }
 

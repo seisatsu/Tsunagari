@@ -4,6 +4,8 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <stdlib.h> // for exit(1) on fatal
+
 #include <boost/foreach.hpp>
 
 #include "area.h"
@@ -249,8 +251,10 @@ void TileSet::set(int idx, TileType* type)
 TileType& TileSet::get(int x, int y)
 {
 	size_t i = idx(x, y);
-	if (i > types.size())
+	if (i > types.size()) {
 		Log::fatal("TileSet", "index " + itostr((int)i) + " out of bounds");
+		exit(1);
+	}
 	return *types[i];
 }
 

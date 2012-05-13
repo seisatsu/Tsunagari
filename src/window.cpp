@@ -61,7 +61,7 @@ bool GameWindow::init(char* argv0)
 	world.reset(new World());
 	if (!rc->init(argv0))
 	       return false;
-	       
+
 	bool cacheEnabled = conf.cacheEnabled;
 	conf.cacheEnabled = false;
 
@@ -84,7 +84,7 @@ bool GameWindow::init(char* argv0)
 		Log::fatal(BASE_ZIP_PATH, "couldn't find init.py");
 		return false;
 	}
-	
+
 	conf.cacheEnabled = cacheEnabled;
 
 	if (!rc->appendPath(conf.worldFilename))
