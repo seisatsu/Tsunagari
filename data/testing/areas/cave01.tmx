@@ -16,58 +16,58 @@
    </properties>
   </tile>
  </tileset>
- <layer name="Tiles(-0.1)" width="14" height="20">
+ <layer name="Tiles(-0.2)" width="14" height="20">
   <properties>
-   <property name="layer" value="-0.1"/>
+   <property name="layer" value="-0.2"/>
   </properties>
   <data>
    <tile gid="17"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="145"/>
+   <tile gid="146"/>
    <tile gid="66"/>
    <tile gid="17"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="145"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
+   <tile gid="146"/>
    <tile gid="19"/>
    <tile gid="17"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="161"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
+   <tile gid="162"/>
    <tile gid="50"/>
    <tile gid="33"/>
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="65"/>
-   <tile gid="161"/>
+   <tile gid="130"/>
    <tile gid="100"/>
    <tile gid="101"/>
    <tile gid="102"/>
@@ -88,11 +88,11 @@
    <tile gid="145"/>
    <tile gid="146"/>
    <tile gid="145"/>
-   <tile gid="146"/>
+   <tile gid="130"/>
    <tile gid="145"/>
    <tile gid="146"/>
    <tile gid="161"/>
-   <tile gid="130"/>
+   <tile gid="146"/>
    <tile gid="50"/>
    <tile gid="49"/>
    <tile gid="116"/>
@@ -107,7 +107,7 @@
    <tile gid="162"/>
    <tile gid="145"/>
    <tile gid="146"/>
-   <tile gid="145"/>
+   <tile gid="130"/>
    <tile gid="146"/>
    <tile gid="145"/>
    <tile gid="146"/>
@@ -128,7 +128,7 @@
    <tile gid="161"/>
    <tile gid="162"/>
    <tile gid="161"/>
-   <tile gid="162"/>
+   <tile gid="130"/>
    <tile gid="161"/>
    <tile gid="162"/>
    <tile gid="161"/>
@@ -137,7 +137,7 @@
    <tile gid="146"/>
    <tile gid="145"/>
    <tile gid="146"/>
-   <tile gid="145"/>
+   <tile gid="130"/>
    <tile gid="146"/>
    <tile gid="145"/>
    <tile gid="146"/>
@@ -176,7 +176,7 @@
    <tile gid="145"/>
    <tile gid="146"/>
    <tile gid="65"/>
-   <tile gid="162"/>
+   <tile gid="130"/>
    <tile gid="161"/>
    <tile gid="147"/>
    <tile gid="161"/>
@@ -193,7 +193,7 @@
    <tile gid="146"/>
    <tile gid="145"/>
    <tile gid="146"/>
-   <tile gid="145"/>
+   <tile gid="130"/>
    <tile gid="146"/>
    <tile gid="145"/>
    <tile gid="146"/>
@@ -214,11 +214,11 @@
    <tile gid="161"/>
    <tile gid="162"/>
    <tile gid="161"/>
-   <tile gid="162"/>
+   <tile gid="130"/>
    <tile gid="161"/>
    <tile gid="162"/>
    <tile gid="17"/>
-   <tile gid="148"/>
+   <tile gid="116"/>
    <tile gid="66"/>
    <tile gid="34"/>
    <tile gid="97"/>
@@ -303,9 +303,9 @@
    <tile gid="51"/>
   </data>
  </layer>
- <layer name="Tiles(0.1)" width="14" height="20">
+ <layer name="Tiles(-0.1)" width="14" height="20">
   <properties>
-   <property name="layer" value="0.1"/>
+   <property name="layer" value="-0.1"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -354,7 +354,7 @@
    <tile gid="64"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="130"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -367,22 +367,22 @@
    <tile gid="55"/>
    <tile gid="27"/>
    <tile gid="0"/>
-   <tile gid="33"/>
-   <tile gid="65"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="130"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="28"/>
    <tile gid="55"/>
    <tile gid="43"/>
    <tile gid="0"/>
-   <tile gid="2"/>
-   <tile gid="49"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -394,7 +394,7 @@
    <tile gid="44"/>
    <tile gid="55"/>
    <tile gid="27"/>
-   <tile gid="130"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -415,7 +415,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="130"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -424,7 +424,7 @@
    <tile gid="16"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="130"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -463,12 +463,12 @@
    <tile gid="0"/>
    <tile gid="28"/>
    <tile gid="0"/>
-   <tile gid="130"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="338"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -480,7 +480,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="130"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -501,7 +501,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="130"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="44"/>
    <tile gid="0"/>
@@ -590,298 +590,11 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="Tiles(0.2)" width="14" height="20">
-  <properties>
-   <property name="layer" value="0.2"/>
-  </properties>
-  <data>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="338"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-  </data>
- </layer>
  <objectgroup name="Prop(0)" width="14" height="20">
   <properties>
    <property name="layer" value="0"/>
   </properties>
-  <object x="32" y="48" width="48" height="48">
+  <object x="32" y="48" width="32" height="48">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
@@ -983,6 +696,11 @@
    </properties>
   </object>
   <object x="176" y="256" width="32" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="64" y="48" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
