@@ -63,6 +63,8 @@ public:
 	//! different.
 	bool setPhase(const std::string& name);
 
+	std::string getPhase() const;
+
 
 	//! The offset from the upper-left of the Area to the upper-left of the
 	//! Tile the Entity is standing on.
@@ -175,6 +177,7 @@ protected:
 	int imgw, imgh;
 	AnimationMap phases;
 	Animation* phase;
+	std::string phaseName;
 	ivec2 facing;
 
 	//! List of sounds this Entity knows about.

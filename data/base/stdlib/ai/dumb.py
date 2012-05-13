@@ -12,7 +12,7 @@ class stdlib_ai_dumb:
 		self.e_inst = tsunagari.Entity()
 		self.e_inst.init(descriptor)
 		self.e_inst.add_on_update_listener(self.tick)
-		self.e_inst.animation = phase
+		self.e_inst.phase = phase
 		self.e_inst.area = Area
 		self.e_inst.set_coords(x, y, layer)
 

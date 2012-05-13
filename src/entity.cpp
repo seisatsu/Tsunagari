@@ -32,6 +32,7 @@ static std::string directions[][3] = {
 Entity::Entity()
 	: redraw(true),
 	  phase(NULL),
+	  phaseName(""),
 	  speedMul(1.0),
 	  moving(false),
 	  stillMoving(false),
@@ -194,11 +195,17 @@ bool Entity::setPhase(const std::string& name)
 			int now = GameWindow::instance().time();
 			phase = newPhase;
 			phase->startOver(now);
+			phaseName = name;
 			redraw = true;
 			return true;
 		}
 	}
 	return false;
+}
+
+std::string Entity::getPhase() const
+{
+	return phaseName;
 }
 
 rcoord Entity::getPixelCoord() const
@@ -702,8 +709,7 @@ void exportEntity()
 	class_<Entity>("Entity")
 		.def("init", &Entity::init)
 		.add_property("frozen", &Entity::getFrozen, &Entity::setFrozen)
-		.add_property("animation",
-		    &Entity::getFacing, &Entity::setPhase)
+		.add_property("phase", &Entity::getPhase, &Entity::setPhase)
 		.add_property("area",
 		    make_function(&Entity::getArea,
 		      return_value_policy<reference_existing_object>()),
