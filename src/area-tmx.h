@@ -51,6 +51,8 @@ private:
 		Gosu::Color::Channel* g,
 		Gosu::Color::Channel* b,
 		Gosu::Color::Channel* a);
+
+	std::vector<TileType*> gids;
 };
 
 #endif

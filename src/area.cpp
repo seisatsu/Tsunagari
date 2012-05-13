@@ -246,11 +246,6 @@ Tile& Area::getTile(vicoord virt)
 	return getTile(virt2phys(virt));
 }
 
-TileType& Area::getGid(int idx)
-{
-	return *gids[idx];
-}
-
 TileSet& Area::getTileSet(std::string imagePath)
 {
 	std::map<std::string, TileSet>::iterator it;
@@ -439,9 +434,16 @@ void Area::runOnLoads()
 void Area::updateTileAnimations()
 {
 	const int millis = GameWindow::instance().time();
-	BOOST_FOREACH(TileType* type, gids) {
-		if (type) // First gid == NULL.
-			type->anim.updateFrame(millis);
+	BOOST_FOREACH(tilesets_t::value_type& pair, tileSets) {
+		TileSet& set = pair.second;
+		int w = set.getWidth();
+		int h = set.getHeight();
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				TileType& type = set.get(x, y);
+				type.anim.updateFrame(millis);
+			}
+		}
 	}
 }
 

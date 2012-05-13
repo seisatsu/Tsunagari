@@ -10,13 +10,13 @@
   <image source="areas/tiles/indoors.png" width="112" height="192"/>
   <tile id="13">
    <properties>
-    <property name="members" value="13,21"/>
+    <property name="members" value="13,20"/>
     <property name="speed" value="1.5"/>
    </properties>
   </tile>
   <tile id="27">
    <properties>
-    <property name="members" value="27,35"/>
+    <property name="members" value="27,34"/>
     <property name="speed" value="1.5"/>
    </properties>
   </tile>
