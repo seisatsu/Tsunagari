@@ -212,11 +212,10 @@ TileType::TileType()
 {
 }
 
-TileType::TileType(TiledImage& img)
+TileType::TileType(ImageRef& img)
 	: TileBase()
 {
-	anim.addFrame(img.front());
-	img.pop_front();
+	anim.addFrame(img);
 }
 
 bool TileType::needsRedraw() const

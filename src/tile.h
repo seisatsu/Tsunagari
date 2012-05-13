@@ -143,7 +143,7 @@ class TileType : public TileBase
 {
 public:
 	TileType();
-	TileType(TiledImage& img);
+	TileType(ImageRef& img);
 
 	//! Returns true if onscreen and we need to update our animation.
 	bool needsRedraw() const;

@@ -11,7 +11,7 @@
   <image source="areas/tiles/objects.png" width="112" height="112"/>
   <tile id="1">
    <properties>
-    <property name="members" value="1,8,15"/>
+    <property name="members" value="1,9,16"/>
     <property name="speed" value="1.5"/>
    </properties>
   </tile>

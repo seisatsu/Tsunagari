@@ -195,7 +195,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 
 	if (tileDim && tileDim != ivec2(x, y)) {
 		Log::err(descriptor,
-			"Tileset width/height contradict earlier layer");
+			"<tileset>'s width/height contradict earlier <layer>");
 		return false;
 	}
 	tileDim = ivec2(x, y);
@@ -213,6 +213,13 @@ bool AreaTMX::processTileSet(XMLNode node)
 			Resourcer* rc = Resourcer::instance();
 			rc->getTiledImage(img, source,
 				(unsigned)x, (unsigned)y, true);
+
+			// Initialize default array of default tile types.
+			for (size_t i = 0; i < img.size(); i++) {
+				TileType* type = new TileType(img[i]);
+				set->add(type);
+				gids.push_back(type);
+			}
 		}
 		else if (child.is("tile")) {
 			if (img.empty()) {
@@ -224,8 +231,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 			int id;
 			ASSERT(child.intAttr("id", &id));
 
-			if (id < 0 || (int)gids.size() +
-			              (int)img.size() <= id) {
+			if (id < 0 || (int)img.size() <= id) {
 				Log::err(descriptor, "tile type id is invalid");
 				return false;
 			}
@@ -236,35 +242,18 @@ bool AreaTMX::processTileSet(XMLNode node)
 			// all other types by one.
 			size_t gid = id + 1;
 
-			if (gid < gids.size()) {
-				Log::err(descriptor,
-					"tile types must be sorted by id");
-				return false;
-			}
-
-			// Undeclared types have default properties.
-			while (gid > gids.size()) {
-				TileType* type = new TileType(img);
-				set->add(type);
-				gids.push_back(type);
-			}
-
 			// Initialize a default TileType, we'll build on that.
-			TileType* type = new TileType(img);
+			TileType* type = new TileType(img[id]);
 			set->add(type);
-			gids.push_back(type);
+
+			delete gids[gid];
+			gids[gid] = type;
 
 			// Handle this (explicitly declared) type.
 			ASSERT(processTileType(child, *type, img, id));
 		}
 	}
 
-	// Handle remaining anonymous items.
-	while (img.size()) {
-		TileType* type = new TileType(img);
-		set->add(type);
-		gids.push_back(type);
-	}
 	return true;
 }
 
@@ -346,12 +335,13 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int
 			// Add frames to our animation.
 			// We already have one from TileType's constructor.
 			for (it = members.begin()+1; it < members.end(); it++) {
-				if (img.empty()) {
-					Log::err(descriptor, "ran out of tiles"
-						"/frames for animated tile");
+				int idx = atoi(it->c_str()) - 1;
+				if (idx < 0 || img.size() <= idx) {
+					Log::err(descriptor, "frame index out "
+						"of range for animated tile");
 					return false;
 				}
-				type.anim.addFrame(img[atoi(it->c_str())-id-1]);
+				type.anim.addFrame(img[idx]);
 			}
 		}
 		else if (name == "speed") {
