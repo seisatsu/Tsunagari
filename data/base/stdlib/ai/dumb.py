@@ -9,14 +9,8 @@ class stdlib_ai_dumb:
 		self.__movechance = movechance
 
 		# Initialize and insert the entity.
-		self.e_inst = tsunagari.Entity()
-		self.e_inst.init(descriptor)
+		self.e_inst = Area.new_entity(descriptor, x, y, layer, phase)
 		self.e_inst.add_on_update_listener(self.tick)
-		self.e_inst.phase = phase
-		self.e_inst.area = Area
-		self.e_inst.set_coords(x, y, layer)
-
-		Area.add_entity(self.e_inst)
 
 	def tick(self): # Called 60 times per second.
 		if not self.e_inst.moving:

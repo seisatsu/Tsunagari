@@ -52,9 +52,6 @@ bool Entity::init(const std::string& descriptor)
 	this->descriptor = descriptor;
 	if (!processDescriptor())
 		return false;
-
-	// Set an initial phase.
-	setPhase(directionStr(setFacing(ivec2(0, 1))));
 	return true;
 }
 
@@ -189,16 +186,18 @@ bool Entity::setPhase(const std::string& name)
 {
 	AnimationMap::iterator it;
 	it = phases.find(name);
-	if (it != phases.end()) {
-		Animation* newPhase = &it->second;
-		if (phase != newPhase) {
-			int now = GameWindow::instance().time();
-			phase = newPhase;
-			phase->startOver(now);
-			phaseName = name;
-			redraw = true;
-			return true;
-		}
+	if (it == phases.end()) {
+		Log::err(descriptor, "phase '" + name + "' not found");
+		return false;
+	}
+	Animation* newPhase = &it->second;
+	if (phase != newPhase) {
+		int now = GameWindow::instance().time();
+		phase = newPhase;
+		phase->startOver(now);
+		phaseName = name;
+		redraw = true;
+		return true;
 	}
 	return false;
 }

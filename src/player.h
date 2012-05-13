@@ -18,6 +18,7 @@ class Player : public Entity
 {
 public:
 	Player();
+	bool init(const std::string& descriptor);
 
 	//! Smooth continuous movement.
 	void startMovement(ivec2 delta);

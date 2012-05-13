@@ -113,6 +113,8 @@ public:
 
 	const std::string getDescriptor() const;
 
+	Entity* spawnEntity(const std::string& descriptor,
+		int x, int y, double z, const std::string& phase);
 	void insert(Entity* e);
 	void erase(Entity* e);
 
@@ -130,6 +132,8 @@ public:
 
 	// For Python interface.
 	boost::python::tuple pyGetDimensions();
+	Entity* pySpawnEntity(const std::string& descriptor,
+		int x, int y, double z, const std::string& phase);
 
 protected:
 	// Convert between virtual and physical map depths.

@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Image.hpp>
@@ -345,6 +346,34 @@ const std::string Area::getDescriptor() const
 	return descriptor;
 }
 
+Entity* Area::spawnEntity(const std::string& descriptor,
+	int x, int y, double z, const std::string& phase)
+{
+	Entity* e = new Entity();
+	if (!e->init(descriptor)) {
+		// Error logged.
+		delete e;
+		return NULL;
+	}
+	e->setArea(this);
+	if (!e->setPhase(phase)) {
+		// Error logged.
+		delete e;
+		return NULL;
+	}
+	if (!inBounds(x, y, z)) {
+		Log::err(descriptor, boost::str(
+			boost::format("not in map bounds: x:%d y:%d z:%f")
+				% x % y % z
+		));
+		delete e;
+		return NULL;
+	}
+	e->setTileCoords(x, y, z);
+	insert(e);
+	return e;
+}
+
 void Area::insert(Entity* e)
 {
 	entities.insert(e);
@@ -507,6 +536,18 @@ boost::python::tuple Area::pyGetDimensions()
 	return make_tuple(dim.x, dim.y, zs);
 }
 
+Entity* Area::pySpawnEntity(const std::string& descriptor,
+	int x, int y, double z, const std::string& phase)
+{
+	Entity* e = spawnEntity(descriptor, x, y, z, phase);
+	if (!e) {
+		PyErr_SetString(PyExc_RuntimeError,
+	             "new_entity(): fail to create entity");
+		boost::python::throw_error_already_set();
+	}
+	return e;
+}
+
 void exportArea()
 {
 	using namespace boost::python;
@@ -525,8 +566,8 @@ void exportArea()
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
 		.def("color_overlay", &Area::setColorOverlay)
-		.def("add_entity", &Area::insert)
-		.def("del_entity", &Area::erase)
+		.def("new_entity", &Area::pySpawnEntity,
+		    return_value_policy<reference_existing_object>())
 		;
 }
 

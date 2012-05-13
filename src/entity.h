@@ -45,7 +45,7 @@ public:
 	~Entity();
 
 	//! Entity Initializer
-	bool init(const std::string& descriptor);
+	virtual bool init(const std::string& descriptor);
 
 	//! Gosu Callback
 	void draw();

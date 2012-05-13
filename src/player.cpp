@@ -37,6 +37,16 @@ Player::Player()
 	nowalkFlags |= TILE_NOWALK_PLAYER;
 }
 
+bool Player::init(const std::string& descriptor)
+{
+	bool b = Entity::init(descriptor);
+	if (b) {
+		// Set an initial phase.
+		setPhase(directionStr(setFacing(ivec2(0, 1))));
+	}
+	return b;
+}
+
 void Player::startMovement(ivec2 delta)
 {
 	switch (conf.moveMode) {
