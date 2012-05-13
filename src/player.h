@@ -30,6 +30,8 @@ public:
 	//! Try to use an object in front of the player.
 	void useTile();
 
+	void setFrozen(bool b);
+
 protected:
 	void preMove();
 	void postMove();

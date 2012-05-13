@@ -37,7 +37,8 @@ Entity::Entity()
 	  stillMoving(false),
 	  nowalkFlags(TILE_NOWALK),
 	  area(NULL),
-	  r(0.0, 0.0, 0.0)
+	  r(0.0, 0.0, 0.0),
+	  frozen(false)
 {
 }
 
@@ -315,6 +316,16 @@ Tile& Entity::getTile() const
 Tile& Entity::getTile()
 {
 	return area->getTile(getTileCoords_i());
+}
+
+void Entity::setFrozen(bool b)
+{
+	frozen = b;
+}
+
+bool Entity::getFrozen()
+{
+	return frozen;
 }
 
 FlagManip Entity::exemptManip()
@@ -690,6 +701,7 @@ void exportEntity()
 
 	class_<Entity>("Entity")
 		.def("init", &Entity::init)
+		.add_property("frozen", &Entity::getFrozen, &Entity::setFrozen)
 		.add_property("animation",
 		    &Entity::getFacing, &Entity::setPhase)
 		.add_property("area",

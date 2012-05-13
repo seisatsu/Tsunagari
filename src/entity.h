@@ -107,6 +107,8 @@ public:
 	Tile& getTile() const;
 	Tile& getTile();
 
+	virtual void setFrozen(bool b);
+	bool getFrozen();
 
 	//
 	// Python-specific interface
@@ -207,6 +209,8 @@ protected:
 	rcoord doff; //!< Drawing offset to center entity on tile.
 
 	std::string descriptor;
+
+	bool frozen;
 };
 
 void exportEntity();

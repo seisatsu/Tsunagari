@@ -77,8 +77,11 @@ void Player::stopMovement(ivec2 delta)
 
 void Player::moveByTile(ivec2 delta)
 {
+	if (frozen)
+		return;
 	if (moving)
 		return;
+
 	setFacing(delta);
 
 	// Left CTRL allows changing facing, but disallows movement.
@@ -99,6 +102,13 @@ void Player::useTile()
 		Tile& t = area->getTile(c);
 		t.onUseScripts(this);
 	}
+}
+
+void Player::setFrozen(bool b)
+{
+	movements.clear();
+
+	Entity::setFrozen(b);
 }
 
 void Player::preMove()
