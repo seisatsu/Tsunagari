@@ -16,5 +16,5 @@ if cave_fall_stage == 2:
 			Area.color_overlay(0, 0, 0, overlay_alpha)
 		else:
 			cave_fall_stage = 3
-			Entity.frozen = False
+			Player.frozen = False
 
