@@ -456,6 +456,10 @@ void Entity::preMove()
 	tileExitScript();
 	fromTile->onLeaveScripts(this);
 
+	SampleRef step = getSound("step");
+	if (step)
+		step->play();
+
 	if (conf.moveMode == TURN) {
 		// Movement is instantaneous.
 		redraw = true;

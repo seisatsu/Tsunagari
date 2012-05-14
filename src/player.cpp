@@ -121,15 +121,6 @@ void Player::setFrozen(bool b)
 	Entity::setFrozen(b);
 }
 
-void Player::preMove()
-{
-	Entity::preMove();
-
-	SampleRef step = getSound("step");
-	if (step)
-		step->play();
-}
-
 void Player::postMove()
 {
 	Entity::postMove();
