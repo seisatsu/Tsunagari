@@ -498,7 +498,7 @@ void Entity::postMove()
 void Entity::tileExitScript()
 {
 	Resourcer* rc = Resourcer::instance();
-	const std::string& name = scripts["tileexit"];
+	const std::string& name = scripts["on_tile_exit"];
 	if (name.size()) {
 		pythonSetGlobal("Entity", this);
 		pythonSetGlobal("Tile", &getTile());
@@ -509,7 +509,7 @@ void Entity::tileExitScript()
 void Entity::tileEntryScript()
 {
 	Resourcer* rc = Resourcer::instance();
-	const std::string& name = scripts["tileentry"];
+	const std::string& name = scripts["on_tile_entry"];
 	if (name.size()) {
 		pythonSetGlobal("Entity", this);
 		pythonSetGlobal("Tile", &getTile());

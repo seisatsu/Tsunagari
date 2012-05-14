@@ -106,9 +106,9 @@ bool AreaTMX::processMapProperties(XMLNode node)
   <property name="name" value="Wooded AreaTMX"/>
   <property name="intro_music" value="arrive.ogg"/>
   <property name="main_music" value="wind.ogg"/>
-  <property name="onLoad" value="wood_setup.py"/>
-  <property name="onFocus" value="wood_focus.py"/>
-  <property name="onUpdate" value="wood_update.py"/>
+  <property name="on_load" value="wood_setup.py"/>
+  <property name="on_focus" value="wood_focus.py"/>
+  <property name="on_update" value="wood_update.py"/>
   <property name="loop" value="xy"/>
   <property name="color_overlay" value="255,255,255,127"/>
  </properties>
