@@ -48,7 +48,7 @@
 	</sounds>
 	
 	<scripts>
-		<!-- <script trigger="tileentry">entities/player/ping.py</script> -->
+		<!-- <script trigger="on_tile_entry">entities/player/ping.py</script> -->
 	</scripts>
 </entity>
 
