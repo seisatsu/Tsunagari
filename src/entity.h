@@ -42,7 +42,7 @@ class Entity
 {
 public:
 	Entity();
-	~Entity();
+	virtual ~Entity();
 
 	//! Entity Initializer
 	virtual bool init(const std::string& descriptor);
