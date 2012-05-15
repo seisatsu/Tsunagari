@@ -81,18 +81,18 @@ If Tsunagari is run from the command line with no options, it simply uses the cl
 
 Command line options and the client config file options they override are described below:
 
-* -h/--help: Display a help message containing a summary of command line options.
-* -g/--gameworld <world file>: Override [engine] "world". (Set game world file to be played.)
-* -c/--config <config file>: Read an alternative client config file.
-* -q/--quiet: Display only fatal errors in the console.
-* --normal: Display all errors in the console.
-* -v/--verbose: Display additional information in the console.
-* -t/--cache-ttl <seconds>: Override [cache] "ttl". (Set resource cache time-to-live in seconds.) A value of zero disables the cache.
-* -m/--cache-size <megabytes>: Override [cache] "size". (Set resource cache size in megabytes.) A value of zero disables the cache.
-* -s/--size <WxH>: Override [window] "width" and [window] "height". (Set width x height of the window or view area.)
-* -f/--fullscreen: Override [window] "fullscreen". (Run in fullscreen mode.)
-* -w/--window: Override [window] "fullscreen". (Run in a window.)
-* --no-audio: Override [audio] "enabled". (Disable sound effects and music.)
-* --query: Query compiled-in engine defaults.
-* --version: Show the engine's version.
+* ``-h/--help``: Display a help message containing a summary of command line options.
+* ``-g/--gameworld <world file>``: Override [engine] "world". (Set game world file to be played.)
+* ``-c/--config <config file>``: Read an alternative client config file.
+* ``-q/--quiet``: Display only fatal errors in the console.
+* ``--normal``: Display all errors in the console.
+* ``-v/--verbose``: Display additional information in the console.
+* ``-t/--cache-ttl <seconds>``: Override [cache] "ttl". (Set resource cache time-to-live in seconds.) A value of zero disables the cache.
+* ``-m/--cache-size <megabytes>``: Override [cache] "size". (Set resource cache size in megabytes.) A value of zero disables the cache.
+* ``-s/--size <WxH>``: Override [window] "width" and [window] "height". (Set width x height of the window or view area.)
+* ``-f/--fullscreen``: Override [window] "fullscreen". (Run in fullscreen mode.)
+* ``-w/--window``: Override [window] "fullscreen". (Run in a window.)
+* ``--no-audio``: Override [audio] "enabled". (Disable sound effects and music.)
+* ``--query``: Query compiled-in engine defaults.
+* ``--version``: Show the engine's version.
 
