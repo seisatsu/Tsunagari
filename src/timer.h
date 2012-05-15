@@ -15,9 +15,15 @@ public:
 	Timer();
 
 	//! Check if the timer is running.
+	/*!
+		@return true if running, false if stopped.
+	*/
 	bool isRunning();
 
 	//! Set whether the timer is running.
+	/*!
+		@param running true to start the timer, false to stop it.
+	*/
 	void setRunning(bool running);
 
 	//! Reset the timer to zero.

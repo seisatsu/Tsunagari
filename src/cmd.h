@@ -39,19 +39,21 @@ public:
 
 	//! Check if option was used.
 	/*!
+		@param longopt Full long option name for search.
 		@return true if option was used, false otherwise.
 	*/
 	bool check(std::string longopt);
 
 	//! Get the string value of an option's argument.
 	/*!
+		@param longopt Full long option name for search.
 		@return empty string if failed.
 	*/
 	std::string get(std::string longopt);
 
 	//! Print a pretty usage/help message.
 	/*!
-		automatically formatted from the list of inserted options.
+		Automatically formatted from the list of inserted options.
 	*/
 	void usage();
 

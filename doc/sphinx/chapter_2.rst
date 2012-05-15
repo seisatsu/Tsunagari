@@ -189,6 +189,53 @@ That looks huge and nasty, so let's break it apart into sections:
 
 Now let's come back to the "phases" section, because it needs a bit more explanation.
 
+Entity Phases
+-------------
+
+An entity's "phases" are the graphical states it can be in. These include still frames and animations. For example, the frame for standing while looking left is a phase, and the animation for walking right is also a phase. Some phases are used automatically by the engine, but custom phases can also be defined in the entity descriptor, and used later through event scripting.
+
+Phases are defined inside the ``<phases> </phases>`` tags, which are **required**.
+
+There are two kinds of phases -- still frames and animations. A still frame phase definition looks like this:
+
+``<phase name="down" pos="7" />``
+
+The name attribute defines the name of the phase as seen by the engine. The pos attribute states the graphic's position in the sprite sheet. See the section on tile and sprite sheets for information on positioning.
+
+The above phase section defines the entity's graphic for standing still while looking down.
+
+An animated phase definition looks like this:
+
+::
+
+   <phase name="moving up" speed="6">
+      <member pos="0" />
+      <member pos="1" />
+      <member pos="2" />
+      <member pos="1" />
+   </phase>
+
+The name attribute as before defines the phase's name. The speed attribute in an animated phase states the speed in frames per second of the phase's animation.
+
+The member tags define, in order, the frames in the animation. The position of each member frame is defined through the pos attribute.
+
+The above phase section defines the entity's animation for moving upwards.
+
+There are currently 12 built-in phase names which are recognized by the engine:
+
+* ``up`` : Facing Up
+* ``down`` : Facing Down
+* ``left`` : Facing Left
+* ``right`` : Facing Right
+* ``up-left`` : Facing Up-Left Diagonal (Turn Mode Only)
+* ``up-right`` : Facing Up-Right Diagonal (Turn Mode Only)
+* ``down-left`` : Facing Down-Left Diagonal (Turn Mode Only)
+* ``down-right`` : Facing Down-Right Diagonal (Turn Mode Only)
+* ``moving up`` : Moving Up Animation (Tile Mode Only)
+* ``moving down`` : Moving Down Animation (Tile Mode Only)
+* ``moving left`` : Moving Left Animation (Tile Mode Only)
+* ``moving right`` : Moving Right Animation (Tile Mode Only)
+
 World File Packaging
 ====================
 
