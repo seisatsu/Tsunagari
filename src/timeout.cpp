@@ -6,6 +6,8 @@
 
 #include <list>
 
+#include <boost/format.hpp>
+
 #include "python.h"
 #include "timeout.h"
 #include "window.h"
@@ -71,6 +73,16 @@ void Timeout::execute()
 	}
 }
 
+std::string Timeout::repr()
+{
+	int now = GameWindow::instance().time();
+	return boost::str(boost::format
+		("<timeout time_remaining=%dms active=%s />")
+			% (start + delay - now)
+			% (isActive() ? "true" : "false")
+	);
+}
+
 void updateTimeouts()
 {
 	int now = GameWindow::instance().time();
@@ -99,6 +111,7 @@ void exportTimeout()
 
 	class_<Timeout> ("Timeout", no_init)
 		.def("cancel", &Timeout::cancel)
+		.def("__repr__", &Timeout::repr)
 		;
 
 	pythonAddFunction("timeout", make_function(pythonSetTimeout,

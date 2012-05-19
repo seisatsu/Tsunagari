@@ -7,6 +7,8 @@
 #ifndef TIMEOUT_H
 #define TIMEOUT_H
 
+#include <string>
+
 #include <boost/python.hpp>
 
 class Timeout {
@@ -18,6 +20,8 @@ public:
 	bool ready(int now);
 	int readyTime();
 	void execute();
+
+	std::string repr();
 
 private:
 	boost::python::object callback;
