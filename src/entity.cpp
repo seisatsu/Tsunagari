@@ -36,7 +36,7 @@ Entity::Entity()
 	  speedMul(1.0),
 	  moving(false),
 	  stillMoving(false),
-	  nowalkFlags(TILE_NOWALK),
+	  nowalkFlags(TILE_NOWALK | TILE_NOWALK_NPC),
 	  area(NULL),
 	  r(0.0, 0.0, 0.0),
 	  frozen(false)

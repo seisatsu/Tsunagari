@@ -34,7 +34,7 @@ void removeValue(Cont* c, ValueType v)
 Player::Player()
 	: Entity(), velocity(0, 0)
 {
-	nowalkFlags |= TILE_NOWALK_PLAYER;
+	nowalkFlags = TILE_NOWALK | TILE_NOWALK_PLAYER;
 }
 
 bool Player::init(const std::string& descriptor)
