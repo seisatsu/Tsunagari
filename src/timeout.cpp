@@ -46,17 +46,17 @@ void Timeout::cancel()
 	active = false;
 }
 
-bool Timeout::isActive()
+bool Timeout::isActive() const
 {
 	return active;
 }
 
-bool Timeout::ready(int now)
+bool Timeout::ready(int now) const
 {
 	return now > start + delay;
 }
 
-int Timeout::readyTime()
+int Timeout::readyTime() const
 {
 	return start + delay;
 }
@@ -73,7 +73,7 @@ void Timeout::execute()
 	}
 }
 
-std::string Timeout::repr()
+std::string Timeout::repr() const
 {
 	int now = GameWindow::instance().time();
 	return boost::str(boost::format

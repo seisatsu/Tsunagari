@@ -18,7 +18,7 @@ public:
 	/*!
 		@return true if running, false if stopped.
 	*/
-	bool isRunning();
+	bool isRunning() const;
 
 	//! Set whether the timer is running.
 	/*!
@@ -30,12 +30,16 @@ public:
 	void reset();
 
 	//! Return the timer's count in seconds.
+	double count() const;
 	double count();
+
+	//! Return a rought string representation of this object.
+	std::string repr() const;
 
 private:
 	bool running;
-	unsigned long prev_time;
-	unsigned long prev_count;
+	int prev_time;
+	int prev_count;
 };
 
 void exportTimer();

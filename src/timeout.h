@@ -16,12 +16,13 @@ public:
 	Timeout(boost::python::object callback, int delay);
 	void cancel();
 
-	bool isActive();
-	bool ready(int now);
-	int readyTime();
+	bool isActive() const;
+	bool ready(int now) const;
+	int readyTime() const;
 	void execute();
 
-	std::string repr();
+	//! Return a rought string representation of this object.
+	std::string repr() const;
 
 private:
 	boost::python::object callback;

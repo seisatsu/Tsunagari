@@ -4,26 +4,24 @@
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
-#include <Gosu/Timing.hpp>
+#include <boost/format.hpp>
 
 #include "python.h"
 #include "timer.h"
+#include "window.h"
 
 static Timer pythonNewTimer()
 {
 	return Timer();
 }
 
-/*
- * Timer
- */
 
 Timer::Timer()
 	: running(false), prev_count(0)
 {
 }
 
-bool Timer::isRunning()
+bool Timer::isRunning() const
 {
 	return running;
 }
@@ -32,7 +30,7 @@ void Timer::setRunning(bool running)
 {
 	if (running == true) {
 		this->running = true;
-		prev_time = Gosu::milliseconds();
+		prev_time = GameWindow::instance().time();
 	}
 
 	else
@@ -44,21 +42,47 @@ void Timer::reset()
 	prev_count = 0;
 }
 
-double Timer::count()
+double Timer::count() const
 {
-	if (running == true) {
-		unsigned long millis = Gosu::milliseconds();
+	int prev_count = this->prev_count;
 
-		if (millis > prev_time)
-			prev_count = prev_count + (millis - prev_time);
+	if (running == true) {
+		int now = GameWindow::instance().time();
+
+		if (now > prev_time)
+			prev_count = prev_count + (now - prev_time);
 
 		else // Gosu::milliseconds() has overflowed; compensate.
-			prev_count = prev_count + (prev_time - millis);
-
-		prev_time = millis;
+			prev_count = prev_count + (prev_time - now);
 	}
 
 	return (double)prev_count / 1000.0;
+}
+
+double Timer::count()
+{
+	if (running == true) {
+		int now = GameWindow::instance().time();
+
+		if (now > prev_time)
+			prev_count = prev_count + (now - prev_time);
+
+		else // Gosu::milliseconds() has overflowed; compensate.
+			prev_count = prev_count + (prev_time - now);
+
+		prev_time = now;
+	}
+
+	return (double)prev_count / 1000.0;
+}
+
+std::string Timer::repr() const
+{
+	return boost::str(boost::format
+		("<timer count=%.02fsec running=%s />")
+			% count()
+			% (isRunning() ? "true" : "false")
+	);
 }
 
 void exportTimer()
@@ -67,8 +91,10 @@ void exportTimer()
 
 	class_<Timer> ("Timer", no_init)
 		.add_property("running", &Timer::isRunning, &Timer::setRunning)
-		.add_property("count", &Timer::count)
+		.add_property("count",
+			static_cast<double (Timer::*) ()> (&Timer::count))
 		.def("reset", &Timer::reset)
+		.def("__repr__", &Timer::repr)
 		;
 
 	pythonAddFunction("new_timer", pythonNewTimer);
