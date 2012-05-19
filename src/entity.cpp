@@ -6,6 +6,7 @@
 
 #include <math.h>
 
+#include <boost/algorithm/string.hpp> // for iequals
 #include <boost/foreach.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
@@ -50,9 +51,7 @@ Entity::~Entity()
 bool Entity::init(const std::string& descriptor)
 {
 	this->descriptor = descriptor;
-	if (!processDescriptor())
-		return false;
-	return true;
+	return processDescriptor();
 }
 
 void Entity::draw()
@@ -104,7 +103,7 @@ static double angleFromXY(double x, double y)
 
 void Entity::update(unsigned long dt)
 {
-	onUpdateScripts();
+	updateScripts();
 	switch (conf.moveMode) {
 	case TURN:
 		updateTurn(dt);
@@ -162,22 +161,6 @@ void Entity::updateTile(unsigned long dt)
 void Entity::updateNoTile(unsigned long)
 {
 	// TODO
-}
-
-void Entity::onUpdateScripts()
-{
-	BOOST_FOREACH(boost::python::object& fn, updateListenerFns) {
-		pythonSetGlobal("Entity", this);
-		try {
-			inPythonScript++;
-			fn();
-			inPythonScript--;
-		} catch (boost::python::error_already_set) {
-			inPythonScript--;
-			Log::err("Python", "Entity.onUpdateScripts():");
-			pythonErr();
-		}
-	}
 }
 
 const std::string Entity::getFacing() const
@@ -314,7 +297,7 @@ void Entity::setSpeed(double multiplier)
 
 void Entity::addOnUpdateListener(boost::python::object callable)
 {
-	updateListenerFns.push_back(callable);
+	updateHooks.push_back(callable);
 }
 
 Tile& Entity::getTile() const
@@ -499,25 +482,30 @@ void Entity::postMove()
 	 */
 }
 
-void Entity::tileExitScript()
+void Entity::updateScripts()
 {
-	Resourcer* rc = Resourcer::instance();
-	const std::string& name = scripts["on_tile_exit"];
-	if (name.size()) {
+	BOOST_FOREACH(ScriptInst& script, updateHooks) {
 		pythonSetGlobal("Entity", this);
 		pythonSetGlobal("Tile", &getTile());
-		rc->runPythonScript(name);
+		script.invoke();
+	}
+}
+
+void Entity::tileExitScript()
+{
+	BOOST_FOREACH(ScriptInst& script, tileExitHooks) {
+		pythonSetGlobal("Entity", this);
+		pythonSetGlobal("Tile", &getTile());
+		script.invoke();
 	}
 }
 
 void Entity::tileEntryScript()
 {
-	Resourcer* rc = Resourcer::instance();
-	const std::string& name = scripts["on_tile_entry"];
-	if (name.size()) {
+	BOOST_FOREACH(ScriptInst& script, tileEntryHooks) {
 		pythonSetGlobal("Entity", this);
 		pythonSetGlobal("Tile", &getTile());
-		rc->runPythonScript(name);
+		script.invoke();
 	}
 }
 
@@ -696,15 +684,36 @@ bool Entity::processScript(const XMLNode node)
 	}
 
 	Resourcer* rc = Resourcer::instance();
-	if (rc->resourceExists(filename)) {
-		scripts[trigger] = filename;
-		return true;
-	}
-	else {
+	if (!rc->resourceExists(filename)) {
 		Log::err(descriptor,
-		         std::string("script not found: ") + filename);
+			"script not found: " + filename);
 		return false;
 	}
+
+	if (!addScript(trigger, filename)) {
+		Log::err(descriptor,
+			"unrecognized script trigger: " + trigger);
+		return false;
+	}
+
+	return true;
+}
+
+bool Entity::addScript(const std::string& trigger, const std::string& filename)
+{
+	if (boost::iequals(trigger, "on_update")) {
+		updateHooks.push_back(ScriptInst(filename));
+		return true;
+	}
+	if (boost::equals(trigger, "on_tile_entry")) {
+		tileEntryHooks.push_back(ScriptInst(filename));
+		return true;
+	}
+	if (boost::iequals(trigger, "on_tile_exit")) {
+		tileExitHooks.push_back(ScriptInst(filename));
+		return true;
+	}
+	return false;
 }
 
 

@@ -15,6 +15,7 @@
 
 #include "tile.h" // for enum TileEventTrigger
 #include "resourcer.h"
+#include "scriptinst.h"
 #include "python.h"
 
 class Animation;
@@ -55,7 +56,6 @@ public:
 	void updateTurn(unsigned long dt);
 	void updateTile(unsigned long dt);
 	void updateNoTile(unsigned long dt);
-	void onUpdateScripts();
 
 	const std::string getFacing() const;
 
@@ -149,6 +149,7 @@ protected:
 	//! Called after we have arrived at another tile.
 	virtual void postMove();
 
+	void updateScripts();
 	void tileExitScript();
 	void tileEntryScript();
 
@@ -165,6 +166,7 @@ protected:
 	bool processSound(const XMLNode node);
 	bool processScripts(XMLNode node);
 	bool processScript(const XMLNode node);
+	bool addScript(const std::string& trigger, const std::string& filename);
 
 
 	//! Set to true if the Entity wants the screen to be redrawn.
@@ -185,7 +187,10 @@ protected:
 	//! List of scripts this Entity knows about.
 	StringMap scripts;
 
-	std::vector<boost::python::object> updateListenerFns;
+	//! Lists of script listeners.
+	std::vector<ScriptInst> updateHooks;
+	std::vector<ScriptInst> tileEntryHooks;
+	std::vector<ScriptInst> tileExitHooks;
 
 	double baseSpeed; //!< Original speed, specified in descriptor.
 	double speedMul;  //!< Speed multiplier.
