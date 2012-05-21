@@ -1,4 +1,4 @@
-class stdlib_ai_dumb:
+class stdlib_ai_wander:
 	def __init__(self, descriptor, phase, x, y, layer, tickspeed, movechance):
 		# Prepare timer.
 		self.__timer = new_timer()
@@ -12,7 +12,7 @@ class stdlib_ai_dumb:
 		self.e_inst = Area.new_entity(descriptor, x, y, layer, phase)
 		self.e_inst.add_on_update_listener(self.tick)
 
-	def tick(self): # Called 60 times per second.
+	def tick(self): # Called on update.
 		if not self.e_inst.moving:
 			if self.__timer.count >= self.__tickspeed:
 				self.__timer.reset()
