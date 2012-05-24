@@ -707,5 +707,10 @@
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
+  <object x="96" y="32" width="16" height="16">
+   <properties>
+    <property name="exit" value="areas/bigtree.tmx,8,19,0"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

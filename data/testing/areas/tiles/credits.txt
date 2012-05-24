@@ -3,4 +3,5 @@ forest.png - http://opengameart.org/content/16x16-tileset-water-dirt-forest
 indoors.png - http://opengameart.org/content/16x16-indoor-rpg-tileset-the-baseline
 indoors_2.png - http://opengameart.org/content/rpg-indoor-tileset-expansion-1
 objects.png - http://opengameart.org/content/objects-for-16x16-tilesets
+baum.png - http://opengameart.org/content/gnarled-tree
 
