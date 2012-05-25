@@ -591,6 +591,10 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	unsigned flags = 0x0;
 
 	XMLNode child = node.childrenNode(); // <properties>
+	if (!child) {
+		// Empty <object> element. Odd, but acceptable.
+		return true;
+	}
 	for (child = child.childrenNode(); child; child = child.next()) {
 		// Each <property>...
 		std::string name = child.attr("name");
