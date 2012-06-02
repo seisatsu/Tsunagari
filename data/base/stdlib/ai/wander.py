@@ -26,26 +26,14 @@ class stdlib_ai_wander:
 		move_choice = randint(0, 3)
 
 		if move_choice == 0:
-			if self.e_inst.tile.offset(-1, 0).flag.nowalk:
-				self.do_move()
-			else:
-				self.e_inst.move(-1, 0)
+			self.e_inst.move(-1, 0)
 
 		elif move_choice == 1:
-			if self.e_inst.tile.offset(1, 0).flag.nowalk:
-				self.do_move()
-			else:
-				self.e_inst.move(1, 0)
+			self.e_inst.move(1, 0)
 
 		elif move_choice == 2:
-			if self.e_inst.tile.offset(0, -1).flag.nowalk:
-				self.do_move()
-			else:
-				self.e_inst.move(0, -1)
+			self.e_inst.move(0, -1)
 
 		elif move_choice == 3:
-			if self.e_inst.tile.offset(0, 1).flag.nowalk:
-				self.do_move()
-			else:
-				self.e_inst.move(0, 1)
+			self.e_inst.move(0, 1)
 
