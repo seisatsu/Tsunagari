@@ -27,9 +27,10 @@ class TileType;
 
 	see AreaTMX::splitTileFlags().
 */
-#define TILE_NOWALK        0x001
-#define TILE_NOWALK_PLAYER 0x002
-#define TILE_NOWALK_NPC    0x004
+#define TILE_NOWALK            0x001
+#define TILE_NOWALK_PLAYER     0x002
+#define TILE_NOWALK_NPC        0x004
+#define TILE_NOWALK_BCO_ENTITY 0x008
 
 // Indexes into Exit and layermod arrays found in class Tile.
 enum ExitDirection {
@@ -51,6 +52,7 @@ public:
 	bool isNowalk() const;
 	bool isNowalkPlayer() const;
 	bool isNowalkNPC() const;
+	bool isNowalkBCOEntity() const;
 
 	void setNowalk(bool nowalk);
 	void setNowalkPlayer(bool nowalk);

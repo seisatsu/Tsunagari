@@ -68,6 +68,11 @@ bool FlagManip::isNowalkNPC() const
 	return (*flags & TILE_NOWALK_NPC) != 0;
 }
 
+bool FlagManip::isNowalkBCOEntity() const
+{
+	return (*flags & TILE_NOWALK_BCO_ENTITY) != 0;
+}
+
 void FlagManip::setNowalk(bool nowalk)
 {
 	*flags = (*flags & ~TILE_NOWALK) | TILE_NOWALK * nowalk;
@@ -297,6 +302,8 @@ void exportTile()
 			&FlagManip::isNowalkPlayer, &FlagManip::setNowalkPlayer)
 		.add_property("nowalk_npc",
 			&FlagManip::isNowalkNPC, &FlagManip::setNowalkNPC)
+		.add_property("nowalk_bco_entity",
+			&FlagManip::isNowalkBCOEntity)
 		;
 	class_<TileBase> ("TileBase", no_init)
 		.add_property("flag", &TileBase::flagManip)

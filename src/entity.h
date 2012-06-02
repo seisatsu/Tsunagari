@@ -143,6 +143,9 @@ protected:
 
 	bool nowalked(Tile& t);
 
+	//! Mark that we do (or will soon) occupy a specific Tile.
+	void occupy(Tile& t);
+
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove();
 

@@ -37,7 +37,8 @@ Entity::Entity()
 	  speedMul(1.0),
 	  moving(false),
 	  stillMoving(false),
-	  nowalkFlags(TILE_NOWALK | TILE_NOWALK_NPC),
+	  nowalkFlags(TILE_NOWALK | TILE_NOWALK_NPC | TILE_NOWALK_BCO_ENTITY),
+	  nowalkExempt(0),
 	  area(NULL),
 	  r(0.0, 0.0, 0.0),
 	  frozen(false)
@@ -215,6 +216,7 @@ void Entity::setTileCoords(int x, int y)
 		return;
 	redraw = true;
 	r = area->virt2virt(virt);
+	occupy(getTile());
 }
 
 void Entity::setTileCoords(int x, int y, double z)
@@ -224,6 +226,7 @@ void Entity::setTileCoords(int x, int y, double z)
 		return;
 	redraw = true;
 	r = area->virt2virt(virt);
+	occupy(getTile());
 }
 
 void Entity::setTileCoords(icoord phys)
@@ -232,6 +235,7 @@ void Entity::setTileCoords(icoord phys)
 		return;
 	redraw = true;
 	r = area->phys2virt_r(phys);
+	occupy(getTile());
 }
 
 void Entity::setTileCoords(vicoord virt)
@@ -240,6 +244,7 @@ void Entity::setTileCoords(vicoord virt)
 		return;
 	redraw = true;
 	r = area->virt2virt(virt);
+	occupy(getTile());
 }
 
 bool Entity::isMoving() const
@@ -279,6 +284,7 @@ void Entity::setArea(Area* a)
 	area = a;
 	calcDoff();
 	setSpeed(speedMul); // Calculate new speed based on tile size.
+	occupy(getTile());
 }
 
 double Entity::getSpeed() const
@@ -394,20 +400,20 @@ bool Entity::canMove(icoord dest)
 bool Entity::nowalked(Tile& t)
 {
 	unsigned flags = nowalkFlags & ~nowalkExempt;
+	return t.hasFlag(flags);
+}
 
-	if (flags & TILE_NOWALK) {
-		if (t.hasFlag(TILE_NOWALK))
-			return true;
-	}
-	if (flags & TILE_NOWALK_PLAYER) {
-		if (t.hasFlag(TILE_NOWALK_PLAYER))
-			return true;
-	}
-	if (flags & TILE_NOWALK_NPC) {
-		if (t.hasFlag(TILE_NOWALK_NPC))
-			return true;
-	}
-	return false;
+void Entity::occupy(Tile& t)
+{
+	unsigned& old = getTile().flags;
+
+	// XXX: When first placing an Entity after creating it, it will be
+	// relocated from its initial position of <0,0,0>. This will break any
+	// NOWALK_BCO_ENTITY put there by another Entity. More generally,
+	// whenever we have a possibility of two Entities being on top of each
+	// other, this will break it.
+	old &= ~TILE_NOWALK_BCO_ENTITY;
+	t.flags |= TILE_NOWALK_BCO_ENTITY;
 }
 
 void Entity::preMove()
@@ -438,6 +444,12 @@ void Entity::preMove()
 	// Process triggers.
 	tileExitScript();
 	fromTile->onLeaveScripts(this);
+
+	// Set NOWALK_BCO_ENTITY on the destination tile to "reserve" it,
+	// making it exclusive to us. Do this before we even start animating
+	// on to it.
+	if (destTile)
+		occupy(*destTile);
 
 	SampleRef step = getSound("step");
 	if (step)
