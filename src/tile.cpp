@@ -143,14 +143,12 @@ void TileBase::onUseScripts(Entity* triggeredBy)
 		parent->onUseScripts(triggeredBy);
 }
 
-void TileBase::runScripts(Entity* triggeredBy,
-                      const std::vector<std::string>& events)
+void TileBase::runScripts(Entity* triggeredBy, std::vector<ScriptInst>& events)
 {
-	BOOST_FOREACH(const std::string& script, events) {
-		Resourcer* rc = Resourcer::instance();
+	BOOST_FOREACH(ScriptInst& script, events) {
 		pythonSetGlobal("Entity", triggeredBy);
 		pythonSetGlobal("Tile", this);
-		rc->runPythonScript(script);
+		script.invoke();
 	}
 }
 

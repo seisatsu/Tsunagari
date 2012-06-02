@@ -22,6 +22,7 @@
 #include "config.h"
 #include "music.h"
 #include "player.h"
+#include "scriptinst.h"
 #include "tile.h"
 #include "viewport.h"
 #include "xml.h"
@@ -186,9 +187,7 @@ protected:
 	// The following contain filenames such that they may be loaded lazily.
 	const std::string descriptor;
 	std::string musicIntro, musicLoop;
-	std::vector<std::string> onLoadScripts;
-	std::vector<std::string> onFocusScripts;
-	std::vector<std::string> onUpdateScripts;
+	std::vector<ScriptInst> onLoadScripts, onFocusScripts, onUpdateScripts;
 };
 
 //! Register Areas with Python.

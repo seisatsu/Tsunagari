@@ -585,7 +585,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	// Gather object properties now. Assign them to tiles later.
 	bool wwide[5], hwide[5]; /* wide exit in dimensions: width, height */
 
-	std::vector<std::string> onEnter, onLeave, onUse;
+	std::vector<ScriptInst> onEnter, onLeave, onUse;
 	boost::scoped_ptr<Exit> exit[5];
 	boost::optional<double> layermods[5];
 	unsigned flags = 0x0;
@@ -609,7 +609,10 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				         "script not found: " + filename);
 				continue;
 			}
-			onEnter.push_back(filename);
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			onEnter.push_back(script);
 		}
 		else if (name == "on_leave") {
 			std::string filename = value;
@@ -618,7 +621,10 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				         "script not found: " + filename);
 				continue;
 			}
-			onLeave.push_back(filename);
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			onLeave.push_back(script);
 		}
 		else if (name == "on_use") {
 			std::string filename = value;
@@ -627,7 +633,10 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				         "script not found: " + filename);
 				continue;
 			}
-			onUse.push_back(filename);
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			onUse.push_back(script);
 		}
 		else if (name == "exit") {
 			exit[EXIT_NORMAL].reset(new Exit);

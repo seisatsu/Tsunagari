@@ -44,11 +44,8 @@ bool World::init()
 		return false;
 	player.setPhase("down");
 
-	if (onLoadScript.size()) {
-		pythonSetGlobal("Player", (Entity*)&player);
-		Resourcer* rc = Resourcer::instance();
-		rc->runPythonScript(onLoadScript);
-	}
+	pythonSetGlobal("Player", (Entity*)&player);
+	onLoadScript.invoke();
 
 	view.reset(new Viewport(viewport));
 	view->trackEntity(&player);
@@ -128,7 +125,7 @@ void World::focusArea(Area* area, vicoord playerPos)
 	area->focus();
 }
 
-std::string World::getAreaLoadScript()
+ScriptInst& World::getAreaLoadScript()
 {
 	return onAreaLoadScript;
 }

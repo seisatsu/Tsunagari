@@ -80,10 +80,9 @@ void Area::focus()
 	music->setLoop(musicLoop);
 
 	if (onFocusScripts.size()) {
-		BOOST_FOREACH(const std::string& script, onFocusScripts) {
+		BOOST_FOREACH(ScriptInst& script, onFocusScripts) {
 			pythonSetGlobal("Area", this);
-			Resourcer* rc = Resourcer::instance();
-			rc->runPythonScript(script);
+			script.invoke();
 		}
 	}
 }
@@ -157,10 +156,9 @@ void Area::requestRedraw()
 void Area::update(unsigned long dt)
 {
 	if (onUpdateScripts.size()) {
-		BOOST_FOREACH(const std::string& script, onUpdateScripts) {
+		BOOST_FOREACH(ScriptInst& script, onUpdateScripts) {
 			pythonSetGlobal("Area", this);
-			Resourcer* rc = Resourcer::instance();
-			rc->runPythonScript(script);
+			script.invoke();
 		}
 	}
 
@@ -437,16 +435,15 @@ double Area::indexDepth(int idx) const
 
 void Area::runOnLoads()
 {
-	Resourcer* rc = Resourcer::instance();
 	World* world = World::instance();
-	std::string onAreaLoadScript = world->getAreaLoadScript();
-	if (onAreaLoadScript.size()) {
+	ScriptInst& onAreaLoadScript = world->getAreaLoadScript();
+
+	pythonSetGlobal("Area", this);
+	onAreaLoadScript.invoke();
+
+	BOOST_FOREACH(ScriptInst& script, onLoadScripts) {
 		pythonSetGlobal("Area", this);
-		rc->runPythonScript(onAreaLoadScript);
-	}
-	BOOST_FOREACH(const std::string& script, onLoadScripts) {
-		pythonSetGlobal("Area", this);
-		rc->runPythonScript(script);
+		script.invoke();
 	}
 }
 

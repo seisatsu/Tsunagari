@@ -166,7 +166,7 @@ protected:
 	bool processSound(const XMLNode node);
 	bool processScripts(XMLNode node);
 	bool processScript(const XMLNode node);
-	bool addScript(const std::string& trigger, const std::string& filename);
+	bool addScript(const std::string& trigger, ScriptInst& script);
 
 
 	//! Set to true if the Entity wants the screen to be redrawn.
@@ -188,9 +188,7 @@ protected:
 	StringMap scripts;
 
 	//! Lists of script listeners.
-	std::vector<ScriptInst> updateHooks;
-	std::vector<ScriptInst> tileEntryHooks;
-	std::vector<ScriptInst> tileExitHooks;
+	std::vector<ScriptInst> updateHooks, tileEntryHooks, tileExitHooks;
 
 	double baseSpeed; //!< Original speed, specified in descriptor.
 	double speedMul;  //!< Speed multiplier.

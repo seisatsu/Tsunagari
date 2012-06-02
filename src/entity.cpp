@@ -683,14 +683,11 @@ bool Entity::processScript(const XMLNode node)
 		return false;
 	}
 
-	Resourcer* rc = Resourcer::instance();
-	if (!rc->resourceExists(filename)) {
-		Log::err(descriptor,
-			"script not found: " + filename);
+	ScriptInst script(filename);
+	if (!script.validate(descriptor))
 		return false;
-	}
 
-	if (!addScript(trigger, filename)) {
+	if (!addScript(trigger, script)) {
 		Log::err(descriptor,
 			"unrecognized script trigger: " + trigger);
 		return false;
@@ -699,18 +696,18 @@ bool Entity::processScript(const XMLNode node)
 	return true;
 }
 
-bool Entity::addScript(const std::string& trigger, const std::string& filename)
+bool Entity::addScript(const std::string& trigger, ScriptInst& script)
 {
 	if (boost::iequals(trigger, "on_update")) {
-		updateHooks.push_back(ScriptInst(filename));
+		updateHooks.push_back(script);
 		return true;
 	}
 	if (boost::equals(trigger, "on_tile_entry")) {
-		tileEntryHooks.push_back(ScriptInst(filename));
+		tileEntryHooks.push_back(script);
 		return true;
 	}
 	if (boost::iequals(trigger, "on_tile_exit")) {
-		tileExitHooks.push_back(ScriptInst(filename));
+		tileExitHooks.push_back(script);
 		return true;
 	}
 	return false;

@@ -14,6 +14,7 @@
 
 #include "animation.h"
 #include "resourcer.h" // for TiledImage
+#include "scriptinst.h"
 
 class Area;
 class Entity;
@@ -94,13 +95,12 @@ public:
 
 private:
 	//! Runs scripts in a vector.
-	void runScripts(Entity* triggeredBy,
-		const std::vector<std::string>& events);
+	void runScripts(Entity* triggeredBy, std::vector<ScriptInst>& events);
 
 public:
 	TileBase* parent;
 	unsigned flags;
-	std::vector<std::string> onEnter, onLeave, onUse;
+	std::vector<ScriptInst> onEnter, onLeave, onUse;
 };
 
 //! Contains properties unique to this tile.

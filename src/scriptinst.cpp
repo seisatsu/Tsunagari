@@ -3,18 +3,60 @@
 #include "resourcer.h"
 #include "scriptinst.h"
 
-struct invoke_visitor : public boost::static_visitor<bool>
+struct validate_visitor : public boost::static_visitor<bool>
 {
-	bool operator()(std::string filename) const
+	std::string context;
+
+	validate_visitor(const std::string& context) : context(context) {}
+
+	bool operator()(void*) const
 	{
-		if (filename.empty()) {
-			Log::err("Script",
-				"trying to run script, but filename is empty");
+		return true;
+	}
+
+	bool operator()(ScriptInst::strref ref) const
+	{
+		Resourcer* rc = Resourcer::instance();
+
+		if (ref.filename.empty()) {
+			Log::err(context,
+				"script filename is empty");
 			return false;
 		}
 
+		if (!rc->resourceExists(ref.filename)) {
+			Log::err(context,
+				ref.filename + "script file not found");
+			return false;
+		}
+
+		return true;
+	}
+
+	bool operator()(boost::python::object) const
+	{
+		return true;
+	}
+};
+
+struct invoke_visitor : public boost::static_visitor<bool>
+{
+	bool operator()(void*) const
+	{
+		return true;
+	}
+
+	bool operator()(ScriptInst::strref ref) const
+	{
 		Resourcer* rc = Resourcer::instance();
-		return rc->runPythonScript(filename);
+
+		if (ref.funcname.size()) {
+			rc->runPythonScript(ref.filename);
+			return pythonExec(ref.funccall);
+		}
+		else {
+			return rc->runPythonScript(ref.filename);
+		}
 	}
 
 	bool operator()(boost::python::object pyfn) const
@@ -32,14 +74,37 @@ struct invoke_visitor : public boost::static_visitor<bool>
 	}
 };
 
-ScriptInst::ScriptInst(const std::string& filename)
-	: data(filename)
+ScriptInst::ScriptInst()
+	: data((void*)NULL)
 {
+}
+
+ScriptInst::ScriptInst(const std::string& strloc)
+{
+	size_t colon = strloc.find(':');
+	strref ref;
+	if (colon == std::string::npos) {
+		ref.filename = strloc;
+	}
+	else {
+		ref.filename = strloc.substr(0, colon);
+		ref.funcname = strloc.substr(colon + 1);
+		ref.funccall = pythonCompile(
+			"<Tsunagari trigger>",
+			(ref.funcname).c_str()
+		);
+	}
+	data = ref;
 }
 
 ScriptInst::ScriptInst(boost::python::object pyfn)
 	: data(pyfn)
 {
+}
+
+bool ScriptInst::validate(const std::string& context)
+{
+	return boost::apply_visitor(validate_visitor(context), data);
 }
 
 bool ScriptInst::invoke()

@@ -9,16 +9,29 @@
 class ScriptInst
 {
 public:
-	ScriptInst(const std::string& filename);
+	ScriptInst();
+	ScriptInst(const std::string& strloc);
 	ScriptInst(boost::python::object pyfn);
 
+	// context = domain for errors msgs
+	bool validate(const std::string& context);
 	bool invoke();
 
 private:
+	struct strref {
+		std::string filename;
+		std::string funcname;
+		PyCodeObject* funccall;
+	};
+
 	boost::variant<
-		std::string,
+		void*,
+		strref,
 		boost::python::object
 	> data;
+
+	friend struct validate_visitor;
+	friend struct invoke_visitor;
 };
 
 #endif

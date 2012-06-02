@@ -14,6 +14,7 @@
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
 #include "player.h"
+#include "scriptinst.h"
 #include "viewport.h"
 
 namespace Gosu {
@@ -69,7 +70,7 @@ public:
 	void focusArea(Area* area, vicoord playerPos);
 
 	//! Get name of script to be run on every Area load.
-	std::string getAreaLoadScript();
+	ScriptInst& getAreaLoadScript();
 
 private:
 	//! Draws black borders around the screen to correct the aspect ratio.
@@ -129,8 +130,8 @@ private:
 	std::string playerentity;
 	WorldTypeLocality locality;
 	WorldEntry entry;
-	std::string onLoadScript;
-	std::string onAreaLoadScript;
+	ScriptInst onLoadScript;
+	ScriptInst onAreaLoadScript;
 	icoord viewport;
 };
 
