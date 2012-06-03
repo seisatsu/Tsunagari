@@ -73,18 +73,14 @@ void Area::focus()
 {
 	if (!beenFocused) {
 		beenFocused = true;
-		runOnLoads();
+		runLoadScripts();
 	}
 
 	music->setIntro(musicIntro);
 	music->setLoop(musicLoop);
 
-	if (onFocusScripts.size()) {
-		BOOST_FOREACH(ScriptInst& script, onFocusScripts) {
-			pythonSetGlobal("Area", this);
-			script.invoke();
-		}
-	}
+	pythonSetGlobal("Area", this);
+	focusScript.invoke();
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -155,20 +151,14 @@ void Area::requestRedraw()
 
 void Area::update(unsigned long dt)
 {
-	if (onUpdateScripts.size()) {
-		BOOST_FOREACH(ScriptInst& script, onUpdateScripts) {
-			pythonSetGlobal("Area", this);
-			script.invoke();
-		}
-	}
+	pythonSetGlobal("Area", this);
+	updateScript.invoke();
 
 	pythonSetGlobal("Area", this);
 	player->update(dt);
 
-	BOOST_FOREACH(Entity* e, entities) {
-		pythonSetGlobal("Area", this);
+	BOOST_FOREACH(Entity* e, entities)
 		e->update(dt);
-	}
 
 	view->update(dt);
 	music->update();
@@ -459,18 +449,13 @@ double Area::indexDepth(int idx) const
 
 
 
-void Area::runOnLoads()
+void Area::runLoadScripts()
 {
 	World* world = World::instance();
-	ScriptInst& onAreaLoadScript = world->getAreaLoadScript();
+	world->runAreaLoadScript(this);
 
 	pythonSetGlobal("Area", this);
-	onAreaLoadScript.invoke();
-
-	BOOST_FOREACH(ScriptInst& script, onLoadScripts) {
-		pythonSetGlobal("Area", this);
-		script.invoke();
-	}
+	loadScript.invoke();
 }
 
 void Area::updateTileAnimations()
@@ -482,8 +467,8 @@ void Area::updateTileAnimations()
 		int h = set.getHeight();
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				TileType& type = set.get(x, y);
-				type.anim.updateFrame(millis);
+				TileType* type = set.get(x, y);
+				type->anim.updateFrame(millis);
 			}
 		}
 	}
@@ -569,6 +554,8 @@ void exportArea()
 		.def("color_overlay", &Area::setColorOverlay)
 		.def("new_entity", &Area::spawnEntity,
 		    return_value_policy<reference_existing_object>())
+		.def_readwrite("on_focus", &Area::focusScript)
+		.def_readwrite("on_update", &Area::updateScript)
 		;
 }
 

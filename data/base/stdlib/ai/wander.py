@@ -10,7 +10,7 @@ class stdlib_ai_wander:
 
 		# Initialize and insert the entity.
 		self.e_inst = Area.new_entity(descriptor, x, y, layer, phase)
-		self.e_inst.add_on_update_listener(self.tick)
+		self.e_inst.on_update = self.tick
 
 	def tick(self): # Called on update.
 		if not self.e_inst.moving:

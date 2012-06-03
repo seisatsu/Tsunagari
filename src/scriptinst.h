@@ -32,6 +32,10 @@ private:
 
 	friend struct validate_visitor;
 	friend struct invoke_visitor;
+	friend struct topython_visitor;
+	friend struct scriptinst_to_python;
 };
+
+void exportScriptInst();
 
 #endif

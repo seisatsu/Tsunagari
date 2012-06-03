@@ -90,18 +90,17 @@ public:
 	TileType* getType() const;
 	void setType(TileType* type);
 
-	void onEnterScripts(Entity* triggeredBy);
-	void onLeaveScripts(Entity* triggeredBy);
-	void onUseScripts(Entity* triggeredBy);
+	void runEnterScript(Entity* triggeredBy);
+	void runLeaveScript(Entity* triggeredBy);
+	void runUseScript(Entity* triggeredBy);
 
 private:
-	//! Runs scripts in a vector.
-	void runScripts(Entity* triggeredBy, std::vector<ScriptInst>& events);
+	void runScript(Entity* triggeredBy, ScriptInst& script);
 
 public:
 	TileBase* parent;
 	unsigned flags;
-	std::vector<ScriptInst> onEnter, onLeave, onUse;
+	ScriptInst enterScript, leaveScript, useScript;
 };
 
 //! Contains properties unique to this tile.
@@ -163,12 +162,9 @@ public:
 
 	void add(TileType* type);
 	void set(int idx, TileType* type);
-	TileType& get(int x, int y);
+	TileType* get(int x, int y);
 	int getWidth() const;
 	int getHeight() const;
-
-	//! Throws a Python exception if out of bounds.
-	TileType& pyGet(int x, int y);
 
 private:
 	size_t idx(int x, int y) const;

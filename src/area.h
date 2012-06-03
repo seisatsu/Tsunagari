@@ -137,13 +137,22 @@ public:
 	// For Python interface.
 	boost::python::tuple pyGetDimensions();
 
+
+	//
+	// Variables public for Python scripts
+	//
+
+	// Script hooks.
+	ScriptInst loadScript, focusScript, updateScript;
+
+
 protected:
 	// Convert between virtual and physical map depths.
 	int depthIndex(double depth) const;
 	double indexDepth(int idx) const;
 
-	//! Run all scripts that need to be run before this Area is usable.
-	void runOnLoads();
+	//! Run scripts that needs to be run before this Area is usable.
+	void runLoadScripts();
 
 	//! Calculate frame to show for each type of tile
 	void updateTileAnimations();
@@ -191,7 +200,6 @@ protected:
 	// The following contain filenames such that they may be loaded lazily.
 	const std::string descriptor;
 	std::string musicIntro, musicLoop;
-	std::vector<ScriptInst> onLoadScripts, onFocusScripts, onUpdateScripts;
 };
 
 //! Register Areas with Python.

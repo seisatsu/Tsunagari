@@ -11,6 +11,7 @@
 #include "music.h"
 #include "random.h"
 #include "resourcer.h"
+#include "scriptinst.h"
 #include "sound.h"
 #include "tile.h"
 #include "timer.h"
@@ -25,6 +26,7 @@ BOOST_PYTHON_MODULE(tsunagari)
 	exportMusic();
 	exportRandom();
 	exportResourcer();
+	exportScriptInst();
 	exportSound();
 	exportTile();
 	exportTimeout();

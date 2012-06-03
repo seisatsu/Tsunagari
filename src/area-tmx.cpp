@@ -113,8 +113,6 @@ bool AreaTMX::processMapProperties(XMLNode node)
   <property name="color_overlay" value="255,255,255,127"/>
  </properties>
 */
-	Resourcer* rc = Resourcer::instance();
-
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
@@ -132,33 +130,24 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		}
 		else if (name == "on_load") {
 			std::string filename = value;
-			if (rc->resourceExists(filename)) {
-				onLoadScripts.push_back(filename);
-			}
-			else {
-				Log::err(descriptor,
-				  std::string("script not found: ") + filename);
-			}
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			loadScript = filename;
 		}
 		else if (name == "on_focus") {
 			std::string filename = value;
-			if (rc->resourceExists(filename)) {
-				onFocusScripts.push_back(filename);
-			}
-			else {
-				Log::err(descriptor,
-				  std::string("script not found: ") + filename);
-			}
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			focusScript = filename;
 		}
 		else if (name == "on_update") {
 			std::string filename = value;
-			if (rc->resourceExists(filename)) {
-				onUpdateScripts.push_back(filename);
-			}
-			else {
-				Log::err(descriptor,
-				  std::string("script not found: ") + filename);
-			}
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			updateScript = filename;
 		}
 		else if (name == "loop") {
 			loopX = value.find('x') != std::string::npos;
@@ -287,8 +276,6 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int
 	// The id has already been handled by processTileSet, so we don't have
 	// to worry about it.
 
-	Resourcer* rc = Resourcer::instance();
-
 	XMLNode child = node.childrenNode(); // <properties>
 	for (child = child.childrenNode(); child; child = child.next()) {
 		// Each <property>...
@@ -299,30 +286,24 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int
 		}
 		else if (name == "on_enter") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor,
-				         "script not found: " + filename);
-				continue;
-			}
-			type.onEnter.push_back(filename);
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			type.enterScript = filename;
 		}
 		else if (name == "on_leave") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor,
-				         "script not found: " + filename);
-				continue;
-			}
-			type.onLeave.push_back(filename);
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			type.leaveScript = filename;
 		}
 		else if (name == "on_use") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor,
-				         "script not found: " + filename);
-				continue;
-			}
-			type.onUse.push_back(filename);
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			type.useScript = filename;
 		}
 		else if (name == "members") {
 			std::string memtemp;
@@ -580,12 +561,10 @@ bool AreaTMX::processObject(XMLNode node, int z)
   </object>
 */
 
-	Resourcer* rc = Resourcer::instance();
-
 	// Gather object properties now. Assign them to tiles later.
 	bool wwide[5], hwide[5]; /* wide exit in dimensions: width, height */
 
-	std::vector<ScriptInst> onEnter, onLeave, onUse;
+	ScriptInst enterScript, leaveScript, useScript;
 	boost::scoped_ptr<Exit> exit[5];
 	boost::optional<double> layermods[5];
 	unsigned flags = 0x0;
@@ -604,39 +583,24 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		}
 		else if (name == "on_enter") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor,
-				         "script not found: " + filename);
-				continue;
-			}
 			ScriptInst script(filename);
 			if (!script.validate(descriptor))
 				return false;
-			onEnter.push_back(script);
+			enterScript = script;
 		}
 		else if (name == "on_leave") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor,
-				         "script not found: " + filename);
-				continue;
-			}
 			ScriptInst script(filename);
 			if (!script.validate(descriptor))
 				return false;
-			onLeave.push_back(script);
+			leaveScript = script;
 		}
 		else if (name == "on_use") {
 			std::string filename = value;
-			if (!rc->resourceExists(filename)) {
-				Log::err(descriptor,
-				         "script not found: " + filename);
-				continue;
-			}
 			ScriptInst script(filename);
 			if (!script.validate(descriptor))
 				return false;
-			onUse.push_back(script);
+			useScript = script;
 		}
 		else if (name == "exit") {
 			exit[EXIT_NORMAL].reset(new Exit);
@@ -736,9 +700,9 @@ bool AreaTMX::processObject(XMLNode node, int z)
 			for (int i = 0; i < 5; i++)
 				if (layermods[i])
 					tile.layermods[i] = layermods[i];
-			tile.onEnter = onEnter;
-			tile.onLeave = onLeave;
-			tile.onUse = onUse;
+			tile.enterScript = enterScript;
+			tile.leaveScript = leaveScript;
+			tile.useScript = useScript;
 		}
 	}
 

@@ -45,7 +45,7 @@ bool World::init()
 	player.setPhase("down");
 
 	pythonSetGlobal("Player", (Entity*)&player);
-	onLoadScript.invoke();
+	loadScript.invoke();
 
 	view.reset(new Viewport(viewport));
 	view->trackEntity(&player);
@@ -125,9 +125,10 @@ void World::focusArea(Area* area, vicoord playerPos)
 	area->focus();
 }
 
-ScriptInst& World::getAreaLoadScript()
+void World::runAreaLoadScript(Area* area)
 {
-	return onAreaLoadScript;
+	pythonSetGlobal("Area", area);
+	areaLoadScript.invoke();
 }
 
 void World::pushLetterbox()
@@ -283,26 +284,17 @@ bool World::processInit(XMLNode node)
 bool World::processScript(XMLNode node)
 {
 	for (node = node.childrenNode(); node; node = node.next()) {
+		std::string filename = node.content();
+		ScriptInst script(filename);
+
 		if (node.is("on_init")) {
-			std::string filename = node.content();
-			if (rc->resourceExists(filename)) {
-				onLoadScript = filename;
-			}
-			else {
-				Log::err("world.conf",
-					std::string("script not found: ") + filename);
+			if (!script.validate("world.conf"))
 				return false;
-			}
+			loadScript = filename;
 		} else if (node.is("on_area_init")) {
-			std::string filename = node.content();
-			if (rc->resourceExists(filename)) {
-				onAreaLoadScript = filename;
-			}
-			else {
-				Log::err("world.conf",
-					std::string("script not found: ") + filename);
+			if (!script.validate("world.conf"))
 				return false;
-			}
+			areaLoadScript = filename;
 		}
 	}
 	return true;

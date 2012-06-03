@@ -104,7 +104,7 @@ static double angleFromXY(double x, double y)
 
 void Entity::update(unsigned long dt)
 {
-	updateScripts();
+	runUpdateScript();
 	switch (conf.moveMode) {
 	case TURN:
 		updateTurn(dt);
@@ -306,11 +306,6 @@ void Entity::setSpeed(double multiplier)
 	}
 }
 
-void Entity::addOnUpdateListener(boost::python::object callable)
-{
-	updateHooks.push_back(callable);
-}
-
 Tile* Entity::getTile() const
 {
 	return area ? area->getTile(r) : NULL;
@@ -435,8 +430,8 @@ void Entity::preMove()
 	}
 
 	// Process triggers.
-	tileExitScript();
-	fromTile->onLeaveScripts(this);
+	runTileExitScript();
+	fromTile->runLeaveScript(this);
 
 	leaveTile();
 	enterTile(destTile);
@@ -473,8 +468,8 @@ void Entity::postMove()
 
 	// Process triggers.
 	if (destTile) {
-		destTile->onEnterScripts(this);
-		tileEntryScript();
+		destTile->runEnterScript(this);
+		runTileEntryScript();
 	}
 
 	// TODO: move teleportation here
@@ -509,31 +504,28 @@ void Entity::enterTile(Tile* t)
 		t->entCnt++;
 }
 
-void Entity::updateScripts()
+void Entity::runUpdateScript()
 {
-	BOOST_FOREACH(ScriptInst& script, updateHooks) {
-		pythonSetGlobal("Entity", this);
-		pythonSetGlobal("Tile", getTile());
-		script.invoke();
-	}
+	pythonSetGlobal("Area", area);
+	pythonSetGlobal("Entity", this);
+	pythonSetGlobal("Tile", getTile());
+	updateScript.invoke();
 }
 
-void Entity::tileExitScript()
+void Entity::runTileExitScript()
 {
-	BOOST_FOREACH(ScriptInst& script, tileExitHooks) {
-		pythonSetGlobal("Entity", this);
-		pythonSetGlobal("Tile", getTile());
-		script.invoke();
-	}
+	pythonSetGlobal("Area", area);
+	pythonSetGlobal("Entity", this);
+	pythonSetGlobal("Tile", getTile());
+	tileExitScript.invoke();
 }
 
-void Entity::tileEntryScript()
+void Entity::runTileEntryScript()
 {
-	BOOST_FOREACH(ScriptInst& script, tileEntryHooks) {
-		pythonSetGlobal("Entity", this);
-		pythonSetGlobal("Tile", getTile());
-		script.invoke();
-	}
+	pythonSetGlobal("Area", area);
+	pythonSetGlobal("Entity", this);
+	pythonSetGlobal("Tile", getTile());
+	tileEntryScript.invoke();
 }
 
 
@@ -714,7 +706,7 @@ bool Entity::processScript(const XMLNode node)
 	if (!script.validate(descriptor))
 		return false;
 
-	if (!addScript(trigger, script)) {
+	if (!setScript(trigger, script)) {
 		Log::err(descriptor,
 			"unrecognized script trigger: " + trigger);
 		return false;
@@ -723,18 +715,18 @@ bool Entity::processScript(const XMLNode node)
 	return true;
 }
 
-bool Entity::addScript(const std::string& trigger, ScriptInst& script)
+bool Entity::setScript(const std::string& trigger, ScriptInst& script)
 {
 	if (boost::iequals(trigger, "on_update")) {
-		updateHooks.push_back(script);
+		updateScript = script;
 		return true;
 	}
 	if (boost::equals(trigger, "on_tile_entry")) {
-		tileEntryHooks.push_back(script);
+		tileEntryScript = script;
 		return true;
 	}
 	if (boost::iequals(trigger, "on_tile_exit")) {
-		tileExitHooks.push_back(script);
+		tileExitScript = script;
 		return true;
 	}
 	return false;
@@ -767,10 +759,12 @@ void exportEntity()
 		    (&Entity::moveByTile))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::setTileCoords))
-		.def("add_on_update_listener", &Entity::addOnUpdateListener)
 		.def("move",
 		    static_cast<void (Entity::*) (int,int)>
-		      (&Entity::moveByTile));
+		      (&Entity::moveByTile))
+		.def_readwrite("on_update", &Entity::updateScript)
+		.def_readwrite("on_tile_entry", &Entity::tileEntryScript)
+		.def_readwrite("on_tile_exit", &Entity::tileExitScript)
 		;
 }
 

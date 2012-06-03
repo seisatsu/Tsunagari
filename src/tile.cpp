@@ -123,34 +123,32 @@ void TileBase::setType(TileType* type)
 	parent = type;
 }
 
-void TileBase::onEnterScripts(Entity* triggeredBy)
+void TileBase::runEnterScript(Entity* triggeredBy)
 {
-	runScripts(triggeredBy, onEnter);
+	runScript(triggeredBy, enterScript);
 	if (parent)
-		parent->onEnterScripts(triggeredBy);
+		parent->runEnterScript(triggeredBy);
 }
 
-void TileBase::onLeaveScripts(Entity* triggeredBy)
+void TileBase::runLeaveScript(Entity* triggeredBy)
 {
-	runScripts(triggeredBy, onLeave);
+	runScript(triggeredBy, leaveScript);
 	if (parent)
-		parent->onLeaveScripts(triggeredBy);
+		parent->runLeaveScript(triggeredBy);
 }
 
-void TileBase::onUseScripts(Entity* triggeredBy)
+void TileBase::runUseScript(Entity* triggeredBy)
 {
-	runScripts(triggeredBy, onUse);
+	runScript(triggeredBy, useScript);
 	if (parent)
-		parent->onUseScripts(triggeredBy);
+		parent->runUseScript(triggeredBy);
 }
 
-void TileBase::runScripts(Entity* triggeredBy, std::vector<ScriptInst>& events)
+void TileBase::runScript(Entity* triggeredBy, ScriptInst& script)
 {
-	BOOST_FOREACH(ScriptInst& script, events) {
-		pythonSetGlobal("Entity", triggeredBy);
-		pythonSetGlobal("Tile", this);
-		script.invoke();
-	}
+	pythonSetGlobal("Entity", triggeredBy);
+	pythonSetGlobal("Tile", this);
+	script.invoke();
 }
 
 
@@ -298,9 +296,12 @@ void exportTile()
 		        (&TileBase::getType),
 		      return_value_policy<reference_existing_object>()),
 		    &TileBase::setType)
-		.def("run_enter_scripts", &TileBase::onEnterScripts)
-		.def("run_leave_scripts", &TileBase::onLeaveScripts)
-		.def("run_use_scripts", &TileBase::onUseScripts)
+		.def_readwrite("on_enter", &TileBase::enterScript)
+		.def_readwrite("on_leave", &TileBase::leaveScript)
+		.def_readwrite("on_use", &TileBase::useScript)
+		.def("run_enter_script", &TileBase::runEnterScript)
+		.def("run_leave_script", &TileBase::runLeaveScript)
+		.def("run_use_script", &TileBase::runUseScript)
 		;
 	class_<Tile, bases<TileBase> > ("Tile", no_init)
 		.def_readonly("area", &Tile::area)

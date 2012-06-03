@@ -110,7 +110,7 @@ void Player::useTile()
 	std::vector<icoord> tiles = frontTiles();
 	BOOST_FOREACH(icoord& c, tiles) {
 		Tile* t = area->getTile(c);
-		t->onUseScripts(this);
+		t->runUseScript(this);
 	}
 }
 

@@ -69,8 +69,7 @@ public:
 	void focusArea(Area* area, int x, int y, double z);
 	void focusArea(Area* area, vicoord playerPos);
 
-	//! Get name of script to be run on every Area load.
-	ScriptInst& getAreaLoadScript();
+	void runAreaLoadScript(Area* area);
 
 private:
 	//! Draws black borders around the screen to correct the aspect ratio.
@@ -130,8 +129,8 @@ private:
 	std::string playerentity;
 	WorldTypeLocality locality;
 	WorldEntry entry;
-	ScriptInst onLoadScript;
-	ScriptInst onAreaLoadScript;
+	ScriptInst loadScript;
+	ScriptInst areaLoadScript;
 	icoord viewport;
 };
 

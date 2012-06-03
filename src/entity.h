@@ -112,6 +112,7 @@ public:
 	virtual void setFrozen(bool b);
 	bool getFrozen();
 
+
 	//
 	// Python-specific interface
 	//
@@ -119,7 +120,14 @@ public:
 	//! Exempt ourselves from TILE_NOWALK et al.
 	FlagManip exemptManip();
 
-	void addOnUpdateListener(boost::python::object callable);
+
+	//
+	// Variables public for Python scripts
+	//
+
+	//! Script hooks.
+	ScriptInst updateScript, tileEntryScript, tileExitScript;
+
 
 protected:
 	std::vector<icoord> frontTiles() const;
@@ -153,9 +161,9 @@ protected:
 	void enterTile();
 	void enterTile(Tile* t);
 
-	void updateScripts();
-	void tileExitScript();
-	void tileEntryScript();
+	void runUpdateScript();
+	void runTileExitScript();
+	void runTileEntryScript();
 
 	// XML parsing functions used in constructing an Entity
 	bool processDescriptor();
@@ -170,7 +178,7 @@ protected:
 	bool processSound(const XMLNode node);
 	bool processScripts(XMLNode node);
 	bool processScript(const XMLNode node);
-	bool addScript(const std::string& trigger, ScriptInst& script);
+	bool setScript(const std::string& trigger, ScriptInst& script);
 
 
 	//! Set to true if the Entity wants the screen to be redrawn.
@@ -190,9 +198,6 @@ protected:
 	SampleMap sounds;
 	//! List of scripts this Entity knows about.
 	StringMap scripts;
-
-	//! Lists of script listeners.
-	std::vector<ScriptInst> updateHooks, tileEntryHooks, tileExitHooks;
 
 	double baseSpeed; //!< Original speed, specified in descriptor.
 	double speedMul;  //!< Speed multiplier.
