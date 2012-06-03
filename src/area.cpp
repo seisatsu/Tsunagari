@@ -20,6 +20,7 @@
 #include "area.h"
 #include "entity.h"
 #include "log.h"
+#include "npc.h"
 #include "python.h"
 #include "resourcer.h"
 #include "tile.h"
@@ -353,7 +354,7 @@ const std::string Area::getDescriptor() const
 Entity* Area::spawnEntity(const std::string& descriptor,
 	int x, int y, double z, const std::string& phase)
 {
-	Entity* e = new Entity();
+	Entity* e = new NPC();
 	if (!e->init(descriptor)) {
 		// Error logged.
 		delete e;

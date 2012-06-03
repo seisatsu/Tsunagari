@@ -31,7 +31,7 @@ depend:
 	@$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl
 
 tsunagari: animation.o area.o area-tmx.o client-conf.o cmd.o entity.o log.o \
-	main.o music.o player.o python.o python-bindings.o random.o \
+	main.o music.o npc.o player.o python.o python-bindings.o random.o \
 	resourcer.o scriptinst.o sound.o string.o tile.o timer.o timeout.o \
 	vec.o viewport.o window.o world.o xml.o
 	$(CXX) -o tsunagari *.o $(LDFLAGS)
@@ -59,81 +59,21 @@ area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h cache.h client-conf.h \
  config.h entity.h log.h music.h player.h python.h resourcer.h scriptinst.h \
  sound.h string.h tile.h vec.h viewport.h window.h world.h xml.h
 area.o: animation.h area.cpp area.h cache.h client-conf.h config.h entity.h \
- log.h music.h player.h python.h resourcer.h scriptinst.h sound.h tile.h \
- vec.h viewport.h window.h world.h xml.h
-client-conf.o: client-conf.cpp client-conf.h cmd.h config.h log.h string.h \
- vec.h
-cmd.o: cmd.cpp cmd.h string.h
-entity.o: animation.h area.h cache.h client-conf.h config.h entity.cpp \
- entity.h log.h music.h player.h python.h resourcer.h scriptinst.h sound.h \
- tile.h vec.h viewport.h window.h xml.h
-log.o: config.h log.cpp log.h
-main.o: client-conf.h config.h log.h main.cpp python.h vec.h window.h
-music.o: cache.h client-conf.h log.h music.cpp music.h python.h resourcer.h \
- sound.h vec.h window.h xml.h
-player.o: animation.h area.h cache.h client-conf.h config.h entity.h log.h \
- music.h player.cpp player.h python.h resourcer.h scriptinst.h sound.h \
+ log.h music.h npc.h player.h python.h resourcer.h scriptinst.h sound.h \
  tile.h vec.h viewport.h window.h world.h xml.h
-python-bindings.o: animation.h area.h cache.h client-conf.h config.h \
- entity.h log.h music.h player.h python-bindings.cpp python.h random.h \
- resourcer.h scriptinst.h sound.h tile.h timeout.h timer.h vec.h viewport.h \
- window.h world.h xml.h
-python.o: cache.h client-conf.h log.h python-bindings.h python.cpp python.h \
- resourcer.h sound.h vec.h window.h xml.h
-random.o: python.h random.cpp random.h
-resourcer.o: cache.h client-conf.h config.h log.h python.h resourcer.cpp \
- resourcer.h sound.h vec.h window.h xml.h
-scriptinst.o: cache.h client-conf.h log.h python.h resourcer.h \
- scriptinst.cpp scriptinst.h sound.h vec.h window.h xml.h
-sound.o: cache.h client-conf.h log.h python.h resourcer.h sound.cpp sound.h \
- vec.h window.h xml.h
-string.o: string.cpp string.h
-tile.o: animation.h area.h cache.h client-conf.h config.h entity.h log.h \
- music.h player.h python-optional.h python.h resourcer.h scriptinst.h \
- sound.h string.h tile.cpp tile.h vec.h viewport.h window.h xml.h
-timeout.o: python.h timeout.cpp timeout.h window.h
-timer.o: python.h timer.cpp timer.h
-vec.o: vec.cpp vec.h
-viewport.o: animation.h area.h cache.h client-conf.h config.h entity.h log.h \
- music.h player.h python.h resourcer.h scriptinst.h sound.h tile.h vec.h \
- viewport.cpp viewport.h window.h xml.h
-window.o: animation.h cache.h client-conf.h config.h entity.h log.h player.h \
- python.h resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h \
- window.cpp window.h world.h xml.h
-world.o: animation.h area-tmx.h area.h cache.h client-conf.h config.h \
- entity.h log.h music.h player.h python.h resourcer.h scriptinst.h sound.h \
- tile.h timeout.h vec.h viewport.h window.h world.cpp world.h xml.h
-xml.o: config.h log.h string.h xml.cpp xml.h
-animation.o: animation.cpp animation.h cache.h client-conf.h log.h \
- resourcer.h sound.h vec.h window.h xml.h
-area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h cache.h client-conf.h \
- config.h entity.h log.h music.h player.h python.h resourcer.h scriptinst.h \
- sound.h string.h tile.h vec.h viewport.h window.h world.h xml.h
-area.o: animation.h area.cpp area.h cache.h client-conf.h config.h entity.h \
- log.h music.h player.h python.h resourcer.h scriptinst.h sound.h tile.h \
- vec.h viewport.h window.h world.h xml.h
 client-conf.o: client-conf.cpp client-conf.h cmd.h config.h log.h string.h \
  vec.h
 cmd.o: cmd.cpp cmd.h string.h
 entity.o: animation.h area.h cache.h client-conf.h config.h entity.cpp \
  entity.h log.h music.h player.h python.h resourcer.h scriptinst.h sound.h \
  tile.h vec.h viewport.h window.h xml.h
-entity.cpp.BACKUP.2636.o: animation.h area.h cache.h client-conf.h config.h \
- entity.cpp.BACKUP.2636.cpp entity.h log.h music.h player.h python.h \
- resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
-entity.cpp.BASE.2636.o: animation.h area.h cache.h client-conf.h config.h \
- entity.cpp.BASE.2636.cpp entity.h log.h music.h player.h python.h \
- resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
-entity.cpp.LOCAL.2636.o: animation.h area.h cache.h client-conf.h config.h \
- entity.cpp.LOCAL.2636.cpp entity.h log.h music.h player.h python.h \
- resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
-entity.cpp.REMOTE.2636.o: animation.h area.h cache.h client-conf.h config.h \
- entity.cpp.REMOTE.2636.cpp entity.h log.h music.h player.h python.h \
- resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
 log.o: config.h log.cpp log.h python.h
 main.o: client-conf.h config.h log.h main.cpp python.h vec.h window.h
 music.o: cache.h client-conf.h log.h music.cpp music.h python.h resourcer.h \
  sound.h vec.h window.h xml.h
+npc.o: animation.h area.h cache.h client-conf.h config.h entity.h log.h \
+ music.h npc.cpp npc.h player.h python.h resourcer.h scriptinst.h sound.h \
+ tile.h vec.h viewport.h window.h xml.h
 player.o: animation.h area.h cache.h client-conf.h config.h entity.h log.h \
  music.h player.cpp player.h python.h resourcer.h scriptinst.h sound.h \
  tile.h vec.h viewport.h window.h world.h xml.h
@@ -155,7 +95,7 @@ tile.o: animation.h area.h cache.h client-conf.h config.h entity.h log.h \
  music.h player.h python-optional.h python.h resourcer.h scriptinst.h \
  sound.h string.h tile.cpp tile.h vec.h viewport.h window.h xml.h
 timeout.o: python.h timeout.cpp timeout.h window.h
-timer.o: python.h timer.cpp timer.h
+timer.o: python.h timer.cpp timer.h window.h
 vec.o: vec.cpp vec.h
 viewport.o: animation.h area.h cache.h client-conf.h config.h entity.h log.h \
  music.h player.h python.h resourcer.h scriptinst.h sound.h tile.h vec.h \

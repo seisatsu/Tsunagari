@@ -32,21 +32,24 @@ static std::string directions[][3] = {
 
 Entity::Entity()
 	: redraw(true),
-	  phase(NULL),
-	  phaseName(""),
+	  area(NULL),
+	  r(0.0, 0.0, 0.0),
+	  frozen(false),
 	  speedMul(1.0),
 	  moving(false),
 	  stillMoving(false),
 	  nowalkFlags(TILE_NOWALK | TILE_NOWALK_NPC),
 	  nowalkExempt(0),
-	  area(NULL),
-	  r(0.0, 0.0, 0.0),
-	  frozen(false)
+	  phase(NULL),
+	  phaseName("")
 {
 }
 
 Entity::~Entity()
 {
+	pythonSetGlobal("Area", area);
+	pythonSetGlobal("Entity", this);
+	deleteScript.invoke();
 }
 
 bool Entity::init(const std::string& descriptor)
@@ -148,7 +151,7 @@ void Entity::updateTile(unsigned long dt)
 		double dx = cos(angle);
 		double dy = -sin(angle);
 
-		// Fix inaccurate trig functions. (Why do we have to do this!??)
+		// Fix inaccurate trig functions. (Yay finite precision.)
 		if (-1e-10 < dx && dx < 1e-10)
 			dx = 0.0;
 		if (-1e-10 < dy && dy < 1e-10)
@@ -435,6 +438,7 @@ void Entity::preMove()
 	runTileExitScript();
 	fromTile->runLeaveScript(this);
 
+	// Modify tile's entity count.
 	leaveTile();
 	enterTile(destTile);
 
@@ -451,6 +455,9 @@ void Entity::preMove()
 		redraw = true;
 		r = destCoord;
 		postMove();
+	}
+	else {
+		// Movement happens over time. See updateTile().
 	}
 }
 
@@ -731,6 +738,10 @@ bool Entity::setScript(const std::string& trigger, ScriptInst& script)
 		tileExitScript = script;
 		return true;
 	}
+	if (boost::iequals(trigger, "on_delete")) {
+		deleteScript = script;
+		return true;
+	}
 	return false;
 }
 
@@ -767,6 +778,7 @@ void exportEntity()
 		.def_readwrite("on_update", &Entity::updateScript)
 		.def_readwrite("on_tile_entry", &Entity::tileEntryScript)
 		.def_readwrite("on_tile_exit", &Entity::tileExitScript)
+		.def_readwrite("on_delete", &Entity::deleteScript)
 		;
 }
 

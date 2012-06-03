@@ -126,7 +126,7 @@ public:
 	//
 
 	//! Script hooks.
-	ScriptInst updateScript, tileEntryScript, tileExitScript;
+	ScriptInst updateScript, tileEntryScript, tileExitScript, deleteScript;
 
 
 protected:
@@ -181,23 +181,22 @@ protected:
 	bool setScript(const std::string& trigger, ScriptInst& script);
 
 
+protected:
+	typedef boost::unordered_map<std::string, Animation> AnimationMap;
+	typedef boost::unordered_map<std::string, SampleRef> SampleMap;
+
+
 	//! Set to true if the Entity wants the screen to be redrawn.
 	bool redraw;
 
-	typedef boost::unordered_map<std::string, Animation> AnimationMap;
-	typedef boost::unordered_map<std::string, SampleRef> SampleMap;
-	typedef boost::unordered_map<std::string, std::string> StringMap;
+	//! Pointer to Area this Entity is located on.
+	Area* area;
+	rcoord r; //!< real x,y position: hold partial pixel transversal
+	rcoord doff; //!< Drawing offset to center entity on tile.
 
-	int imgw, imgh;
-	AnimationMap phases;
-	Animation* phase;
-	std::string phaseName;
-	ivec2 facing;
+	std::string descriptor;
 
-	//! List of sounds this Entity knows about.
-	SampleMap sounds;
-	//! List of scripts this Entity knows about.
-	StringMap scripts;
+	bool frozen;
 
 	double baseSpeed; //!< Original speed, specified in descriptor.
 	double speedMul;  //!< Speed multiplier.
@@ -218,14 +217,14 @@ protected:
 	Tile* fromTile;
 	Tile* destTile;
 
-	//! Pointer to Area this Entity is located on.
-	Area* area;
-	rcoord r; //!< real x,y position: hold partial pixel transversal
-	rcoord doff; //!< Drawing offset to center entity on tile.
+	int imgw, imgh;
+	AnimationMap phases;
+	Animation* phase;
+	std::string phaseName;
+	ivec2 facing;
 
-	std::string descriptor;
-
-	bool frozen;
+	//! List of sounds this Entity knows about.
+	SampleMap sounds;
 };
 
 void exportEntity();
