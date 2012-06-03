@@ -27,9 +27,35 @@ class TileType;
 
 	see AreaTMX::splitTileFlags().
 */
-#define TILE_NOWALK        0x001
-#define TILE_NOWALK_PLAYER 0x002
-#define TILE_NOWALK_NPC    0x004
+
+/**
+ * TILE_NOWALK
+ * Neither the player nor NPCs can walk here.
+ */
+#define TILE_NOWALK          0x001
+
+/**
+ * TILE_NOWALK_PLAYER
+ * The player cannot walk here. NPCs can, though.
+ */
+#define TILE_NOWALK_PLAYER   0x002
+
+/**
+ * TILE_NOWALK_NPC
+ * NPCs cannot walk here. The player can, though.
+ */
+#define TILE_NOWALK_NPC      0x004
+
+/**
+ * TILE_NOWALK_AREA_BOUND
+ * This Tile is at the edge of an Area. If you step here, please handle it
+ * appropriately.
+ *
+ * (Usually if one moves off a map bound, one will either transfer to another
+ * Area, or will be destroyed.)
+ */
+#define TILE_NOWALK_AREA_BOUND 0x008
+
 
 // Indexes into Exit and layermod arrays found in class Tile.
 enum ExitDirection {
@@ -51,10 +77,12 @@ public:
 	bool isNowalk() const;
 	bool isNowalkPlayer() const;
 	bool isNowalkNPC() const;
+	bool isNowalkAreaBound() const;
 
 	void setNowalk(bool nowalk);
 	void setNowalkPlayer(bool nowalk);
 	void setNowalkNPC(bool nowalk);
+	void setNowalkAreaBound(bool nowalk);
 
 private:
 	unsigned* flags;

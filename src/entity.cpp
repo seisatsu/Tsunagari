@@ -377,29 +377,31 @@ const std::string& Entity::directionStr(ivec2 facing) const
 
 bool Entity::canMove(icoord dest)
 {
-	bool inBounds;
-	icoord delta = dest;
-	delta -= getTileCoords_i();
-
+	icoord delta = dest - getTileCoords_i();
 	ivec2 dxy(delta.x, delta.y);
+	bool inBounds = area->inBounds(dest);
 
-	if (!(inBounds = area->inBounds(dest)) &&
-	    !(delta.z == 0 && getTile()->exitAt(dxy)))
-		// The tile is off the map.
-		return false;
 	destCoord = area->phys2virt_r(dest);
+	destTile = NULL;
+
 	if (inBounds) {
+		// Tile is inside map. Can we move?
 		destTile = area->getTile(dest);
-		if (!nowalked(*destTile)) {
-			return destTile->entCnt == 0;
-		}
-		else
+		if (nowalked(*destTile))
 			return false;
-	}
-	else {
-		destTile = NULL;
+		if (destTile->entCnt) // Space is occupied by another Entity.
+			return false;
 		return true;
 	}
+	else if (delta.z == 0 && getTile()->exitAt(dxy)) {
+		// Even if it's out of map bounds, we could be coming from a
+		// directional Exit that just points off the map.
+	       if (nowalkExempt & TILE_NOWALK_AREA_BOUND)
+			return true;
+	}
+
+	// The tile is legitimately off the map.
+	return false;
 }
 
 bool Entity::nowalked(Tile& t)
