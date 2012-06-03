@@ -91,7 +91,7 @@ public:
 	Tile* getTile(vicoord virt);
 	Tile* getTile(rcoord virt);
 	TileType& getGid(int idx);
-	TileSet& getTileSet(std::string imagePath);
+	TileSet* getTileSet(std::string imagePath);
 
 	//! Return the dimensions of the Tile matrix.
 	ivec3 getDimensions() const;

@@ -7,6 +7,7 @@
 #include <stdlib.h> // for exit(1) on fatal
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 
 #include "area.h"
 #include "python.h"
@@ -247,14 +248,15 @@ void TileSet::set(int idx, TileType* type)
 	types[idx] = type;
 }
 
-TileType& TileSet::get(int x, int y)
+TileType* TileSet::get(int x, int y)
 {
 	size_t i = idx(x, y);
 	if (i > types.size()) {
-		Log::fatal("TileSet", "index " + itostr((int)i) + " out of bounds");
-		exit(1);
+		Log::err("TileSet", boost::str(boost::format(
+			"get(%d, %d): out of bounds") % x % y));
+		return NULL;
 	}
-	return *types[i];
+	return types[i];
 }
 
 int TileSet::getWidth() const
@@ -265,17 +267,6 @@ int TileSet::getWidth() const
 int TileSet::getHeight() const
 {
 	return width;
-}
-
-TileType& TileSet::pyGet(int x, int y)
-{
-	size_t i = idx(x, y);
-	if (i > types.size()) {
-		PyErr_SetString(PyExc_IndexError,
-			"TileSet::at(): x, y index out of range");
-		boost::python::throw_error_already_set();
-	}
-	return *types[i];
 }
 
 size_t TileSet::idx(int x, int y) const
@@ -331,7 +322,7 @@ void exportTile()
 	class_<TileSet> ("TileSet", no_init)
 		.add_property("width", &TileSet::getWidth)
 		.add_property("height", &TileSet::getHeight)
-		.def("at", &TileSet::pyGet,
+		.def("at", &TileSet::get,
 		    return_value_policy<reference_existing_object>())
 		;
 	class_<Exit> ("Exit", no_init)

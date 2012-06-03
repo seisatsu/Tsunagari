@@ -262,15 +262,15 @@ Tile* Area::getTile(rcoord virt)
 	return getTile(virt2phys(virt));
 }
 
-TileSet& Area::getTileSet(std::string imagePath)
+TileSet* Area::getTileSet(std::string imagePath)
 {
 	std::map<std::string, TileSet>::iterator it;
 	it = tileSets.find(imagePath);
 	if (it == tileSets.end()) {
-		Log::fatal("Area", "tileset " + imagePath + " not found");
-		exit(1);
+		Log::err("Area", "tileset " + imagePath + " not found");
+		return NULL;
 	}
-	return tileSets[imagePath];
+	return &tileSets[imagePath];
 }
 
 
