@@ -394,6 +394,16 @@ bool Entity::canMove(icoord dest)
 			return false;
 		if (destTile->entCnt) // Space is occupied by another Entity.
 			return false;
+
+		// Are we allowed to pass through Exits?
+		bool isExit = false;
+		if (destTile->exits[EXIT_NORMAL])
+			isExit = true;
+		if (getTile()->exitAt(dxy))
+			isExit = true;
+		if (isExit && !(nowalkExempt & TILE_NOWALK_EXIT))
+			return false;
+
 		return true;
 	}
 	else if (delta.z == 0 && getTile()->exitAt(dxy)) {

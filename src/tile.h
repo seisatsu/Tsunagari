@@ -47,14 +47,27 @@ class TileType;
 #define TILE_NOWALK_NPC      0x004
 
 /**
+ * TILE_NOWALK_EXIT
+ * This Tile is an Exit. Please take appropriate action when entering this Tile,
+ * usually by transferring to another Area.
+ *
+ * This flag is not carried by actual Tiles, but can instead be flipped in an
+ * Entity's "exempt" flag which will be read elsewhere in the engine.
+ */
+#define TILE_NOWALK_EXIT     0x008
+
+/**
  * TILE_NOWALK_AREA_BOUND
  * This Tile is at the edge of an Area. If you step here, please handle it
  * appropriately.
  *
  * (Usually if one moves off a map bound, one will either transfer to another
  * Area, or will be destroyed.)
+ *
+ * This flag is not carried by actual Tiles, but can instead be flipped in an
+ * Entity's "exempt" flag which will be read elsewhere in the engine.
  */
-#define TILE_NOWALK_AREA_BOUND 0x008
+#define TILE_NOWALK_AREA_BOUND 0x016
 
 
 // Indexes into Exit and layermod arrays found in class Tile.
@@ -77,11 +90,13 @@ public:
 	bool isNowalk() const;
 	bool isNowalkPlayer() const;
 	bool isNowalkNPC() const;
+	bool isNowalkExit() const;
 	bool isNowalkAreaBound() const;
 
 	void setNowalk(bool nowalk);
 	void setNowalkPlayer(bool nowalk);
 	void setNowalkNPC(bool nowalk);
+	void setNowalkExit(bool nowalk);
 	void setNowalkAreaBound(bool nowalk);
 
 private:

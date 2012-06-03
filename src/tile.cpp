@@ -69,6 +69,11 @@ bool FlagManip::isNowalkNPC() const
 	return (*flags & TILE_NOWALK_NPC) != 0;
 }
 
+bool FlagManip::isNowalkExit() const
+{
+	return (*flags & TILE_NOWALK_EXIT) != 0;
+}
+
 bool FlagManip::isNowalkAreaBound() const
 {
 	return (*flags & TILE_NOWALK_AREA_BOUND) != 0;
@@ -90,6 +95,12 @@ void FlagManip::setNowalkNPC(bool nowalk)
 {
 	*flags &= ~TILE_NOWALK_NPC;
 	*flags |= TILE_NOWALK_NPC * nowalk;
+}
+
+void FlagManip::setNowalkExit(bool nowalk)
+{
+	*flags &= ~TILE_NOWALK_EXIT;
+	*flags |= TILE_NOWALK_EXIT * nowalk;
 }
 
 void FlagManip::setNowalkAreaBound(bool nowalk)
@@ -301,6 +312,8 @@ void exportTile()
 			&FlagManip::isNowalkPlayer, &FlagManip::setNowalkPlayer)
 		.add_property("nowalk_npc",
 			&FlagManip::isNowalkNPC, &FlagManip::setNowalkNPC)
+		.add_property("nowalk_exit",
+			&FlagManip::isNowalkExit, &FlagManip::setNowalkExit)
 		.add_property("nowalk_area_bound",
 			&FlagManip::isNowalkAreaBound,
 			&FlagManip::setNowalkAreaBound)

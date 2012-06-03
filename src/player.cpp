@@ -35,7 +35,7 @@ Player::Player()
 	: Entity(), velocity(0, 0)
 {
 	nowalkFlags = TILE_NOWALK | TILE_NOWALK_PLAYER;
-	nowalkExempt = TILE_NOWALK_AREA_BOUND;
+	nowalkExempt = TILE_NOWALK_EXIT | TILE_NOWALK_AREA_BOUND;
 }
 
 bool Player::init(const std::string& descriptor)
