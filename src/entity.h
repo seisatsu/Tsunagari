@@ -105,9 +105,9 @@ public:
 	void setSpeed(double multiplier);
 
 
-	//! Get the Tile we are standing on.
-	Tile& getTile() const;
-	Tile& getTile();
+	//! Get the Tile that we are standing on.
+	Tile* getTile() const;
+	Tile* getTile();
 
 	virtual void setFrozen(bool b);
 	bool getFrozen();
@@ -143,14 +143,15 @@ protected:
 
 	bool nowalked(Tile& t);
 
-	//! Mark that we do (or will soon) occupy a specific Tile.
-	void occupy(Tile& t);
-
 	//! Called right before starting to moving onto another tile.
 	virtual void preMove();
 
 	//! Called after we have arrived at another tile.
 	virtual void postMove();
+
+	void leaveTile();
+	void enterTile();
+	void enterTile(Tile* t);
 
 	void updateScripts();
 	void tileExitScript();

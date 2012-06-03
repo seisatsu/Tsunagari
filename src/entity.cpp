@@ -37,7 +37,7 @@ Entity::Entity()
 	  speedMul(1.0),
 	  moving(false),
 	  stillMoving(false),
-	  nowalkFlags(TILE_NOWALK | TILE_NOWALK_NPC | TILE_NOWALK_BCO_ENTITY),
+	  nowalkFlags(TILE_NOWALK | TILE_NOWALK_NPC),
 	  nowalkExempt(0),
 	  area(NULL),
 	  r(0.0, 0.0, 0.0),
@@ -211,40 +211,44 @@ vicoord Entity::getTileCoords_vi() const
 
 void Entity::setTileCoords(int x, int y)
 {
+	leaveTile();
 	vicoord virt(x, y, r.z);
 	if (!area->inBounds(virt))
 		return;
 	redraw = true;
 	r = area->virt2virt(virt);
-	occupy(getTile());
+	enterTile();
 }
 
 void Entity::setTileCoords(int x, int y, double z)
 {
+	leaveTile();
 	vicoord virt(x, y, z);
 	if (!area->inBounds(virt))
 		return;
 	redraw = true;
 	r = area->virt2virt(virt);
-	occupy(getTile());
+	enterTile();
 }
 
 void Entity::setTileCoords(icoord phys)
 {
+	leaveTile();
 	if (!area->inBounds(phys))
 		return;
 	redraw = true;
 	r = area->phys2virt_r(phys);
-	occupy(getTile());
+	enterTile();
 }
 
 void Entity::setTileCoords(vicoord virt)
 {
+	leaveTile();
 	if (!area->inBounds(virt))
 		return;
 	redraw = true;
 	r = area->virt2virt(virt);
-	occupy(getTile());
+	enterTile();
 }
 
 bool Entity::isMoving() const
@@ -281,10 +285,11 @@ Area* Entity::getArea()
 
 void Entity::setArea(Area* a)
 {
+	leaveTile();
 	area = a;
 	calcDoff();
 	setSpeed(speedMul); // Calculate new speed based on tile size.
-	occupy(getTile());
+	enterTile();
 }
 
 double Entity::getSpeed() const
@@ -306,14 +311,14 @@ void Entity::addOnUpdateListener(boost::python::object callable)
 	updateHooks.push_back(callable);
 }
 
-Tile& Entity::getTile() const
+Tile* Entity::getTile() const
 {
-	return area->getTile(getTileCoords_i());
+	return area ? area->getTile(r) : NULL;
 }
 
-Tile& Entity::getTile()
+Tile* Entity::getTile()
 {
-	return area->getTile(getTileCoords_i());
+	return area ? area->getTile(r) : NULL;
 }
 
 void Entity::setFrozen(bool b)
@@ -334,10 +339,9 @@ FlagManip Entity::exemptManip()
 std::vector<icoord> Entity::frontTiles() const
 {
 	std::vector<icoord> tiles;
-	icoord dest = getTileCoords_i();
-	dest += icoord(facing.x, facing.y, 0);
+	icoord dest = getTileCoords_i() + icoord(facing.x, facing.y, 0);
 
-	boost::optional<double> layermod = getTile().layermodAt(facing);
+	boost::optional<double> layermod = getTile()->layermodAt(facing);
 	if (layermod)
 		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
 	tiles.push_back(dest);
@@ -381,15 +385,21 @@ bool Entity::canMove(icoord dest)
 	bool inBounds;
 	icoord delta = dest;
 	delta -= getTileCoords_i();
+
 	ivec2 dxy(delta.x, delta.y);
+
 	if (!(inBounds = area->inBounds(dest)) &&
-	    !(delta.z == 0 && getTile().exitAt(dxy)))
+	    !(delta.z == 0 && getTile()->exitAt(dxy)))
 		// The tile is off the map.
 		return false;
 	destCoord = area->phys2virt_r(dest);
 	if (inBounds) {
-		destTile = &area->getTile(dest);
-		return !nowalked(*destTile);
+		destTile = area->getTile(dest);
+		if (!nowalked(*destTile)) {
+			return destTile->entCnt == 0;
+		}
+		else
+			return false;
 	}
 	else {
 		destTile = NULL;
@@ -403,33 +413,16 @@ bool Entity::nowalked(Tile& t)
 	return t.hasFlag(flags);
 }
 
-void Entity::occupy(Tile& t)
-{
-	unsigned& old = getTile().flags;
-
-	// XXX: When first placing an Entity after creating it, it will be
-	// relocated from its initial position of <0,0,0>. This will break any
-	// NOWALK_BCO_ENTITY put there by another Entity. More generally,
-	// whenever we have a possibility of two Entities being on top of each
-	// other, this will break it.
-	old &= ~TILE_NOWALK_BCO_ENTITY;
-	t.flags |= TILE_NOWALK_BCO_ENTITY;
-}
-
 void Entity::preMove()
 {
 	fromCoord = r;
-	fromTile = &getTile();
+	fromTile = getTile();
 
 	rcoord d = destCoord;
 	d -= fromCoord;
 	deltaCoord = area->virt2virt(d);
 
 	moving = true;
-
-	// Set z right away so that we're on-level with the square we're
-	// entering.
-	r.z = destCoord.z;
 
 	// Start moving animation.
 	switch (conf.moveMode) {
@@ -445,15 +438,16 @@ void Entity::preMove()
 	tileExitScript();
 	fromTile->onLeaveScripts(this);
 
-	// Set NOWALK_BCO_ENTITY on the destination tile to "reserve" it,
-	// making it exclusive to us. Do this before we even start animating
-	// on to it.
-	if (destTile)
-		occupy(*destTile);
+	leaveTile();
+	enterTile(destTile);
 
 	SampleRef step = getSound("step");
 	if (step)
 		step->play();
+
+	// Set z right away so that we're on-level with the square we're
+	// entering.
+	r.z = destCoord.z;
 
 	if (conf.moveMode == TURN) {
 		// Movement is instantaneous.
@@ -468,7 +462,7 @@ void Entity::postMove()
 	moving = false;
 
 	if (destTile) {
-		boost::optional<double> layermod = getTile().layermods[EXIT_NORMAL];
+		boost::optional<double> layermod = getTile()->layermods[EXIT_NORMAL];
 		if (layermod)
 			r.z = *layermod;
 	}
@@ -494,11 +488,32 @@ void Entity::postMove()
 	 */
 }
 
+void Entity::leaveTile()
+{
+	if (area) {
+		Tile* t = getTile();
+		if (t)
+			t->entCnt--;
+	}
+}
+
+void Entity::enterTile()
+{
+	if (area)
+		enterTile(getTile());
+}
+
+void Entity::enterTile(Tile* t)
+{
+	if (t)
+		t->entCnt++;
+}
+
 void Entity::updateScripts()
 {
 	BOOST_FOREACH(ScriptInst& script, updateHooks) {
 		pythonSetGlobal("Entity", this);
-		pythonSetGlobal("Tile", &getTile());
+		pythonSetGlobal("Tile", getTile());
 		script.invoke();
 	}
 }
@@ -507,7 +522,7 @@ void Entity::tileExitScript()
 {
 	BOOST_FOREACH(ScriptInst& script, tileExitHooks) {
 		pythonSetGlobal("Entity", this);
-		pythonSetGlobal("Tile", &getTile());
+		pythonSetGlobal("Tile", getTile());
 		script.invoke();
 	}
 }
@@ -516,7 +531,7 @@ void Entity::tileEntryScript()
 {
 	BOOST_FOREACH(ScriptInst& script, tileEntryHooks) {
 		pythonSetGlobal("Entity", this);
-		pythonSetGlobal("Tile", &getTile());
+		pythonSetGlobal("Tile", getTile());
 		script.invoke();
 	}
 }
@@ -739,7 +754,7 @@ void exportEntity()
 		      return_value_policy<reference_existing_object>()),
 		    &Entity::setArea)
 		.add_property("tile", make_function(
-		    static_cast<Tile& (Entity::*) ()> (&Entity::getTile),
+		    static_cast<Tile* (Entity::*) ()> (&Entity::getTile),
 		    return_value_policy<reference_existing_object>()))
 		.add_property("coords", &Entity::getTileCoords_vi)
 		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)

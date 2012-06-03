@@ -27,10 +27,9 @@ class TileType;
 
 	see AreaTMX::splitTileFlags().
 */
-#define TILE_NOWALK            0x001
-#define TILE_NOWALK_PLAYER     0x002
-#define TILE_NOWALK_NPC        0x004
-#define TILE_NOWALK_BCO_ENTITY 0x008
+#define TILE_NOWALK        0x001
+#define TILE_NOWALK_PLAYER 0x002
+#define TILE_NOWALK_NPC    0x004
 
 // Indexes into Exit and layermod arrays found in class Tile.
 enum ExitDirection {
@@ -52,7 +51,6 @@ public:
 	bool isNowalk() const;
 	bool isNowalkPlayer() const;
 	bool isNowalkNPC() const;
-	bool isNowalkBCOEntity() const;
 
 	void setNowalk(bool nowalk);
 	void setNowalkPlayer(bool nowalk);
@@ -83,10 +81,11 @@ class TileBase
 public:
 	TileBase();
 
+	FlagManip flagManip();
+
 	//! Determines whether this tile or one of its parent types embodies a
 	//! flag.
 	bool hasFlag(unsigned flag) const;
-	FlagManip flagManip();
 
 	TileType* getType() const;
 	void setType(TileType* type);
@@ -118,7 +117,7 @@ public:
 	Tile(); // Should not be used. Wanted by std::containers.
 	Tile(Area* area, int x, int y, int z);
 
-	Tile& offset(int x, int y);
+	Tile* offset(int x, int y);
 
 	double getZ();
 
@@ -133,6 +132,7 @@ public:
 	int x, y, z;
 	Exit* exits[5];
 	boost::optional<double> layermods[5];
+	int entCnt; //!< Number of entities on this Tile.
 };
 
 //! Contains the properties shared by all tiles of a certain type.

@@ -68,11 +68,6 @@ bool FlagManip::isNowalkNPC() const
 	return (*flags & TILE_NOWALK_NPC) != 0;
 }
 
-bool FlagManip::isNowalkBCOEntity() const
-{
-	return (*flags & TILE_NOWALK_BCO_ENTITY) != 0;
-}
-
 void FlagManip::setNowalk(bool nowalk)
 {
 	*flags = (*flags & ~TILE_NOWALK) | TILE_NOWALK * nowalk;
@@ -107,14 +102,14 @@ TileBase::TileBase()
 {
 }
 
-bool TileBase::hasFlag(unsigned flag) const
-{
-	return flags & flag || (parent && parent->hasFlag(flag));
-}
-
 FlagManip TileBase::flagManip()
 {
 	return FlagManip(&flags);
+}
+
+bool TileBase::hasFlag(unsigned flag) const
+{
+	return flags & flag || (parent && parent->hasFlag(flag));
 }
 
 TileType* TileBase::getType() const
@@ -162,17 +157,18 @@ void TileBase::runScripts(Entity* triggeredBy, std::vector<ScriptInst>& events)
  * TILE
  */
 Tile::Tile()
+	: entCnt(0)
 {
 }
 
 Tile::Tile(Area* area, int x, int y, int z)
-	: TileBase(), area(area), x(x), y(y), z(z)
+	: TileBase(), area(area), x(x), y(y), z(z), entCnt(0)
 {
 	memset(exits, 0, sizeof(exits));
 	memset(layermods, 0, sizeof(layermods));
 }
 
-Tile& Tile::offset(int x, int y)
+Tile* Tile::offset(int x, int y)
 {
 	return area->getTile(this->x + x, this->y + y, z);
 }
@@ -302,8 +298,6 @@ void exportTile()
 			&FlagManip::isNowalkPlayer, &FlagManip::setNowalkPlayer)
 		.add_property("nowalk_npc",
 			&FlagManip::isNowalkNPC, &FlagManip::setNowalkNPC)
-		.add_property("nowalk_bco_entity",
-			&FlagManip::isNowalkBCOEntity)
 		;
 	class_<TileBase> ("TileBase", no_init)
 		.add_property("flag", &TileBase::flagManip)
@@ -328,6 +322,7 @@ void exportTile()
 		        (&Tile::getNormalExit),
 		      return_value_policy<reference_existing_object>()),
 		    &Tile::setNormalExit)
+		.def_readonly("nentities", &Tile::entCnt)
 		.def("offset", &Tile::offset,
 		    return_value_policy<reference_existing_object>())
 		;

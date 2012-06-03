@@ -80,14 +80,16 @@ public:
 
 	void setColorOverlay(int r, int g, int b, int a);
 
-	const Tile& getTile(int x, int y, int z) const; /* phys */
-	const Tile& getTile(int x, int y, double z) const; /* virt */
-	const Tile& getTile(icoord phys) const;
-	const Tile& getTile(vicoord virt) const;
-	Tile& getTile(int x, int y, int z); /* phys */
-	Tile& getTile(int x, int y, double z); /* virt */
-	Tile& getTile(icoord phys);
-	Tile& getTile(vicoord virt);
+	const Tile* getTile(int x, int y, int z) const; /* phys */
+	const Tile* getTile(int x, int y, double z) const; /* virt */
+	const Tile* getTile(icoord phys) const;
+	const Tile* getTile(vicoord virt) const;
+	const Tile* getTile(rcoord virt) const;
+	Tile* getTile(int x, int y, int z); /* phys */
+	Tile* getTile(int x, int y, double z); /* virt */
+	Tile* getTile(icoord phys);
+	Tile* getTile(vicoord virt);
+	Tile* getTile(rcoord virt);
 	TileType& getGid(int idx);
 	TileSet& getTileSet(std::string imagePath);
 
@@ -107,6 +109,8 @@ public:
 	bool inBounds(int x, int y, double z) const; /* virt */
 	bool inBounds(icoord phys) const;
 	bool inBounds(vicoord virt) const;
+	bool inBounds(rcoord virt) const;
+	bool inBounds(Entity* ent) const;
 
 	bool loopsInX() const;
 	bool loopsInY() const;

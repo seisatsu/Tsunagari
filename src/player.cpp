@@ -34,7 +34,7 @@ void removeValue(Cont* c, ValueType v)
 Player::Player()
 	: Entity(), velocity(0, 0)
 {
-	nowalkFlags = TILE_NOWALK | TILE_NOWALK_PLAYER | TILE_NOWALK_BCO_ENTITY;
+	nowalkFlags = TILE_NOWALK | TILE_NOWALK_PLAYER;
 }
 
 bool Player::init(const std::string& descriptor)
@@ -109,8 +109,8 @@ void Player::useTile()
 {
 	std::vector<icoord> tiles = frontTiles();
 	BOOST_FOREACH(icoord& c, tiles) {
-		Tile& t = area->getTile(c);
-		t.onUseScripts(this);
+		Tile* t = area->getTile(c);
+		t->onUseScripts(this);
 	}
 }
 

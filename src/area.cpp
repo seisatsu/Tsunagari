@@ -138,8 +138,8 @@ bool Area::needsRedraw() const
 	for (int z = tiles.z1; z < tiles.z2; z++) {
 		for (int y = tiles.y1; y < tiles.y2; y++) {
 			for (int x = tiles.x1; x < tiles.x2; x++) {
-				const Tile& tile = getTile(x, y, z);
-				const TileType* type = tile.getType();
+				const Tile* tile = getTile(x, y, z);
+				const TileType* type = tile->getType();
 				if (type && type->needsRedraw())
 					return true;
 			}
@@ -198,50 +198,66 @@ void Area::setColorOverlay(int r, int g, int b, int a)
 
 
 
-const Tile& Area::getTile(int x, int y, int z) const
+const Tile* Area::getTile(int x, int y, int z) const
 {
 	if (loopX)
 		x = wrap(0, x, dim.x);
 	if (loopY)
 		y = wrap(0, y, dim.y);
-	return map[z][y][x];
+	if (inBounds(x, y, z))
+		return &map[z][y][x];
+	else
+		return NULL;
 }
 
-const Tile& Area::getTile(int x, int y, double z) const
+const Tile* Area::getTile(int x, int y, double z) const
 {
 	return getTile(x, y, depthIndex(z));
 }
 
-const Tile& Area::getTile(icoord phys) const
+const Tile* Area::getTile(icoord phys) const
 {
 	return getTile(phys.x, phys.y, phys.z);
 }
 
-const Tile& Area::getTile(vicoord virt) const
+const Tile* Area::getTile(vicoord virt) const
 {
 	return getTile(virt2phys(virt));
 }
 
-Tile& Area::getTile(int x, int y, int z)
+const Tile* Area::getTile(rcoord virt) const
+{
+	return getTile(virt2phys(virt));
+}
+
+Tile* Area::getTile(int x, int y, int z)
 {
 	if (loopX)
 		x = wrap(0, x, dim.x);
 	if (loopY)
 		y = wrap(0, y, dim.y);
-	return map[z][y][x];
+	if (inBounds(x, y, z))
+		return &map[z][y][x];
+	else
+		return NULL;
 }
 
-Tile& Area::getTile(int x, int y, double z)
+Tile* Area::getTile(int x, int y, double z)
 {
 	return getTile(x, y, depthIndex(z));
 }
 
-Tile& Area::getTile(icoord phys)
+Tile* Area::getTile(icoord phys)
 {
 	return getTile(phys.x, phys.y, phys.z);
 }
 
-Tile& Area::getTile(vicoord virt)
+Tile* Area::getTile(vicoord virt)
+{
+	return getTile(virt2phys(virt));
+}
+
+Tile* Area::getTile(rcoord virt)
 {
 	return getTile(virt2phys(virt));
 }
@@ -315,6 +331,16 @@ bool Area::inBounds(icoord phys) const
 bool Area::inBounds(vicoord virt) const
 {
 	return inBounds(virt2phys(virt));
+}
+
+bool Area::inBounds(rcoord virt) const
+{
+	return inBounds(virt2phys(virt));
+}
+
+bool Area::inBounds(Entity* ent) const
+{
+	return inBounds(ent->getPixelCoord());
 }
 
 
@@ -470,8 +496,8 @@ void Area::drawTiles() const
 		double depth = idx2depth[z];
 		for (int y = tiles.y1; y < tiles.y2; y++) {
 			for (int x = tiles.x1; x < tiles.x2; x++) {
-				const Tile& tile = getTile(x, y, z);
-				drawTile(tile, x, y, depth);
+				const Tile* tile = getTile(x, y, z);
+				drawTile(*tile, x, y, depth);
 			}
 		}
 	}
@@ -534,7 +560,7 @@ void exportArea()
 		.def("tileset", &Area::getTileSet,
 		    return_value_policy<reference_existing_object>())
 		.def("tile",
-		    static_cast<Tile& (Area::*) (int, int, double)>
+		    static_cast<Tile* (Area::*) (int, int, double)>
 		    (&Area::getTile),
 		    return_value_policy<reference_existing_object>())
 		.def("in_bounds",
