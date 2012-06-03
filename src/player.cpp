@@ -48,6 +48,13 @@ bool Player::init(const std::string& descriptor)
 	return b;
 }
 
+void Player::destroy()
+{
+	// Assuming this is being called from Python code, where this function
+	// is bound to the name "delete()".
+	Log::err("Player", "delete(): Player cannot be destroyed");
+}
+
 void Player::startMovement(ivec2 delta)
 {
 	switch (conf.moveMode) {

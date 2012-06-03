@@ -45,8 +45,11 @@ public:
 	Entity();
 	virtual ~Entity();
 
-	//! Entity Initializer
+	//! Entity initializer
 	virtual bool init(const std::string& descriptor);
+
+	//! Entity destroyer.
+	virtual void destroy();
 
 	//! Gosu Callback
 	void draw();

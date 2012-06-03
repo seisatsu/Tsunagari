@@ -58,6 +58,17 @@ bool Entity::init(const std::string& descriptor)
 	return processDescriptor();
 }
 
+void Entity::destroy()
+{
+	leaveTile();
+	if (area) {
+		area->erase(this);
+		area->requestRedraw();
+	}
+	area = NULL;
+	delete this;
+}
+
 void Entity::draw()
 {
 	int millis = GameWindow::instance().time();
@@ -762,6 +773,7 @@ void exportEntity()
 
 	class_<Entity>("Entity")
 		.def("init", &Entity::init)
+		.def("delete", &Entity::destroy)
 		.add_property("frozen", &Entity::getFrozen, &Entity::setFrozen)
 		.add_property("phase", &Entity::getPhase, &Entity::setPhase)
 		.add_property("area",

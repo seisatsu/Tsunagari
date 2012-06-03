@@ -27,8 +27,6 @@ void NPC::postMove()
 void NPC::takeExit(Exit*)
 {
 	moving = false; // Prevent time rollover check in Entity::updateTile().
-	area->erase(this); // Assuming area exists if taking an Exit.
-	area->requestRedraw();
-	delete this;
+	destroy();
 }
 
