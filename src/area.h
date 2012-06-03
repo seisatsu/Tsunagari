@@ -41,11 +41,16 @@ class Resourcer;
 class Sprite;
 class World;
 
-//! An Area represents one map, or screen, in a Tsunagari World.
+//! An Area represents one map, or screen, in a World.
 /*!
-	The Area class handles the parsing of TMX-format Area descriptor files,
-	the initialization, placement, and drawing of tiles, and various
-	Area-related functionality.
+	The Area class manages a three-dimensional structure of Tiles and a set
+	of Entities.
+
+	The game's Viewport must be "focused" on an Area. Only one Area can be
+	focused on at a time.
+
+	The viewport will not scroll past the edge of an Area. (At least as of
+	June 2012. :)
 */
 class Area
 {
@@ -75,7 +80,8 @@ public:
 	void requestRedraw();
 
 	//! Update the game state within this Area as if dt milliseconds had
-	//! passed since the last call. Updates Entities and runs scripts.
+	//! passed since the last call. Updates Entities, runs scripts, and
+	//! checks for Tile animation updates.
 	void update(unsigned long dt);
 
 	void setColorOverlay(int r, int g, int b, int a);
@@ -90,8 +96,8 @@ public:
 	Tile* getTile(icoord phys);
 	Tile* getTile(vicoord virt);
 	Tile* getTile(rcoord virt);
-	TileType& getGid(int idx);
-	TileSet* getTileSet(std::string imagePath);
+
+	TileSet* getTileSet(const std::string& imagePath);
 
 	//! Return the dimensions of the Tile matrix.
 	ivec3 getDimensions() const;

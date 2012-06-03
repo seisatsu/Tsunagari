@@ -252,7 +252,7 @@ Tile* Area::getTile(rcoord virt)
 	return getTile(virt2phys(virt));
 }
 
-TileSet* Area::getTileSet(std::string imagePath)
+TileSet* Area::getTileSet(const std::string& imagePath)
 {
 	std::map<std::string, TileSet>::iterator it;
 	it = tileSets.find(imagePath);
