@@ -94,6 +94,7 @@ public:
 	void moveByTile(ivec2 delta);
 
 	Tile* canMove(Tile* from, int dx, int dy);
+	Tile* canMove(Tile* from, ivec2 facing);
 
 
 	//! Gets the Entity's current Area.
@@ -136,7 +137,6 @@ public:
 
 
 protected:
-	std::vector<icoord> frontTiles() const;
 	std::vector<icoord> frontTiles(Tile* tile, ivec2 facing) const;
 
 	//! Calculate what the draw offset should be and saves it in 'doff'.

@@ -115,7 +115,7 @@ void Player::moveByTile(ivec2 delta)
 
 void Player::useTile()
 {
-	std::vector<icoord> tiles = frontTiles();
+	std::vector<icoord> tiles = frontTiles(getTile(), facing);
 	BOOST_FOREACH(icoord& c, tiles) {
 		Tile* t = area->getTile(c);
 		t->runUseScript(this);

@@ -291,20 +291,20 @@ void Entity::moveByTile(ivec2 delta)
 		return;
 	setFacing(delta);
 
-	std::vector<icoord> tiles = frontTiles();
-	BOOST_FOREACH(const icoord& tile, tiles) {
-		if (canMove(tile)) {
-			preMove();
-			return;
-		}
-		else
-			setPhase(directionStr(facing));
-	}
+	Tile* tile = canMove(getTile(), facing);
+	if (tile)
+		preMove();
+	else
+		setPhase(directionStr(facing));
 }
 
 Tile* Entity::canMove(Tile* from, int dx, int dy)
 {
-	ivec2 facing(dx, dy);
+	Entity::canMove(from, ivec2(dx, dy));
+}
+
+Tile* Entity::canMove(Tile* from, ivec2 facing)
+{
 	std::vector<icoord> tiles = frontTiles(from, facing);
 	BOOST_FOREACH(const icoord& tile, tiles) {
 		if (canMove(tile)) {
@@ -366,18 +366,6 @@ bool Entity::getFrozen()
 FlagManip Entity::exemptManip()
 {
 	return FlagManip(&nowalkExempt);
-}
-
-std::vector<icoord> Entity::frontTiles() const
-{
-	std::vector<icoord> tiles;
-	icoord dest = getTileCoords_i() + icoord(facing.x, facing.y, 0);
-
-	boost::optional<double> layermod = getTile()->layermodAt(facing);
-	if (layermod)
-		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
-	tiles.push_back(dest);
-	return tiles;
 }
 
 std::vector<icoord> Entity::frontTiles(Tile* tile, ivec2 facing) const
