@@ -26,14 +26,20 @@ class stdlib_ai_wander:
 		move_choice = randint(0, 3)
 
 		if move_choice == 0:
-			self.e_inst.move(-1, 0)
-
+			x, y = -1, 0
 		elif move_choice == 1:
-			self.e_inst.move(1, 0)
-
+			x, y = 1, 0
 		elif move_choice == 2:
-			self.e_inst.move(0, -1)
-
+			x, y = 0, -1
 		elif move_choice == 3:
-			self.e_inst.move(0, 1)
+			x, y = 0, 1
+
+		e = self.e_inst
+		if e.can_move(e.tile, x, y):
+			print "[Python] ai.wander: can_move() == True"
+		else:
+			print "[Python] ai.wander: can_move() == False"
+
+		# Try to move even if we know we can't. Shouldn't matter.
+		e.move(x, y)
 

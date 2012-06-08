@@ -302,6 +302,19 @@ void Entity::moveByTile(ivec2 delta)
 	}
 }
 
+Tile* Entity::canMove(Tile* from, int dx, int dy)
+{
+	ivec2 facing(dx, dy);
+	std::vector<icoord> tiles = frontTiles(from, facing);
+	BOOST_FOREACH(const icoord& tile, tiles) {
+		if (canMove(tile)) {
+			Tile* obj = area->getTile(tile);
+			return obj;
+		}
+	}
+	return NULL;
+}
+
 Area* Entity::getArea()
 {
 	return area;
@@ -361,6 +374,19 @@ std::vector<icoord> Entity::frontTiles() const
 	icoord dest = getTileCoords_i() + icoord(facing.x, facing.y, 0);
 
 	boost::optional<double> layermod = getTile()->layermodAt(facing);
+	if (layermod)
+		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
+	tiles.push_back(dest);
+	return tiles;
+}
+
+std::vector<icoord> Entity::frontTiles(Tile* tile, ivec2 facing) const
+{
+	std::vector<icoord> tiles;
+	icoord here(tile->x, tile->y, tile->z);
+	icoord dest = here + icoord(facing.x, facing.y, 0);
+
+	boost::optional<double> layermod = tile->layermodAt(facing);
 	if (layermod)
 		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
 	tiles.push_back(dest);
@@ -802,6 +828,10 @@ void exportEntity()
 		      (&Entity::setTileCoords))
 		.def("move", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::moveByTile))
+		.def("can_move", make_function(
+		    static_cast<Tile* (Entity::*) (Tile*,int,int)>
+		      (&Entity::canMove),
+		    return_value_policy<reference_existing_object>()))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::setTileCoords))
 		.def("move",
