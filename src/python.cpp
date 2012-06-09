@@ -273,12 +273,21 @@ bool pythonExec(PyCodeObject* code)
 {
 	if (!code)
 		return false;
-	inPythonScript++;
-	PyObject* globals = dictMain.ptr();
-	PyObject* result = PyEval_EvalCode(code, globals, globals);
-	inPythonScript--;
-	if (!result)
+
+	try {
+		inPythonScript++;
+
+		PyObject* globals = dictMain.ptr();
+		PyObject* result = PyEval_EvalCode(code, globals, globals);
+
+		inPythonScript--;
+		if (!result)
+			pythonErr();
+		return result;
+	} catch (boost::python::error_already_set) {
+		inPythonScript--;
 		pythonErr();
-	return result;
+		return NULL;
+	}
 }
 

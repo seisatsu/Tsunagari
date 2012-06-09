@@ -85,6 +85,10 @@ public:
 	void setTileCoords(rcoord virt);
 
 
+	//! Indicates which coordinate we will move into if we proceed in
+	//! direction specified.
+	icoord moveDest(ivec2 facing);
+
 	//! Indicates whether we are in the middle of transitioning between
 	//! tiles.
 	bool isMoving() const;
@@ -92,9 +96,6 @@ public:
 	//! Initiate a movement within the Area.
 	void moveByTile(int x, int y);
 	void moveByTile(ivec2 delta);
-
-	Tile* canMove(Tile* from, int dx, int dy);
-	Tile* canMove(Tile* from, ivec2 facing);
 
 
 	//! Gets the Entity's current Area.

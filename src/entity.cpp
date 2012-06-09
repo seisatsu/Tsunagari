@@ -275,6 +275,15 @@ void Entity::setTileCoords(rcoord virt)
 	enterTile();
 }
 
+icoord Entity::moveDest(ivec2 facing)
+{
+	Tile* tile = getTile();
+	if (tile)
+		return tile->moveDest(facing);
+	else
+		return getTileCoords_i() + icoord(facing.x, facing.y, 0);
+}
+
 bool Entity::isMoving() const
 {
 	return moving || stillMoving;
@@ -291,28 +300,10 @@ void Entity::moveByTile(ivec2 delta)
 		return;
 	setFacing(delta);
 
-	Tile* tile = canMove(getTile(), facing);
-	if (tile)
+	if (canMove(moveDest(facing)))
 		preMove();
 	else
 		setPhase(directionStr(facing));
-}
-
-Tile* Entity::canMove(Tile* from, int dx, int dy)
-{
-	Entity::canMove(from, ivec2(dx, dy));
-}
-
-Tile* Entity::canMove(Tile* from, ivec2 facing)
-{
-	std::vector<icoord> tiles = frontTiles(from, facing);
-	BOOST_FOREACH(const icoord& tile, tiles) {
-		if (canMove(tile)) {
-			Tile* obj = area->getTile(tile);
-			return obj;
-		}
-	}
-	return NULL;
 }
 
 Area* Entity::getArea()
@@ -368,19 +359,6 @@ FlagManip Entity::exemptManip()
 	return FlagManip(&nowalkExempt);
 }
 
-std::vector<icoord> Entity::frontTiles(Tile* tile, ivec2 facing) const
-{
-	std::vector<icoord> tiles;
-	icoord here(tile->x, tile->y, tile->z);
-	icoord dest = here + icoord(facing.x, facing.y, 0);
-
-	boost::optional<double> layermod = tile->layermodAt(facing);
-	if (layermod)
-		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
-	tiles.push_back(dest);
-	return tiles;
-}
-
 void Entity::calcDoff()
 {
 	// X-axis is centered on tile.
@@ -415,41 +393,35 @@ const std::string& Entity::directionStr(ivec2 facing) const
 
 bool Entity::canMove(icoord dest)
 {
-	icoord delta = dest - getTileCoords_i();
-	ivec2 dxy(delta.x, delta.y);
+	icoord dxyz = dest - getTileCoords_i();
+	ivec2 dxy(dxyz.x, dxyz.y);
+
+	Tile* curTile = getTile();
+	this->destTile = area->getTile(dest);
+	this->destCoord = area->phys2virt_r(dest);
+
+	if (curTile && curTile->exitAt(dxy) ||
+	    destTile && destTile->exits[EXIT_NORMAL]) {
+		// We can always take exits as long as we can take exits.
+		// (Even if they would cause us to be out of bounds.)
+		if (nowalkExempt & TILE_NOWALK_EXIT)
+			return true;
+	}
+
 	bool inBounds = area->inBounds(dest);
-
-	destCoord = area->phys2virt_r(dest);
-	destTile = NULL;
-
-	if (inBounds) {
+	if (destTile && inBounds) {
 		// Tile is inside map. Can we move?
-		destTile = area->getTile(dest);
 		if (nowalked(*destTile))
 			return false;
-		if (destTile->entCnt) // Space is occupied by another Entity.
-			return false;
-
-		// Are we allowed to pass through Exits?
-		bool isExit = false;
-		if (destTile->exits[EXIT_NORMAL])
-			isExit = true;
-		if (getTile()->exitAt(dxy))
-			isExit = true;
-		if (isExit && !(nowalkExempt & TILE_NOWALK_EXIT))
+		if (destTile->entCnt)
+			// Space is occupied by another Entity.
 			return false;
 
 		return true;
 	}
-	else if (delta.z == 0 && getTile()->exitAt(dxy)) {
-		// Even if it's out of map bounds, we could be coming from a
-		// directional Exit that just points off the map.
-	       if (nowalkExempt & TILE_NOWALK_AREA_BOUND)
-			return true;
-	}
 
 	// The tile is legitimately off the map.
-	return false;
+	return nowalkExempt & TILE_NOWALK_AREA_BOUND;
 }
 
 bool Entity::nowalked(Tile& t)
@@ -463,8 +435,7 @@ void Entity::preMove()
 	fromCoord = r;
 	fromTile = getTile();
 
-	rcoord d = destCoord;
-	d -= fromCoord;
+	rcoord d = destCoord - fromCoord;
 	deltaCoord = area->virt2virt(d);
 
 	moving = true;
@@ -481,7 +452,8 @@ void Entity::preMove()
 
 	// Process triggers.
 	runTileExitScript();
-	fromTile->runLeaveScript(this);
+	if (fromTile)
+		fromTile->runLeaveScript(this);
 
 	// Modify tile's entity count.
 	leaveTile();
@@ -511,7 +483,7 @@ void Entity::postMove()
 	moving = false;
 
 	if (destTile) {
-		boost::optional<double> layermod = getTile()->layermods[EXIT_NORMAL];
+		boost::optional<double> layermod = destTile->layermods[EXIT_NORMAL];
 		if (layermod)
 			r.z = *layermod;
 	}
@@ -521,10 +493,10 @@ void Entity::postMove()
 		setPhase(getFacing());
 
 	// Process triggers.
-	if (destTile) {
+	if (destTile)
 		destTile->runEnterScript(this);
-		runTileEntryScript();
-	}
+
+	runTileEntryScript();
 
 	// TODO: move teleportation here
 	/*
@@ -539,16 +511,15 @@ void Entity::postMove()
 
 void Entity::leaveTile()
 {
-	if (area) {
-		Tile* t = getTile();
-		if (t)
-			t->entCnt--;
-	}
+	Tile* t = getTile();
+	if (t)
+		t->entCnt--;
 }
 
 void Entity::enterTile()
 {
-	if (area)
+	Tile* t = getTile();
+	if (t)
 		enterTile(getTile());
 }
 
@@ -816,10 +787,6 @@ void exportEntity()
 		      (&Entity::setTileCoords))
 		.def("move", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::moveByTile))
-		.def("can_move", make_function(
-		    static_cast<Tile* (Entity::*) (Tile*,int,int)>
-		      (&Entity::canMove),
-		    return_value_policy<reference_existing_object>()))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::setTileCoords))
 		.def("move",

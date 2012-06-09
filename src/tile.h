@@ -159,9 +159,11 @@ public:
 	Tile(); // Should not be used. Wanted by std::containers.
 	Tile(Area* area, int x, int y, int z);
 
-	Tile* offset(int x, int y);
+	icoord moveDest(int x, int y) const;
+	icoord moveDest(ivec2 facing) const;
+	Tile* offset(int x, int y) const;
 
-	double getZ();
+	double getZ() const;
 
 	Exit* getNormalExit() const;
 	void setNormalExit(Exit exit);

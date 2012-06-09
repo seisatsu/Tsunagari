@@ -192,12 +192,30 @@ Tile::Tile(Area* area, int x, int y, int z)
 	memset(layermods, 0, sizeof(layermods));
 }
 
-Tile* Tile::offset(int x, int y)
+icoord Tile::moveDest(int x, int y) const
+{
+	return moveDest(ivec2(x, y));
+}
+
+icoord Tile::moveDest(ivec2 facing) const
+{
+	// PRECONDITION: abs(x) + abs(y) = 1
+
+	icoord here(x, y, z);
+	icoord dest = here + icoord(facing.x, facing.y, 0);
+
+	boost::optional<double> layermod = layermodAt(facing);
+	if (layermod)
+		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
+	return dest;
+}
+
+Tile* Tile::offset(int x, int y) const
 {
 	return area->getTile(this->x + x, this->y + y, z);
 }
 
-double Tile::getZ()
+double Tile::getZ() const
 {
 	vicoord vi = area->phys2virt_vi(icoord(x, y, z));
 	return vi.z;

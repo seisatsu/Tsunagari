@@ -34,12 +34,5 @@ class stdlib_ai_wander:
 		elif move_choice == 3:
 			x, y = 0, 1
 
-		e = self.e_inst
-		if e.can_move(e.tile, x, y):
-			print "[Python] ai.wander: can_move() == True"
-		else:
-			print "[Python] ai.wander: can_move() == False"
-
-		# Try to move even if we know we can't. Shouldn't matter.
-		e.move(x, y)
+		self.e_inst.move(x, y)
 

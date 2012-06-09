@@ -115,11 +115,9 @@ void Player::moveByTile(ivec2 delta)
 
 void Player::useTile()
 {
-	std::vector<icoord> tiles = frontTiles(getTile(), facing);
-	BOOST_FOREACH(icoord& c, tiles) {
-		Tile* t = area->getTile(c);
+	Tile* t = area->getTile(moveDest(facing));
+	if (t)
 		t->runUseScript(this);
-	}
 }
 
 void Player::setFrozen(bool b)
@@ -141,10 +139,12 @@ void Player::postMove()
 	}
 
 	// Side exit.
-	ivec2 dxy(deltaCoord.x, deltaCoord.y);
-	Exit* exit = fromTile->exitAt(dxy);
-	if (exit)
-		takeExit(exit);
+	if (fromTile) {
+		ivec2 dxy(deltaCoord.x, deltaCoord.y);
+		Exit* exit = fromTile->exitAt(dxy);
+		if (exit)
+			takeExit(exit);
+	}
 
 	// If we have a velocity, keep moving.
 	if (conf.moveMode == TILE && velocity)
