@@ -265,6 +265,16 @@ void Entity::setTileCoords(vicoord virt)
 	enterTile();
 }
 
+void Entity::setTileCoords(rcoord virt)
+{
+	leaveTile();
+	if (!area->inBounds(virt))
+		return;
+	redraw = true;
+	r = virt;
+	enterTile();
+}
+
 bool Entity::isMoving() const
 {
 	return moving || stillMoving;

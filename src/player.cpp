@@ -160,7 +160,7 @@ void Player::takeExit(Exit* exit)
 	}
 	else {
 		// Roll back movement if exit failed to open.
-		r = fromCoord;
+		setTileCoords(fromCoord);
 		Log::err("Exit", exit->area + ": failed to load properly");
 	}
 }

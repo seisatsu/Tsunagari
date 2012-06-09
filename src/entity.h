@@ -82,6 +82,7 @@ public:
 	void setTileCoords(int x, int y, double z);
 	void setTileCoords(icoord phys);
 	void setTileCoords(vicoord virt);
+	void setTileCoords(rcoord virt);
 
 
 	//! Indicates whether we are in the middle of transitioning between
