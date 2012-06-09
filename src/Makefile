@@ -18,10 +18,10 @@ CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
 LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
 	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
 
-OBJECTS = animation.o area.o area-tmx.o client-conf.o cmd.o entity.o log.o \
-	main.o music.o npc.o player.o python.o python-bindings.o random.o \
-	resourcer.o scriptinst.o sound.o string.o tile.o timer.o timeout.o \
-	vec.o viewport.o window.o world.o xml.o
+OBJECTS = animation.o area.o area-tmx.o character.o client-conf.o cmd.o \
+          entity.o log.o main.o music.o npc.o player.o python.o python-bindings.o \
+          random.o resourcer.o scriptinst.o sound.o string.o tile.o timer.o \
+          timeout.o vec.o viewport.o window.o world.o xml.o
 
 # Name of testing world.
 BASEDATA = ../data/base.zip

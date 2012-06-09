@@ -32,7 +32,7 @@ void removeValue(Cont* c, ValueType v)
 
 
 Player::Player()
-	: Entity(), velocity(0, 0)
+	: Character(), velocity(0, 0)
 {
 	nowalkFlags = TILE_NOWALK | TILE_NOWALK_PLAYER;
 	nowalkExempt = TILE_NOWALK_EXIT;
@@ -164,3 +164,4 @@ void Player::takeExit(Exit* exit)
 		Log::err("Exit", exit->area + ": failed to load properly");
 	}
 }
+

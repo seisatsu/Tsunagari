@@ -275,6 +275,11 @@ void Entity::setTileCoords(rcoord virt)
 	enterTile();
 }
 
+void Entity::teleport(int, int)
+{
+	throw "pure virtual function";
+}
+
 icoord Entity::moveDest(ivec2 facing)
 {
 	Tile* tile = getTile();
@@ -318,6 +323,11 @@ void Entity::moveByTile(ivec2 delta)
 		preMove();
 	else
 		setPhase(directionStr(facing));
+}
+
+void Entity::move(int, int)
+{
+	throw "pure virtual function";
 }
 
 Area* Entity::getArea()
@@ -442,6 +452,11 @@ bool Entity::canMove(icoord dest)
 
 	// The tile is legitimately off the map.
 	return nowalkExempt & TILE_NOWALK_AREA_BOUND;
+}
+
+bool Entity::canMove(vicoord dest)
+{
+	return canMove(area->virt2phys(dest));
 }
 
 bool Entity::nowalked(Tile& t)
@@ -786,7 +801,7 @@ void exportEntity()
 {
 	using namespace boost::python;
 
-	class_<Entity>("Entity")
+	class_<Entity>("Entity", no_init)
 		.def("init", &Entity::init)
 		.def("delete", &Entity::destroy)
 		.add_property("frozen", &Entity::getFrozen, &Entity::setFrozen)
@@ -798,17 +813,15 @@ void exportEntity()
 		.add_property("tile", make_function(
 		    static_cast<Tile* (Entity::*) ()> (&Entity::getTile),
 		    return_value_policy<reference_existing_object>()))
-		.add_property("coords", &Entity::getTileCoords_vi)
 		.add_property("speed", &Entity::getSpeed, &Entity::setSpeed)
 		.add_property("moving", &Entity::isMoving)
 		.add_property("exempt", &Entity::exemptManip)
+		.add_property("coords", &Entity::getTileCoords_vi)
 		.def("set_coords",
 		    static_cast<void (Entity::*) (int,int,double)>
 		      (&Entity::setTileCoords))
-		.def("teleport", static_cast<void (Entity::*) (int,int)>
-		    (&Entity::setTileCoords))
-		.def("move", static_cast<void (Entity::*) (int,int)>
-		    (&Entity::moveByTile))
+		.def("teleport", &Entity::teleport)
+		.def("move", &Entity::move)
 		.def("move_dest",
 		    static_cast<vicoord (Entity::*) (Tile*,int,int)>
 		      (&Entity::moveDest))

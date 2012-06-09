@@ -7,9 +7,9 @@
 #ifndef NPC_H
 #define NPC_H
 
-#include "entity.h"
+#include "character.h"
 
-class NPC : public Entity
+class NPC : public Character
 {
 public:
 	NPC();

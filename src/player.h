@@ -9,12 +9,12 @@
 
 #include <vector>
 
-#include "entity.h"
+#include "character.h"
 
 class Area;
 class Resourcer;
 
-class Player : public Entity
+class Player : public Character
 {
 public:
 	Player();

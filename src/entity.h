@@ -84,6 +84,9 @@ public:
 	void setTileCoords(vicoord virt);
 	void setTileCoords(rcoord virt);
 
+	//! Abstract, Python-specific method.
+	virtual void teleport(int x, int y);
+
 
 	//! Indicates which coordinate we will move into if we proceed in
 	//! direction specified.
@@ -92,7 +95,8 @@ public:
 
 	//! Returns true if we can move in the desired direction.
 	bool canMove(int x, int y, double z); // Python-specific version.
-	bool canMove(icoord delta);
+	bool canMove(icoord dest);
+	bool canMove(vicoord dest);
 
 	//! Indicates whether we are in the middle of transitioning between
 	//! tiles.
@@ -101,6 +105,9 @@ public:
 	//! Initiate a movement within the Area.
 	void moveByTile(int x, int y);
 	void moveByTile(ivec2 delta);
+
+	//! Abstract, Python-specific method.
+	virtual void move(int x, int y);
 
 
 	//! Gets the Entity's current Area.
