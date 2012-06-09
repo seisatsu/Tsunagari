@@ -88,6 +88,11 @@ public:
 	//! Indicates which coordinate we will move into if we proceed in
 	//! direction specified.
 	icoord moveDest(ivec2 facing);
+	vicoord moveDest(Tile* tile, int dx, int dy); // Python-specific version
+
+	//! Returns true if we can move in the desired direction.
+	bool canMove(int x, int y, double z); // Python-specific version.
+	bool canMove(icoord delta);
 
 	//! Indicates whether we are in the middle of transitioning between
 	//! tiles.
@@ -153,9 +158,6 @@ protected:
 
 	//! Gets a string describing a direction.
 	const std::string& directionStr(ivec2 facing) const;
-
-	//! Returns true if we can move in the desired direction.
-	virtual bool canMove(icoord delta);
 
 	bool nowalked(Tile& t);
 

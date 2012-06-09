@@ -284,6 +284,20 @@ icoord Entity::moveDest(ivec2 facing)
 		return getTileCoords_i() + icoord(facing.x, facing.y, 0);
 }
 
+vicoord Entity::moveDest(Tile* t, int dx, int dy)
+{
+	icoord dest;
+	if (t) {
+		dest = t->moveDest(ivec2(dx, dy));
+		return t->area->phys2virt_vi(dest);
+	}
+	else {
+		dest = getTileCoords_i() + icoord(dx, dy, 0);
+		return area->phys2virt_vi(dest);
+	}
+
+}
+
 bool Entity::isMoving() const
 {
 	return moving || stillMoving;
@@ -391,6 +405,12 @@ const std::string& Entity::directionStr(ivec2 facing) const
 	return directions[facing.y+1][facing.x+1];
 }
 
+bool Entity::canMove(int x, int y, double z)
+{
+	vicoord virt(x, y, z);
+	return canMove(area->virt2phys(virt));
+}
+
 bool Entity::canMove(icoord dest)
 {
 	icoord dxyz = dest - getTileCoords_i();
@@ -400,8 +420,8 @@ bool Entity::canMove(icoord dest)
 	this->destTile = area->getTile(dest);
 	this->destCoord = area->phys2virt_r(dest);
 
-	if (curTile && curTile->exitAt(dxy) ||
-	    destTile && destTile->exits[EXIT_NORMAL]) {
+	if ((curTile && curTile->exitAt(dxy)) ||
+	    (destTile && destTile->exits[EXIT_NORMAL])) {
 		// We can always take exits as long as we can take exits.
 		// (Even if they would cause us to be out of bounds.)
 		if (nowalkExempt & TILE_NOWALK_EXIT)
@@ -785,13 +805,16 @@ void exportEntity()
 		.def("set_coords",
 		    static_cast<void (Entity::*) (int,int,double)>
 		      (&Entity::setTileCoords))
-		.def("move", static_cast<void (Entity::*) (int,int)>
-		    (&Entity::moveByTile))
 		.def("teleport", static_cast<void (Entity::*) (int,int)>
 		    (&Entity::setTileCoords))
-		.def("move",
-		    static_cast<void (Entity::*) (int,int)>
-		      (&Entity::moveByTile))
+		.def("move", static_cast<void (Entity::*) (int,int)>
+		    (&Entity::moveByTile))
+		.def("move_dest",
+		    static_cast<vicoord (Entity::*) (Tile*,int,int)>
+		      (&Entity::moveDest))
+		.def("can_move",
+		    static_cast<bool (Entity::*) (int,int,double)>
+		      (&Entity::canMove))
 		.def_readwrite("on_update", &Entity::updateScript)
 		.def_readwrite("on_tile_entry", &Entity::tileEntryScript)
 		.def_readwrite("on_tile_exit", &Entity::tileExitScript)

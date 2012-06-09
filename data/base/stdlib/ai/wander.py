@@ -26,13 +26,21 @@ class stdlib_ai_wander:
 		move_choice = randint(0, 3)
 
 		if move_choice == 0:
-			x, y = -1, 0
+			dx, dy = -1, 0
 		elif move_choice == 1:
-			x, y = 1, 0
+			dx, dy = 1, 0
 		elif move_choice == 2:
-			x, y = 0, -1
+			dx, dy = 0, -1
 		elif move_choice == 3:
-			x, y = 0, 1
+			dx, dy = 0, 1
 
-		self.e_inst.move(x, y)
+		e = self.e_inst
+		x, y, z = e.move_dest(e.tile, dx, dy)
+		can = e.can_move(x, y, z)
+		if can:
+			print "Info [Python] ai.wander: move: %d %d %.1f valid" % (x, y, z)
+		else:
+			print "Info [Python] ai.wander: move: %d %d %.1f invalid" % (x, y, z)
+		e.move(dx, dy)
+
 
