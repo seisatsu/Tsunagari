@@ -123,7 +123,9 @@ public:
 
 	const std::string getDescriptor() const;
 
-	Entity* spawnEntity(const std::string& descriptor,
+	Entity* spawnNPC(const std::string& descriptor,
+		int x, int y, double z, const std::string& phase);
+	Entity* spawnOverlay(const std::string& descriptor,
 		int x, int y, double z, const std::string& phase);
 	void insert(Entity* e);
 	void erase(Entity* e);

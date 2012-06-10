@@ -463,4 +463,9 @@
    </properties>
   </object>
  </objectgroup>
+ <objectgroup name="Prop(10) (Cloud layer)" width="10" height="10">
+  <properties>
+   <property name="layer" value="10"/>
+  </properties>
+ </objectgroup>
 </map>

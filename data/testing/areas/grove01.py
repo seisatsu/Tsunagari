@@ -2,6 +2,9 @@ def grove01_load():
 	global grove01_ai_wizard
 	grove01_ai_wizard = stdlib_ai_wander("entities/wizard/wizard.xml", "down", 6, 3, 0.0, 1.0, 4)
 
+	cloud = Area.new_overlay("entities/cloud/cloud.xml", 11, 2, 10.0, "down")
+	cloud.move(-400, 0)
+
 def grove01_update():
 	global grove01_drinking, grove01_duration, grove01_max_alpha
 	if grove01_drinking == True:

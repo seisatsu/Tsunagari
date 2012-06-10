@@ -21,6 +21,7 @@
 #include "entity.h"
 #include "log.h"
 #include "npc.h"
+#include "overlay.h"
 #include "python.h"
 #include "resourcer.h"
 #include "tile.h"
@@ -351,7 +352,7 @@ const std::string Area::getDescriptor() const
 	return descriptor;
 }
 
-Entity* Area::spawnEntity(const std::string& descriptor,
+Entity* Area::spawnNPC(const std::string& descriptor,
 	int x, int y, double z, const std::string& phase)
 {
 	Entity* e = new NPC();
@@ -366,15 +367,29 @@ Entity* Area::spawnEntity(const std::string& descriptor,
 		delete e;
 		return NULL;
 	}
-	if (!inBounds(x, y, z)) {
-		Log::err(descriptor, boost::str(
-			boost::format("not in map bounds: x:%d y:%d z:%f")
-				% x % y % z
-		));
+	e->setTileCoords(x, y, z);
+	insert(e);
+	return e;
+}
+
+Entity* Area::spawnOverlay(const std::string& descriptor,
+	int x, int y, double z, const std::string& phase)
+{
+	Entity* e = new Overlay();
+	if (!e->init(descriptor)) {
+		// Error logged.
+		delete e;
+		return NULL;
+	}
+	e->setArea(this);
+	if (!e->setPhase(phase)) {
+		// Error logged.
 		delete e;
 		return NULL;
 	}
 	e->setTileCoords(x, y, z);
+	// XXX: e->leaveTile(); // Overlays don't consume tiles.
+
 	insert(e);
 	return e;
 }
@@ -553,7 +568,9 @@ void exportArea()
 		    static_cast<bool (Area::*) (int, int, double) const>
 		    (&Area::inBounds))
 		.def("color_overlay", &Area::setColorOverlay)
-		.def("new_entity", &Area::spawnEntity,
+		.def("new_npc", &Area::spawnNPC,
+		    return_value_policy<reference_existing_object>())
+		.def("new_overlay", &Area::spawnOverlay,
 		    return_value_policy<reference_existing_object>())
 		.def_readwrite("on_focus", &Area::focusScript)
 		.def_readwrite("on_update", &Area::updateScript)

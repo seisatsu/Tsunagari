@@ -227,8 +227,6 @@ void Entity::setTileCoords(int x, int y)
 {
 	leaveTile();
 	vicoord virt(x, y, r.z);
-	if (!area->inBounds(virt))
-		return;
 	redraw = true;
 	r = area->virt2virt(virt);
 	enterTile();
@@ -238,8 +236,6 @@ void Entity::setTileCoords(int x, int y, double z)
 {
 	leaveTile();
 	vicoord virt(x, y, z);
-	if (!area->inBounds(virt))
-		return;
 	redraw = true;
 	r = area->virt2virt(virt);
 	enterTile();
@@ -248,8 +244,6 @@ void Entity::setTileCoords(int x, int y, double z)
 void Entity::setTileCoords(icoord phys)
 {
 	leaveTile();
-	if (!area->inBounds(phys))
-		return;
 	redraw = true;
 	r = area->phys2virt_r(phys);
 	enterTile();
@@ -258,8 +252,6 @@ void Entity::setTileCoords(icoord phys)
 void Entity::setTileCoords(vicoord virt)
 {
 	leaveTile();
-	if (!area->inBounds(virt))
-		return;
 	redraw = true;
 	r = area->virt2virt(virt);
 	enterTile();
@@ -268,8 +260,6 @@ void Entity::setTileCoords(vicoord virt)
 void Entity::setTileCoords(rcoord virt)
 {
 	leaveTile();
-	if (!area->inBounds(virt))
-		return;
 	redraw = true;
 	r = virt;
 	enterTile();
