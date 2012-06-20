@@ -20,6 +20,7 @@ Example Client.ini
 
    [engine]
    world = testing.world
+   datapath = data1.zip,data2.zip
    loglevel = debug
 
    [window]
@@ -40,6 +41,7 @@ The above settings and their effects are described below:
 * [engine] Section
 
    * "world": This option sets the filename of the game world to be loaded and played by the engine at runtime.
+   * "datapath": A comma delimited list of zip files to be prepended to the engine's data path. See section "Data Path" in chapter 5.
    * "loglevel": This option sets the types of messages to be sent to the console. It has no noticeable effect unless the engine is run from the command line. It accepts the following values:
 
       * "normal": Only error messages are sent to the console. Error type messages generally describe game world design oversights, or the cause of a sudden crash.
@@ -84,6 +86,7 @@ Command line options and the client config file options they override are descri
 * ``-h/--help``: Display a help message containing a summary of command line options.
 * ``-g/--gameworld <world file>``: Override [engine] "world". (Set game world file to be played.)
 * ``-c/--config <config file>``: Read an alternative client config file.
+* ``-p/--datapath <file,file,...>``: Prepend zips to data path. See section "Data Path" in chapter 5.
 * ``-q/--quiet``: Display only fatal errors in the console.
 * ``--normal``: Display all errors in the console.
 * ``-v/--verbose``: Display additional information in the console.

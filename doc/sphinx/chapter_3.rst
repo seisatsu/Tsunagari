@@ -32,3 +32,9 @@ Event Triggers
 Linking Areas with Exits
 ========================
 
+Lazy Exits
+----------
+
+Wide Exits
+----------
+

@@ -8,7 +8,7 @@ Operating System Differences
 Config.h
 ========
 
-Base Data
+Data Path
 =========
 
 Compiling Tsunagari

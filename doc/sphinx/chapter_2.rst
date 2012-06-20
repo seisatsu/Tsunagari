@@ -239,3 +239,43 @@ There are currently 12 built-in phase names which are recognized by the engine:
 World File Packaging
 ====================
 
+A world file contains all of the data and files that make up your game in a neat little package. Making a world file is very simple.
+
+Let's take a look at the directory tree of a simple world.
+
+* world.conf
+* init_world.py
+* areas/
+
+   * area01.tmx
+   * area02.tmx
+   * area03.tmx
+   * area01_events.py
+   * tiles/
+
+      * forest.png
+      * house.png
+
+* sounds/
+
+   * door.oga
+   * splash.oga
+   * step.oga
+
+* music/
+
+   * mainmusic.oga
+
+* entities/
+
+   * player/
+
+      * player.png
+      * player.xml
+
+A world file is just a zip file. Using any zip creation utility, create a zip from the world directory tree, such that "world.conf" is in the top directory of the zip. In this case, "init_world.py", and the "areas", "sounds", "music", and "entities" folders would also be in the top directory of the zip.
+
+Any zip file with "world.conf" in its top directory is treated as a world file by the Tsunagari Tile Engine. All filenames inside a world file are referenced by their path relative to the top directory of the world file. For example, door.oga is always referenced as "sounds/door.oga".
+
+If possible, create the world file with compression level 0 to reduce load times.
+
