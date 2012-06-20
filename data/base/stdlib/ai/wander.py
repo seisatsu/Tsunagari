@@ -9,7 +9,7 @@ class stdlib_ai_wander:
 		self.__movechance = movechance
 
 		# Initialize and insert the entity.
-		self.e_inst = Area.new_entity(descriptor, x, y, layer, phase)
+		self.e_inst = Area.new_npc(descriptor, x, y, layer, phase)
 		self.e_inst.on_update = self.tick
 
 	def tick(self): # Called on update.
