@@ -163,9 +163,8 @@ protected:
 	void runLoadScripts();
 
 	//! Calculate frame to show for each type of tile
-	void updateTileAnimations();
-	void drawTiles() const;
-	void drawTile(const Tile& tile, int x, int y, double depth) const;
+	void drawTiles();
+	void drawTile(Tile& tile, int x, int y, double depth);
 	void drawEntities();
 	void drawColorOverlay();
 

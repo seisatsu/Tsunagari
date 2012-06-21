@@ -276,6 +276,10 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int
 	// The id has already been handled by processTileSet, so we don't have
 	// to worry about it.
 
+	// If a Tile is animated, it needs both member frames and a speed.
+	std::vector<ImageRef> frames;
+	int frameLen = -1;
+
 	XMLNode child = node.childrenNode(); // <properties>
 	for (child = child.childrenNode(); child; child = child.next()) {
 		// Each <property>...
@@ -322,22 +326,30 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int
 
 			// Add frames to our animation.
 			// We already have one from TileType's constructor.
-			for (it = members.begin()+1; it < members.end(); it++) {
+			for (it = members.begin(); it < members.end(); it++) {
 				int idx = atoi(it->c_str());
 				if (idx < 0 || (int)img.size() <= idx) {
 					Log::err(descriptor, "frame index out "
 						"of range for animated tile");
 					return false;
 				}
-				type.anim.addFrame(img[idx]);
+				frames.push_back(img[idx]);
 			}
 		}
 		else if (name == "speed") {
 			double hertz;
 			ASSERT(child.doubleAttr("value", &hertz));
-			int len = (int)(1000.0/hertz);
-			type.anim.setFrameLen(len);
+			frameLen = (int)(1000.0/hertz);
 		}
+	}
+
+	if (frames.size() || frameLen != -1) {
+		if (frames.empty() || frameLen == -1) {
+			Log::err(descriptor, "tile type must either have both "
+				"members and speed or none");
+			return false;
+		}
+		type.anim = Animation(frames, frameLen);
 	}
 
 	return true;

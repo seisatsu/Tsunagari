@@ -15,25 +15,72 @@ namespace Gosu {
 	class Image;
 }
 
+/**
+ * An Animation is a sequence of bitmap images (called frames) used to creates
+ * the illusion of motion. Frames are cycled over with an even amount of time
+ * given to each, and the whole animation starts over after the last frame is
+ * displayed.
+ *
+ * Mechanically, it is a list of images and a period of time over which to
+ * play.
+ */
 class Animation
 {
 public:
+	/**
+	 * Constructs an empty, but safe, Animation. All methods on this
+	 * object will be null.
+	 */
 	Animation();
 
-	void addFrame(ImageRef frame);
-	void setFrameLen(int milliseconds);
-	void startOver(int ms_now);
+	/**
+	 * Constructs a single-frame Animation. It will function like a static
+	 * image.
+	 *
+	 * @param frame static image
+	 */
+	Animation(const ImageRef& frame);
 
-	bool needsRedraw(int milliseconds) const;
-	void updateFrame(int milliseconds);
-	Gosu::Image* frame() const;
+	/**
+	 * Constructs a Animation from a list of frames.
+	 *
+	 * If given more than one frame, frameLength must be a positive,
+	 * non-zero value.
+	 *
+	 * @param frames list of frames to cycle through
+	 * @param frameLength length of time in milliseconds that each frame
+	 *        will display for
+	 */
+	Animation(const std::vector<ImageRef>& frames, int frameLength);
+
+	/**
+	 * Starts the animation over.
+	 *
+	 * @now current time in milliseconds
+	 */
+	void startOver(int now);
+
+	/**
+	 * Has this Animation switched frames since frame() was last called?
+	 *
+	 * @now current time in milliseconds
+	 */
+	bool needsRedraw(int now) const;
+
+	/**
+	 * Returns the image that should be displayed at this time.
+	 *
+	 * @now current time in milliseconds
+	 */
+	Gosu::Image* frame(int now);
 
 private:
-	/** List of images in animation. */
-	std::vector<ImageRef> frames;
 
-	/** Current graphic displaying on screen. */
-	Gosu::Image* img;
+	typedef std::vector<ImageRef> ImageVec;
+
+
+	/** List of images in animation. */
+	ImageVec frames;
 
 	/** Are we animated? Equals frames.size() > 1 */
 	bool animated;
@@ -47,8 +94,8 @@ private:
 	/** Index of frame currently displaying on screen. */
 	int frameShowing;
 
-	/** Millisecond base to find current animation frame. */
-	int base;
+	/** Time offset to find current animation frame. */
+	int offset;
 };
 
 #endif

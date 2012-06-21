@@ -68,8 +68,9 @@ area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h cache.h character.h \
  scriptinst.h sound.h string.h tile.h vec.h viewport.h window.h world.h \
  xml.h
 area.o: animation.h area.cpp area.h cache.h character.h client-conf.h \
- config.h entity.h log.h music.h npc.h player.h python.h resourcer.h \
- scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h xml.h
+ config.h entity.h log.h music.h npc.h overlay.h player.h python.h \
+ resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h \
+ xml.h
 character.o: animation.h area.h cache.h character.cpp character.h \
  client-conf.h config.h entity.h log.h music.h player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h

@@ -71,16 +71,15 @@ void Entity::destroy()
 
 void Entity::draw()
 {
-	int millis = GameWindow::instance().time();
-	phase->updateFrame(millis);
-	phase->frame()->draw(doff.x + r.x, doff.y + r.y, r.z);
+	int now = GameWindow::instance().time();
+	phase->frame(now)->draw(doff.x + r.x, doff.y + r.y, r.z);
 	redraw = false;
 }
 
 bool Entity::needsRedraw() const
 {
-	int millis = GameWindow::instance().time();
-	return redraw || phase->needsRedraw(millis);
+	int now = GameWindow::instance().time();
+	return redraw || phase->needsRedraw(now);
 }
 
 
@@ -668,31 +667,32 @@ bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 				"<phase></phase> index out of bounds");
 			return false;
 		}
-		phases[name].addFrame(tiles[pos]);
+		phases[name] = Animation(tiles[pos]);
 	}
 	else {
 		int speed;
 		ASSERT(node.intAttr("speed", &speed));
 
-		int len = (int)(1000.0/speed);
-		phases[name].setFrameLen(len);
-		ASSERT(processMembers(node.childrenNode(),
-		                      phases[name], tiles));
+		int frameLen = (int)(1000.0/speed);
+		std::vector<ImageRef> frames;
+
+		ASSERT(processMembers(node.childrenNode(), frames, tiles));
+		phases[name] = Animation(frames, frameLen);
 	}
 
 	return true;
 }
 
-bool Entity::processMembers(XMLNode node, Animation& anim,
+bool Entity::processMembers(XMLNode node, std::vector<ImageRef>& frames,
                             const TiledImage& tiles)
 {
 	for (; node; node = node.next())
 		if (node.is("member"))
-			ASSERT(processMember(node, anim, tiles));
+			ASSERT(processMember(node, frames, tiles));
 	return true;
 }
 
-bool Entity::processMember(const XMLNode node, Animation& anim,
+bool Entity::processMember(const XMLNode node, std::vector<ImageRef>& frames,
                            const TiledImage& tiles)
 {
 	int pos;
@@ -701,7 +701,7 @@ bool Entity::processMember(const XMLNode node, Animation& anim,
 		Log::err(descriptor, "<member></member> index out of bounds");
 		return false;
 	}
-	anim.addFrame(tiles[pos]);
+	frames.push_back(tiles[pos]);
 	return true;
 }
 

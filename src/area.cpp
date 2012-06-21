@@ -113,7 +113,6 @@ void Area::buttonUp(const Gosu::Button btn)
 
 void Area::draw()
 {
-	updateTileAnimations();
 	drawTiles();
 	drawEntities();
 	drawColorOverlay();
@@ -474,41 +473,27 @@ void Area::runLoadScripts()
 	loadScript.invoke();
 }
 
-void Area::updateTileAnimations()
+void Area::drawTiles()
 {
-	const int millis = GameWindow::instance().time();
-	BOOST_FOREACH(tilesets_t::value_type& pair, tileSets) {
-		TileSet& set = pair.second;
-		int w = set.getWidth();
-		int h = set.getHeight();
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				TileType* type = set.get(x, y);
-				type->anim.updateFrame(millis);
-			}
-		}
-	}
-}
-
-void Area::drawTiles() const
-{
-	const icube tiles = visibleTiles();
+	icube tiles = visibleTiles();
 	for (int z = tiles.z1; z < tiles.z2; z++) {
 		double depth = idx2depth[z];
 		for (int y = tiles.y1; y < tiles.y2; y++) {
 			for (int x = tiles.x1; x < tiles.x2; x++) {
-				const Tile* tile = getTile(x, y, z);
+				Tile* tile = getTile(x, y, z);
+				// We are certain the Tile exists.
 				drawTile(*tile, x, y, depth);
 			}
 		}
 	}
 }
 
-void Area::drawTile(const Tile& tile, int x, int y, double depth) const
+void Area::drawTile(Tile& tile, int x, int y, double depth)
 {
-	const TileType* type = (TileType*)tile.parent;
+	TileType* type = (TileType*)tile.parent;
 	if (type) {
-		const Gosu::Image* img = type->anim.frame();
+		int now = GameWindow::instance().time();
+		const Gosu::Image* img = type->anim.frame(now);
 		if (img)
 			img->draw((double)x*img->width(),
 				  (double)y*img->height(), depth);

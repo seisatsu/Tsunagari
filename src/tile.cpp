@@ -258,13 +258,13 @@ TileType::TileType()
 TileType::TileType(ImageRef& img)
 	: TileBase()
 {
-	anim.addFrame(img);
+	anim = Animation(img);
 }
 
 bool TileType::needsRedraw() const
 {
-	const int millis = GameWindow::instance().time();
-	return anim.needsRedraw(millis);
+	int now = GameWindow::instance().time();
+	return anim.needsRedraw(now);
 }
 
 /*

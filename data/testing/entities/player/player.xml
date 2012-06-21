@@ -46,7 +46,7 @@
 	<sounds>
 		<sound name="step">sounds/step.oga</sound>
 	</sounds>
-	
+
 	<scripts>
 		<!-- <script trigger="on_tile_entry">entities/player/ping.py</script> -->
 	</scripts>

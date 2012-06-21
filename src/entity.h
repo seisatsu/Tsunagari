@@ -187,9 +187,9 @@ protected:
 	bool processSprite(XMLNode node);
 	bool processPhases(XMLNode node, const TiledImage& tiles);
 	bool processPhase(const XMLNode node, const TiledImage& tiles);
-	bool processMembers(XMLNode node, Animation& anim,
+	bool processMembers(XMLNode node, std::vector<ImageRef>& frames,
                             const TiledImage& tiles);
-	bool processMember(const XMLNode node, Animation& anim,
+	bool processMember(const XMLNode node, std::vector<ImageRef>& frames,
                            const TiledImage& tiles);
 	bool processSounds(XMLNode node);
 	bool processSound(const XMLNode node);

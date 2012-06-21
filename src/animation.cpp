@@ -9,60 +9,58 @@
 #include "animation.h"
 
 Animation::Animation()
-	: frames(),
-	  img(NULL),
-	  animated(false),
-	  frameLen(0),
-	  animCycle(0),
-	  frameShowing(0),
-	  base(0)
+	: animated(false),
+	  frameShowing(0)
 {
 }
 
-void Animation::addFrame(ImageRef frame)
+Animation::Animation(const ImageRef& frame)
+	: animated(false),
+	  frameShowing(0)
 {
 	frames.push_back(frame);
-	animCycle = frameLen * (int)frames.size();
-	if (frames.size() == 1)
-		img = frame.get();
-	if (frames.size() > 1)
-		animated = true;
 }
 
-void Animation::setFrameLen(int milliseconds)
+Animation::Animation(const std::vector<ImageRef>& _frames, int frameLen)
+	: frameLen(frameLen),
+	  frameShowing(0),
+	  offset(0)
 {
-	frameLen = milliseconds;
+	for (ImageVec::const_iterator it = _frames.begin(); *it; it++)
+		frames.push_back(*it);
+	animated = frames.size() > 1;
 	animCycle = frameLen * (int)frames.size();
 }
 
-void Animation::startOver(int ms_now)
-{
-	base = ms_now;
-	frameShowing = 0;
-	img = frames[0].get();
-}
-
-bool Animation::needsRedraw(int milliseconds) const
+void Animation::startOver(int now)
 {
 	if (animated) {
-		int offset = milliseconds - base;
-		int frame = (offset % animCycle) / frameLen;
+		offset = now;
+		frameShowing = 0;
+	}
+}
+
+bool Animation::needsRedraw(int now) const
+{
+	if (animated) {
+		int pos = now - offset;
+		int frame = (pos % animCycle) / frameLen;
 		return frame != frameShowing;
 	}
 	return false;
 }
 
-void Animation::updateFrame(int milliseconds)
+Gosu::Image* Animation::frame(int now)
 {
-	if (animated) {
-		int offset = milliseconds - base;
-		frameShowing = (offset % animCycle) / frameLen;
-		img = frames[frameShowing].get();
+	switch (frames.size()) {
+	case 0:
+		return NULL;
+	case 1:
+		return frames[0].get();
+	default:
+		int pos = now - offset;
+		frameShowing = (pos % animCycle) / frameLen;
+		return frames[frameShowing].get();
 	}
-}
-
-Gosu::Image* Animation::frame() const
-{
-	return img;
 }
 
