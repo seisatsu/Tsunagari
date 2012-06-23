@@ -26,7 +26,8 @@ Animation::Animation(const std::vector<ImageRef>& _frames, int frameLen)
 	  frameShowing(0),
 	  offset(0)
 {
-	for (ImageVec::const_iterator it = _frames.begin(); *it; it++)
+	ImageVec::const_iterator it;
+	for (it = _frames.begin(); it != _frames.end(); it++)
 		frames.push_back(*it);
 	animated = frames.size() > 1;
 	animCycle = frameLen * (int)frames.size();
