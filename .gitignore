@@ -1,0 +1,8 @@
+notes.txt
+doc/notes/
+src/*.o
+src/*.world
+src/tsunagari
+data/*.zip
+data/*.world
+
