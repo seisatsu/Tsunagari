@@ -654,7 +654,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="378"/>
    <tile gid="120"/>
    <tile gid="123"/>
    <tile gid="97"/>
@@ -879,7 +879,7 @@
     <property name="flags" value="nowalk"/>
    </properties>
   </object>
-  <object x="96" y="192" width="96" height="16">
+  <object x="112" y="176" width="64" height="32">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
@@ -985,6 +985,16 @@
    </properties>
   </object>
   <object x="304" y="16" width="16" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="96" y="144" width="112" height="16">
+   <properties>
+    <property name="flags" value="nowalk"/>
+   </properties>
+  </object>
+  <object x="192" y="160" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
    </properties>
@@ -1226,7 +1236,7 @@
    <tile gid="375"/>
    <tile gid="376"/>
    <tile gid="377"/>
-   <tile gid="378"/>
+   <tile gid="0"/>
    <tile gid="131"/>
    <tile gid="132"/>
    <tile gid="0"/>
