@@ -34,15 +34,6 @@
 // ===
 
 // === Cross-Platform Fixes ===
-	/* Windows check. */
-	#if defined(_Windows) && !defined(_WINDOWS)
-		#define _WINDOWS 1
-	#endif
-
-	#if defined(_WINDOWS) && !defined(_Windows)
-		#define _Windows 1
-	#endif
-
 	/* Fix snprintf for VisualC++. */
 	#ifdef _MSC_VER
 		#define snprintf _snprintf

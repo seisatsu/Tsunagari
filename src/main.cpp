@@ -16,7 +16,7 @@
 #include "python.h"
 #include "window.h"
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 	#include <windows.h>
 #endif
 
@@ -53,7 +53,7 @@ struct libraries
  */
 int main(int argc, char** argv)
 {
-	#if _WINDOWS /* Fix console output on Windows */
+	#ifdef _WIN32 /* Fix console output on Windows */
 	if (AttachConsole(ATTACH_PARENT_PROCESS)) {
 		freopen("CONOUT$","wb",stdout);
 		freopen("CONOUT$","wb",stderr);
