@@ -272,21 +272,28 @@ void Entity::teleport(int, int)
 icoord Entity::moveDest(ivec2 facing)
 {
 	Tile* tile = getTile();
+	icoord here = getTileCoords_i();
+
 	if (tile)
-		return tile->moveDest(facing);
+		// Handle layermod.
+		return tile->moveDest(here, facing);
 	else
-		return getTileCoords_i() + icoord(facing.x, facing.y, 0);
+		return here + icoord(facing.x, facing.y, 0);
 }
 
+// Python API.
 vicoord Entity::moveDest(Tile* t, int dx, int dy)
 {
+	icoord here = getTileCoords_i();
 	icoord dest;
+
 	if (t) {
-		dest = t->moveDest(ivec2(dx, dy));
+		// Handle layermod.
+		dest = t->moveDest(here, ivec2(dx, dy));
 		return t->area->phys2virt_vi(dest);
 	}
 	else {
-		dest = getTileCoords_i() + icoord(dx, dy, 0);
+		dest = here + icoord(dx, dy, 0);
 		return area->phys2virt_vi(dest);
 	}
 

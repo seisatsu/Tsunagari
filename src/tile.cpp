@@ -192,16 +192,8 @@ Tile::Tile(Area* area, int x, int y, int z)
 	memset(layermods, 0, sizeof(layermods));
 }
 
-icoord Tile::moveDest(int x, int y) const
+icoord Tile::moveDest(icoord here, ivec2 facing) const
 {
-	return moveDest(ivec2(x, y));
-}
-
-icoord Tile::moveDest(ivec2 facing) const
-{
-	// PRECONDITION: abs(x) + abs(y) = 1
-
-	icoord here(x, y, z);
 	icoord dest = here + icoord(facing.x, facing.y, 0);
 
 	boost::optional<double> layermod = layermodAt(facing);

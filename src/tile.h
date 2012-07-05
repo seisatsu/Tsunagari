@@ -70,13 +70,35 @@ class TileType;
 #define TILE_NOWALK_AREA_BOUND 0x016
 
 
-// Indexes into Exit and layermod arrays found in class Tile.
+/**
+ * Types of exits.
+ */
 enum ExitDirection {
+	/**
+	 * An Exit that is taken upon arriving at the Tile.
+	 */
 	EXIT_NORMAL,
+	/**
+	 * An Exit that is taken when leaving in the upwards
+	 * direction from a Tile.
+	 */
 	EXIT_UP,
+	/**
+	 * An Exit that is taken when leaving in the downwards
+	 * direction from a Tile.
+	 */
 	EXIT_DOWN,
+	/**
+	 * An Exit that is taken when leaving to the left from
+	 * a Tile.
+	 */
 	EXIT_LEFT,
-	EXIT_RIGHT
+	/**
+	 * An Exit that is taken when leaving to the right from
+	 * a Tile.
+	 */
+	EXIT_RIGHT,
+	EXITS_LENGTH
 };
 
 /**
@@ -159,8 +181,17 @@ public:
 	Tile(); // Should not be used. Wanted by std::containers.
 	Tile(Area* area, int x, int y, int z);
 
-	icoord moveDest(int x, int y) const;
-	icoord moveDest(ivec2 facing) const;
+	/**
+	 * Gets the correct destination for an Entity wanting to
+	 * move off of this tile in <code>facing</code>
+	 * direction.
+	 *
+	 * This call is necessary to handle layermod.
+	 *
+	 * @param here    area-space coordinate for this Tile
+	 * @param facing  facing vector
+	 */
+	icoord moveDest(icoord here, ivec2 facing) const;
 	Tile* offset(int x, int y) const;
 
 	double getZ() const;
@@ -173,9 +204,16 @@ public:
 
 public:
 	Area* area;
+
+	/*
+	 * The grid-space coordinates of this Tile.
+	 *
+	 * Looping Areas utilize area-space components. These
+	 * cannot be losslessly transformed into area-space.
+	 */
 	int x, y, z;
-	Exit* exits[5];
-	boost::optional<double> layermods[5];
+	Exit* exits[EXITS_LENGTH];
+	boost::optional<double> layermods[EXITS_LENGTH];
 	int entCnt; //!< Number of entities on this Tile.
 };
 
