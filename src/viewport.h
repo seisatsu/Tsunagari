@@ -21,7 +21,8 @@ public:
 	Viewport(icoord vsize);
 	~Viewport();
 
-	void update(unsigned long dt);
+	void tick(unsigned long dt);
+	void turn();
 
 	//! How far the map is scrolled in pixels, counting from the upper-left.
 	rvec2 getMapOffset() const;
@@ -51,6 +52,8 @@ public:
 	void setArea(const Area* a);
 
 private:
+	void update();
+
 	void _jumpToEntity(const Entity* e);
 
 	//! Returns as a normalized vector the percentage of screen that should

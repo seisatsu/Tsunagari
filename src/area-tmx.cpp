@@ -108,7 +108,8 @@ bool AreaTMX::processMapProperties(XMLNode node)
   <property name="main_music" value="wind.ogg"/>
   <property name="on_load" value="wood_setup.py"/>
   <property name="on_focus" value="wood_focus.py"/>
-  <property name="on_update" value="wood_update.py"/>
+  <property name="on_tick" value="wood_tick.py"/>
+  <property name="on_turn" value="wood_turn.py"/>
   <property name="loop" value="xy"/>
   <property name="color_overlay" value="255,255,255,127"/>
  </properties>
@@ -142,12 +143,19 @@ bool AreaTMX::processMapProperties(XMLNode node)
 				return false;
 			focusScript = filename;
 		}
-		else if (name == "on_update") {
+		else if (name == "on_tick") {
 			std::string filename = value;
 			ScriptInst script(filename);
 			if (!script.validate(descriptor))
 				return false;
-			updateScript = filename;
+			tickScript = filename;
+		}
+		else if (name == "on_turn") {
+			std::string filename = value;
+			ScriptInst script(filename);
+			if (!script.validate(descriptor))
+				return false;
+			turnScript = filename;
 		}
 		else if (name == "loop") {
 			loopX = value.find('x') != std::string::npos;

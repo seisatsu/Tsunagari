@@ -143,7 +143,7 @@ void GameWindow::update()
 	calculateDt();
 	if (conf.moveMode == TURN)
 		handleKeyboardInput();
-	world->update(dt);
+	world->tick(dt);
 
 	// Run once per second.
 	if (now/1000 > currentSecond) {

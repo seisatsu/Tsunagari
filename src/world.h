@@ -54,8 +54,28 @@ public:
 	//! Do we need to redraw the screen?
 	bool needsRedraw() const;
 
-	//! Update the game world. Process time passing.
-	void update(unsigned long dt);
+	/**
+	 * Updates the game state within this World as if dt milliseconds had
+	 * passed since the last call.
+	 *
+	 *                       MOVE MODE
+	 *                 TURN     TILE     NOTILE
+	 * Area		   yes      yes      yes
+	 * Character       no       yes      yes
+	 * Overlay         yes      yes      yes
+	 */
+	void tick(unsigned long dt);
+
+	/**
+	 * Update the game world when the turn is over (Player moves).
+	 *
+	 *                       MOVE MODE
+	 *                 TURN     TILE     NOTILE
+	 * Area		   yes      no       no
+	 * Character       yes      no       no
+	 * Overlay         yes      no       no
+	 */
+	void turn();
 
 	//! Create a new Area object, loading from the appropriate files. If
 	//! the Area has already been loaded previously, return that instance.

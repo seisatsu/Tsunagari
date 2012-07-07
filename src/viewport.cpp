@@ -29,16 +29,14 @@ Viewport::~Viewport()
 }
 
 
-void Viewport::update(unsigned long)
+void Viewport::tick(unsigned long)
 {
-	switch (mode) {
-	case TM_MANUAL:
-		// Do nothing.
-		break;
-	case TM_FOLLOW_ENTITY:
-		_jumpToEntity(targete);
-		break;
-	};
+	update();
+}
+
+void Viewport::turn()
+{
+	update();
 }
 
 rvec2 Viewport::getMapOffset() const
@@ -112,6 +110,18 @@ void Viewport::setArea(const Area* a)
 	area = a;
 }
 
+
+void Viewport::update()
+{
+	switch (mode) {
+	case TM_MANUAL:
+		// Do nothing.
+		break;
+	case TM_FOLLOW_ENTITY:
+		_jumpToEntity(targete);
+		break;
+	};
+}
 
 void Viewport::_jumpToEntity(const Entity* e)
 {

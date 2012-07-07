@@ -111,7 +111,7 @@ void Music::stop()
 	state = NOT_PLAYING;
 }
 
-void Music::update()
+void Music::tick()
 {
 	if (paused)
 		return;

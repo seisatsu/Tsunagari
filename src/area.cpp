@@ -150,21 +150,36 @@ void Area::requestRedraw()
 	redraw = true;
 }
 
-void Area::update(unsigned long dt)
+void Area::tick(unsigned long dt)
 {
 	pythonSetGlobal("Area", this);
-	updateScript.invoke();
+	tickScript.invoke();
 
 	pythonSetGlobal("Area", this);
-	player->update(dt);
+	player->tick(dt);
 
 	BOOST_FOREACH(Entity* e, entities)
-		e->update(dt);
+		e->tick(dt);
 
-	view->update(dt);
-	music->update();
+	view->tick(dt);
+	music->tick();
 }
 
+void Area::turn()
+{
+	pythonSetGlobal("Area", this);
+	turnScript.invoke();
+
+	pythonSetGlobal("Area", this);
+	player->turn();
+
+	BOOST_FOREACH(Entity* e, entities)
+		e->turn();
+
+	view->turn();
+}
+
+// Python API.
 void Area::setColorOverlay(int r, int g, int b, int a)
 {
 	using namespace Gosu;
@@ -558,7 +573,8 @@ void exportArea()
 		.def("new_overlay", &Area::spawnOverlay,
 		    return_value_policy<reference_existing_object>())
 		.def_readwrite("on_focus", &Area::focusScript)
-		.def_readwrite("on_update", &Area::updateScript)
+		.def_readwrite("on_tick", &Area::tickScript)
+		.def_readwrite("on_turn", &Area::turnScript)
 		;
 }
 

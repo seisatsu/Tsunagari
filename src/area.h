@@ -79,10 +79,21 @@ public:
 	//! Inform the Area that a redraw is needed.
 	void requestRedraw();
 
+	/**
+	 * Updates the game state within this Area as if dt milliseconds had
+	 * passed since the last call.
+	 *
+	 * MOVE MODE       TURN     TILE     NOTILE
+	 * 
+	 */
 	//! Update the game state within this Area as if dt milliseconds had
 	//! passed since the last call. Updates Entities, runs scripts, and
 	//! checks for Tile animation updates.
-	void update(unsigned long dt);
+	void tick(unsigned long dt);
+
+	//! Updates Entities, runs scripts, and checks for Tile animation
+	//! updates.
+	void turn();
 
 	void setColorOverlay(int r, int g, int b, int a);
 
@@ -151,7 +162,7 @@ public:
 	//
 
 	// Script hooks.
-	ScriptInst loadScript, focusScript, updateScript;
+	ScriptInst loadScript, focusScript, tickScript, turnScript;
 
 
 protected:

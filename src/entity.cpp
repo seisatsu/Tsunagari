@@ -83,28 +83,28 @@ bool Entity::needsRedraw() const
 }
 
 
-void Entity::update(unsigned long dt)
+void Entity::tick(unsigned long dt)
 {
 	runUpdateScript();
 	switch (conf.moveMode) {
 	case TURN:
-		updateTurn(dt);
+		tickTurn(dt);
 		break;
 	case TILE:
-		updateTile(dt);
+		tickTile(dt);
 		break;
 	case NOTILE:
-		updateNoTile(dt);
+		tickNoTile(dt);
 		break;
 	}
 }
 
-void Entity::updateTurn(unsigned long)
+void Entity::tickTurn(unsigned long)
 {
-	// Entities don't do anything in TILE mode.
+	// FIXME Characters (!!) don't do anything in TILE mode.
 }
 
-void Entity::updateTile(unsigned long dt)
+void Entity::tickTile(unsigned long dt)
 {
 	if (!moving)
 		return;
@@ -120,22 +120,26 @@ void Entity::updateTile(unsigned long dt)
 			// Time rollover.
 			double perc = 1.0 - destDist/traveled;
 			unsigned long remt = (unsigned long)(perc * (double)dt);
-			update(remt);
+			tick(remt);
 		}
 	}
 	else {
-		double angle = atan2(r.y - destCoord.y, destCoord.x - r.x);
+		double angle = atan2(destCoord.y - r.y, destCoord.x - r.x);
 		double dx = cos(angle);
-		double dy = -sin(angle);
+		double dy = sin(angle);
 
 		r.x += dx * traveled;
 		r.y += dy * traveled;
 	}
 }
 
-void Entity::updateNoTile(unsigned long)
+void Entity::tickNoTile(unsigned long)
 {
 	// TODO
+}
+
+void Entity::turn()
+{
 }
 
 const std::string Entity::getFacing() const
@@ -465,7 +469,7 @@ void Entity::preMove()
 		postMove();
 	}
 	else {
-		// Movement happens over time. See updateTile().
+		// Movement happens over time. See tickTile().
 	}
 }
 
@@ -525,7 +529,7 @@ void Entity::runUpdateScript()
 	pythonSetGlobal("Area", area);
 	pythonSetGlobal("Entity", this);
 	pythonSetGlobal("Tile", getTile());
-	updateScript.invoke();
+	tickScript.invoke();
 }
 
 void Entity::runTileExitScript()
@@ -734,8 +738,12 @@ bool Entity::processScript(const XMLNode node)
 
 bool Entity::setScript(const std::string& trigger, ScriptInst& script)
 {
-	if (boost::iequals(trigger, "on_update")) {
-		updateScript = script;
+	if (boost::iequals(trigger, "on_tick")) {
+		tickScript = script;
+		return true;
+	}
+	if (boost::iequals(trigger, "on_turn")) {
+		turnScript = script;
 		return true;
 	}
 	if (boost::equals(trigger, "on_tile_entry")) {
@@ -785,7 +793,8 @@ void exportEntity()
 		.def("can_move",
 		    static_cast<bool (Entity::*) (int,int,double)>
 		      (&Entity::canMove))
-		.def_readwrite("on_update", &Entity::updateScript)
+		.def_readwrite("on_tick", &Entity::tickScript)
+		.def_readwrite("on_turn", &Entity::turnScript)
 		.def_readwrite("on_tile_entry", &Entity::tileEntryScript)
 		.def_readwrite("on_tile_exit", &Entity::tileExitScript)
 		.def_readwrite("on_delete", &Entity::deleteScript)

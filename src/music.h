@@ -54,7 +54,7 @@ public:
 
 	void stop();
 
-	void update();
+	void tick();
 
 private:
 	void playIntro();

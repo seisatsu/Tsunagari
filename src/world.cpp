@@ -86,10 +86,18 @@ bool World::needsRedraw() const
 	return area->needsRedraw();
 }
 
-void World::update(unsigned long dt)
+void World::tick(unsigned long dt)
 {
-	area->update(dt);
 	updateTimeouts();
+	area->tick(dt);
+}
+
+void World::turn()
+{
+	if (conf.moveMode == TURN) {
+		updateTimeouts();
+		area->turn();
+	}
 }
 
 Area* World::getArea(const std::string& filename)

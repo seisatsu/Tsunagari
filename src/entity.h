@@ -55,10 +55,12 @@ public:
 	void draw();
 	bool needsRedraw() const;
 
-	void update(unsigned long dt);
-	void updateTurn(unsigned long dt);
-	void updateTile(unsigned long dt);
-	void updateNoTile(unsigned long dt);
+	void tick(unsigned long dt);
+	void tickTurn(unsigned long dt);
+	void tickTile(unsigned long dt);
+	void tickNoTile(unsigned long dt);
+
+	void turn();
 
 	const std::string getFacing() const;
 
@@ -146,7 +148,8 @@ public:
 	//
 
 	//! Script hooks.
-	ScriptInst updateScript, tileEntryScript, tileExitScript, deleteScript;
+	ScriptInst tickScript, turnScript, tileEntryScript,
+	           tileExitScript, deleteScript;
 
 
 protected:
