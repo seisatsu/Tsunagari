@@ -57,17 +57,18 @@ GameWindow::~GameWindow()
 {
 }
 
-static void callInitpy(const std::string& archivePath)
+static bool callInitpy(Resourcer* rc, const std::string& archivePath)
 {
 	ASSERT(rc->prependPath(archivePath));
 	bool exists = rc->resourceExists("init.py");
 	Log::info(archivePath,
 		std::string("init.py: ") +
-		exists ? "" : "not " +
+		(exists ? "" : "not ") +
 		"found");
 	if (exists)
 		rc->runPythonScript("init.py");
 	rc->rmPath(archivePath);
+	return true;
 }
 
 bool GameWindow::init(char* argv0)
@@ -78,8 +79,8 @@ bool GameWindow::init(char* argv0)
 
 	// If any of our archives contain a file called "init.py", call it.
 	BOOST_FOREACH(std::string archivePath, conf.dataPath)
-		callInitpy(archivePath);
-	callInitpy(BASE_ZIP_PATH);
+		ASSERT(callInitpy(rc.get(), archivePath));
+	ASSERT(callInitpy(rc.get(), BASE_ZIP_PATH));
 
 	BOOST_FOREACH(std::string pathname, conf.dataPath)
 		ASSERT(rc->prependPath(pathname));

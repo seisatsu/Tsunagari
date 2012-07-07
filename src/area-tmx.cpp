@@ -745,7 +745,7 @@ bool AreaTMX::splitTileFlags(const std::string& strOfFlags, unsigned* flags)
 }
 
 /**
- * Matches regex /\s+\d+\+?/
+ * Matches regex /\s*\d+\+?/
  */
 static bool isIntegerOrPlus(const std::string& s)
 {

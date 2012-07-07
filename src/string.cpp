@@ -49,31 +49,68 @@ std::string itostr(int in)
 	return out.str();
 }
 
-// FIXME: "1 2", " ", and "" are considered valid, " -3" not valid
+/**
+ * Matches regex /\s*-?\d+/
+ */
 bool isInteger(const std::string& s)
 {
-	for (unsigned i = 0; i < s.size(); i++) {
+	const int space = 0;
+	const int sign = 1;
+	const int digit = 2;
+
+	int state = space;
+
+	for (size_t i = 0; i < s.size(); i++) {
 		char c = s[i];
-		if (isdigit(c) || isspace(c) || (c == '-' && i == 0))
-			continue;
-		return false;
+		if (state == space) {
+		       if (isspace(c)) continue;
+		       else state++;
+		}
+		if (state == sign) {
+			state++;
+			if (c == '-') continue;
+		}
+		if (state == digit) {
+			if (isdigit(c)) continue;
+			else return false;
+		}
 	}
 	return true;
 }
 
-// FIXME: "1 2", " ", and "" are considered valid, " -3" not valid
+/**
+ * Matches regex /\s*-?\d+\.?\d* /   [sic: star-slash ends comment]
+ */
 bool isDecimal(const std::string& s)
 {
-	bool seenDot = false;
-	for (unsigned i = 0; i < s.size(); i++) {
+	const int space = 0;
+	const int sign = 1;
+	const int digit = 2;
+	const int dot = 3;
+	const int digit2 = 4;
+
+	int state = space;
+
+	for (size_t i = 0; i < s.size(); i++) {
 		char c = s[i];
-		if (c == '.' && !seenDot) {
-			seenDot = true;
-			continue;
+		switch (state) {
+		case space:
+		       if (isspace(c)) continue;
+		       else state++;
+		case sign:
+			state++;
+			if (c == '-') continue;
+		case digit:
+			if (isdigit(c)) continue;
+			else state++;
+		case dot:
+			state++;
+			if (c == '.') continue;
+			else return false;
+		case digit2:
+			if (isdigit(c)) continue;
+			else return false;
 		}
-		if (isdigit(c) || isspace(c) || (c == '-' && i == 0))
-			continue;
-		return false;
 	}
 	return true;
 }
