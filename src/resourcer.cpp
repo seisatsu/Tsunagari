@@ -47,16 +47,13 @@ Resourcer::~Resourcer()
 
 bool Resourcer::init(char* argv0)
 {
-	int err;
-	err = PHYSFS_init(argv0);
+	int err = PHYSFS_init(argv0);
 	return err != 0;
 }
 
-bool Resourcer::prependPath(std::string path)
+bool Resourcer::prependPath(const std::string& path)
 {
-	int err;
-
-	err = PHYSFS_mount(path.c_str(), NULL, 0);
+	int err = PHYSFS_mount(path.c_str(), NULL, 0);
 	if (!err) {
 		Log::fatal("Resourcer", path + ": could not open archive");
 		return false;
@@ -65,17 +62,23 @@ bool Resourcer::prependPath(std::string path)
 	return true;
 }
 
-bool Resourcer::appendPath(std::string path)
+bool Resourcer::appendPath(const std::string& path)
 {
-	int err;
-
-	err = PHYSFS_mount(path.c_str(), NULL, 1);
+	int err = PHYSFS_mount(path.c_str(), NULL, 1);
 	if (!err) {
 		Log::fatal("Resourcer", path + ": could not open archive");
 		return false;
 	}
 
 	return true;
+}
+
+void Resourcer::rmPath(const std::string& path)
+{
+	int err = PHYSFS_removeFromSearchPath(path.c_str());
+	if (err == 0)
+		Log::err("Resourcer",
+			"libphysfs: " + path + ": " + PHYSFS_getLastError());
 }
 
 bool Resourcer::resourceExists(const std::string& name) const

@@ -68,21 +68,26 @@ bool GameWindow::init(char* argv0)
 	BOOST_FOREACH(std::string pathname, conf.dataPath) {
 		if (!rc->prependPath(pathname))
 			return false;
-		if (rc->resourceExists("init.py"))
+		if (rc->resourceExists("init.py")) {
+			Log::info(pathname, "init.py: found");
 			rc->runPythonScript("init.py");
-		else {
-			Log::fatal(pathname, "couldn't find init.py");
-			return false;
 		}
+		else
+			Log::info(pathname, "init.py: not found");
+		rc->rmPath(pathname);
 	}
+
+	BOOST_FOREACH(std::string pathname, conf.dataPath)
+		rc->prependPath(pathname);
 
 	if (!rc->appendPath(BASE_ZIP_PATH))
 		return false;
-	if (rc->resourceExists("init.py"))
+	if (rc->resourceExists("init.py")) {
+		Log::info(BASE_ZIP_PATH, "init.py: found");
 		rc->runPythonScript("init.py");
+	}
 	else {
-		Log::fatal(BASE_ZIP_PATH, "couldn't find init.py");
-		return false;
+		Log::info(BASE_ZIP_PATH, "init.py: not found");
 	}
 
 	conf.cacheEnabled = cacheEnabled;

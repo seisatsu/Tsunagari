@@ -53,8 +53,9 @@ public:
 	Resourcer();
 	~Resourcer();
 	bool init(char* argv0);
-	bool prependPath(std::string path);
-	bool appendPath(std::string path);
+	bool prependPath(const std::string& path);
+	bool appendPath(const std::string& path);
+	void rmPath(const std::string& path);
 
 	//! Returns true if the World contains a resource by that name.
 	bool resourceExists(const std::string& name) const;
