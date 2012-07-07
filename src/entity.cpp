@@ -83,38 +83,6 @@ bool Entity::needsRedraw() const
 }
 
 
-static double angleFromXY(double x, double y)
-{
-	double angle = 0.0;
-
-	// Moving at an angle
-	if (x != 0 && y != 0) {
-		angle = atan(y / x);
-		if (y < 0 && x < 0)
-			;
-		else if (y < 0 && x > 0)
-			angle += M_PI;
-		else if (y > 0 && x < 0)
-			angle += M_PI*2;
-		else if (y > 0 && x > 0)
-			angle += M_PI;
-	}
-
-	// Moving straight
-	else {
-		if (x < 0)
-			angle = 0;
-		else if (x > 0)
-			angle = M_PI;
-		else if (y < 0)
-			angle = M_PI_2;
-		else if (y > 0)
-			angle = 3*M_PI_2;
-	}
-
-	return angle;
-}
-
 void Entity::update(unsigned long dt)
 {
 	runUpdateScript();
@@ -156,16 +124,9 @@ void Entity::updateTile(unsigned long dt)
 		}
 	}
 	else {
-		double angle = angleFromXY(r.x - destCoord.x,
-		                           destCoord.y - r.y);
+		double angle = atan2(r.y - destCoord.y, destCoord.x - r.x);
 		double dx = cos(angle);
 		double dy = -sin(angle);
-
-		// Fix inaccurate trig functions. (Yay finite precision.)
-		if (-1e-10 < dx && dx < 1e-10)
-			dx = 0.0;
-		if (-1e-10 < dy && dy < 1e-10)
-			dy = 0.0;
 
 		r.x += dx * traveled;
 		r.y += dy * traveled;
@@ -296,7 +257,6 @@ vicoord Entity::moveDest(Tile* t, int dx, int dy)
 		dest = here + icoord(dx, dy, 0);
 		return area->phys2virt_vi(dest);
 	}
-
 }
 
 bool Entity::isMoving() const
