@@ -14,6 +14,8 @@
 #include "world.h"
 #include "window.h"
 
+#define ASSERT(x)  if (!(x)) return false
+
 namespace Gosu {
 	/**
 	 * Enable 1980s-style graphics scaling: nearest-neighbor filtering.
@@ -55,45 +57,35 @@ GameWindow::~GameWindow()
 {
 }
 
+static void callInitpy(const std::string& archivePath)
+{
+	ASSERT(rc->prependPath(archivePath));
+	bool exists = rc->resourceExists("init.py");
+	Log::info(archivePath,
+		std::string("init.py: ") +
+		exists ? "" : "not " +
+		"found");
+	if (exists)
+		rc->runPythonScript("init.py");
+	rc->rmPath(archivePath);
+}
+
 bool GameWindow::init(char* argv0)
 {
 	rc.reset(new Resourcer());
 	world.reset(new World());
-	if (!rc->init(argv0))
-	       return false;
+	ASSERT(rc->init(argv0));
 
-	bool cacheEnabled = conf.cacheEnabled;
-	conf.cacheEnabled = false;
-
-	BOOST_FOREACH(std::string pathname, conf.dataPath) {
-		if (!rc->prependPath(pathname))
-			return false;
-		if (rc->resourceExists("init.py")) {
-			Log::info(pathname, "init.py: found");
-			rc->runPythonScript("init.py");
-		}
-		else
-			Log::info(pathname, "init.py: not found");
-		rc->rmPath(pathname);
-	}
+	// If any of our archives contain a file called "init.py", call it.
+	BOOST_FOREACH(std::string archivePath, conf.dataPath)
+		callInitpy(archivePath);
+	callInitpy(BASE_ZIP_PATH);
 
 	BOOST_FOREACH(std::string pathname, conf.dataPath)
-		rc->prependPath(pathname);
+		ASSERT(rc->prependPath(pathname));
+	ASSERT(rc->appendPath(BASE_ZIP_PATH));
+	ASSERT(rc->appendPath(conf.worldFilename));
 
-	if (!rc->appendPath(BASE_ZIP_PATH))
-		return false;
-	if (rc->resourceExists("init.py")) {
-		Log::info(BASE_ZIP_PATH, "init.py: found");
-		rc->runPythonScript("init.py");
-	}
-	else {
-		Log::info(BASE_ZIP_PATH, "init.py: not found");
-	}
-
-	conf.cacheEnabled = cacheEnabled;
-
-	if (!rc->appendPath(conf.worldFilename))
-		return false;
 	return world->init();
 }
 
