@@ -33,7 +33,7 @@ public:
 	double count() const;
 	double count();
 
-	//! Return a rought string representation of this object.
+	//! Return a rough string representation of this object.
 	std::string repr() const;
 
 private:

@@ -10,9 +10,10 @@ class stdlib_ai_wander:
 
 		# Initialize and insert the entity.
 		self.e_inst = Area.new_npc(descriptor, x, y, layer, phase)
-		self.e_inst.on_update = self.tick
+		self.e_inst.on_tick = self.tick
+		self.e_inst.on_turn = self.turn
 
-	def tick(self): # Called on update.
+	def tick(self): # Called for tick().
 		if not self.e_inst.moving:
 			if self.__timer.count >= self.__tickspeed:
 				self.__timer.reset()
@@ -21,6 +22,11 @@ class stdlib_ai_wander:
 				move_choice = randint(0, self.__movechance)
 				if move_choice == 0:
 					self.do_move()
+
+	def turn(self): # Called for turn().
+		move_choice = randint(0, self.__movechance)
+		if move_choice == 0:
+			self.do_move()
 
 	def do_move(self): # Move the entity.
 		move_choice = randint(0, 3)
