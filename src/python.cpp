@@ -9,18 +9,13 @@
 #include <string.h> // for strrchr
 
 #include <boost/python.hpp>
+#include <Python.h>
+#include <Python-ast.h>
 
 #include "log.h"
 #include "python.h"
 #include "python-bindings.h" // for pythonInitBindings
 #include "resourcer.h"
-
-// Include libpython after everything else so it doesn't mess with Windows'
-// namespace.
-#include <Python.h>
-#include <grammar.h> // for struct grammar
-#include <node.h> // for struct node
-#include <parsetok.h> // for PyParser_ParseStringFlags
 
 
 namespace bp = boost::python;
@@ -194,10 +189,10 @@ static std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
 		return extract<std::string>(str(hexc));
 	}
 	else {
-		object traceback(import("traceback"));
-		object format_exception(traceback.attr("format_exception"));
-		object formatted_list(format_exception(hexc, hval, htb));
-		object formatted(str("").join(formatted_list));
+		bp::object traceback(import("traceback"));
+		bp::object format_exception(traceback.attr("format_exception"));
+		bp::object formatted_list(format_exception(hexc, hval, htb));
+		bp::object formatted(str("").join(formatted_list));
 		return extract<std::string>(formatted);
 	}
 }
@@ -243,30 +238,31 @@ bp::object pythonGlobals()
 	return dictMain;
 }
 
-extern grammar _PyParser_Grammar; // From Python's graminit.c
-
 PyCodeObject* pythonCompile(const char* fn, const char* code)
 {
-	// FIXME: memory leaks
-	// XXX: there's already a compile function in Python somewhere
-	perrdetail err;
-	node* n = PyParser_ParseStringFlagsFilename(
-		code, fn, &_PyParser_Grammar,
-		Py_file_input, &err, 0
-	);
-	if (!n) {
-		PyParser_SetError(&err);
-		pythonErr();
+	PyArena *arena = PyArena_New();
+	if (!arena) {
 		return NULL;
 	}
-	PyCodeObject* pco = PyNode_Compile(n, fn);
-	if (!pco) {
+
+	mod_ty mod = PyParser_ASTFromString(code, fn, Py_file_input, NULL, arena);
+	if (!mod) {
 		Log::err("Python",
-		         std::string(fn) + ": possibly unknown compile error");
+		         std::string(fn) + ": failed to parse");
 		pythonErr();
 		return NULL;
 	}
-	return pco;
+
+	PyCodeObject* co = PyAST_Compile(mod, fn, NULL, arena);
+	if (!co) {
+		Log::err("Python",
+		         std::string(fn) + ": failed to compile");
+		pythonErr();
+		return NULL;
+	}
+
+	PyArena_Free(arena);
+	return co;
 }
 
 bool pythonExec(PyCodeObject* code)
@@ -277,6 +273,7 @@ bool pythonExec(PyCodeObject* code)
 	try {
 		inPythonScript++;
 
+		// FIXME: locals, globals
 		PyObject* globals = dictMain.ptr();
 		PyObject* result = PyEval_EvalCode(code, globals, globals);
 
