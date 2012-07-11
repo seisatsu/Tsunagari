@@ -9,13 +9,13 @@
 #include <string.h> // for strrchr
 
 #include <boost/python.hpp>
-#include <Python.h>
-#include <Python-ast.h>
 
 #include "log.h"
 #include "python.h"
 #include "python-bindings.h" // for pythonInitBindings
 #include "resourcer.h"
+
+#include <Python-ast.h>
 
 
 namespace bp = boost::python;

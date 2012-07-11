@@ -140,6 +140,7 @@ void Entity::tickNoTile(unsigned long)
 
 void Entity::turn()
 {
+	runTurnScript();
 }
 
 const std::string Entity::getFacing() const
@@ -535,6 +536,14 @@ void Entity::runTickScript()
 	pythonSetGlobal("Entity", this);
 	pythonSetGlobal("Tile", getTile());
 	tickScript.invoke();
+}
+
+void Entity::runTurnScript()
+{
+	pythonSetGlobal("Area", area);
+	pythonSetGlobal("Entity", this);
+	pythonSetGlobal("Tile", getTile());
+	turnScript.invoke();
 }
 
 void Entity::runTileExitScript()

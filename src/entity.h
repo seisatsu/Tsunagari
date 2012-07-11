@@ -182,6 +182,7 @@ protected:
 	void enterTile(Tile* t);
 
 	void runTickScript();
+	void runTurnScript();
 	void runTileExitScript();
 	void runTileEntryScript();
 

@@ -111,6 +111,9 @@ void Player::moveByTile(ivec2 delta)
 	}
 
 	Entity::moveByTile(delta);
+
+	World* world = World::instance();
+	world->turn();
 }
 
 void Player::useTile()
