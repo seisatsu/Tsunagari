@@ -6,7 +6,7 @@ def cave_load():
 		cave_overlay_alpha = 255
 		Area.color_overlay(0, 0, 0, cave_overlay_alpha)
 
-def cave_update():
+def cave_tick():
 	global cave_fall_gfx_timer, cave_fall_snd, cave_fall_stage, cave_overlay_alpha
 	if cave_fall_stage == 0:
 		cave_fall_stage = 1

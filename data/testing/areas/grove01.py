@@ -5,7 +5,7 @@ def grove01_load():
 	cloud = Area.new_overlay("entities/cloud/cloud.xml", 11, 2, 10.0, "down")
 	cloud.move(-400, 0)
 
-def grove01_update():
+def grove01_tick():
 	global grove01_drinking, grove01_duration, grove01_max_alpha
 	if grove01_drinking == True:
 		progress = grove01_well_timer.count / grove01_duration

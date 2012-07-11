@@ -4,7 +4,7 @@
   <property name="author" value="Michael D. Reiley"/>
   <property name="name" value="Cave 01"/>
   <property name="on_load" value="areas/cave01.py:cave_load()"/>
-  <property name="on_update" value="areas/cave01.py:cave_update()"/>
+  <property name="on_tick" value="areas/cave01.py:cave_tick()"/>
  </properties>
  <tileset firstgid="1" name="cave.png" tilewidth="16" tileheight="16">
   <image source="areas/tiles/cave.png" width="256" height="336"/>
