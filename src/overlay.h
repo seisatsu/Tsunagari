@@ -15,10 +15,13 @@ public:
 	Overlay();
 	virtual ~Overlay();
 
+	void tick(unsigned long dt);
+
 	void teleport(int x, int y);
 	void move(int x, int y);
 
 protected:
+	virtual void erase();
 };
 
 #endif

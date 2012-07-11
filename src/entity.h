@@ -55,7 +55,7 @@ public:
 	void draw();
 	bool needsRedraw() const;
 
-	void tick(unsigned long dt);
+	virtual void tick(unsigned long dt);
 	void tickTurn(unsigned long dt);
 	void tickTile(unsigned long dt);
 	void tickNoTile(unsigned long dt);
@@ -153,7 +153,7 @@ public:
 
 
 protected:
-	std::vector<icoord> frontTiles(Tile* tile, ivec2 facing) const;
+	virtual void erase();
 
 	//! Calculate what the draw offset should be and saves it in 'doff'.
 	void calcDoff();
@@ -181,7 +181,7 @@ protected:
 	void enterTile();
 	void enterTile(Tile* t);
 
-	void runUpdateScript();
+	void runTickScript();
 	void runTileExitScript();
 	void runTileEntryScript();
 

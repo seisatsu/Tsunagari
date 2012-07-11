@@ -126,8 +126,11 @@ bool Area::needsRedraw() const
 	if (player->needsRedraw())
 		return true;
 
-	BOOST_FOREACH(Entity* e, entities)
-		if (e->needsRedraw())
+	BOOST_FOREACH(Character* c, characters)
+		if (c->needsRedraw())
+			return true;
+	BOOST_FOREACH(Overlay* o, overlays)
+		if (o->needsRedraw())
 			return true;
 
 	// Do any on-screen tile types need to update their animations?
@@ -155,11 +158,20 @@ void Area::tick(unsigned long dt)
 	pythonSetGlobal("Area", this);
 	tickScript.invoke();
 
-	pythonSetGlobal("Area", this);
-	player->tick(dt);
+	BOOST_FOREACH(Overlay* o, overlays) {
+		pythonSetGlobal("Area", this);
+		o->tick(dt);
+	}
 
-	BOOST_FOREACH(Entity* e, entities)
-		e->tick(dt);
+	if (conf.moveMode != TURN) {
+		pythonSetGlobal("Area", this);
+		player->tick(dt);
+
+		BOOST_FOREACH(Character* c, characters) {
+			pythonSetGlobal("Area", this);
+			c->tick(dt);
+		}
+	}
 
 	view->tick(dt);
 	music->tick();
@@ -173,8 +185,10 @@ void Area::turn()
 	pythonSetGlobal("Area", this);
 	player->turn();
 
-	BOOST_FOREACH(Entity* e, entities)
-		e->turn();
+	BOOST_FOREACH(Character* c, characters) {
+		pythonSetGlobal("Area", this);
+		c->turn();
+	}
 
 	view->turn();
 }
@@ -369,53 +383,63 @@ const std::string Area::getDescriptor() const
 Entity* Area::spawnNPC(const std::string& descriptor,
 	int x, int y, double z, const std::string& phase)
 {
-	Entity* e = new NPC();
-	if (!e->init(descriptor)) {
+	Character* c = new NPC();
+	if (!c->init(descriptor)) {
 		// Error logged.
-		delete e;
+		delete c;
 		return NULL;
 	}
-	e->setArea(this);
-	if (!e->setPhase(phase)) {
+	c->setArea(this);
+	if (!c->setPhase(phase)) {
 		// Error logged.
-		delete e;
+		delete c;
 		return NULL;
 	}
-	e->setTileCoords(x, y, z);
-	insert(e);
-	return e;
+	c->setTileCoords(x, y, z);
+	insert(c);
+	return c;
 }
 
 Entity* Area::spawnOverlay(const std::string& descriptor,
 	int x, int y, double z, const std::string& phase)
 {
-	Entity* e = new Overlay();
-	if (!e->init(descriptor)) {
+	Overlay* o = new Overlay();
+	if (!o->init(descriptor)) {
 		// Error logged.
-		delete e;
+		delete o;
 		return NULL;
 	}
-	e->setArea(this);
-	if (!e->setPhase(phase)) {
+	o->setArea(this);
+	if (!o->setPhase(phase)) {
 		// Error logged.
-		delete e;
+		delete o;
 		return NULL;
 	}
-	e->setTileCoords(x, y, z);
-	// XXX: e->leaveTile(); // Overlays don't consume tiles.
+	o->setTileCoords(x, y, z);
+	// XXX: o->leaveTile(); // Overlays don't consume tiles.
 
-	insert(e);
-	return e;
+	insert(o);
+	return o;
 }
 
-void Area::insert(Entity* e)
+void Area::insert(Character* c)
 {
-	entities.insert(e);
+	characters.insert(c);
 }
 
-void Area::erase(Entity* e)
+void Area::insert(Overlay* o)
 {
-	entities.erase(e);
+	overlays.insert(o);
+}
+
+void Area::erase(Character* c)
+{
+	characters.erase(c);
+}
+
+void Area::erase(Overlay* o)
+{
+	overlays.erase(o);
 }
 
 
@@ -517,8 +541,11 @@ void Area::drawTile(Tile& tile, int x, int y, double depth)
 
 void Area::drawEntities()
 {
-	BOOST_FOREACH(Entity* e, entities) {
-		e->draw();
+	BOOST_FOREACH(Character* c, characters) {
+		c->draw();
+	}
+	BOOST_FOREACH(Overlay* o, overlays) {
+		o->draw();
 	}
 	player->draw();
 }

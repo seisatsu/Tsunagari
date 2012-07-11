@@ -16,6 +16,23 @@ Overlay::~Overlay()
 {
 }
 
+void Overlay::tick(unsigned long dt)
+{
+	runTickScript();
+	switch (conf.moveMode) {
+	case TURN:
+		// Replace with MOVE_TO_DEST();
+		tickTile(dt);
+		break;
+	case TILE:
+		tickTile(dt);
+		break;
+	case NOTILE:
+		tickNoTile(dt);
+		break;
+	}
+}
+
 void Overlay::teleport(int x, int y)
 {
 	r.x = x;
@@ -42,5 +59,10 @@ void Overlay::move(int x, int y)
 	//setPhase("moving " + getFacing());
 
 	// Movement happens over time. See updateTile().
+}
+
+void Overlay::erase()
+{
+	area->erase(this);
 }
 

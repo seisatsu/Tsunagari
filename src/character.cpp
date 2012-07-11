@@ -28,3 +28,8 @@ void Character::move(int x, int y)
 	moveByTile(x, y);
 }
 
+void Character::erase()
+{
+	area->erase(this);
+}
+

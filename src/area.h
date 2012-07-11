@@ -37,6 +37,7 @@ class Area;
 class Entity;
 class GameWindow;
 class Music;
+class Overlay;
 class Resourcer;
 class Sprite;
 class World;
@@ -138,8 +139,10 @@ public:
 		int x, int y, double z, const std::string& phase);
 	Entity* spawnOverlay(const std::string& descriptor,
 		int x, int y, double z, const std::string& phase);
-	void insert(Entity* e);
-	void erase(Entity* e);
+	void insert(Character* c);
+	void insert(Overlay* o);
+	void erase(Character* c);
+	void erase(Overlay* o);
 
 	// Convert between virtual and physical map coordinates. Physical
 	// coordinates are the physical indexes into the Tile matrix. Layer
@@ -182,7 +185,8 @@ protected:
 protected:
 	Viewport* view;
 	Player* player;
-	boost::unordered_set<Entity*> entities;
+	boost::unordered_set<Character*> characters;
+	boost::unordered_set<Overlay*> overlays;
 	Music* music;
 	Gosu::Color colorOverlay;
 

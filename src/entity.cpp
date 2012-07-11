@@ -62,7 +62,7 @@ void Entity::destroy()
 {
 	leaveTile();
 	if (area) {
-		area->erase(this);
+		erase();
 		area->requestRedraw();
 	}
 	area = NULL;
@@ -85,7 +85,7 @@ bool Entity::needsRedraw() const
 
 void Entity::tick(unsigned long dt)
 {
-	runUpdateScript();
+	runTickScript();
 	switch (conf.moveMode) {
 	case TURN:
 		tickTurn(dt);
@@ -343,6 +343,11 @@ FlagManip Entity::exemptManip()
 	return FlagManip(&nowalkExempt);
 }
 
+void Entity::erase()
+{
+	throw "pure virtual function";
+}
+
 void Entity::calcDoff()
 {
 	// X-axis is centered on tile.
@@ -524,7 +529,7 @@ void Entity::enterTile(Tile* t)
 		t->entCnt++;
 }
 
-void Entity::runUpdateScript()
+void Entity::runTickScript()
 {
 	pythonSetGlobal("Area", area);
 	pythonSetGlobal("Entity", this);

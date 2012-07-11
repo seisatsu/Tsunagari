@@ -19,6 +19,7 @@ public:
 	void move(int x, int y);
 
 protected:
+	virtual void erase();
 };
 
 #endif
