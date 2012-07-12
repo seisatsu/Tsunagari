@@ -9,6 +9,7 @@
 #include "config.h"
 #include "log.h"
 #include "python.h"
+#include "timer.h"
 
 static verbosity_t verb = V_NORMAL;
 
@@ -21,22 +22,20 @@ static std::string& chomp(std::string& str)
 
 static std::string ts()
 {
+	static Timer timer;
+
+	if (!timer->isRunning())
+		timer->setRunning(true);
+
 	std::ostringstream ts;
 	ts.precision(4);
 	ts << std::fixed;
-	ts << Log::tsTimer->count();
+	ts << timer->count();
 	return "[" + ts.str() + "] ";
 }
 
 Log::Log()
 {
-	Log::tsTimer = new Timer;
-	Log::tsTimer->setRunning(true);
-}
-
-Log::~Log()
-{
-	delete Log::tsTimer;
 }
 
 void Log::setVerbosity(verbosity_t v)
