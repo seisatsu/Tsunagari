@@ -9,14 +9,14 @@ This chapter covers the procedures for creating a Tsunagari game world from scra
 Anatomy of a World File
 =======================
 
-The Tsunagari Tile Engine is an interpreter for "world files", self-contained packages which consist of game data. World files themselves are simply zip archives with a ".world" file suffix. Inside these packages are several kinds of data, which together describe a game world. The different kinds of data files found inside a game world are described below.
+The Tsunagari Tile Engine is an interpreter for "world files", self-contained packages which consist of game data. World files themselves are simply zip archives with a ".world" file suffix (suffix not required). Inside these packages are several kinds of data, which together describe a game world. The different kinds of data files found inside a game world are described below.
 
 World File Contents
 -------------------
 
 * World Descriptor: An XML file which must be named "world.conf", and must be present in the root directory of a world file. This file contains the base settings needed for the engine to initialize a game world.
 * Player Descriptor: An XML file, of which exactly one must be present in a world file. This file contains initial settings for the player character, including movement speed, sprite data, and sound effects.
-* NPC Descriptors: XML files, which contain the initial settings for a non-player-character, including movement speed, sprite data, and event script references for its AI.
+* NPC Descriptors: XML files, which contain the initial settings for a non-player-character, including movement speed, sprite data, and sound effects.
 * Audio Files: OGG Vorbis format audio files, with a ".oga" file suffix. These files contain sound effects and music.
 * Tile/Sprite Sheets: PNG or JPEG format image files. Each of these files contain a sheet of tile graphics or sprite frames.
 * Area Descriptors: XML files with a ".tmx" file suffix, which follow the TMX Map Format specification. Each of these files describe a single game world area. They are authored with the Tiled Map Editor, the use of which is described in a later chapter.

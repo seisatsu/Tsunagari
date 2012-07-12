@@ -20,6 +20,9 @@ Working with Entities
 Working with Overlays
 =====================
 
+NPC AI Design
+=============
+
 The Timer
 =========
 

@@ -2,9 +2,6 @@
 Chapter 5 - Technical Details
 *****************************
 
-Operating System Differences
-============================
-
 Config.h
 ========
 

@@ -6,3 +6,7 @@ The Tsunagari Tile Engine is a 2D game design suite and game interpreter. It sup
 
 This documentation covers subjects ranging from running a game to building the engine from source. It aims to describe in-depth every feature of the engine, in language which is easy to understand.
 
+This documentation is written for Tsunagari AlphaP4-R2. The instructions within may not work with other versions.
+
+Tsunagari Official User's Manual Copyright (c) 2012 OmegaSDG.
+

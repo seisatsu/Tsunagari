@@ -84,8 +84,8 @@ bool GameWindow::init(char* argv0)
 
 	BOOST_FOREACH(std::string pathname, conf.dataPath)
 		ASSERT(rc->prependPath(pathname));
-	ASSERT(rc->appendPath(BASE_ZIP_PATH));
 	ASSERT(rc->appendPath(conf.worldFilename));
+	ASSERT(rc->appendPath(BASE_ZIP_PATH));
 
 	return world->init();
 }
