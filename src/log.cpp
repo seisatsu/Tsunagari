@@ -24,13 +24,13 @@ static std::string ts()
 {
 	static Timer timer;
 
-	if (!timer->isRunning())
-		timer->setRunning(true);
+	if (!timer.isRunning())
+		timer.setRunning(true);
 
 	std::ostringstream ts;
-	ts.precision(4);
+	ts.precision(3);
 	ts << std::fixed;
-	ts << timer->count();
+	ts << timer.count();
 	return "[" + ts.str() + "] ";
 }
 
