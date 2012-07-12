@@ -10,6 +10,8 @@
 #include <boost/utility.hpp> // for boost::noncopyable
 #include <string>
 
+#include "timer.h"
+
 enum verbosity_t {
 	V_QUIET,   // Display fatals.
 	V_NORMAL,  // Display fatals and errors. (This is the default.)
@@ -25,8 +27,11 @@ public:
 	static void err(std::string domain, std::string msg);
 	static void fatal(std::string domain, std::string msg);
 
+	static Timer* tsTimer;
+
 private:
 	Log();
+	~Log();
 };
 
 #endif
