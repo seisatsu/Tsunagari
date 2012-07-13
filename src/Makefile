@@ -79,7 +79,7 @@ client-conf.o: client-conf.cpp client-conf.h cmd.h config.h log.h string.h \
 cmd.o: cmd.cpp cmd.h string.h
 entity.o: animation.h area.h cache.h character.h client-conf.h config.h \
  entity.cpp entity.h log.h music.h player.h python.h resourcer.h \
- scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
+ scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h xml.h
 log.o: animation.h cache.h character.h client-conf.h config.h entity.h \
  log.cpp log.h player.h python.h resourcer.h scriptinst.h sound.h tile.h \
  vec.h viewport.h window.h world.h xml.h
@@ -113,8 +113,10 @@ string.o: string.cpp string.h
 tile.o: animation.h area.h cache.h character.h client-conf.h config.h \
  entity.h log.h music.h player.h python-optional.h python.h resourcer.h \
  scriptinst.h sound.h string.h tile.cpp tile.h vec.h viewport.h window.h \
- xml.h
-timeout.o: python.h timeout.cpp timeout.h window.h
+ world.h xml.h
+timeout.o: animation.h cache.h character.h client-conf.h entity.h log.h \
+ player.h python.h resourcer.h scriptinst.h sound.h tile.h timeout.cpp \
+ timeout.h vec.h viewport.h window.h world.h xml.h
 timer.o: python.h timer.cpp timer.h window.h
 vec.o: vec.cpp vec.h
 viewport.o: animation.h area.h cache.h character.h client-conf.h config.h \
