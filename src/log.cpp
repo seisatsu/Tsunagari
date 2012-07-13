@@ -11,6 +11,7 @@
 #include "config.h"
 #include "log.h"
 #include "python.h"
+#include "world.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -87,5 +88,17 @@ void Log::fatal(std::string domain, std::string msg)
 			wMessageBox("Tsunagari - Fatal", str);
 		#endif
 	}
+}
+
+static void pythonLogInfo(std::string msg)
+{
+	Log::info("Script", msg);
+}
+
+void exportLog()
+{
+	using namespace boost::python;
+
+	pythonAddFunction("log", pythonLogInfo);
 }
 

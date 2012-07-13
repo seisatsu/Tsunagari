@@ -44,9 +44,9 @@ class stdlib_ai_wander:
 		x, y, z = e.move_dest(e.tile, dx, dy)
 		can = e.can_move(x, y, z)
 		if can:
-			print "Info [Python] ai.wander: move: %d %d %.1f valid" % (x, y, z)
+			log("ai.wander: move: %d %d %.1f valid" % (x, y, z))
 		else:
-			print "Info [Python] ai.wander: move: %d %d %.1f invalid" % (x, y, z)
+			log("ai.wander: move: %d %d %.1f invalid" % (x, y, z))
 		e.move(dx, dy)
 
 

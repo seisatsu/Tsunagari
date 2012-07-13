@@ -31,5 +31,7 @@ private:
 	Log();
 };
 
+void exportLog();
+
 #endif
 

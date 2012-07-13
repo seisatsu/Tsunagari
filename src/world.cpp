@@ -57,6 +57,11 @@ bool World::init()
 	return true;
 }
 
+const std::string& World::getName()
+{
+	return name;
+}
+
 void World::buttonDown(const Gosu::Button btn)
 {
 	area->buttonDown(btn);

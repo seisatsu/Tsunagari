@@ -8,6 +8,7 @@
 
 #include "area.h"
 #include "entity.h"
+#include "log.h"
 #include "music.h"
 #include "random.h"
 #include "resourcer.h"
@@ -23,6 +24,7 @@ BOOST_PYTHON_MODULE(tsunagari)
 {
 	exportArea();
 	exportEntity();
+	exportLog();
 	exportMusic();
 	exportRandom();
 	exportResourcer();

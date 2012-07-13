@@ -125,6 +125,13 @@ static PyObject* nullOpen(PyObject*, PyObject*)
 	return NULL;
 }
 
+static PyObject* nullPrint(PyObject*, PyObject*)
+{
+	PyErr_SetString(PyExc_RuntimeError,
+	             "print(): Tsunagari does not allow scripts to print");
+	return NULL;
+}
+
 static PyObject* nullReload(PyObject*, PyObject*)
 {
 	PyErr_SetString(PyExc_RuntimeError,
@@ -137,6 +144,7 @@ PyMethodDef nullMethods[] = {
 	{"execfile", nullExecfile, METH_VARARGS, ""},
 	{"file", nullFile, METH_VARARGS, ""},
 	{"open", nullOpen, METH_VARARGS, ""},
+	{"print", nullPrint, METH_VARARGS | METH_KEYWORDS, ""},
 	{"reload", nullReload, METH_O, ""},
 	{NULL, NULL, 0, NULL},
 };

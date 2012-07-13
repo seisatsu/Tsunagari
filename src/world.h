@@ -44,6 +44,8 @@ public:
 	//! Initialize the world for use.
 	bool init();
 
+	const std::string& getName();
+
 	//! Process key presses.
 	void buttonDown(const Gosu::Button btn);
 	void buttonUp(const Gosu::Button btn);
