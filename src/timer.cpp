@@ -8,7 +8,7 @@
 
 #include "python.h"
 #include "timer.h"
-#include "window.h"
+#include "world.h"
 
 static Timer pythonNewTimer()
 {
@@ -28,9 +28,9 @@ bool Timer::isRunning() const
 
 void Timer::setRunning(bool running)
 {
-	if (running == true) {
+	if (running) {
 		this->running = true;
-		prev_time = GameWindow::instance().time();
+		prev_time = World::instance()->time();
 	}
 
 	else
@@ -44,16 +44,11 @@ void Timer::reset()
 
 double Timer::count() const
 {
-	int prev_count = this->prev_count;
+	time_t prev_count = this->prev_count;
 
-	if (running == true) {
-		int now = GameWindow::instance().time();
-
-		if (now > prev_time)
-			prev_count = prev_count + (now - prev_time);
-
-		else // Gosu::milliseconds() has overflowed; compensate.
-			prev_count = prev_count + (prev_time - now);
+	if (running) {
+		time_t now = World::instance()->time();
+		prev_count = prev_count + (now - prev_time);
 	}
 
 	return (double)prev_count / 1000.0;
@@ -61,15 +56,9 @@ double Timer::count() const
 
 double Timer::count()
 {
-	if (running == true) {
-		int now = GameWindow::instance().time();
-
-		if (now > prev_time)
-			prev_count = prev_count + (now - prev_time);
-
-		else // Gosu::milliseconds() has overflowed; compensate.
-			prev_count = prev_count + (prev_time - now);
-
+	if (running) {
+		time_t now = World::instance()->time();
+		prev_count = prev_count + (now - prev_time);
 		prev_time = now;
 	}
 

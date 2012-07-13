@@ -38,8 +38,8 @@ public:
 
 private:
 	bool running;
-	int prev_time;
-	int prev_count;
+	time_t prev_time;
+	time_t prev_count;
 };
 
 void exportTimer();

@@ -61,7 +61,7 @@ public:
 			return;
 		CacheEntry entry;
 		entry.resource = data;
-		int now = GameWindow::instance().time();
+		time_t now = GameWindow::instance().time();
 		entry.lastUsed = now;
 		map[name] = entry;
 	}
@@ -80,25 +80,21 @@ public:
 	{
 		if (!conf.cacheEnabled)
 			return;
-		int now = GameWindow::instance().time();
+		time_t now = GameWindow::instance().time();
 		std::vector<std::string> dead;
 		BOOST_FOREACH(typename CacheMap::value_type& i, map) {
 			const std::string& name = i.first;
 			CacheEntry& cache = i.second;
 			bool unused = !cache.resource || cache.resource.unique();
-			if (unused) {
-				if (cache.lastUsed == IN_USE_NOW) {
-					cache.lastUsed = now;
-					//Log::info("Resourcer", name + ": unused");
-				}
-				else if (now < cache.lastUsed) {
-					// Handle time overflow.
-					cache.lastUsed = now;
-				}
-				else if (now > cache.lastUsed + conf.cacheTTL*1000) {
-					dead.push_back(name);
-					Log::info("Cache", name + ": purged");
-				}
+			if (!unused)
+				continue;
+			if (cache.lastUsed == IN_USE_NOW) {
+				cache.lastUsed = now;
+				//Log::info("Resourcer", name + ": unused");
+			}
+			else if (now > cache.lastUsed + conf.cacheTTL*1000) {
+				dead.push_back(name);
+				Log::info("Cache", name + ": purged");
 			}
 		}
 		BOOST_FOREACH(std::string& name, dead)
