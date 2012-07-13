@@ -195,7 +195,8 @@ protected:
 
 
 	bool redraw;
-	bool paused;
+	bool userPaused;
+	int paused;
 };
 
 void exportWorld();

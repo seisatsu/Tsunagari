@@ -25,7 +25,8 @@ World* World::instance()
 }
 
 World::World()
-	: lastTime(0), total(0), music(new Music()), redraw(false), paused(false)
+	: lastTime(0), total(0), music(new Music()), redraw(false),
+          userPaused(false), paused(0)
 {
 	globalWorld = this;
 	pythonSetGlobal("World", this);
@@ -71,7 +72,9 @@ void World::buttonDown(const Gosu::Button btn)
 {
 	switch (btn.id()) {
 	case Gosu::kbEscape:
-		setPaused(!paused);
+		userPaused = !userPaused;
+		setPaused(userPaused);
+		redraw = true;
 		break;
 	default:
 		if (!paused)
@@ -107,7 +110,7 @@ void World::draw()
 	graphics.popTransform();
 	popLetterbox(clips);
 
-	if (paused) {
+	if (userPaused) {
 		unsigned ww = graphics.width();
 		unsigned wh = graphics.height();
 		unsigned iw = pauseInfo->width();
@@ -187,16 +190,7 @@ void World::focusArea(Area* area, vicoord playerPos)
 
 void World::setPaused(bool b)
 {
-	if (paused == b) {
-		if (paused)
-			Log::err("World", "game already paused");
-		else
-			Log::err("World", "game already unpaused");
-		return;
-	}
-
-	paused = b;
-	redraw = true;
+	paused += b ? 1 : -1;
 
 	if (paused)
 		music->setPaused(true);
