@@ -22,7 +22,6 @@
 // ===
 
 // === Client.ini Default Values ===
-	#define DEF_ENGINE_WORLD		"../data/testing.world"
 	#define DEF_ENGINE_VERBOSITY	"verbose"
 	#define DEF_WINDOW_WIDTH		640
 	#define DEF_WINDOW_HEIGHT		480

@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 		exit(1);
 
 	if (!parseConfig(CLIENT_CONF_PATH))
-		return 1;
+		true; // client.ini no longer required.
 	if (!parseCommandLine(argc, argv))
 		return 1;
 	if (!conf.validate(CLIENT_CONF_PATH))

@@ -37,8 +37,6 @@ struct Conf {
 	int cacheSize;
 	int persistInit;
 	int persistCons;
-
-	bool fullscreen_opt_set;
 };
 extern Conf conf;
 

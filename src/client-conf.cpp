@@ -22,8 +22,19 @@ Conf conf; // Project-wide global configuration.
 Conf::Conf()
 {
 	worldFilename = "";
-	windowSize.x = 0;
-	windowSize.y = 0;
+	if (!strcmp(DEF_ENGINE_VERBOSITY, "quiet"))
+		conf.verbosity = V_QUIET;
+	else if (!strcmp(DEF_ENGINE_VERBOSITY, "normal"))
+		conf.verbosity = V_NORMAL;
+	else if (!strcmp(DEF_ENGINE_VERBOSITY, "verbose"))
+		conf.verbosity = V_VERBOSE;
+	windowSize.x = DEF_WINDOW_WIDTH;
+	windowSize.y = DEF_WINDOW_HEIGHT;
+	fullscreen = DEF_WINDOW_FULLSCREEN;
+	audioEnabled = DEF_AUDIO_ENABLED;
+	cacheEnabled = DEF_CACHE_ENABLED;
+	cacheTTL = DEF_CACHE_TTL;
+	cacheSize = DEF_CACHE_SIZE;
 	persistInit = 0;
 	persistCons = 0;
 	scriptHalt = false;
@@ -32,28 +43,11 @@ Conf::Conf()
 //! Check for missing required configuration variables.
 bool Conf::validate(const char* filename)
 {
-	bool good_conf = true;
-
 	if (conf.worldFilename == "") {
 		Log::fatal(filename, "\"[engine] world\" option or equivalent command line option expected");
-		good_conf = false;
-	}
-	if (!conf.windowSize.x) {
-		Log::fatal(filename, "\"[window] width\" option or equivalent command line option expected");
-		good_conf = false;
-	}
-	if (!conf.windowSize.y) {
-		Log::fatal(filename, "\"[window] height\" option or equivalent command line option expected");
-		good_conf = false;
-	}
-	if (!conf.fullscreen_opt_set) {
-		Log::fatal(filename, "\"[window] fullscreen\" option or equivalent command line option expected");
-		good_conf = false;
-	}
-	if (good_conf)
-		return true;
-	else
 		return false;
+	}
+		return true;
 }
 
 /* Output compiled-in engine defaults. */
@@ -65,8 +59,6 @@ static void defaultsQuery()
 		<< BASE_ZIP_PATH << std::endl;
 	std::cerr << "XML_DTD_PATH:                        "
 		<< XML_DTD_PATH << std::endl;
-	std::cerr << "DEF_ENGINE_WORLD:                    "
-		<< DEF_ENGINE_WORLD << std::endl;
 	std::cerr << "DEF_ENGINE_VERBOSITY:                "
 		<< DEF_ENGINE_VERBOSITY << std::endl;
 	std::cerr << "DEF_WINDOW_WIDTH:                    "
@@ -103,7 +95,7 @@ bool parseConfig(const char* filename)
 
 	std::ifstream config(filename);
 	if (!config) {
-		Log::fatal(filename, "could not parse config");
+		Log::err(filename, "could not parse config");
 		return false;
 	}
 
@@ -129,10 +121,8 @@ bool parseConfig(const char* filename)
 	if (!parameters["window.height"].empty())
 		conf.windowSize.y = atoi(parameters["window.height"].c_str());
 
-	if (!parameters["window.fullscreen"].empty()) {
-		conf.fullscreen_opt_set = true;
+	if (!parameters["window.fullscreen"].empty())
 		conf.fullscreen = parseBool(parameters["window.fullscreen"]);
-	}
 
 	if (parameters["audio.enabled"].size())
 		conf.audioEnabled = parseBool(parameters["audio.enabled"]);
@@ -278,15 +268,11 @@ bool parseCommandLine(int argc, char* argv[])
 		return false;
 	}
 
-	if (cmd.check("--fullscreen")) {
+	if (cmd.check("--fullscreen"))
 		conf.fullscreen = true;
-		conf.fullscreen_opt_set = true;
-	}
 
-	if (cmd.check("--window")) {
+	if (cmd.check("--window"))
 		conf.fullscreen = false;
-		conf.fullscreen_opt_set = true;
-	}
 
 	if (cmd.check("--script-halt"))
 		conf.scriptHalt = true;
