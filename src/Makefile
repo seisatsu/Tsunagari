@@ -18,9 +18,9 @@ CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
 LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
 	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
 
-OBJECTS = animation.o area.o area-tmx.o character.o client-conf.o cmd.o \
-          entity.o log.o main.o music.o npc.o overlay.o player.o python.o \
-          python-bindings.o random.o resourcer.o scriptinst.o sound.o \
+OBJECTS = animation.o area.o area-tmx.o bitrecord.o character.o client-conf.o \
+          cmd.o entity.o log.o main.o music.o npc.o overlay.o player.o \
+          python.o python-bindings.o random.o resourcer.o scriptinst.o sound.o \
           string.o tile.o timer.o timeout.o vec.o viewport.o window.o world.o \
           xml.o
 
@@ -63,43 +63,46 @@ clean:
 
 animation.o: animation.cpp animation.h cache.h client-conf.h log.h \
  resourcer.h sound.h vec.h window.h xml.h
-area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h cache.h character.h \
- client-conf.h config.h entity.h log.h music.h player.h python.h resourcer.h \
- scriptinst.h sound.h string.h tile.h vec.h viewport.h window.h world.h \
- xml.h
-area.o: animation.h area.cpp area.h cache.h character.h client-conf.h \
- config.h entity.h log.h music.h npc.h overlay.h player.h python.h \
- resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h \
- xml.h
+area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h bitrecord.h cache.h \
+ character.h client-conf.h config.h entity.h log.h music.h player.h python.h \
+ resourcer.h scriptinst.h sound.h string.h tile.h vec.h viewport.h window.h \
+ world.h xml.h
+area.o: animation.h area.cpp area.h bitrecord.h cache.h character.h \
+ client-conf.h config.h entity.h log.h music.h npc.h overlay.h player.h \
+ python.h resourcer.h scriptinst.h sound.h tile.h vec.h viewport.h window.h \
+ world.h xml.h
+bitrecord.o: bitrecord.cpp bitrecord.h window.h
 character.o: animation.h area.h cache.h character.cpp character.h \
  client-conf.h config.h entity.h log.h music.h player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
 client-conf.o: client-conf.cpp client-conf.h cmd.h config.h log.h string.h \
  vec.h
 cmd.o: cmd.cpp cmd.h string.h
-entity.o: animation.h area.h cache.h character.h client-conf.h config.h \
- entity.cpp entity.h log.h music.h player.h python.h resourcer.h \
+entity.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
+ config.h entity.cpp entity.h log.h music.h player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h xml.h
-log.o: animation.h cache.h character.h client-conf.h config.h entity.h \
- log.cpp log.h player.h python.h resourcer.h scriptinst.h sound.h tile.h \
- vec.h viewport.h window.h world.h xml.h
+log.o: animation.h bitrecord.h cache.h character.h client-conf.h config.h \
+ entity.h log.cpp log.h player.h python.h resourcer.h scriptinst.h sound.h \
+ tile.h vec.h viewport.h window.h world.h xml.h
 main.o: client-conf.h config.h log.h main.cpp python.h vec.h window.h
 music.o: cache.h client-conf.h log.h music.cpp music.h python.h resourcer.h \
  sound.h vec.h window.h xml.h
 npc.o: animation.h area.h cache.h character.h client-conf.h config.h \
  entity.h log.h music.h npc.cpp npc.h player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
-os-windows.o: os-windows.cpp os-windows.h window.h
+os-windows.o: animation.h bitrecord.h cache.h character.h client-conf.h \
+ entity.h log.h os-windows.cpp os-windows.h player.h python.h resourcer.h \
+ scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h xml.h
 overlay.o: animation.h area.h cache.h character.h client-conf.h config.h \
  entity.h log.h music.h overlay.cpp overlay.h player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
-player.o: animation.h area.h cache.h character.h client-conf.h config.h \
- entity.h log.h music.h player.cpp player.h python.h resourcer.h \
+player.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
+ config.h entity.h log.h music.h player.cpp player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h xml.h
-python-bindings.o: animation.h area.h cache.h character.h client-conf.h \
- config.h entity.h log.h music.h player.h python-bindings.cpp python.h \
- random.h resourcer.h scriptinst.h sound.h tile.h timeout.h timer.h vec.h \
- viewport.h window.h world.h xml.h
+python-bindings.o: animation.h area.h bitrecord.h cache.h character.h \
+ client-conf.h config.h entity.h log.h music.h player.h python-bindings.cpp \
+ python.h random.h resourcer.h scriptinst.h sound.h tile.h timeout.h timer.h \
+ vec.h viewport.h window.h world.h xml.h
 python.o: cache.h client-conf.h log.h python-bindings.h python.cpp python.h \
  resourcer.h sound.h vec.h window.h xml.h
 random.o: python.h random.cpp random.h
@@ -110,22 +113,25 @@ scriptinst.o: cache.h client-conf.h log.h python.h resourcer.h \
 sound.o: cache.h client-conf.h log.h python.h resourcer.h sound.cpp sound.h \
  vec.h window.h xml.h
 string.o: string.cpp string.h
-tile.o: animation.h area.h cache.h character.h client-conf.h config.h \
- entity.h log.h music.h player.h python-optional.h python.h resourcer.h \
- scriptinst.h sound.h string.h tile.cpp tile.h vec.h viewport.h window.h \
- world.h xml.h
-timeout.o: animation.h cache.h character.h client-conf.h entity.h log.h \
- player.h python.h resourcer.h scriptinst.h sound.h tile.h timeout.cpp \
- timeout.h vec.h viewport.h window.h world.h xml.h
-timer.o: python.h timer.cpp timer.h window.h
+tile.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
+ config.h entity.h log.h music.h player.h python-optional.h python.h \
+ resourcer.h scriptinst.h sound.h string.h tile.cpp tile.h vec.h viewport.h \
+ window.h world.h xml.h
+timeout.o: animation.h bitrecord.h cache.h character.h client-conf.h \
+ entity.h log.h player.h python.h resourcer.h scriptinst.h sound.h tile.h \
+ timeout.cpp timeout.h vec.h viewport.h window.h world.h xml.h
+timer.o: animation.h bitrecord.h cache.h character.h client-conf.h entity.h \
+ log.h player.h python.h resourcer.h scriptinst.h sound.h tile.h timer.cpp \
+ timer.h vec.h viewport.h window.h world.h xml.h
 vec.o: vec.cpp vec.h
 viewport.o: animation.h area.h cache.h character.h client-conf.h config.h \
  entity.h log.h music.h player.h python.h resourcer.h scriptinst.h sound.h \
  tile.h vec.h viewport.cpp viewport.h window.h xml.h
-window.o: animation.h cache.h character.h client-conf.h config.h entity.h \
- log.h player.h python.h resourcer.h scriptinst.h sound.h tile.h vec.h \
- viewport.h window.cpp window.h world.h xml.h
-world.o: animation.h area-tmx.h area.h cache.h character.h client-conf.h \
- config.h entity.h log.h music.h player.h python.h resourcer.h scriptinst.h \
- sound.h tile.h timeout.h vec.h viewport.h window.h world.cpp world.h xml.h
+window.o: animation.h bitrecord.h cache.h character.h client-conf.h config.h \
+ entity.h log.h player.h python.h resourcer.h scriptinst.h sound.h tile.h \
+ vec.h viewport.h window.cpp window.h world.h xml.h
+world.o: animation.h area-tmx.h area.h bitrecord.h cache.h character.h \
+ client-conf.h config.h entity.h log.h music.h player.h python.h resourcer.h \
+ scriptinst.h sound.h tile.h timeout.h vec.h viewport.h window.h world.cpp \
+ world.h xml.h
 xml.o: config.h log.h string.h xml.cpp xml.h

@@ -125,9 +125,12 @@ void Player::useTile()
 
 void Player::setFrozen(bool b)
 {
-	movements.clear();
+	World* world = World::instance();
 
+	b ?  world->storeKeys() : world->restoreKeys();
 	Entity::setFrozen(b);
+	if (!frozen && velocity)
+		moveByTile(velocity);
 }
 
 void Player::postMove()

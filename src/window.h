@@ -64,7 +64,7 @@ public:
 	//! Time since epoch.
 	time_t time() const;
 
-private:
+protected:
 	//! Process persistent keyboard input
 	void handleKeyboardInput(time_t now);
 

@@ -7,12 +7,14 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <stack>
 #include <string>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
+#include "bitrecord.h"
 #include "player.h"
 #include "resourcer.h"
 #include "scriptinst.h"
@@ -120,6 +122,9 @@ public:
 
 	void setPaused(bool b);
 
+	void storeKeys();
+	void restoreKeys();
+
 	void runAreaLoadScript(Area* area);
 
 protected:
@@ -159,17 +164,6 @@ protected:
 	typedef boost::unordered_map<std::string, Area*> AreaMap;
 
 
-	/**
-	 * Last time engine state was updated. See World::update().
-	 */
-	time_t lastTime;
-
-	/**
-	 * Total unpaused game run time.
-	 */
-	time_t total;
-
-
 	std::string name;
 	std::string author;
 	double version;
@@ -194,9 +188,23 @@ protected:
 	Resourcer* rc;
 
 
+	/**
+	 * Last time engine state was updated. See World::update().
+	 */
+	time_t lastTime;
+
+	/**
+	 * Total unpaused game run time.
+	 */
+	time_t total;
+
+
 	bool redraw;
 	bool userPaused;
 	int paused;
+
+
+	std::stack<BitRecord> keyStates;
 };
 
 void exportWorld();

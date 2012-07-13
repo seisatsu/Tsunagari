@@ -25,7 +25,7 @@ World* World::instance()
 }
 
 World::World()
-	: lastTime(0), total(0), music(new Music()), redraw(false),
+	: music(new Music()), lastTime(0), total(0), redraw(false),
           userPaused(false), paused(0)
 {
 	globalWorld = this;
@@ -77,7 +77,7 @@ void World::buttonDown(const Gosu::Button btn)
 		redraw = true;
 		break;
 	default:
-		if (!paused)
+		if (!paused && keyStates.empty())
 			area->buttonDown(btn);
 		break;
 	}
@@ -89,7 +89,7 @@ void World::buttonUp(const Gosu::Button btn)
 	case Gosu::kbEscape:
 		break;
 	default:
-		if (!paused)
+		if (!paused && keyStates.empty())
 			area->buttonUp(btn);
 		break;
 	}
@@ -196,12 +196,47 @@ void World::focusArea(Area* area, vicoord playerPos)
 
 void World::setPaused(bool b)
 {
+	if (!paused && !b) {
+		Log::err("World", "trying to unpause, but not paused");
+		return;
+	}
+
+	// If just pausing.
+	if (!paused)
+		storeKeys();
+
 	paused += b ? 1 : -1;
 
 	if (paused)
 		music->setPaused(true);
 	else
 		music->setPaused(false);
+
+	// If finally unpausing.
+	if (!paused)
+		restoreKeys();
+}
+
+void World::storeKeys()
+{
+	keyStates.push(BitRecord::fromGosuInput());
+}
+
+void World::restoreKeys()
+{
+	BitRecord now = BitRecord::fromGosuInput();
+	BitRecord then = keyStates.top();
+	std::vector<size_t> diffs = now.diff(then);
+
+	keyStates.pop();
+
+	BOOST_FOREACH(size_t id, diffs) {
+		Gosu::Button btn((unsigned)id);
+		if (now[id])
+			buttonDown(btn);
+		else
+			buttonUp(btn);
+	}
 }
 
 void World::runAreaLoadScript(Area* area)
