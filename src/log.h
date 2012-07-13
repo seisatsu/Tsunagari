@@ -19,6 +19,8 @@ enum verbosity_t {
 class Log : boost::noncopyable
 {
 public:
+	static bool init();
+
 	static void setVerbosity(verbosity_t mode);
 
 	static void info(std::string domain, std::string msg);

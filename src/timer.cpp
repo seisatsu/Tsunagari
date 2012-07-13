@@ -78,11 +78,10 @@ double Timer::count()
 
 std::string Timer::repr() const
 {
-	return boost::str(boost::format
-		("<timer count=%.02fsec running=%s />")
-			% count()
-			% (isRunning() ? "true" : "false")
-	);
+	using namespace boost;
+
+	return str(format("<timer count=%.02fsec running=%s />")
+			% count() % (isRunning() ? "true" : "false"));
 }
 
 void exportTimer()

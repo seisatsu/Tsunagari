@@ -75,9 +75,10 @@ void Timeout::execute()
 
 std::string Timeout::repr() const
 {
+	using namespace boost;
+
 	int now = GameWindow::instance().time();
-	return boost::str(boost::format
-		("<timeout time_remaining=%dms active=%s />")
+	return str(format("<timeout time_remaining=%dms active=%s />")
 			% (start + delay - now)
 			% (isActive() ? "true" : "false")
 	);

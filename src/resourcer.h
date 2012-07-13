@@ -55,7 +55,7 @@ public:
 	bool init(char* argv0);
 	bool prependPath(const std::string& path);
 	bool appendPath(const std::string& path);
-	void rmPath(const std::string& path);
+	bool rmPath(const std::string& path);
 
 	//! Returns true if the World contains a resource by that name.
 	bool resourceExists(const std::string& name) const;
@@ -92,15 +92,19 @@ public:
 	void garbageCollect();
 
 private:
-	//! Read an XML document from disk and parse it.
+	//! Reads a file from the game archive.
+	template <class T>
+	bool readFromDisk(const std::string& name, T& buf);
+
+	//! Read an XML document from the game archive and parse it.
 	XMLDoc* readXMLDocFromDisk(const std::string& name,
-		const std::string& dtdFile) const;
+		const std::string& dtdFile);
 
-	//! Read a string resource from disk.
-	std::string readStringFromDisk(const std::string& name) const;
+	//! Read a string resource from the game archive.
+	std::string readStringFromDisk(const std::string& name);
 
-	//! Read a generic resource from disk.
-	Gosu::Buffer* read(const std::string& name) const;
+	//! Read a generic resource from the game archive.
+	Gosu::Buffer* read(const std::string& name);
 
 	//! Helper function.
 	std::string path(const std::string& entryName) const;

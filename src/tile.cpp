@@ -283,10 +283,12 @@ void TileSet::set(int idx, TileType* type)
 
 TileType* TileSet::get(int x, int y)
 {
+	using namespace boost;
+
 	size_t i = idx(x, y);
 	if (i > types.size()) {
-		Log::err("TileSet", boost::str(boost::format(
-			"get(%d, %d): out of bounds") % x % y));
+		Log::err("TileSet", str(format("get(%d, %d): out of bounds")
+				% x % y));
 		return NULL;
 	}
 	return types[i];

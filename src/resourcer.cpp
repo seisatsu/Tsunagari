@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 #include <boost/python.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -55,8 +56,8 @@ static bool callInitpy(Resourcer* rc, const std::string& archivePath)
 		std::string("init.py: ") +
 		(exists ? "found" : "not found"));
 	if (exists)
-		rc->runPythonScript("init.py");
-	rc->rmPath(archivePath);
+		ASSERT(rc->runPythonScript("init.py"));
+	ASSERT(rc->rmPath(archivePath));
 	return true;
 }
 
@@ -79,9 +80,13 @@ bool Resourcer::init(char* argv0)
 
 bool Resourcer::prependPath(const std::string& path)
 {
+	using namespace boost;
+
 	int err = PHYSFS_mount(path.c_str(), NULL, 0);
-	if (!err) {
-		Log::fatal("Resourcer", path + ": could not open archive");
+	if (err == 0) {
+		Log::fatal("Resourcer", str(
+				format("%s: could not open archive: %s")
+				% path % PHYSFS_getLastError()));
 		return false;
 	}
 
@@ -90,21 +95,31 @@ bool Resourcer::prependPath(const std::string& path)
 
 bool Resourcer::appendPath(const std::string& path)
 {
+	using namespace boost;
+
 	int err = PHYSFS_mount(path.c_str(), NULL, 1);
-	if (!err) {
-		Log::fatal("Resourcer", path + ": could not open archive");
+	if (err == 0) {
+		Log::fatal("Resourcer", str(
+				format("%s: could not open archive: %s")
+				% path % PHYSFS_getLastError()));
 		return false;
 	}
 
 	return true;
 }
 
-void Resourcer::rmPath(const std::string& path)
+bool Resourcer::rmPath(const std::string& path)
 {
+	using namespace boost;
+
 	int err = PHYSFS_removeFromSearchPath(path.c_str());
-	if (err == 0)
-		Log::err("Resourcer",
-			"libphysfs: " + path + ": " + PHYSFS_getLastError());
+	if (err == 0) {
+		Log::err("Resourcer", str(format("libphysfs: %s: %s")
+				% path % PHYSFS_getLastError()));
+		return false;
+	}
+
+	return true;
 }
 
 bool Resourcer::resourceExists(const std::string& name) const
@@ -238,87 +253,98 @@ void Resourcer::garbageCollect()
 	texts.garbageCollect();
 }
 
-XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
-                                     const std::string& dtdFile) const
+template <class T>
+bool Resourcer::readFromDisk(const std::string& name, T& buf)
 {
+	using namespace boost;
+
+	PHYSFS_sint64 size;
+	PHYSFS_File* zf;
+
+	if (!PHYSFS_exists(name.c_str())) {
+		Log::err("Resourcer", str(format("%s: file missing")
+				% path(name)));
+		return false;
+	}
+
+	zf = PHYSFS_openRead(name.c_str());
+	if (!zf) {
+		Log::err("Resourcer", str(format("%s: error opening file: %s")
+				% path(name) % PHYSFS_getLastError()));
+		return false;
+	}
+
+	size = PHYSFS_fileLength(zf);
+	if (size == -1) {
+		Log::err("Resourcer", str(
+				format("%s: could not determine file size: %s")
+				% path(name) % PHYSFS_getLastError()));
+		PHYSFS_close(zf);
+		return false;
+	}
+	if (size > std::numeric_limits<uint32_t>::max()) {
+		// FIXME: Technically, we just need to issue multiple calls to
+		// PHYSFS_read. Fix when needed.
+		Log::err("Resourcer", str(format("%s: file too long (>4GB)")
+				% path(name)));
+		PHYSFS_close(zf);
+		return false;
+	}
+
+	buf.resize(size);
+	if (size == 0) {
+		PHYSFS_close(zf);
+		return true;
+	}
+
+	if (PHYSFS_read(zf, (char*)(buf.data()),
+			(PHYSFS_uint32)size, 1) != 1) {
+		Log::err("Resourcer", str(format("%s: error reading file: %s")
+				% path(name) % PHYSFS_getLastError()));
+		PHYSFS_close(zf);
+		return false;
+	}
+
+	PHYSFS_close(zf);
+	return true;
+}
+
+XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
+		const std::string& dtdFile)
+{
+	using namespace boost;
+
 	XMLDoc* doc = new XMLDoc;
-	const std::string data = readStringFromDisk(name);
+	std::string data = readStringFromDisk(name);
 	if (data.size()) {
-		const std::string p = path(name);
-		const std::string dtdPath = std::string(XML_DTD_PATH) +
-			"/" + dtdFile;
-		doc->init(p, data, dtdPath); // Ignore return value?
+		std::string p = path(name);
+		std::string dtdPath = str(format("%s/%s")
+				% XML_DTD_PATH % dtdFile);
+		if (!doc->init(p, data, dtdPath)) {
+			delete doc;
+			doc = NULL;
+		}
 	}
 	return doc;
 }
 
-std::string Resourcer::readStringFromDisk(const std::string& name) const
+std::string Resourcer::readStringFromDisk(const std::string& name)
 {
-	unsigned long size;
-	boost::scoped_array<char> buf;
 	std::string str;
-	PHYSFS_File* zf;
-
-	if (!PHYSFS_exists(name.c_str())) {
-		Log::err("Resourcer", path(name) + ": file missing");
-		return "";
-	}
-
-	zf = PHYSFS_openRead(name.c_str());
-	if (!zf) {
-		Log::err("Resourcer", path(name) + ": error opening file");
-		return "";
-	}
-
-	size = (unsigned long)PHYSFS_fileLength(zf);
-	buf.reset(new char[size + 1]);
-	buf[size] = '\0';
-
-	if (PHYSFS_read(zf, buf.get(), 1,
-	   (PHYSFS_uint32)PHYSFS_fileLength(zf)) == -1) {
-		Log::err("Resourcer", path(name) + ": general I/O error"
-			" during loading");
-		PHYSFS_close(zf);
-		return "";
-	}
-
-	str = buf.get();
-
-	PHYSFS_close(zf);
-	return str;
+	return readFromDisk(name, str) ? str : "";
 }
 
-Gosu::Buffer* Resourcer::read(const std::string& name) const
+Gosu::Buffer* Resourcer::read(const std::string& name)
 {
-	unsigned long size;
-	PHYSFS_File* zf;
+	Gosu::Buffer* buf = new Gosu::Buffer();
 
-	if (!PHYSFS_exists(name.c_str())) {
-		Log::err("Resourcer", path(name) + ": file missing");
+	if (readFromDisk(name, *buf)) {
+		return buf;
+	}
+	else {
+		delete buf;
 		return NULL;
 	}
-
-	zf = PHYSFS_openRead(name.c_str());
-	if (!zf) {
-		Log::err("Resourcer", path(name) + ": error opening file");
-		return NULL;
-	}
-
-	size = (unsigned long)PHYSFS_fileLength(zf);
-
-	Gosu::Buffer* buffer = new Gosu::Buffer;
-	buffer->resize(size);
-	if (PHYSFS_read(zf, buffer->data(), 1,
-	   (PHYSFS_uint32)PHYSFS_fileLength(zf)) == -1) {
-		Log::err("Resourcer", path(name) + ": general I/O error"
-			" during loading");
-		PHYSFS_close(zf);
-		delete buffer;
-		return NULL;
-	}
-
-	PHYSFS_close(zf);
-	return buffer;
 }
 
 std::string Resourcer::path(const std::string& entryName) const

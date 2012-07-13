@@ -29,6 +29,9 @@ struct libraries
 		// Initialize the C library's random seed.
 		srand((unsigned)time(NULL));
 
+		if (!Log::init())
+			exit(1);
+
 		/*
 		 * This initializes the XML library and checks for potential
 		 * ABI mismatches between the version it was compiled for and
