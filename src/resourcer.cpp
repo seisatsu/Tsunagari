@@ -24,6 +24,8 @@
 #include "window.h"
 #include "xml.h"
 
+#define ASSERT(x)  if (!(x)) return false
+
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 
 
@@ -45,10 +47,34 @@ Resourcer::~Resourcer()
 	PHYSFS_deinit();
 }
 
+static bool callInitpy(Resourcer* rc, const std::string& archivePath)
+{
+	ASSERT(rc->prependPath(archivePath));
+	bool exists = rc->resourceExists("init.py");
+	Log::info(archivePath,
+		std::string("init.py: ") +
+		(exists ? "found" : "not found"));
+	if (exists)
+		rc->runPythonScript("init.py");
+	rc->rmPath(archivePath);
+	return true;
+}
+
 bool Resourcer::init(char* argv0)
 {
-	int err = PHYSFS_init(argv0);
-	return err != 0;
+	ASSERT(PHYSFS_init(argv0) != 0);
+
+	// If any of our archives contain a file called "init.py", call it.
+	BOOST_FOREACH(std::string archivePath, conf.dataPath)
+		ASSERT(callInitpy(this, archivePath));
+	ASSERT(callInitpy(this, BASE_ZIP_PATH));
+
+	BOOST_FOREACH(std::string pathname, conf.dataPath)
+		ASSERT(prependPath(pathname));
+	ASSERT(appendPath(conf.worldFilename));
+	ASSERT(appendPath(BASE_ZIP_PATH));
+
+	return true;
 }
 
 bool Resourcer::prependPath(const std::string& path)

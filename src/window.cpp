@@ -57,37 +57,11 @@ GameWindow::~GameWindow()
 {
 }
 
-static bool callInitpy(Resourcer* rc, const std::string& archivePath)
-{
-	ASSERT(rc->prependPath(archivePath));
-	bool exists = rc->resourceExists("init.py");
-	Log::info(archivePath,
-		std::string("init.py: ") +
-		(exists ? "" : "not ") +
-		"found");
-	if (exists)
-		rc->runPythonScript("init.py");
-	rc->rmPath(archivePath);
-	return true;
-}
-
 bool GameWindow::init(char* argv0)
 {
 	rc.reset(new Resourcer());
 	world.reset(new World());
-	ASSERT(rc->init(argv0));
-
-	// If any of our archives contain a file called "init.py", call it.
-	BOOST_FOREACH(std::string archivePath, conf.dataPath)
-		ASSERT(callInitpy(rc.get(), archivePath));
-	ASSERT(callInitpy(rc.get(), BASE_ZIP_PATH));
-
-	BOOST_FOREACH(std::string pathname, conf.dataPath)
-		ASSERT(rc->prependPath(pathname));
-	ASSERT(rc->appendPath(conf.worldFilename));
-	ASSERT(rc->appendPath(BASE_ZIP_PATH));
-
-	return world->init();
+	return rc->init(argv0) && world->init();
 }
 
 int GameWindow::width() const
