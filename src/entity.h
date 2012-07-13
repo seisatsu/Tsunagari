@@ -55,10 +55,10 @@ public:
 	void draw();
 	bool needsRedraw() const;
 
-	virtual void tick(unsigned long dt);
-	void tickTurn(unsigned long dt);
-	void tickTile(unsigned long dt);
-	void tickNoTile(unsigned long dt);
+	virtual void tick(time_t dt);
+	void tickTurn(time_t dt);
+	void tickTile(time_t dt);
+	void tickNoTile(time_t dt);
 
 	void turn();
 

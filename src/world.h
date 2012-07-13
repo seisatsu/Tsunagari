@@ -14,6 +14,7 @@
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
 #include "player.h"
+#include "resourcer.h"
 #include "scriptinst.h"
 #include "viewport.h"
 
@@ -35,26 +36,46 @@ class GameWindow;
 class World
 {
 public:
-	//! Get the currently open World.
+	/**
+	 * Get the currently open World.
+	 */
 	static World* instance();
 
 	World();
 	~World();
 
-	//! Initialize the world for use.
+	/**
+	 * Initialize the world for use.
+	 */
 	bool init();
 
-	const std::string& getName();
+	/**
+	 * User's friendly name for this map.
+	 */
+	const std::string& getName() const;
 
-	//! Process key presses.
+	/**
+	 * Syncronized time value used throughout the engine.
+	 */
+	time_t time() const;
+
+	/**
+	 * Process key presses.
+	 */
 	void buttonDown(const Gosu::Button btn);
 	void buttonUp(const Gosu::Button btn);
 
-	//! Draw game state to the screen.
+	/**
+	 * Draw game state to the screen.
+	 */
 	void draw();
 
-	//! Do we need to redraw the screen?
+	/**
+	 * Do we need to redraw the screen?
+	 */
 	bool needsRedraw() const;
+
+	void update(time_t now);
 
 	/**
 	 * Updates the game state within this World as if dt milliseconds had
@@ -79,34 +100,53 @@ public:
 	 */
 	void turn();
 
-	//! Create a new Area object, loading from the appropriate files. If
-	//! the Area has already been loaded previously, return that instance.
+	/**
+	 * Create a new Area object, loading from the appropriate files. If
+	 * the Area has already been loaded previously, return that instance.
+	 */
 	Area* getArea(const std::string& filename);
 
-	//! Returns the currently focused Area.
+	/**
+	 * Returns the currently focused Area.
+	 */
 	Area* getFocusedArea();
 
-	//! Switch the game to a new Area, moving the player to the specified
-	//! position in the Area.
+	/**
+	 * Switch the game to a new Area, moving the player to the specified
+	 * position in the Area.
+	 */
 	void focusArea(Area* area, int x, int y, double z);
 	void focusArea(Area* area, vicoord playerPos);
 
+	void setPaused(bool b);
+
 	void runAreaLoadScript(Area* area);
 
-private:
-	//! Draws black borders around the screen to correct the aspect ratio.
-	//! Draws black borders around the Area if the Area doesn't fit in the
-	//! Viewport.
-	void pushLetterbox();
-	void popLetterbox();
+protected:
+	/**
+	 * Calculate time passed since engine state was last updated.
+	 */
+	time_t calculateDt(time_t now);
 
-	//! Draws a rectangle on the screen of the specified color. Coordinates
-	//! are in pixels.
+	/**
+	 * Draws black borders around the screen. Used to correct the aspect
+	 * ratio and optimize drawing if the Area doesn't fit into the
+	 * Viewport.
+	 */
+	int pushLetterbox();
+	void popLetterbox(int clips);
+
+	/**
+	 * Draws a rectangle on the screen of the specified color. Coordinates
+	 * are in pixels.
+	 */
 	void drawRect(double x1, double x2, double y1, double y2,
 	              Gosu::Color c, double z);
 
-	//! Returns an affine transformation that will zoom and pan the Area to
-	//! fit on-screen.
+	/**
+	 * Returns an affine transformation that will zoom and pan the Area to
+	 * fit on-screen.
+	 */
 	Gosu::Transform getTransform();
 
 	bool processDescriptor();
@@ -115,45 +155,47 @@ private:
 	bool processScript(XMLNode node);
 	bool processInput(XMLNode node);
 
-	boost::shared_ptr<Viewport> view;
-	Area* area;
-	boost::shared_ptr<Music> music;
-	Player player;
-	Resourcer* rc;
-	int clips;
-
+protected:
 	typedef boost::unordered_map<std::string, Area*> AreaMap;
-	AreaMap areas;
 
-	//! WorldTypeLocality XML Storage Enum
-	/*!
-	  Stores the World locality type. Options are "local" (singleplayer),
-	  or "network" (multiplayer).
-	*/
-	enum WorldTypeLocality {
-		LOCAL,
-		NETWORK
-	};
 
-	//! WorldEntry XML Storage Struct
-	/*!
-	  Stores the World's entry point data. Includes the start
-	  Area, and starting coordinates.
-	*/
-	struct WorldEntry {
-		std::string area;
-		vicoord coords;
-	};
+	/**
+	 * Last time engine state was updated. See World::update().
+	 */
+	time_t lastTime;
+
+	/**
+	 * Total unpaused game run time.
+	 */
+	time_t total;
+
 
 	std::string name;
 	std::string author;
 	double version;
-	std::string playerentity;
-	WorldTypeLocality locality;
-	WorldEntry entry;
+	icoord viewportSz;
+
+
+	std::string playerEntity;
+	std::string startArea;
+	vicoord startCoords;
+
+
 	ScriptInst loadScript;
 	ScriptInst areaLoadScript;
-	icoord viewport;
+	ImageRef pauseInfo;
+
+
+	AreaMap areas;
+	Area* area;
+	Player player;
+	boost::shared_ptr<Viewport> view;
+	boost::shared_ptr<Music> music;
+	Resourcer* rc;
+
+
+	bool redraw;
+	bool paused;
 };
 
 void exportWorld();

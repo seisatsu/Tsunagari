@@ -61,34 +61,22 @@ public:
 	//! Gosu Callback
 	void update();
 
-	//! Syncronized time value used throughout the engine
-	int time() const;
+	//! Time since epoch.
+	time_t time() const;
 
 private:
-	//! Calculate time passed since engine state was last updated
-	void calculateDt();
-
 	//! Process persistent keyboard input
-	void handleKeyboardInput();
+	void handleKeyboardInput(time_t now);
 
 	boost::scoped_ptr<Resourcer> rc;
 	boost::scoped_ptr<World> world;
 
-	//! Last time engine state was updated.
-	int lastTime;
-
-	//! Milliseconds that have passed since engine last updated.
-	int dt; // delta time
-
-	//! Milliseconds that have passed since game started. Loops on overflow.
-	int now;
-
-	//! Call the garbage colelctor once a second.
-	int currentSecond;
+	time_t now;
+	time_t lastGCtime;
 
 	struct keystate {
 		bool consecutive, initiallyResolved;
-		int since;
+		time_t since;
 	};
 
 	std::map<Gosu::Button, keystate> keystates;

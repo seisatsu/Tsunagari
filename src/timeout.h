@@ -13,12 +13,12 @@
 
 class Timeout {
 public:
-	Timeout(boost::python::object callback, int delay);
+	Timeout(boost::python::object callback, time_t delay);
 	void cancel();
 
 	bool isActive() const;
-	bool ready(int now) const;
-	int readyTime() const;
+	bool ready(time_t now) const;
+	time_t readyTime() const;
 	void execute();
 
 	//! Return a rought string representation of this object.
@@ -26,7 +26,7 @@ public:
 
 private:
 	boost::python::object callback;
-	int start, delay;
+	time_t start, delay;
 	bool active;
 };
 

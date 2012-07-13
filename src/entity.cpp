@@ -18,7 +18,7 @@
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"
-#include "window.h"
+#include "world.h"
 #include "xml.h"
 
 #define ASSERT(x)  if (!(x)) return false
@@ -71,19 +71,19 @@ void Entity::destroy()
 
 void Entity::draw()
 {
-	int now = GameWindow::instance().time();
+	time_t now = World::instance()->time();
 	phase->frame(now)->draw(doff.x + r.x, doff.y + r.y, r.z);
 	redraw = false;
 }
 
 bool Entity::needsRedraw() const
 {
-	int now = GameWindow::instance().time();
+	time_t now = World::instance()->time();
 	return redraw || phase->needsRedraw(now);
 }
 
 
-void Entity::tick(unsigned long dt)
+void Entity::tick(time_t dt)
 {
 	runTickScript();
 	switch (conf.moveMode) {
@@ -99,12 +99,12 @@ void Entity::tick(unsigned long dt)
 	}
 }
 
-void Entity::tickTurn(unsigned long)
+void Entity::tickTurn(time_t)
 {
 	// FIXME Characters (!!) don't do anything in TILE mode.
 }
 
-void Entity::tickTile(unsigned long dt)
+void Entity::tickTile(time_t dt)
 {
 	if (!moving)
 		return;
@@ -119,7 +119,7 @@ void Entity::tickTile(unsigned long dt)
 		if (moving) {
 			// Time rollover.
 			double perc = 1.0 - destDist/traveled;
-			unsigned long remt = (unsigned long)(perc * (double)dt);
+			time_t remt = (time_t)(perc * (double)dt);
 			tick(remt);
 		}
 	}
@@ -133,7 +133,7 @@ void Entity::tickTile(unsigned long dt)
 	}
 }
 
-void Entity::tickNoTile(unsigned long)
+void Entity::tickNoTile(time_t)
 {
 	// TODO
 }
@@ -158,7 +158,7 @@ bool Entity::setPhase(const std::string& name)
 	}
 	Animation* newPhase = &it->second;
 	if (phase != newPhase) {
-		int now = GameWindow::instance().time();
+		time_t now = World::instance()->time();
 		phase = newPhase;
 		phase->startOver(now);
 		phaseName = name;

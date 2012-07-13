@@ -4,12 +4,12 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <Gosu/Image.hpp>
 #include <Gosu/Utility.hpp>
 
 #include "area-tmx.h"
 #include "log.h"
 #include "python.h"
-#include "resourcer.h"
 #include "timeout.h"
 #include "window.h"
 #include "world.h"
@@ -25,7 +25,7 @@ World* World::instance()
 }
 
 World::World()
-	: music(new Music()), clips(0)
+	: lastTime(0), total(0), music(new Music()), redraw(false), paused(false)
 {
 	globalWorld = this;
 	pythonSetGlobal("World", this);
@@ -37,58 +37,105 @@ World::~World()
 
 bool World::init()
 {
-	if (!processDescriptor()) // Try to load in descriptor.
-		return false;
+	ASSERT(processDescriptor()); // Try to load in descriptor.
+	ASSERT(pauseInfo = rc->getImage("resource/pause_overlay.png"));
 
-	if (!player.init(playerentity))
-		return false;
+	ASSERT(player.init(playerEntity));
 	player.setPhase("down");
 
 	pythonSetGlobal("Player", (Entity*)&player);
-	loadScript.invoke();
 
-	view.reset(new Viewport(viewport));
+	view.reset(new Viewport(viewportSz));
 	view->trackEntity(&player);
 
-	Area* area = getArea(entry.area);
-	if (!area)
-		return false;
-	focusArea(area, entry.coords);
+	loadScript.invoke();
+
+	Area* area = getArea(startArea);
+	ASSERT(area != NULL);
+	focusArea(area, startCoords);
+
 	return true;
 }
 
-const std::string& World::getName()
+const std::string& World::getName() const
 {
 	return name;
 }
 
+time_t World::time() const
+{
+	return total;
+}
+
 void World::buttonDown(const Gosu::Button btn)
 {
-	area->buttonDown(btn);
+	switch (btn.id()) {
+	case Gosu::kbEscape:
+		setPaused(!paused);
+		break;
+	default:
+		if (!paused)
+			area->buttonDown(btn);
+		break;
+	}
 }
 
 void World::buttonUp(const Gosu::Button btn)
 {
-	area->buttonUp(btn);
+	switch (btn.id()) {
+	case Gosu::kbEscape:
+		break;
+	default:
+		if (!paused)
+			area->buttonUp(btn);
+		break;
+	}
 }
 
 void World::draw()
 {
+	redraw = false;
+
 	GameWindow& window = GameWindow::instance();
 	Gosu::Graphics& graphics = window.graphics();
 
-	pushLetterbox();
+	int clips = pushLetterbox();
 	graphics.pushTransform(getTransform());
 
 	area->draw();
 
 	graphics.popTransform();
-	popLetterbox();
+	popLetterbox(clips);
+
+	if (paused) {
+		unsigned ww = graphics.width();
+		unsigned wh = graphics.height();
+		unsigned iw = pauseInfo->width();
+		unsigned ih = pauseInfo->height();
+
+		Gosu::Color darken(127, 0, 0, 0);
+		double top = std::numeric_limits<double>::max();
+		drawRect(0, ww, 0, wh, darken, top);
+		pauseInfo->draw(ww/2 - iw/2, wh/2 - ih/2, top);
+	}
 }
 
 bool World::needsRedraw() const
 {
-	return area->needsRedraw();
+	if (redraw)
+		return true;
+	if (!paused && area->needsRedraw())
+		return true;
+	return false;
+}
+
+void World::update(time_t now)
+{
+	time_t dt = calculateDt(now);
+	if (!paused) {
+		total += dt;
+		tick(dt);
+	}
 }
 
 void World::tick(unsigned long dt)
@@ -138,13 +185,44 @@ void World::focusArea(Area* area, vicoord playerPos)
 	area->focus();
 }
 
+void World::setPaused(bool b)
+{
+	if (paused == b) {
+		if (paused)
+			Log::err("World", "game already paused");
+		else
+			Log::err("World", "game already unpaused");
+		return;
+	}
+
+	paused = b;
+	redraw = true;
+
+	if (paused)
+		music->setPaused(true);
+	else
+		music->setPaused(false);
+}
+
 void World::runAreaLoadScript(Area* area)
 {
 	pythonSetGlobal("Area", area);
 	areaLoadScript.invoke();
 }
 
-void World::pushLetterbox()
+time_t World::calculateDt(time_t now)
+{
+	if (lastTime == 0) {
+		lastTime = now;
+		return 0;
+	}
+
+	time_t dt = now - lastTime;
+	lastTime = now;
+	return dt;
+}
+
+int World::pushLetterbox()
 {
 	GameWindow& w = GameWindow::instance();
 	Gosu::Graphics& g = w.graphics();
@@ -154,7 +232,7 @@ void World::pushLetterbox()
 	rvec2 lb = -1 * view->getLetterboxOffset();
 
 	g.beginClipping(lb.x, lb.y, sz.x - 2 * lb.x, sz.y - 2 * lb.y);
-	clips++;
+	int clips = 1;
 
 	// Map bounds.
 	rvec2 scale = view->getScale();
@@ -176,9 +254,11 @@ void World::pushLetterbox()
 		g.beginClipping(0, physScroll.y, sz.x, sz.y - 2 * physScroll.y);
 		clips++;
 	}
+
+	return clips;
 }
 
-void World::popLetterbox()
+void World::popLetterbox(int clips)
 {
 	GameWindow& w = GameWindow::instance();
 	for (; clips; clips--)
@@ -218,7 +298,7 @@ bool World::processDescriptor()
 	XMLRef doc;
 	XMLNode root;
 
-	Resourcer* rc = Resourcer::instance();
+	rc = Resourcer::instance();
 	ASSERT(doc = rc->getXMLDoc("world.conf", "world.dtd"));
 	ASSERT(root = doc->root()); // <world>
 
@@ -265,10 +345,10 @@ bool World::processInit(XMLNode node)
 {
 	for (node = node.childrenNode(); node; node = node.next()) {
 		if (node.is("area")) {
-			entry.area = node.content();
+			startArea = node.content();
 		}
 		else if (node.is("player")) {
-			playerentity = node.content();
+			playerEntity = node.content();
 		}
 		else if (node.is("mode")) {
 			std::string str = node.content();
@@ -280,14 +360,14 @@ bool World::processInit(XMLNode node)
 				conf.moveMode = NOTILE;
 		}
 		else if (node.is("coords")) {
-			if (!node.intAttr("x", &entry.coords.x) ||
-			    !node.intAttr("y", &entry.coords.y) ||
-			    !node.doubleAttr("z", &entry.coords.z))
+			if (!node.intAttr("x", &startCoords.x) ||
+			    !node.intAttr("y", &startCoords.y) ||
+			    !node.doubleAttr("z", &startCoords.z))
 				return false;
 		}
 		else if (node.is("viewport")) {
-			if (!node.intAttr("width", &viewport.x) ||
-			    !node.intAttr("height", &viewport.y))
+			if (!node.intAttr("width", &viewportSz.x) ||
+			    !node.intAttr("height", &viewportSz.y))
 				return false;
 		}
 	}

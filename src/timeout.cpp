@@ -10,15 +10,18 @@
 
 #include "python.h"
 #include "timeout.h"
-#include "window.h"
+#include "world.h"
 
 static std::list<Timeout*> timeouts;
 
 static Timeout* pythonSetTimeout(boost::python::object callback, float delay)
 {
-	int delayi = (int)(1000 * delay);
-	int now = GameWindow::instance().time();
-	int end = now + delayi;
+	if (delay < 0.0)
+		delay = 0.0;
+
+	time_t delayi = (time_t)(1000 * delay);
+	time_t now = World::instance()->time();
+	time_t end = now + delayi;
 
 	// Insert sorted by resolution time.
 	std::list<Timeout*>::iterator it;
@@ -33,9 +36,9 @@ static Timeout* pythonSetTimeout(boost::python::object callback, float delay)
 	return t;
 }
 
-Timeout::Timeout(boost::python::object callback, int delay)
+Timeout::Timeout(boost::python::object callback, time_t delay)
 	: callback(callback),
-	  start(GameWindow::instance().time()),
+	  start(World::instance()->time()),
 	  delay(delay),
 	  active(true)
 {
@@ -51,12 +54,12 @@ bool Timeout::isActive() const
 	return active;
 }
 
-bool Timeout::ready(int now) const
+bool Timeout::ready(time_t now) const
 {
 	return now > start + delay;
 }
 
-int Timeout::readyTime() const
+time_t Timeout::readyTime() const
 {
 	return start + delay;
 }
@@ -77,7 +80,7 @@ std::string Timeout::repr() const
 {
 	using namespace boost;
 
-	int now = GameWindow::instance().time();
+	time_t now = World::instance()->time();
 	return str(format("<timeout time_remaining=%dms active=%s />")
 			% (start + delay - now)
 			% (isActive() ? "true" : "false")
@@ -86,7 +89,7 @@ std::string Timeout::repr() const
 
 void updateTimeouts()
 {
-	int now = GameWindow::instance().time();
+	time_t now = World::instance()->time();
 	bool next = true;
 
 	while (next && timeouts.size()) {

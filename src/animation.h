@@ -51,28 +51,28 @@ public:
 	 * @param frameLength length of time in milliseconds that each frame
 	 *        will display for
 	 */
-	Animation(const std::vector<ImageRef>& frames, int frameLength);
+	Animation(const std::vector<ImageRef>& frames, time_t frameLength);
 
 	/**
 	 * Starts the animation over.
 	 *
 	 * @now current time in milliseconds
 	 */
-	void startOver(int now);
+	void startOver(time_t now);
 
 	/**
 	 * Has this Animation switched frames since frame() was last called?
 	 *
 	 * @now current time in milliseconds
 	 */
-	bool needsRedraw(int now) const;
+	bool needsRedraw(time_t now) const;
 
 	/**
 	 * Returns the image that should be displayed at this time.
 	 *
 	 * @now current time in milliseconds
 	 */
-	Gosu::Image* frame(int now);
+	Gosu::Image* frame(time_t now);
 
 private:
 
@@ -86,16 +86,16 @@ private:
 	bool animated;
 
 	/** Length of each frame in animation in milliseconds. */
-	int frameLen;
+	time_t frameLen;
 
 	/** Length of one complete cycle through animation in milliseconds. */
-	int animCycle;
+	time_t animCycle;
 
 	/** Index of frame currently displaying on screen. */
-	int frameShowing;
+	size_t frameShowing;
 
 	/** Time offset to find current animation frame. */
-	int offset;
+	time_t offset;
 };
 
 #endif

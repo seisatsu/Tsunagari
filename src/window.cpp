@@ -16,6 +16,9 @@
 
 #define ASSERT(x)  if (!(x)) return false
 
+// Garbage collection called every X milliseconds
+#define GC_CALL_PERIOD 10 * 1000
+
 namespace Gosu {
 	/**
 	 * Enable 1980s-style graphics scaling: nearest-neighbor filtering.
@@ -45,9 +48,7 @@ GameWindow::GameWindow()
 	                      (unsigned)conf.windowSize.y,
 	    conf.fullscreen
 	  ),
-	  lastTime((int)Gosu::milliseconds()),
-	  now(lastTime),
-	  currentSecond(now/1000)
+	  lastGCtime(0)
 {
 	globalWindow = this;
 	Gosu::enableUndocumentedRetrofication();
@@ -77,8 +78,11 @@ int GameWindow::height() const
 void GameWindow::buttonDown(const Gosu::Button btn)
 {
 	now = (int)Gosu::milliseconds();
-	if (btn == Gosu::kbEscape)
+	if (btn == Gosu::kbEscape &&
+			(input().down(Gosu::kbLeftShift) ||
+			 input().down(Gosu::kbRightShift))) {
 		close();
+	}
 	else {
 		if (keystates.find(btn) == keystates.end()) {
 			keystate& state = keystates[btn];
@@ -112,31 +116,24 @@ bool GameWindow::needsRedraw() const
 
 void GameWindow::update()
 {
-	calculateDt();
-	if (conf.moveMode == TURN)
-		handleKeyboardInput();
-	world->tick(dt);
+	now = Gosu::milliseconds();
 
-	// Run once per second.
-	if (now/1000 > currentSecond) {
-		currentSecond = now/1000;
+	if (conf.moveMode == TURN)
+		handleKeyboardInput(now);
+	world->update(now);
+
+	if (now > lastGCtime + GC_CALL_PERIOD) {
+		lastGCtime = now;
 		rc->garbageCollect();
 	}
 }
 
-int GameWindow::time() const
+time_t GameWindow::time() const
 {
 	return now;
 }
 
-void GameWindow::calculateDt()
-{
-	now = (int)Gosu::milliseconds();
-	dt = now - lastTime;
-	lastTime = now;
-}
-
-void GameWindow::handleKeyboardInput()
+void GameWindow::handleKeyboardInput(time_t now)
 {
 	std::map<Gosu::Button, keystate>::iterator it;
 
@@ -156,7 +153,7 @@ void GameWindow::handleKeyboardInput()
 			continue;
 		}
 
-		int delay = state.consecutive ?
+		time_t delay = state.consecutive ?
 		    conf.persistCons : conf.persistInit;
 		if (now >= state.since + delay) {
 			state.since = now;

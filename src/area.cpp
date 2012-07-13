@@ -531,7 +531,7 @@ void Area::drawTile(Tile& tile, int x, int y, double depth)
 {
 	TileType* type = (TileType*)tile.parent;
 	if (type) {
-		int now = GameWindow::instance().time();
+		time_t now = World::instance()->time();
 		const Gosu::Image* img = type->anim.frame(now);
 		if (img)
 			img->draw((double)x*img->width(),

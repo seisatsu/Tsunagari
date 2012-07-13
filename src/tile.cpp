@@ -14,7 +14,7 @@
 #include "python-optional.h"
 #include "string.h"
 #include "tile.h"
-#include "window.h"
+#include "world.h"
 
 static int ivec2_to_dir(ivec2 v)
 {
@@ -255,7 +255,7 @@ TileType::TileType(ImageRef& img)
 
 bool TileType::needsRedraw() const
 {
-	int now = GameWindow::instance().time();
+	time_t now = World::instance()->time();
 	return anim.needsRedraw(now);
 }
 

@@ -32,8 +32,7 @@ public:
 				CacheEntry& entry = it->second;
 				// Set lastUsed to now because it won't be used
 				// by the time garbageCollect() gets to it.
-				int now = GameWindow::instance().time();
-				entry.lastUsed = now;
+				entry.lastUsed = GameWindow::instance().time();
 				return entry.resource;
 			}
 		}
@@ -110,7 +109,7 @@ private:
 	struct CacheEntry
 	{
 		T resource;
-		int lastUsed;
+		time_t lastUsed;
 		int memoryUsed;
 	};
 

@@ -21,7 +21,7 @@ Animation::Animation(const ImageRef& frame)
 	frames.push_back(frame);
 }
 
-Animation::Animation(const std::vector<ImageRef>& _frames, int frameLen)
+Animation::Animation(const std::vector<ImageRef>& _frames, time_t frameLen)
 	: frameLen(frameLen),
 	  frameShowing(0),
 	  offset(0)
@@ -30,10 +30,10 @@ Animation::Animation(const std::vector<ImageRef>& _frames, int frameLen)
 	for (it = _frames.begin(); it != _frames.end(); it++)
 		frames.push_back(*it);
 	animated = frames.size() > 1;
-	animCycle = frameLen * (int)frames.size();
+	animCycle = frameLen * frames.size();
 }
 
-void Animation::startOver(int now)
+void Animation::startOver(time_t now)
 {
 	if (animated) {
 		offset = now;
@@ -41,17 +41,17 @@ void Animation::startOver(int now)
 	}
 }
 
-bool Animation::needsRedraw(int now) const
+bool Animation::needsRedraw(time_t now) const
 {
 	if (animated) {
-		int pos = now - offset;
-		int frame = (pos % animCycle) / frameLen;
+		time_t pos = now - offset;
+		size_t frame = (pos % animCycle) / frameLen;
 		return frame != frameShowing;
 	}
 	return false;
 }
 
-Gosu::Image* Animation::frame(int now)
+Gosu::Image* Animation::frame(time_t now)
 {
 	switch (frames.size()) {
 	case 0:
@@ -59,7 +59,7 @@ Gosu::Image* Animation::frame(int now)
 	case 1:
 		return frames[0].get();
 	default:
-		int pos = now - offset;
+		time_t pos = now - offset;
 		frameShowing = (pos % animCycle) / frameLen;
 		return frames[frameShowing].get();
 	}
