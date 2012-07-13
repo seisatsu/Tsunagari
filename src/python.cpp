@@ -10,10 +10,12 @@
 
 #include <boost/python.hpp>
 
+#include "client-conf.h"
 #include "log.h"
 #include "python.h"
 #include "python-bindings.h" // for pythonInitBindings
 #include "resourcer.h"
+#include "window.h"
 
 #include <Python-ast.h>
 
@@ -238,7 +240,13 @@ void pythonErr()
 
 	PyErr_NormalizeException(&exc, &val, &tb);
 
-	Log::err("Python", extractException(exc, val, tb));
+	if (conf.scriptHalt) {
+		Log::fatal("Python", extractException(exc, val, tb));
+		GameWindow::instance().close();
+		exit(0);
+	}
+	else
+		Log::err("Python", extractException(exc, val, tb));
 }
 
 bp::object pythonGlobals()

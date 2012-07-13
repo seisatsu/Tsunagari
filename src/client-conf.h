@@ -4,6 +4,9 @@
 ** Copyright 2012 OmegaSDG **
 ****************************/
 
+#ifndef CLIENT_CONF_H
+#define CLIENT_CONF_H
+
 #include <vector>
 
 #include "log.h"
@@ -29,6 +32,7 @@ struct Conf {
 	bool fullscreen;
 	bool audioEnabled;
 	bool cacheEnabled;
+	bool scriptHalt;
 	int cacheTTL;
 	int cacheSize;
 	int persistInit;
@@ -40,4 +44,6 @@ extern Conf conf;
 
 bool parseConfig(const char* filename);
 bool parseCommandLine(int argc, char* argv[]);
+
+#endif
 
