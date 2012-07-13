@@ -90,6 +90,25 @@ void Log::fatal(std::string domain, std::string msg)
 	}
 }
 
+void Log::reportVerbosityOnStartup()
+{
+	std::string verbString;
+	switch (conf.verbosity)
+	{
+		case V_QUIET:
+			verbString = "QUIET";
+			break;
+		case V_NORMAL:
+			verbString = "NORMAL";
+			break;
+		case V_VERBOSE:
+			verbString = "VERBOSE";
+			break;
+	}
+	std::cout << ts() << "Reporting engine messages in " << verbString 
+			<< " mode." << std::endl;
+}
+
 static void pythonLogInfo(std::string msg)
 {
 	Log::info("Script", msg);

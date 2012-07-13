@@ -27,6 +27,8 @@ public:
 	static void err(std::string domain, std::string msg);
 	static void fatal(std::string domain, std::string msg);
 
+	static void reportVerbosityOnStartup();
+
 private:
 	Log();
 };

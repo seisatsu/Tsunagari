@@ -4,6 +4,7 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -27,9 +28,6 @@ struct libraries
 	{
 		// Initialize the C library's random seed.
 		srand((unsigned)time(NULL));
-
-		if (!Log::init())
-			exit(1);
 
 		/*
 		 * This initializes the XML library and checks for potential
@@ -61,6 +59,12 @@ int main(int argc, char** argv)
 		wFixConsole();
 	#endif
 
+	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION 
+			<< std::endl;
+
+	if (!Log::init())
+		exit(1);
+
 	if (!parseConfig(CLIENT_CONF_PATH))
 		return 1;
 	if (!parseCommandLine(argc, argv))
@@ -69,6 +73,8 @@ int main(int argc, char** argv)
 		return 1;
 	if (conf.verbosity)
 		Log::setVerbosity(conf.verbosity);
+
+	Log::reportVerbosityOnStartup();
 
 	// Init various libraries we use.
 	libraries libs;
