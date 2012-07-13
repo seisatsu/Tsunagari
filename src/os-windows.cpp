@@ -1,8 +1,10 @@
-/*********************************
-** Tsunagari Tile Engine        **
-** os-windows.cpp               **
-** Copyright 2011-2012 OmegaSDG **
-*********************************/
+/****************************
+** Tsunagari Tile Engine   **
+** os-windows.cpp          **
+** Copyright 2012 OmegaSDG **
+****************************/
+
+#ifdef _WIN32
 
 #include "os-windows.h"
 #include "window.h"
@@ -28,4 +30,6 @@ void wMessageBox(std::string title, std::string text)
 	);
 	setPaused(false);
 }
+
+#endif
 

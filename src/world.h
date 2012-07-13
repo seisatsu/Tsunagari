@@ -183,6 +183,7 @@ protected:
 	AreaMap areas;
 	Area* area;
 	Player player;
+	std::string playerPhase;
 	boost::shared_ptr<Viewport> view;
 	boost::shared_ptr<Music> music;
 	Resourcer* rc;

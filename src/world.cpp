@@ -42,7 +42,7 @@ bool World::init()
 	ASSERT(pauseInfo = rc->getImage("resource/pause_overlay.png"));
 
 	ASSERT(player.init(playerEntity));
-	player.setPhase("down");
+	player.setPhase(playerPhase);
 
 	pythonSetGlobal("Player", (Entity*)&player);
 
@@ -383,7 +383,8 @@ bool World::processInit(XMLNode node)
 			startArea = node.content();
 		}
 		else if (node.is("player")) {
-			playerEntity = node.content();
+			playerEntity = node.attr("file");
+			playerPhase = node.attr("phase");
 		}
 		else if (node.is("mode")) {
 			std::string str = node.content();

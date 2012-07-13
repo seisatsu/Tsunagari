@@ -7,7 +7,9 @@
 
 <!ELEMENT init (area, player, mode, coords, viewport)>
 <!ELEMENT area (#PCDATA)>
-<!ELEMENT player (#PCDATA)>
+<!ELEMENT player EMPTY>
+<!ATTLIST player file  CDATA #REQUIRED
+                 phase CDATA #REQUIRED>
 <!ELEMENT mode (#PCDATA)>
 <!ELEMENT coords EMPTY>
 <!ATTLIST coords x     CDATA #REQUIRED

@@ -33,26 +33,5 @@
 	#define DEF_CACHE_SIZE			100
 // ===
 
-// === Cross-Platform Fixes ===
-	/* Fix snprintf for VisualC++. */
-	#ifdef _MSC_VER
-		#define snprintf _snprintf
-	#endif
-
-	/* Fix NAN constant for VisualC++. */
-	#ifdef _MSC_VER
-		#ifndef NAN
-		    static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
-		    #define NAN (*(const float *) __nan)
-		#endif
-	#endif
-
-	/* Fix PI declaration for VisualC++. */
-	#ifndef M_PI
-		#define M_PI 3.14159265358979323846
-		#define M_PI_2 1.57079632679489661923
-	#endif
-// ===
-
 #endif
 
