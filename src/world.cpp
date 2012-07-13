@@ -110,17 +110,23 @@ void World::draw()
 	graphics.popTransform();
 	popLetterbox(clips);
 
-	if (userPaused) {
+	if (paused) {
 		unsigned ww = graphics.width();
 		unsigned wh = graphics.height();
-		unsigned iw = pauseInfo->width();
-		unsigned ih = pauseInfo->height();
-
 		Gosu::Color darken(127, 0, 0, 0);
 		double top = std::numeric_limits<double>::max();
+
 		drawRect(0, ww, 0, wh, darken, top);
-		pauseInfo->draw(ww/2 - iw/2, wh/2 - ih/2, top);
+
+		if (userPaused) {
+			unsigned iw = pauseInfo->width();
+			unsigned ih = pauseInfo->height();
+
+			pauseInfo->draw(ww/2 - iw/2, wh/2 - ih/2, top);
+		}
 	}
+
+
 }
 
 bool World::needsRedraw() const
