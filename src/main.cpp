@@ -4,7 +4,6 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
-#include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
