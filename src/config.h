@@ -15,14 +15,14 @@
 	#define CLIENT_CONF_PATH "./client.ini"
 
 	/* Base data file. */
-	#define BASE_ZIP_PATH "data/base.zip"
+	#define BASE_ZIP_PATH "../data/base.zip"
 
 	/* Tsunagari XML DTD directory. */
-	#define XML_DTD_PATH "data/dtd/"
+	#define XML_DTD_PATH "../data/dtd/"
 // ===
 
 // === Client.ini Default Values ===
-	#define DEF_ENGINE_WORLD		"data/testing.world"
+	#define DEF_ENGINE_WORLD		"../data/testing.world"
 	#define DEF_ENGINE_VERBOSITY	"verbose"
 	#define DEF_WINDOW_WIDTH		640
 	#define DEF_WINDOW_HEIGHT		480
