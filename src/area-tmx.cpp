@@ -24,6 +24,10 @@
 #include "window.h"
 #include "world.h"
 
+#ifdef _WIN32
+	#include "os-windows.h"
+#endif
+
 #define ASSERT(x)  if (!(x)) return false
 
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting

@@ -12,6 +12,9 @@
 #include "string.h"
 #include "xml.h"
 
+#ifdef _WIN32
+	#include "os-windows.h"
+#endif
 
 XMLNode::XMLNode()
 {

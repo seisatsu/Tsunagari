@@ -22,13 +22,13 @@ void wFixConsole()
 
 void wMessageBox(std::string title, std::string text)
 {
-	setPaused(true);
+	World::instance()->setPaused(true);
 	MessageBox(GameWindow::instance().handle(), 
 		Gosu::widen(text).c_str(), 
 		Gosu::widen(title).c_str(), 
 		MB_OK
 	);
-	setPaused(false);
+	World::instance()->setPaused(false);
 }
 
 #endif
