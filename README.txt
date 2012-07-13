@@ -11,7 +11,7 @@ ________                                _________________    ________
 Tsunagari Tile Engine
 <http://tileengine.org/>
 
-Alpha Preview Release 4 "Akatsuki" Revision 2
+Alpha Preview Release 4 "Akatsuki" Revision 3
 
 -----
 
@@ -40,8 +40,8 @@ Tsunagari license: MIT
 Requirements:
 NAME        LICENSE     LINK
 libboost    (BOOST)     http://www.boost.org/
-libgosu     (MIT)       http://www.libgosu.org/
-libpython   (PSF)       http://www.python.org/     
+libgosu     (MIT)       http://github.com/jamer/gosu/tree/quake2_allocblock (fork)
+libpython   (PSF)       http://www.python.org/
 libxml2     (MIT)       http://xmlsoft.org/
 PhysicsFS   (ZLIB)      http://icculus.org/physfs/
 
