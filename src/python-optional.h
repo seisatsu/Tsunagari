@@ -9,6 +9,9 @@
  * http://stackoverflow.com/questions/6274822/boost-python-no-to-python-converter-found-for-stdstring
  */
 
+#ifndef PYTHON_OPTIONAL_H
+#define PYTHON_OPTIONAL_H
+
 #include <boost/optional.hpp>
 #include <boost/python.hpp>
 
@@ -64,3 +67,4 @@ struct optional_ : private boost::noncopyable {
 
 } } // namespace boost::python
 
+#endif

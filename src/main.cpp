@@ -4,6 +4,7 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+#include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -17,7 +18,8 @@
 #include "window.h"
 
 #ifdef _WIN32
-	#include <windows.h>
+	#include <Windows.h>
+	#include "os-windows.h"
 #endif
 
 struct libraries
@@ -53,11 +55,8 @@ struct libraries
  */
 int main(int argc, char** argv)
 {
-	#ifdef _WIN32 /* Fix console output on Windows */
-	if (AttachConsole(ATTACH_PARENT_PROCESS)) {
-		freopen("CONOUT$","wb",stdout);
-		freopen("CONOUT$","wb",stderr);
-	}
+	#ifdef _WIN32
+		wFixConsole();
 	#endif
 
 	if (!parseConfig(CLIENT_CONF_PATH))
