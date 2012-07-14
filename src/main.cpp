@@ -21,6 +21,8 @@
 	#include "os-windows.h"
 #endif
 
+#define ASSERT_MAIN(x)  if (!(x)) return 1
+
 struct libraries
 {
 	libraries()
@@ -58,17 +60,13 @@ int main(int argc, char** argv)
 		wFixConsole();
 	#endif
 
-	if (!parseConfig(CLIENT_CONF_PATH))
-		{} // client.ini no longer required.
-	if (!parseCommandLine(argc, argv))
-		return 1;
-	if (!conf.validate(CLIENT_CONF_PATH))
-		return 1;
-	if (conf.verbosity)
-		Log::setVerbosity(conf.verbosity);
+	parseConfig(CLIENT_CONF_PATH)
 
-	if (!Log::init())
-		exit(1);
+	ASSERT_MAIN(parseCommandLine(argc, argv))
+	ASSERT_MAIN(conf.validate(CLIENT_CONF_PATH))
+
+	Log::setVerbosity(conf.verbosity);
+	ASSERT_MAIN(Log::init())
 
 	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
 	Log::reportVerbosityOnStartup();
@@ -77,8 +75,7 @@ int main(int argc, char** argv)
 	libraries libs;
 
 	GameWindow window;
-	if (!window.init(argv[0]))
-		return 1;
+	ASSERT_MAIN(window.init(argv[0]))
 	window.show();
 	return 0;
 }

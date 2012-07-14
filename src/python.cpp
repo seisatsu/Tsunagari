@@ -243,7 +243,7 @@ void pythonErr()
 	if (conf.scriptHalt) {
 		Log::fatal("Python", extractException(exc, val, tb));
 		GameWindow::instance().close();
-		exit(0);
+		exit(1);
 	}
 	else
 		Log::err("Python", extractException(exc, val, tb));

@@ -11,7 +11,7 @@
 #include <string>
 
 enum verbosity_t {
-	V_QUIET,   //! Display fatals.
+	V_QUIET = 1,   //! Display fatals.
 	V_NORMAL,  //! Display fatals and errors.
 	V_VERBOSE  //! Display fatals, errors and info.
 };

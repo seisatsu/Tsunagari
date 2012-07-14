@@ -16,7 +16,7 @@ Configuring Tiled
 .. image:: _static/tiled_01.png
    :scale: 25
 
-This is Tiled. It looks very simple because it is very simple. In this chapter, the features and usage of Tiled will be documented by breaking down the recreation of a few areas that show up in the Tsunagari testing world.
+This is Tiled. It looks very simple because it is very simple. This chapter explains the features of Tiled, and its use in creating Tsunagari maps.
 
 First, Tiled needs to be configured to produce files that Tsunagari can understand. Navigate to ``Edit > Preferences`` in the topbar menu.
 
