@@ -41,7 +41,7 @@ Example World.conf (from Testing World)
       </info>
       <init>
          <area>areas/grove01.tmx</area>
-         <player>entities/player/player.xml</player>
+         <player file="entities/player/player.xml" phase="down" />
          <mode>tile</mode>
          <coords x="5" y="3" layer="0" />
          <viewport width="160" height="160" />
@@ -68,7 +68,7 @@ That looks a little complicated. Let's break it down:
 * The ``<init> </init>`` tags denote the init section of world.conf. This section is **required**, and contains information used for initializing the game.
 
    * ``<area>areas/grove01.tmx</area>`` gives the location of the starting area inside the world file. This area loads first, and the player is inserted here when the game starts.
-   * ``<player>entities/player/player.xml</player>`` gives the location of the player entity descriptor, which is described in a later section.
+   * ``<player file="entities/player/player.xml" phase="down" />`` gives the location of the player entity descriptor, and its starting phase. These are described in later sections.
    * ``<mode>tile</mode>`` states that this game is a "tile" mode game. Currently supported modes are "tile" and "turn". More game modes will be supported in the future. See the appendix for more information.
    * ``<coords x="5" y="3" layer="0" />`` states that the player will be inserted into the starting area at tile coordinates 5 by 3, on layer 0.
    * ``<viewport width="160" height="160" />`` states that the game window will scale to show at most 160 pixels of width and 160 pixels of height for each area. If the game's tiles are 16x16 pixels, then the window will show an area of 10 tiles by 10 tiles.

@@ -9,9 +9,9 @@ This chapter covers standard usage of the Tsunagari Tile Engine for the common e
 Client Config File
 ==================
 
-A file named "client.ini" is present in the same directory as the Tsunagari Tile Engine executable. This file contains the engine's default gameplay and configuration settings, in a layman-friendly format. The file is split into sections, with each section containing modifiable options which affect the operation of the engine.
+A file named "client.ini" is usually present in the same directory as the Tsunagari Tile Engine executable. This file contains the engine's default gameplay and configuration settings, in a layman-friendly format. The file is split into sections, with each section containing modifiable options which affect the operation of the engine.
 
-When the engine is run, this file is read and its settings are used as defaults, which may be overridden by command line options, described in the next section. The engine will not operate if "client.ini" is missing.
+When the engine is run, this file is read and its settings are used as defaults, which may be overridden by command line options, described in the next section. If "client.ini" is missing, the engine will fall back on compiled-in defaults.
 
 Example Client.ini
 ------------------
@@ -21,7 +21,8 @@ Example Client.ini
    [engine]
    world = testing.world
    datapath = data1.zip,data2.zip
-   loglevel = debug
+   verbosity = verbose
+   scripthalt = false
 
    [window]
    width = 320
@@ -42,11 +43,13 @@ The above settings and their effects are described below:
 
    * "world": This option sets the filename of the game world to be loaded and played by the engine at runtime.
    * "datapath": A comma delimited list of zip files to be prepended to the engine's data path. See section "Data Path" in chapter 5.
-   * "loglevel": This option sets the types of messages to be sent to the console. It has no noticeable effect unless the engine is run from the command line. It accepts the following values:
+   * "verbosity": This option sets the types of messages to be sent to the console. It has no noticeable effect unless the engine is run from the command line. It accepts the following values:
 
       * "normal": Only error messages are sent to the console. Error type messages generally describe game world design oversights, or the cause of a sudden crash.
       * "verbose": Debug messages are sent to the console. Debug type messages generally describe information which would be useful to a game world designer in the process of building a game, or to a developer working on the engine itself. This produces large amounts of output.
       * "quiet": Only fatal error messages are sent to the console. Fatal errors describe the cause of an engine crash.
+
+   * "scripthalt": This option sets whether the engine should quit when an event script encounters an error.
 
 * [window] Section
 
@@ -79,12 +82,15 @@ Command Line Options
 
 While the client config file is used for setting defaults, one-time options may be set from the command line. Command line options are used to temporarily override the settings in the config file, for purposes such as testing an alternative setting or trying out a new game world. Command line options may be used from a script (not discussed here), or from your operating system's command line interface.
 
+The world file to be run can be specified on the command line by giving its path as an argument.
+
 If Tsunagari is run from the command line with no options, it simply uses the client config file. Note that engine messages can only be viewed when the engine is run from the command line.
+
+* ``Usage: ./tsunagari [OPTIONS] [WORLD FILE]``
 
 Command line options and the client config file options they override are described below:
 
 * ``-h/--help``: Display a help message containing a summary of command line options.
-* ``-g/--gameworld <world file>``: Override [engine] "world". (Set game world file to be played.)
 * ``-c/--config <config file>``: Read an alternative client config file.
 * ``-p/--datapath <file,file,...>``: Prepend zips to data path. See section "Data Path" in chapter 5.
 * ``-q/--quiet``: Display only fatal errors in the console.
@@ -95,6 +101,7 @@ Command line options and the client config file options they override are descri
 * ``-s/--size <WxH>``: Override [window] "width" and [window] "height". (Set width x height of the window or view area.)
 * ``-f/--fullscreen``: Override [window] "fullscreen". (Run in fullscreen mode.)
 * ``-w/--window``: Override [window] "fullscreen". (Run in a window.)
+* ``--script-halt``: Override [engine] "scripthalt". (Engine will stop on event script errors.)
 * ``--no-audio``: Override [audio] "enabled". (Disable sound effects and music.)
 * ``--query``: Query compiled-in engine defaults.
 * ``--version``: Show the engine's version.
