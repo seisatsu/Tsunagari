@@ -7,6 +7,7 @@
 #ifndef CLIENT_CONF_H
 #define CLIENT_CONF_H
 
+#include <string>
 #include <vector>
 
 #include "log.h"

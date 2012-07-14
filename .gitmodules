@@ -1,0 +1,3 @@
+[submodule "src/nbcl"]
+	path = src/nbcl
+	url = git@github.com:omegasdg/NBCL.git

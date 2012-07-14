@@ -58,12 +58,6 @@ int main(int argc, char** argv)
 		wFixConsole();
 	#endif
 
-	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION 
-			<< std::endl;
-
-	if (!Log::init())
-		exit(1);
-
 	if (!parseConfig(CLIENT_CONF_PATH))
 		{} // client.ini no longer required.
 	if (!parseCommandLine(argc, argv))
@@ -73,6 +67,10 @@ int main(int argc, char** argv)
 	if (conf.verbosity)
 		Log::setVerbosity(conf.verbosity);
 
+	if (!Log::init())
+		exit(1);
+
+	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
 	Log::reportVerbosityOnStartup();
 
 	// Init various libraries we use.

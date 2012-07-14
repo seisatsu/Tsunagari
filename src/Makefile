@@ -19,7 +19,7 @@ LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
 	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
 
 OBJECTS = animation.o area.o area-tmx.o bitrecord.o character.o client-conf.o \
-          cmd.o entity.o log.o main.o music.o npc.o overlay.o player.o \
+          nbcl/nbcl.o entity.o log.o main.o music.o npc.o overlay.o player.o \
           python.o python-bindings.o random.o resourcer.o scriptinst.o sound.o \
           string.o tile.o timer.o timeout.o vec.o viewport.o window.o world.o \
           xml.o
@@ -74,8 +74,8 @@ bitrecord.o: bitrecord.cpp bitrecord.h window.h
 character.o: animation.h area.h cache.h character.cpp character.h \
  client-conf.h entity.h log.h music.h player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h xml.h
-client-conf.o: client-conf.cpp client-conf.h cmd.h log.h string.h vec.h
-cmd.o: cmd.cpp cmd.h string.h
+client-conf.o: client-conf.cpp client-conf.h log.h string.h vec.h \
+ nbcl/nbcl.h
 entity.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
  entity.cpp entity.h log.h music.h player.h python.h resourcer.h \
  scriptinst.h sound.h tile.h vec.h viewport.h window.h world.h xml.h

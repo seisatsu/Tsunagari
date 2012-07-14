@@ -13,7 +13,7 @@
 #include <boost/program_options/parsers.hpp>
 
 #include "client-conf.h"
-#include "cmd.h"
+#include "nbcl/nbcl.h"
 #include "string.h"
 
 Conf conf; // Project-wide global configuration.
@@ -171,10 +171,11 @@ bool parseConfig(const char* filename)
 //! Parse and process command line options and arguments.
 bool parseCommandLine(int argc, char* argv[])
 {
-	CommandLineOptions cmd(argc, argv);
+	NBCL cmd(argc, argv);
+
+	cmd.setStrayArgsDesc("[WORLD FILE]");
 
 	cmd.insert("-h", "--help",        "",                "Display this help message");
-	cmd.insert("-g", "--gameworld",   "<world file>",    "Game world to load");
 	cmd.insert("-c", "--config",      "<config file>",   "Client config file to use");
 	cmd.insert("-p", "--datapath",    "<file,file,...>", "Prepend zips to data path");
 	cmd.insert("-q", "--quiet",       "",                "Display only fatal errors");
@@ -194,6 +195,14 @@ bool parseCommandLine(int argc, char* argv[])
 		cmd.usage();
 		return false;
 	}
+
+	std::vector<std::string> strayArgs = cmd.getStrayArgsList();
+	if (strayArgs.size() > 1) {
+		cmd.usage();
+		return false;
+	}
+	else if (strayArgs.size() == 1)
+		conf.worldFilename = strayArgs[0];
 
 	if (cmd.check("--help")) {
 		cmd.usage();
@@ -217,9 +226,6 @@ bool parseCommandLine(int argc, char* argv[])
 
 	if (cmd.check("--datapath"))
 		conf.dataPath = splitStr(cmd.get("--datapath"), ",");
-
-	if (cmd.check("--gameworld"))
-		conf.worldFilename = cmd.get("--gameworld");
 
 	int verbcount = 0;
 	if (cmd.check("--quiet")) {
