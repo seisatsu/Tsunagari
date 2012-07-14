@@ -12,7 +12,6 @@
 #include <libxml/parser.h>
 
 #include "client-conf.h"
-#include "config.h"
 #include "log.h"
 #include "python.h"
 #include "window.h"
@@ -66,7 +65,7 @@ int main(int argc, char** argv)
 		exit(1);
 
 	if (!parseConfig(CLIENT_CONF_PATH))
-		true; // client.ini no longer required.
+		{} // client.ini no longer required.
 	if (!parseCommandLine(argc, argv))
 		return 1;
 	if (!conf.validate(CLIENT_CONF_PATH))

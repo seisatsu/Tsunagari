@@ -14,7 +14,6 @@
 
 #include "client-conf.h"
 #include "cmd.h"
-#include "config.h"
 #include "string.h"
 
 Conf conf; // Project-wide global configuration.

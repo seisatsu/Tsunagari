@@ -8,7 +8,6 @@
 
 #include <Gosu/Timing.hpp>
 
-#include "config.h"
 #include "log.h"
 #include "python.h"
 #include "world.h"

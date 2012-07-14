@@ -13,7 +13,6 @@
 #include <Gosu/Timing.hpp>
 
 #include "area.h"
-#include "config.h"
 #include "entity.h"
 #include "log.h"
 #include "python.h"

@@ -18,7 +18,7 @@
 #include <Gosu/IO.hpp>
 #include <physfs.h>
 
-#include "config.h"
+#include "client-conf.h"
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"

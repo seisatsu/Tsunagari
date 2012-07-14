@@ -19,7 +19,6 @@
 
 #include <Gosu/Color.hpp>
 
-#include "config.h"
 #include "music.h"
 #include "player.h"
 #include "scriptinst.h"
