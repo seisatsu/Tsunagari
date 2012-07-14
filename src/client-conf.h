@@ -48,6 +48,10 @@ enum movement_mode_t {
 //! Engine-wide user-confurable values.
 struct Conf {
 	Conf();
+
+	/**
+	 * Check for missing required configuration variables.
+	 */
 	bool validate(const char* filename);
 
 	std::string worldFilename;

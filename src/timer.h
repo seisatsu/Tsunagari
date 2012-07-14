@@ -14,26 +14,35 @@ class Timer {
 public:
 	Timer();
 
-	//! Check if the timer is running.
-	/*!
-		@return true if running, false if stopped.
-	*/
+	/**
+	 * Check if the timer is running.
+	 * @return true if running, false if stopped.
+	 */
 	bool isRunning() const;
 
-	//! Set whether the timer is running.
-	/*!
-		@param running true to start the timer, false to stop it.
-	*/
+	/**
+	 * Set whether the timer is running.
+	 * @param running true to start the timer, false to stop it.
+	 */
 	void setRunning(bool running);
 
-	//! Reset the timer to zero.
+	/**
+	 * Reset the timer to zero.
+	 */
 	void reset();
 
-	//! Return the timer's count in seconds.
-	double count() const;
+	/**
+	 * Return the timer's count in seconds.
+	 *
+	 */
+	//@{
 	double count();
+	double count() const;
+	//@}
 
-	//! Return a rough string representation of this object.
+	/**
+	 * Return a rough string representation of this object.
+	 */
 	std::string repr() const;
 
 private:

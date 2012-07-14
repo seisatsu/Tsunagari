@@ -1,12 +1,12 @@
-***********************
-Chapter 3 - Map Editing
-***********************
+**********************************
+Chapter 3 - Map Editing with Tiled
+**********************************
 
 Rather than having its own map editor, Tsunagari uses "Tiled" for map creation and editing. Tiled is a program that allows you to easily create a map for use in a 2D game. It outputs TMX format map files, a format which Tsunagari is written to use.
 
 Maps are the most important part of a game world. In order to create them, you'll need to grab a copy of Tiled from its website.
 
-Tiled is not an OmegaSDG project.
+Tiled is not an OmegaSDG project, nor is it affiliated with Tsunagari.
 
 `Download Tiled <http://www.mapeditor.org/>`_
 
@@ -24,7 +24,7 @@ First, Tiled needs to be configured to produce files that Tsunagari can understa
 
 The options that need to be changed are under the "General" tab. In the newest version of Tiled, the required settings are as follows:
 
-* Store tile data as: XML
+* Store tile layer data as: XML
 * Include DTD reference in saved maps: OFF
 
 Once the Preferences dialog is closed, Tiled should remember these settings.
@@ -90,12 +90,25 @@ The other options in this dialog are for specialized uses, and won't be discusse
 .. image:: _static/tiled_07.png
    :scale: 25
 
-Once a tile sheet is linked in, its contents will appear in the "Tilesets" dialog in the bottom right of Tiled's window. This dialog is used for placing tiles and setting global tile properties.
+Once a tile sheet is linked in, its contents will appear in the "Tilesets" dialog in the bottom right of Tiled's window. This dialog is used for placing tiles and setting global tile properties. Multiple tile sheets may be linked, and they will all be usable from this dialog.
 
 Global tile properties are properties that apply to every instance of that tile which is placed on the map. Tile properties in general are discussed across several later sections.
 
 Animations
 ==========
+
+Animations allow a tile in an area to cycle through several frames at a constant speed. They are usually set up as global tile properties. To create an animated tile, the properties must be added to the first tile in the animation, using the "Tilesets" dialog.
+
+.. image:: _static/tiled_08.png
+
+Right-click on the tile which will be the first frame of the animation, and select the ``Tile Properties`` option. To make this tile animated, set the following properties:
+
+* "speed": An integer or decimal value -- speed of the animation in frames per second.
+* "members": A comma separated list of the numerical positions of the frames in this tile sheet. Example: "12,27,34". The first member of the list must be this tile. For more information on tile positions, see the chapter 2 section on sprite and tile sheets.
+
+.. image:: _static/tiled_09.png
+
+When the first tile in the animation is placed on the map, it will be animated in-game.
 
 Layers
 ======

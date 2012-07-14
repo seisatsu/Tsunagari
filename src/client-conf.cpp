@@ -39,7 +39,6 @@ Conf::Conf()
 	scriptHalt = false;
 }
 
-//! Check for missing required configuration variables.
 bool Conf::validate(const char* filename)
 {
 	if (conf.worldFilename == "") {
