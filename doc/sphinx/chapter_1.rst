@@ -106,3 +106,14 @@ Command line options and the client config file options they override are descri
 * ``--query``: Query compiled-in engine defaults.
 * ``--version``: Show the engine's version.
 
+Gameplay Input
+==============
+
+Currently, there are several hardcoded keyboard input events which have the same function across all games.
+
+* Escape: Pause the engine and display the pause screen.
+* Shift + Escape: Exit the engine.
+* Arrow Keys: Move in the specified direction.
+* Ctrl + Arrow Keys: Look in the specified direction.
+* Space: Trigger the use event on an object or tile.
+
