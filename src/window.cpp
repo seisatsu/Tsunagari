@@ -80,7 +80,7 @@ void GameWindow::buttonDown(const Gosu::Button btn)
 	if (btn == Gosu::kbEscape &&
 			(input().down(Gosu::kbLeftShift) ||
 			 input().down(Gosu::kbRightShift))) {
-		close();
+		exit(0);
 	}
 	else {
 		if (keystates.find(btn) == keystates.end()) {
