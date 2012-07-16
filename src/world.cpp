@@ -41,9 +41,7 @@ bool World::init()
 	ASSERT(processDescriptor()); // Try to load in descriptor.
 	ASSERT(pauseInfo = rc->getImage("resource/pause_overlay.png"));
 
-	ASSERT(player.init(playerEntity));
-	player.setPhase(playerPhase);
-
+	ASSERT(player.init(playerEntity, playerPhase));
 	pythonSetGlobal("Player", (Entity*)&player);
 
 	view.reset(new Viewport(viewportSz));

@@ -17,6 +17,8 @@
 #include "world.h"
 #include "window.h"
 
+#define ASSERT(x)  if (!(x)) return false
+
 template<class Cont, class ValueType>
 void removeValue(Cont* c, ValueType v)
 {
@@ -37,14 +39,11 @@ Player::Player()
 	nowalkExempt = TILE_NOWALK_EXIT;
 }
 
-bool Player::init(const std::string& descriptor)
+bool Player::init(const std::string& descriptor, const std::string& initialPhase)
 {
-	bool b = Entity::init(descriptor);
-	if (b) {
-		// Set an initial phase.
-		setPhase(directionStr(setFacing(ivec2(0, 1))));
-	}
-	return b;
+	ASSERT(Entity::init(descriptor));
+	setPhase(initialPhase);
+	return true;
 }
 
 void Player::destroy()

@@ -71,14 +71,15 @@ void Entity::destroy()
 void Entity::draw()
 {
 	time_t now = World::instance()->time();
-	phase->frame(now)->draw(doff.x + r.x, doff.y + r.y, r.z);
+	if (phase)
+		phase->frame(now)->draw(doff.x + r.x, doff.y + r.y, r.z);
 	redraw = false;
 }
 
 bool Entity::needsRedraw() const
 {
 	time_t now = World::instance()->time();
-	return redraw || phase->needsRedraw(now);
+	return redraw || (phase && phase->needsRedraw(now));
 }
 
 

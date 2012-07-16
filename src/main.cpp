@@ -21,7 +21,7 @@
 	#include "os-windows.h"
 #endif
 
-#define ASSERT_MAIN(x)  if (!(x)) return 1
+#define ASSERT_RETURN1(x)  if (!(x)) { return 1; }
 
 struct libraries
 {
@@ -62,11 +62,11 @@ int main(int argc, char** argv)
 
 	parseConfig(CLIENT_CONF_PATH);
 
-	ASSERT_MAIN(parseCommandLine(argc, argv));
-	ASSERT_MAIN(conf.validate(CLIENT_CONF_PATH));
+	ASSERT_RETURN1(parseCommandLine(argc, argv));
+	ASSERT_RETURN1(conf.validate(CLIENT_CONF_PATH));
 
 	Log::setVerbosity(conf.verbosity);
-	ASSERT_MAIN(Log::init());
+	ASSERT_RETURN1(Log::init());
 
 	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
 	Log::reportVerbosityOnStartup();
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 	libraries libs;
 
 	GameWindow window;
-	ASSERT_MAIN(window.init(argv[0]));
+	ASSERT_RETURN1(window.init(argv[0]));
 	window.show();
 	return 0;
 }

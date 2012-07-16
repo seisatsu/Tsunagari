@@ -18,7 +18,7 @@ class Player : public Character
 {
 public:
 	Player();
-	bool init(const std::string& descriptor);
+	bool init(const std::string& descriptor, const std::string& initialPhase);
 	void destroy();
 
 	//! Smooth continuous movement.
