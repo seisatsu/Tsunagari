@@ -60,13 +60,13 @@ int main(int argc, char** argv)
 		wFixConsole();
 	#endif
 
-	parseConfig(CLIENT_CONF_PATH)
+	parseConfig(CLIENT_CONF_PATH);
 
-	ASSERT_MAIN(parseCommandLine(argc, argv))
-	ASSERT_MAIN(conf.validate(CLIENT_CONF_PATH))
+	ASSERT_MAIN(parseCommandLine(argc, argv));
+	ASSERT_MAIN(conf.validate(CLIENT_CONF_PATH));
 
 	Log::setVerbosity(conf.verbosity);
-	ASSERT_MAIN(Log::init())
+	ASSERT_MAIN(Log::init());
 
 	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
 	Log::reportVerbosityOnStartup();
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 	libraries libs;
 
 	GameWindow window;
-	ASSERT_MAIN(window.init(argv[0]))
+	ASSERT_MAIN(window.init(argv[0]));
 	window.show();
 	return 0;
 }
