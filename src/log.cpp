@@ -104,7 +104,7 @@ void Log::reportVerbosityOnStartup()
 			verbString = "VERBOSE";
 			break;
 	}
-	std::cout << ts() << "Reporting engine messages in " << verbString 
+	std::cout << ts() << "Reporting engine messages in " << verbString
 			<< " mode." << std::endl;
 }
 

@@ -11,6 +11,7 @@
 #include "world.h"
 
 #include <Gosu/Gosu.hpp>
+#include <Windows.h>
 
 void wFixConsole()
 {
@@ -20,12 +21,12 @@ void wFixConsole()
 	}
 }
 
-void wMessageBox(std::string title, std::string text)
+void wMessageBox(const std::string& title, const std::string& text)
 {
 	World::instance()->setPaused(true);
-	MessageBox(GameWindow::instance().handle(), 
-		Gosu::widen(text).c_str(), 
-		Gosu::widen(title).c_str(), 
+	MessageBox(GameWindow::instance().handle(),
+		Gosu::widen(text).c_str(),
+		Gosu::widen(title).c_str(),
 		MB_OK
 	);
 	World::instance()->setPaused(false);

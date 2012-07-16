@@ -47,6 +47,7 @@ GameWindow::GameWindow()
 	                      (unsigned)conf.windowSize.y,
 	    conf.fullscreen
 	  ),
+	  now(Gosu::milliseconds()),
 	  lastGCtime(0)
 {
 	globalWindow = this;

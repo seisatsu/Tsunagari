@@ -17,7 +17,6 @@
 #include "window.h"
 
 #ifdef _WIN32
-	#include <Windows.h>
 	#include "os-windows.h"
 #endif
 
@@ -60,6 +59,7 @@ int main(int argc, char** argv)
 		wFixConsole();
 	#endif
 
+	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
 	parseConfig(CLIENT_CONF_PATH);
 
 	ASSERT_RETURN1(parseCommandLine(argc, argv));
@@ -68,7 +68,6 @@ int main(int argc, char** argv)
 	Log::setVerbosity(conf.verbosity);
 	ASSERT_RETURN1(Log::init());
 
-	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
 	Log::reportVerbosityOnStartup();
 
 	// Init various libraries we use.

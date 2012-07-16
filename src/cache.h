@@ -28,7 +28,7 @@ public:
 		if (conf.cacheEnabled) {
 			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
-				// Log::info("Cache", name + ": requested (cached)");
+//				Log::info("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
 				// Set lastUsed to now because it won't be used
 				// by the time garbageCollect() gets to it.
@@ -45,7 +45,7 @@ public:
 		if (conf.cacheEnabled) {
 			typename CacheMap::iterator it = map.find(name);
 			if (it != map.end()) {
-				// Log::info("Cache", name + ": requested (cached)");
+//				Log::info("Cache", name + ": requested (cached)");
 				CacheEntry& entry = it->second;
 				entry.lastUsed = IN_USE_NOW;
 				return entry.resource;
@@ -90,14 +90,14 @@ public:
 				continue;
 			if (cache.lastUsed == IN_USE_NOW) {
 				cache.lastUsed = now;
-				//Log::info("Resourcer", name + ": unused");
+//				Log::info("Resourcer", name + ": unused");
 			}
 			else if (now > cache.lastUsed + conf.cacheTTL*1000) {
 				dead.push_back(name);
 				Log::info("Cache", name + ": purged");
 			}
 		}
-		BOOST_FOREACH(std::string& name, dead)
+		BOOST_FOREACH(const std::string& name, dead)
 			map.erase(name);
 	}
 
@@ -106,7 +106,7 @@ private:
 	{
 		T resource;
 		time_t lastUsed;
-		int memoryUsed;
+		size_t memoryUsed;
 	};
 
 	typedef boost::unordered_map<const std::string, CacheEntry> CacheMap;
