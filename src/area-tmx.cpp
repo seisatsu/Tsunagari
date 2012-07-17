@@ -121,8 +121,6 @@ bool AreaTMX::processMapProperties(XMLNode node)
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
-		if (value.empty())
-			continue;
 		if (name == "author")
 			author = value;
 		else if (name == "name")

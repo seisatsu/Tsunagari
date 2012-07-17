@@ -2,7 +2,6 @@
 <map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="16" tileheight="16">
  <properties>
   <property name="author" value="Paul Merrill"/>
-  <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove 05"/>
  </properties>
  <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">

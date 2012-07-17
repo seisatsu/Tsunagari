@@ -3,6 +3,7 @@
  <properties>
   <property name="author" value="Michael D. Reiley"/>
   <property name="color_overlay" value="0,0,0,200"/>
+  <property name="main_music" value=""/>
   <property name="name" value="Basement"/>
  </properties>
  <tileset firstgid="1" name="indoors.png" tilewidth="16" tileheight="16">

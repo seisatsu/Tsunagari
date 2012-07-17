@@ -28,7 +28,7 @@ Tsunagari will be a comprehensive game design suite for singleplayer 2D games.
 The engine will support several styles, such as roguelikes, and old 
 console-style RPGs. Multiplayer support is more difficult, and is not expected 
 to be present in the first release. Tsunagari is intended as an open source 
-replacement for game design suites such as RPGMaker, and will allow Python 
+replacement for game design suites such as RPGMaker, and allows Python 
 scripting for the event system, and for additional custom functionality. As a 
 suite, Tsunagari aims to allow as much game variation as possible without 
 direct modifications to the engine source code. Game design will require manual 

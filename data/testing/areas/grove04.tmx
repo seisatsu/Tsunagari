@@ -3,7 +3,6 @@
  <properties>
   <property name="author" value="Michael D. Reiley"/>
   <property name="loop" value="y"/>
-  <property name="main_music" value="music/A_Travellers_Tale.oga"/>
   <property name="name" value="Grove 04"/>
  </properties>
  <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
