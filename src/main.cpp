@@ -59,15 +59,15 @@ int main(int argc, char** argv)
 		wFixConsole();
 	#endif
 
-	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
-	parseConfig(CLIENT_CONF_PATH);
+	ASSERT_RETURN1(Log::init());
 
+	parseConfig(CLIENT_CONF_PATH);
 	ASSERT_RETURN1(parseCommandLine(argc, argv));
 	ASSERT_RETURN1(conf.validate(CLIENT_CONF_PATH));
 
-	Log::setVerbosity(conf.verbosity);
-	ASSERT_RETURN1(Log::init());
+	std::cout << "[0.000] Starting " << TSUNAGARI_RELEASE_VERSION << std::endl;
 
+	Log::setVerbosity(conf.verbosity);
 	Log::reportVerbosityOnStartup();
 
 	// Init various libraries we use.

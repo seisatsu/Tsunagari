@@ -59,6 +59,10 @@ void Log::info(std::string domain, std::string msg)
 
 void Log::err(std::string domain, std::string msg)
 {
+	if (conf.halting == ERROR) {
+		Log::fatal(domain, msg);
+		exit(1);
+	}
 	std::string str = ts() + "Error [" + domain + "] - " + chomp(msg);
 	if (inPythonScript) {
 		PyErr_SetString(PyExc_RuntimeError, str.c_str());

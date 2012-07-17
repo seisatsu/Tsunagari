@@ -28,14 +28,15 @@
 // ===
 
 // === Client.ini Default Values ===
-	#define DEF_ENGINE_VERBOSITY	"verbose"
-	#define DEF_WINDOW_WIDTH		640
-	#define DEF_WINDOW_HEIGHT		480
-	#define DEF_WINDOW_FULLSCREEN	false
-	#define DEF_AUDIO_ENABLED		true
-	#define DEF_CACHE_ENABLED		true
-	#define DEF_CACHE_TTL			300
-	#define DEF_CACHE_SIZE			100
+	#define DEF_ENGINE_VERBOSITY  "verbose"
+	#define DEF_ENGINE_HALTING    "fatal"
+	#define DEF_WINDOW_WIDTH      640
+	#define DEF_WINDOW_HEIGHT     480
+	#define DEF_WINDOW_FULLSCREEN false
+	#define DEF_AUDIO_ENABLED     true
+	#define DEF_CACHE_ENABLED     true
+	#define DEF_CACHE_TTL         300
+	#define DEF_CACHE_SIZE        100
 // ===
 
 //! Game Movement Mode
@@ -43,6 +44,13 @@ enum movement_mode_t {
 	TURN,
 	TILE,
 	NOTILE
+};
+
+//! Halting Mode
+enum halting_mode_t {
+	FATAL,
+	SCRIPT,
+	ERROR
 };
 
 //! Engine-wide user-confurable values.
@@ -58,11 +66,11 @@ struct Conf {
 	std::vector<std::string> dataPath;
 	verbosity_t verbosity;
 	movement_mode_t moveMode;
+	halting_mode_t halting;
 	icoord windowSize;
 	bool fullscreen;
 	bool audioEnabled;
 	bool cacheEnabled;
-	bool scriptHalt;
 	int cacheTTL;
 	int cacheSize;
 	int persistInit;

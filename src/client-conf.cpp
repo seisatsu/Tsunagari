@@ -27,6 +27,12 @@ Conf::Conf()
 		conf.verbosity = V_NORMAL;
 	else if (!strcmp(DEF_ENGINE_VERBOSITY, "verbose"))
 		conf.verbosity = V_VERBOSE;
+	if (!strcmp(DEF_ENGINE_HALTING, "fatal"))
+		conf.halting = FATAL;
+	else if (!strcmp(DEF_ENGINE_HALTING, "script"))
+		conf.halting = SCRIPT;
+	else if (!strcmp(DEF_ENGINE_HALTING, "error"))
+		conf.halting = ERROR;
 	windowSize.x = DEF_WINDOW_WIDTH;
 	windowSize.y = DEF_WINDOW_HEIGHT;
 	fullscreen = DEF_WINDOW_FULLSCREEN;
@@ -36,7 +42,6 @@ Conf::Conf()
 	cacheSize = DEF_CACHE_SIZE;
 	persistInit = 0;
 	persistCons = 0;
-	scriptHalt = false;
 }
 
 bool Conf::validate(const char* filename)
@@ -59,6 +64,8 @@ static void defaultsQuery()
 		<< XML_DTD_PATH << std::endl;
 	std::cerr << "DEF_ENGINE_VERBOSITY:                "
 		<< DEF_ENGINE_VERBOSITY << std::endl;
+	std::cerr << "DEF_ENGINE_HALTING:                  "
+		<< DEF_ENGINE_HALTING << std::endl;
 	std::cerr << "DEF_WINDOW_WIDTH:                    "
 		<< DEF_WINDOW_WIDTH << std::endl;
 	std::cerr << "DEF_WINDOW_HEIGHT:                   "
@@ -110,9 +117,6 @@ bool parseConfig(const char* filename)
 	if (!parameters["engine.datapath"].empty())
 		conf.dataPath = splitStr(parameters["engine.datapath"], ",");
 
-	if (!parameters["engine.scripthalt"].empty())
-		conf.scriptHalt = parseBool(parameters["engine.scripthalt"]);
-
 	if (!parameters["window.width"].empty())
 		conf.windowSize.x = atoi(parameters["window.width"].c_str());
 
@@ -151,7 +155,6 @@ bool parseConfig(const char* filename)
 	}
 
 	std::string verbosity = parameters["engine.verbosity"];
-	conf.verbosity = V_NORMAL;
 	if (verbosity.empty())
 		;
 	else if (verbosity == "quiet")
@@ -162,6 +165,19 @@ bool parseConfig(const char* filename)
 		conf.verbosity = V_VERBOSE;
 	else {
 		Log::err(filename, "unknown value for \"[engine] verbosity\", using default");
+	}
+
+	std::string halting = parameters["engine.halting"];
+	if (halting.empty())
+		;
+	else if (halting == "fatal")
+		conf.halting = FATAL;
+	else if (halting == "script")
+		conf.halting = SCRIPT;
+	else if (halting == "error")
+		conf.halting = ERROR;
+	else {
+		Log::err(filename, "unknown value for \"[engine] halting\", using default");
 	}
 
 	return true;
@@ -185,7 +201,9 @@ bool parseCommandLine(int argc, char* argv[])
 	cmd.insert("-s", "--size",        "<WxH>",           "Window dimensions");
 	cmd.insert("-f", "--fullscreen",  "",                "Run in fullscreen mode");
 	cmd.insert("-w", "--window",      "",                "Run in windowed mode");
+	cmd.insert("",   "--fatal-halt",  "",                "Stop engine only on fatal errors");
 	cmd.insert("",   "--script-halt", "",                "Stop engine on script errors");
+	cmd.insert("",   "--error-halt",  "",                "Stop engine on all errors");
 	cmd.insert("",   "--no-audio",    "",                "Disable audio");
 	cmd.insert("",   "--query",       "",                "Query compiled-in engine defaults");
 	cmd.insert("",   "--version",     "",                "Print the engine version string");
@@ -242,6 +260,22 @@ bool parseCommandLine(int argc, char* argv[])
 	if (verbcount > 1)
 		Log::err("cmdline", "multiple verbosity flags on cmdline, using most verbose");
 
+	int haltcount = 0;
+	if (cmd.check("--fatal-halt")) {
+		conf.halting = FATAL;
+		haltcount++;
+	}
+	if (cmd.check("--script-halt")) {
+		conf.halting = SCRIPT;
+		haltcount++;
+	}
+	if (cmd.check("--error-halt")) {
+		conf.halting = ERROR;
+		haltcount++;
+	}
+	if (haltcount > 1)
+		Log::err("cmdline", "multiple halting flags on cmdline, using most stringent");
+
 	if (cmd.check("--no-audio"))
 		conf.audioEnabled = false;
 
@@ -277,9 +311,6 @@ bool parseCommandLine(int argc, char* argv[])
 
 	if (cmd.check("--window"))
 		conf.fullscreen = false;
-
-	if (cmd.check("--script-halt"))
-		conf.scriptHalt = true;
 
 	return true;
 }

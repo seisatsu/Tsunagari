@@ -49,7 +49,7 @@ tsunagari: $(OBJECTS)
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
 
 clean:
-	$(RM) tsunagari *.o $(BASEDATA) $(TESTWORLD)
+	$(RM) tsunagari *.o */*.o $(BASEDATA) $(TESTWORLD)
 
 
 ### --- DEPENDS SECTION --- ###
