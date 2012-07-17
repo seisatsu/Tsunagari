@@ -14,6 +14,116 @@
 #include "log.h"
 #include "string.h"
 
+/**
+ * Matches regex /\s*-?\d+/
+ */
+bool isInteger(const std::string& s)
+{
+	const int space = 0;
+	const int sign = 1;
+	const int digit = 2;
+
+	int state = space;
+
+	for (size_t i = 0; i < s.size(); i++) {
+		char c = s[i];
+		if (state == space) {
+			if (isspace(c)) continue;
+			else state++;
+		}
+		if (state == sign) {
+			state++;
+			if (c == '-') continue;
+		}
+		if (state == digit) {
+			if (isdigit(c)) continue;
+			else return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Matches regex /\s*-?\d+\.?\d* /   [sic: star-slash ends comment]
+ */
+bool isDecimal(const std::string& s)
+{
+	const int space = 0;
+	const int sign = 1;
+	const int digit = 2;
+	const int dot = 3;
+	const int digit2 = 4;
+
+	int state = space;
+
+	for (size_t i = 0; i < s.size(); i++) {
+		char c = s[i];
+		switch (state) {
+		case space:
+			if (isspace(c)) continue;
+			else state++;
+		case sign:
+			state++;
+			if (c == '-') continue;
+		case digit:
+			if (isdigit(c)) continue;
+			else state++;
+		case dot:
+			state++;
+			if (c == '.') continue;
+			else return false;
+		case digit2:
+			if (isdigit(c)) continue;
+			else return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Matches "5-7,2,12-14" no whitespace.
+ */
+bool isRanges(const std::string& s)
+{
+	const int sign = 0;
+	const int digit = 1;
+	const int dash = 3;
+	const int comma = 4;
+
+	bool dashed = false;
+
+	int state = sign;
+
+	for (size_t i = 0; i < s.size(); i++) {
+		char c = s[i];
+		switch (state) {
+		case sign:
+			state++;
+			if (c == '-' || c == '+') break;
+		case digit:
+			if (isdigit(c)) break;
+			state++;
+		case dash:
+			state++;
+			if (c == '-') {
+				if (dashed) return false;
+				dashed = true;
+				state = sign;
+				break;
+			}
+		case comma:
+			state++;
+			if (c == ',') {
+				dashed = false;
+				state = sign;
+				break;
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
 bool parseBool(const std::string& s)
 {
 	// boost::equals is case-insensative
@@ -79,71 +189,5 @@ std::string itostr(int in)
 	std::stringstream out;
 	out << in;
 	return out.str();
-}
-
-/**
- * Matches regex /\s*-?\d+/
- */
-bool isInteger(const std::string& s)
-{
-	const int space = 0;
-	const int sign = 1;
-	const int digit = 2;
-
-	int state = space;
-
-	for (size_t i = 0; i < s.size(); i++) {
-		char c = s[i];
-		if (state == space) {
-		       if (isspace(c)) continue;
-		       else state++;
-		}
-		if (state == sign) {
-			state++;
-			if (c == '-') continue;
-		}
-		if (state == digit) {
-			if (isdigit(c)) continue;
-			else return false;
-		}
-	}
-	return true;
-}
-
-/**
- * Matches regex /\s*-?\d+\.?\d* /   [sic: star-slash ends comment]
- */
-bool isDecimal(const std::string& s)
-{
-	const int space = 0;
-	const int sign = 1;
-	const int digit = 2;
-	const int dot = 3;
-	const int digit2 = 4;
-
-	int state = space;
-
-	for (size_t i = 0; i < s.size(); i++) {
-		char c = s[i];
-		switch (state) {
-		case space:
-		       if (isspace(c)) continue;
-		       else state++;
-		case sign:
-			state++;
-			if (c == '-') continue;
-		case digit:
-			if (isdigit(c)) continue;
-			else state++;
-		case dot:
-			state++;
-			if (c == '.') continue;
-			else return false;
-		case digit2:
-			if (isdigit(c)) continue;
-			else return false;
-		}
-	}
-	return true;
 }
 

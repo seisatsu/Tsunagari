@@ -17,6 +17,7 @@
 #include "log.h"
 #include "python.h"
 #include "resourcer.h"
+#include "string.h"
 #include "world.h"
 #include "xml.h"
 
@@ -632,10 +633,8 @@ bool Entity::processPhases(XMLNode node, const TiledImage& tiles)
 
 bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 {
-	/* Each phase requires a 'name'. Additionally,
-	 * one of either 'pos' or 'speed' is needed.
-	 * If speed is used, we have sub-elements. We
-	 * can't have both pos and speed.
+	/* Each phase requires a 'name' and 'members'. Additionally,
+	 * 'speed' is required if 'members' has more than one member.
 	 */
 	const std::string name = node.attr("name");
 	if (name.empty()) {
@@ -643,62 +642,51 @@ bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 		return false;
 	}
 
-	const std::string posStr = node.attr("pos");
+	const std::string membersStr = node.attr("members");
 	const std::string speedStr = node.attr("speed");
 
-	if (posStr.size() && speedStr.size()) {
-		Log::err(descriptor, "pos and speed attributes in "
-				"phase element are mutually exclusive");
-		return false;
-	} else if (posStr.empty() && speedStr.empty()) {
-		Log::err(descriptor, "must have pos or speed attribute "
-			       "in phase element");
+	if (membersStr.empty()) {
+		Log::err(descriptor, "<phase> members attribute empty");
 		return false;
 	}
 
-	if (posStr.size()) {
-		int pos;
-		ASSERT(node.intAttr("pos", &pos));
-		if (pos < 0 || (int)tiles.size() < pos) {
+	if (isInteger(membersStr)) {
+		int member = atoi(membersStr.c_str());
+		if (member < 0 || (int)tiles.size() < member) {
 			Log::err(descriptor,
-				"<phase></phase> index out of bounds");
+				"<phase> members attribute index out of bounds");
 			return false;
 		}
-		phases[name] = Animation(tiles[pos]);
+		const ImageRef& image = tiles[member];
+		phases[name] = Animation(image);
+	}
+	else if (isRanges(membersStr)) {
+		if (!isDecimal(speedStr)) {
+			Log::err(descriptor,
+				"<phase> speed attribute must be present and "
+				"must be decimal");
+		}
+		double fps = atof(speedStr.c_str());
+
+		std::vector<int> members = parseRanges(membersStr);
+		std::vector<ImageRef> images;
+		BOOST_FOREACH(int i, members) {
+			if (i < 0 || (int)tiles.size() < i) {
+				Log::err(descriptor,
+					"<phase> members attribute index out of bounds");
+				return false;
+			}
+			images.push_back(tiles[i]);
+		}
+
+		phases[name] = Animation(images, (time_t)(1000.0 / fps));
 	}
 	else {
-		int speed;
-		ASSERT(node.intAttr("speed", &speed));
-
-		int frameLen = (int)(1000.0/speed);
-		std::vector<ImageRef> frames;
-
-		ASSERT(processMembers(node.childrenNode(), frames, tiles));
-		phases[name] = Animation(frames, frameLen);
-	}
-
-	return true;
-}
-
-bool Entity::processMembers(XMLNode node, std::vector<ImageRef>& frames,
-                            const TiledImage& tiles)
-{
-	for (; node; node = node.next())
-		if (node.is("member"))
-			ASSERT(processMember(node, frames, tiles));
-	return true;
-}
-
-bool Entity::processMember(const XMLNode node, std::vector<ImageRef>& frames,
-                           const TiledImage& tiles)
-{
-	int pos;
-	ASSERT(node.intAttr("pos", &pos));
-	if (pos < 0 || (int)tiles.size() < pos) {
-		Log::err(descriptor, "<member></member> index out of bounds");
+		Log::err(descriptor,
+			"<phase> members attribute not an int or int ranges");
 		return false;
 	}
-	frames.push_back(tiles[pos]);
+
 	return true;
 }
 

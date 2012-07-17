@@ -10,6 +10,16 @@
 #include <string>
 #include <vector>
 
+//! Returns true if the string contains only digits, whitespace, and minus.
+bool isInteger(const std::string& s);
+
+//! Returns true if the string contains only digits, whitespace, minus, and
+//! period.
+bool isDecimal(const std::string& s);
+
+bool isRanges(const std::string& s);
+
+
 //! Return a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);
 
@@ -25,13 +35,6 @@ std::vector<int> parseRanges(const std::string& format);
 
 //! Convert an integer to a representative string.
 std::string itostr(int in);
-
-//! Returns true if the string contains only digits, whitespace, and minus.
-bool isInteger(const std::string& s);
-
-//! Returns true if the string contains only digits, whitespace, minus, and
-//! period.
-bool isDecimal(const std::string& s);
 
 #endif
 
