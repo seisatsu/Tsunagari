@@ -1,8 +1,8 @@
-/*********************************
-** Tsunagari Tile Engine        **
-** npc.h                        **
-** Copyright 2011-2012 OmegaSDG **
-*********************************/
+/****************************
+** Tsunagari Tile Engine   **
+** npc.h                   **
+** Copyright 2012 OmegaSDG **
+****************************/
 
 #ifndef NPC_H
 #define NPC_H

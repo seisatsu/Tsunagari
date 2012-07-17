@@ -1,3 +1,9 @@
+/****************************
+** Tsunagari Tile Engine   **
+** npc.cpp                 **
+** Copyright 2012 OmegaSDG **
+****************************/
+
 #include "area.h"
 #include "npc.h"
 

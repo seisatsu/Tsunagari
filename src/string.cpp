@@ -6,9 +6,12 @@
 
 #include <ctype.h>
 #include <sstream>
+#include <stdlib.h>
 
+#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp> // for iequals
 
+#include "log.h"
 #include "string.h"
 
 bool parseBool(const std::string& s)
@@ -20,26 +23,55 @@ bool parseBool(const std::string& s)
 	    s == "1";
 }
 
-std::vector<std::string> splitStr(std::string str, const std::string& delimiter)
+std::vector<std::string> splitStr(const std::string& input,
+		const std::string& delimiter)
 {
 	std::vector<std::string> strlist;
-	size_t pos;
+	size_t i = 0;
 
-	pos = str.find(delimiter);
-
-	while (pos != std::string::npos) {
-		if (pos != std::string::npos || pos+1 != str.size()) {
-			if (str.size() && pos) // Don't save empty strings
-				strlist.push_back(str.substr(0, pos)); // Save
-			str = str.substr(pos+delimiter.size()); // Cut delimiter
-		}
-		pos = str.find(delimiter);
+	for (size_t pos = input.find(delimiter); pos != std::string::npos; pos = input.find(delimiter, i)) {
+		if (input.size() != i) // Don't save empty strings
+			strlist.push_back(input.substr(i, pos - i)); // Save
+		i = pos + delimiter.size();
 	}
 
-	if (pos == std::string::npos && str.size() != 0)
-		strlist.push_back(str);
-
+	if (input.size() != i)
+		strlist.push_back(input.substr(i));
 	return strlist;
+}
+
+std::vector<int> parseRanges(const std::string& format)
+{
+	std::vector<int> ints;
+	std::vector<std::string> ranges = splitStr(format, ",");
+	BOOST_FOREACH(const std::string& range, ranges) {
+		size_t dash = range.find("-");
+		if (dash == std::string::npos) {
+			if (!isInteger(range)) {
+				Log::err("parseRanges", "not an integer");
+				continue;
+			}
+			int i = atoi(range.c_str());
+			ints.push_back(i);
+		}
+		else {
+			std::string rngbeg = range.substr(0, dash);
+			std::string rngend = range.substr(dash + 1);
+			if (!isInteger(rngbeg) || !isInteger(rngend)) {
+				Log::err("parseRanges", "not an integer");
+				continue;
+			}
+			int beg = atoi(rngbeg.c_str());
+			int end = atoi(rngend.c_str());
+			if (beg > end) {
+				Log::err("parseRanges", "beg > end");
+				continue;
+			}
+			for (int i = beg; i <= end; i++)
+				ints.push_back(i);
+		}
+	}
+	return ints;
 }
 
 std::string itostr(int in)
