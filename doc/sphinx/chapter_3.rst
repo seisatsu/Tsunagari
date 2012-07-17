@@ -14,7 +14,7 @@ Configuring Tiled
 =================
 
 .. image:: _static/tiled_01.png
-   :scale: 25
+	:scale: 25
 
 This is Tiled. It looks very simple because it is very simple. This chapter explains the features of Tiled, and its use in creating Tsunagari maps.
 
@@ -41,7 +41,7 @@ To create a new map, navigate to ``File > New`` in the topbar menu.
 Make sure that "Orientation" is set to "Orthogonal", and that the "Tile Size" settings match with the size of the tiles in your tile sheets. "Map Size" is exactly what it sounds like; it sets the width and height of the new map in tiles.
 
 .. image:: _static/tiled_04.png
-   :scale: 25
+	:scale: 25
 
 Setting Map Properties
 ----------------------
@@ -90,7 +90,7 @@ The "Tile width" and "Tile height" fields should contain the width and height of
 The other options in this dialog are for specialized uses, and won't be discussed here. They are mostly self-explanatory, if needed.
 
 .. image:: _static/tiled_07.png
-   :scale: 25
+	:scale: 25
 
 Once a tile sheet is linked in, its contents will appear in the "Tilesets" dialog in the bottom right of Tiled's window. This dialog is used for placing tiles and setting global tile properties. Multiple tile sheets may be linked, and they will all be usable from this dialog.
 
