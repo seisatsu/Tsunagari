@@ -44,7 +44,9 @@
 			<phase name="moving down" speed="4">
 				<member pos="6" />
 				<member pos="7" />
-				<member pos="8" /> <member pos="7" /> </phase>
+				<member pos="8" />
+				<member pos="7" />
+			</phase>
 
 			<phase name="moving down-left" speed="4">
 				<member pos="6" />

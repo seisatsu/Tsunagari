@@ -27,6 +27,12 @@ namespace Gosu {
 	class Image;
 }
 
+enum SetPhaseResult {
+	PHASE_NOTFOUND,
+	PHASE_NOTCHANGED,
+	PHASE_CHANGED
+};
+
 //! An Entity represents one 'thing' that will be rendered to the screen.
 /*!
 	An Entity might be a dynamic game object such as a monster, NPC, or
@@ -168,6 +174,8 @@ protected:
 
 	//! Gets a string describing a direction.
 	const std::string& directionStr(ivec2 facing) const;
+
+	enum SetPhaseResult _setPhase(const std::string& name);
 
 	bool nowalked(Tile& t);
 

@@ -23,9 +23,9 @@
 #define ASSERT(x)  if (!(x)) return false
 
 static std::string directions[][3] = {
-	{"up-left",   "up",   "up-right"},
-	{"left",      "",     "right"},
-	{"down-left", "down", "down-right"},
+	{"up-left",   "up",     "up-right"},
+	{"left",      "stance", "right"},
+	{"down-left", "down",   "down-right"},
 };
 
 
@@ -150,22 +150,14 @@ const std::string Entity::getFacing() const
 
 bool Entity::setPhase(const std::string& name)
 {
-	AnimationMap::iterator it;
-	it = phases.find(name);
-	if (it == phases.end()) {
-		Log::err(descriptor, "phase '" + name + "' not found");
-		return false;
+	enum SetPhaseResult res;
+	res = _setPhase(name);
+	if (res == PHASE_NOTFOUND) {
+		res = _setPhase("stance");
+		if (res == PHASE_NOTFOUND)
+			Log::err(descriptor, "phase '" + name + "' not found");
 	}
-	Animation* newPhase = &it->second;
-	if (phase != newPhase) {
-		time_t now = World::instance()->time();
-		phase = newPhase;
-		phase->startOver(now);
-		phaseName = name;
-		redraw = true;
-		return true;
-	}
-	return false;
+	return res == PHASE_CHANGED;
 }
 
 std::string Entity::getPhase() const
@@ -262,6 +254,51 @@ vicoord Entity::moveDest(Tile* t, int dx, int dy)
 		dest = here + icoord(dx, dy, 0);
 		return area->phys2virt_vi(dest);
 	}
+}
+
+// Python API.
+bool Entity::canMove(int x, int y, double z)
+{
+	vicoord virt(x, y, z);
+	return canMove(area->virt2phys(virt));
+}
+
+bool Entity::canMove(icoord dest)
+{
+	icoord dxyz = dest - getTileCoords_i();
+	ivec2 dxy(dxyz.x, dxyz.y);
+
+	Tile* curTile = getTile();
+	this->destTile = area->getTile(dest);
+	this->destCoord = area->phys2virt_r(dest);
+
+	if ((curTile && curTile->exitAt(dxy)) ||
+	    (destTile && destTile->exits[EXIT_NORMAL])) {
+		// We can always take exits as long as we can take exits.
+		// (Even if they would cause us to be out of bounds.)
+		if (nowalkExempt & TILE_NOWALK_EXIT)
+			return true;
+	}
+
+	bool inBounds = area->inBounds(dest);
+	if (destTile && inBounds) {
+		// Tile is inside map. Can we move?
+		if (nowalked(*destTile))
+			return false;
+		if (destTile->entCnt)
+			// Space is occupied by another Entity.
+			return false;
+
+		return true;
+	}
+
+	// The tile is legitimately off the map.
+	return nowalkExempt & TILE_NOWALK_AREA_BOUND;
+}
+
+bool Entity::canMove(vicoord dest)
+{
+	return canMove(area->virt2phys(dest));
 }
 
 bool Entity::isMoving() const
@@ -381,48 +418,23 @@ const std::string& Entity::directionStr(ivec2 facing) const
 	return directions[facing.y+1][facing.x+1];
 }
 
-bool Entity::canMove(int x, int y, double z)
+enum SetPhaseResult Entity::_setPhase(const std::string& name)
 {
-	vicoord virt(x, y, z);
-	return canMove(area->virt2phys(virt));
-}
-
-bool Entity::canMove(icoord dest)
-{
-	icoord dxyz = dest - getTileCoords_i();
-	ivec2 dxy(dxyz.x, dxyz.y);
-
-	Tile* curTile = getTile();
-	this->destTile = area->getTile(dest);
-	this->destCoord = area->phys2virt_r(dest);
-
-	if ((curTile && curTile->exitAt(dxy)) ||
-	    (destTile && destTile->exits[EXIT_NORMAL])) {
-		// We can always take exits as long as we can take exits.
-		// (Even if they would cause us to be out of bounds.)
-		if (nowalkExempt & TILE_NOWALK_EXIT)
-			return true;
+	AnimationMap::iterator it;
+	it = phases.find(name);
+	if (it == phases.end()) {
+		return PHASE_NOTFOUND;
 	}
-
-	bool inBounds = area->inBounds(dest);
-	if (destTile && inBounds) {
-		// Tile is inside map. Can we move?
-		if (nowalked(*destTile))
-			return false;
-		if (destTile->entCnt)
-			// Space is occupied by another Entity.
-			return false;
-
-		return true;
+	Animation* newPhase = &it->second;
+	if (phase != newPhase) {
+		time_t now = World::instance()->time();
+		phase = newPhase;
+		phase->startOver(now);
+		phaseName = name;
+		redraw = true;
+		return PHASE_CHANGED;
 	}
-
-	// The tile is legitimately off the map.
-	return nowalkExempt & TILE_NOWALK_AREA_BOUND;
-}
-
-bool Entity::canMove(vicoord dest)
-{
-	return canMove(area->virt2phys(dest));
+	return PHASE_NOTCHANGED;
 }
 
 bool Entity::nowalked(Tile& t)
