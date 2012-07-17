@@ -28,7 +28,7 @@
 #include "window.h"
 #include "world.h"
 
-#define ASSERT(x)  if (!(x)) return false
+#define ASSERT(x)  if (!(x)) { return false; }
 
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
@@ -78,8 +78,10 @@ void Area::focus()
 		runLoadScripts();
 	}
 
-	music->setIntro(musicIntro);
-	music->setLoop(musicLoop);
+	if (musicIntro)
+		music->setIntro(musicIntro.get());
+	if (musicLoop)
+		music->setLoop(musicLoop.get());
 
 	pythonSetGlobal("Area", this);
 	focusScript.invoke();

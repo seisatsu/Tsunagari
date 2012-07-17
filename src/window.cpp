@@ -13,7 +13,7 @@
 #include "world.h"
 #include "window.h"
 
-#define ASSERT(x)  if (!(x)) return false
+#define ASSERT(x)  if (!(x)) { return false; }
 
 // Garbage collection called every X milliseconds
 #define GC_CALL_PERIOD 10 * 1000

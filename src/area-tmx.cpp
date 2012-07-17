@@ -28,7 +28,7 @@
 	#include "os-windows.h"
 #endif
 
-#define ASSERT(x)  if (!(x)) return false
+#define ASSERT(x)  if (!(x)) { return false; }
 
 /* NOTE: In the TMX map format used by Tiled, tileset tiles start counting
          their Y-positions from 0, while layer tiles start counting from 1. I
@@ -128,10 +128,10 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		else if (name == "name")
 			this->name = value;
 		else if (name == "intro_music") {
-			musicIntro = value;
+			musicIntro.reset(value);
 		}
 		else if (name == "main_music") {
-			musicLoop = value;
+			musicLoop.reset(value);
 		}
 		else if (name == "on_load") {
 			std::string filename = value;

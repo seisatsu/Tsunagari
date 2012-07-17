@@ -217,7 +217,7 @@ protected:
 
 	// The following contain filenames such that they may be loaded lazily.
 	const std::string descriptor;
-	std::string musicIntro, musicLoop;
+	boost::optional<std::string> musicIntro, musicLoop;
 };
 
 //! Register Areas with Python.

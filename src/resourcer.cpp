@@ -25,7 +25,7 @@
 #include "window.h"
 #include "xml.h"
 
-#define ASSERT(x)  if (!(x)) return false
+#define ASSERT(x)  if (!(x)) { return false; }
 
 typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 

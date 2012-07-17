@@ -17,7 +17,7 @@
 #include "world.h"
 #include "window.h"
 
-#define ASSERT(x)  if (!(x)) return false
+#define ASSERT(x)  if (!(x)) { return false; }
 
 template<class Cont, class ValueType>
 void removeValue(Cont* c, ValueType v)

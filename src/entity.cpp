@@ -20,7 +20,7 @@
 #include "world.h"
 #include "xml.h"
 
-#define ASSERT(x)  if (!(x)) return false
+#define ASSERT(x)  if (!(x)) { return false; }
 
 static std::string directions[][3] = {
 	{"up-left",   "up",     "up-right"},
