@@ -121,42 +121,19 @@ Example Entity Descriptor (Player Entity from Testing World)
       <sprite>
          <sheet tile_width="16" tile_height="18">entities/player/player.png</sheet>
          <phases>
-            <phase name="down" pos="7" />
-            <phase name="down-left" pos="7" />
-            <phase name="left" pos="10" />
-            <phase name="up-left" pos="1" />
-            <phase name="up" pos="1" />
-            <phase name="up-right" pos="1" />
-            <phase name="right" pos="4" />
-            <phase name="down-right" pos="7" />
+            <phase name="down" members="7" />
+            <phase name="down-left" members="7" />
+            <phase name="left" members="10" />
+            <phase name="up-left" members="1" />
+            <phase name="up" members="1" />
+            <phase name="up-right" members="1" />
+            <phase name="right" members="4" />
+            <phase name="down-right" members="7" />
 
-            <phase name="moving up" speed="6">
-               <member pos="0" />
-               <member pos="1" />
-               <member pos="2" />
-               <member pos="1" />
-            </phase>
-
-            <phase name="moving right" speed="6">
-               <member pos="3" />
-               <member pos="4" />
-               <member pos="5" />
-               <member pos="4" />
-            </phase>
-
-            <phase name="moving down" speed="6">
-               <member pos="6" />
-               <member pos="7" />
-               <member pos="8" />
-               <member pos="7" />
-            </phase>
-
-            <phase name="moving left" speed="6">
-               <member pos="9" />
-               <member pos="10" />
-               <member pos="11" />
-               <member pos="10" />
-            </phase>
+            <phase name="moving up" speed="6" members="0,1,2,1" />
+			<phase name="moving right" speed="6" members="3,4,5,4" />
+			<phase name="moving down" speed="6" members="6,7,8,7" />
+			<phase name="moving left" speed="6" members="9,10,11,10" />
          </phases>
       </sprite>
 
@@ -198,30 +175,21 @@ Phases are defined inside the ``<phases> </phases>`` tags, which are **required*
 
 There are two kinds of phases -- still frames and animations. A still frame phase definition looks like this:
 
-``<phase name="down" pos="7" />``
+``<phase name="down" members="7" />``
 
-The name attribute defines the name of the phase as seen by the engine. The pos attribute states the graphic's position in the sprite sheet. See the section on tile and sprite sheets for information on positioning.
+The name attribute defines the name of the phase as seen by the engine. The members attribute states the graphic's position in the sprite sheet. See the section on tile and sprite sheets for information on positioning.
 
 The above phase section defines the entity's graphic for standing still while looking down.
 
 An animated phase definition looks like this:
 
-::
+``<phase name="moving up" speed="6" members="0,1,2,1" />``
 
-   <phase name="moving up" speed="6">
-      <member pos="0" />
-      <member pos="1" />
-      <member pos="2" />
-      <member pos="1" />
-   </phase>
-
-The name attribute as before defines the phase's name. The speed attribute in an animated phase states the speed in frames per second of the phase's animation.
-
-The member tags define, in order, the frames in the animation. The position of each member frame is defined through the pos attribute.
+The name attribute as before defines the phase's name. The speed attribute in an animated phase states the speed in frames per second of the phase's animation. The members attribute is a multi-ranged list which defines, in order, the members of the animation. Example: "5,7-10,12".
 
 The above phase section defines the entity's animation for moving upwards.
 
-There are currently 12 built-in phase names which are recognized by the engine:
+There are currently 13 built-in phase names which are recognized by the engine:
 
 * ``up`` : Facing Up
 * ``down`` : Facing Down
@@ -235,6 +203,7 @@ There are currently 12 built-in phase names which are recognized by the engine:
 * ``moving down`` : Moving Down Animation (Tile Mode Only)
 * ``moving left`` : Moving Left Animation (Tile Mode Only)
 * ``moving right`` : Moving Right Animation (Tile Mode Only)
+* ``stance`` : Substitutes all of the above phases, except those that are also defined.
 
 World File Packaging
 ====================

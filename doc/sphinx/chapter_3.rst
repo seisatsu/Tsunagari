@@ -65,6 +65,8 @@ To add a new property, double click on "<new property>" under the name field. On
 * "loop": (**OPTIONAL**) The looping area setting. Use "x" for a horizontal loop, "y" for a vertical loop, or "xy" for a full loop.
 * "color_overlay": (**OPTIONAL**) Overlay a color onto the entire screen inside this area. Uses format "r,g,b,alpha".
 
+The "intro_music" and "main_music" properties are persistent across all areas until redefined in the map properties of another area. In other words, any area without these properties will continue playing the music from before. Defining either of these properties with no value kills the music. A new "intro_music" property replaces the current "main_music".
+
 Event script triggers always use one of two formats:
 
 * "path/to/script.py": Run the specified script when the trigger is activated.
@@ -104,7 +106,7 @@ Animations allow a tile in an area to cycle through several frames at a constant
 Right-click on the tile which will be the first frame of the animation, and select the ``Tile Properties`` option. To make this tile animated, set the following properties:
 
 * "speed": An integer or decimal value -- speed of the animation in frames per second.
-* "members": A comma separated list of the numerical positions of the frames in this tile sheet. Example: "12,27,34". The first member of the list must be this tile. For more information on tile positions, see the chapter 2 section on sprite and tile sheets.
+* "members": A multi-ranged list of the numerical positions of the frames in this tile sheet. Example: "12,27,29-34,38". The first member of the list must be this tile. For more information on tile positions, see the chapter 2 section on sprite and tile sheets.
 
 .. image:: _static/tiled_09.png
 
