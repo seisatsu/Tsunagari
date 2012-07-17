@@ -4,7 +4,7 @@
 	<sprite>
 		<sheet tile_width="32" tile_height="23">entities/cloud/cloud.png</sheet>
 		<phases>
-			<phase name="down" pos="0" />
+			<phase name="down" members="0" />
 		</phases>
 	</sprite>
 

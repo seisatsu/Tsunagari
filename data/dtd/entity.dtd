@@ -10,13 +10,10 @@
 
 <!ELEMENT phases (phase+)>
 
-<!ELEMENT phase (member*)>
-<!ATTLIST phase name  CDATA #REQUIRED
-                pos   CDATA #IMPLIED
-                speed CDATA #IMPLIED>
-
-<!ELEMENT member EMPTY>
-<!ATTLIST member pos CDATA #REQUIRED>
+<!ELEMENT phase EMPTY>
+<!ATTLIST phase name    CDATA #REQUIRED
+                members CDATA #REQUIRED
+                speed   CDATA #IMPLIED>
 
 <!ELEMENT sounds (sound*)>
 
