@@ -129,7 +129,7 @@ XMLDoc::XMLDoc()
 
 bool XMLDoc::init(const std::string& path,
                   const std::string& data,
-                  const std::string& dtdPath)
+                  xmlDtd* dtd)
 {
 	this->path_ = path;
 
@@ -147,19 +147,10 @@ bool XMLDoc::init(const std::string& path,
 		return false;
 	}
 
-	// Load up a Document Type Definition for validating the document.
-	xmlDtd* dtd = xmlParseDTD(NULL, (const xmlChar*)dtdPath.c_str());
-	if (!dtd) {
-		doc.reset();
-		Log::err(dtdPath, "file not found");
-		return false;
-	}
-
 	// Assert the document is sane.
 	xmlValidCtxt* vc = xmlNewValidCtxt();
 	int valid = xmlValidateDtd(vc, doc.get(), dtd);
 	xmlFreeValidCtxt(vc);
-	xmlFreeDtd(dtd);
 
 	if (!valid) {
 		doc.reset();

@@ -76,7 +76,7 @@ bool AreaTMX::processDescriptor()
 	XMLNode root;
 
 	Resourcer* rc = Resourcer::instance();
-	ASSERT(doc = rc->getXMLDoc(descriptor, "area.dtd"));
+	ASSERT(doc = rc->getXMLDoc(descriptor, "dtd/area.dtd"));
 	ASSERT(root = doc->root()); // <map>
 
 	ASSERT(root.intAttr("width", &dim.x));

@@ -332,7 +332,7 @@ bool World::processDescriptor()
 	XMLNode root;
 
 	rc = Resourcer::instance();
-	ASSERT(doc = rc->getXMLDoc("world.conf", "world.dtd"));
+	ASSERT(doc = rc->getXMLDoc("world.conf", "dtd/world.dtd"));
 	ASSERT(root = doc->root()); // <world>
 
 	for (XMLNode child = root.childrenNode(); child; child = child.next()) {

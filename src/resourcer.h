@@ -11,6 +11,7 @@
 #include <string>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 #include <Python.h>
 
@@ -33,6 +34,7 @@ typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Sound> SampleRef;
 typedef boost::shared_ptr<Gosu::Song> SongRef;
 typedef boost::shared_ptr<XMLDoc> XMLRef;
+typedef boost::shared_ptr<xmlDtd> DTDRef;
 typedef std::deque<ImageRef> TiledImage;
 typedef boost::shared_ptr<TiledImage> TiledImageRef;
 typedef boost::shared_ptr<std::string> StringRef;
@@ -79,7 +81,7 @@ public:
 
 	//! Request an XML document from the World.
 	XMLRef getXMLDoc(const std::string& name,
-		const std::string& dtdFile);
+		const std::string& dtdPath);
 
 	//! Request a Python script from the World be run.
 	bool runPythonScript(const std::string& name);
@@ -92,21 +94,27 @@ public:
 	void garbageCollect();
 
 private:
+	DTDRef parseDTD(const std::string& path);
+	bool preloadDTDs();
+
+	//! Read an XML document from the game archive and parse it.
+	XMLDoc* readXMLDoc(const std::string& name,
+		const std::string& dtdFile);
+
+	//! Requests an XML DTD from Tsunagari. (Does not load from the World.)
+	xmlDtd* getDTD(const std::string& name);
+
+	//! Read a generic resource from the game archive.
+	Gosu::Buffer* readBuffer(const std::string& name);
+
+	//! Read a string resource from the game archive.
+	std::string readString(const std::string& name);
+
 	//! Reads a file from the game archive.
 	template <class T>
 	bool readFromDisk(const std::string& name, T& buf);
 
-	//! Read an XML document from the game archive and parse it.
-	XMLDoc* readXMLDocFromDisk(const std::string& name,
-		const std::string& dtdFile);
-
-	//! Read a string resource from the game archive.
-	std::string readStringFromDisk(const std::string& name);
-
-	//! Read a generic resource from the game archive.
-	Gosu::Buffer* read(const std::string& name);
-
-	//! Helper function.
+	//! Build a pathname: arhive + "/" + entryName
 	std::string path(const std::string& entryName) const;
 
 private:
@@ -118,6 +126,10 @@ private:
 	Cache<XMLRef> xmls;
 	Cache<PyCodeObject*> codes;
 	Cache<StringRef> texts;
+
+	// DTDs don't expire. No garbage collection.
+	typedef boost::unordered_map<std::string, DTDRef> TextMap;
+	TextMap dtds;
 };
 
 void exportResourcer();

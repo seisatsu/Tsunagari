@@ -70,10 +70,15 @@ bool Resourcer::init(char* argv0)
 		ASSERT(callInitpy(this, archivePath));
 	ASSERT(callInitpy(this, BASE_ZIP_PATH));
 
+	ASSERT(prependPath(BASE_ZIP_PATH));
+
+	// DTDs must be loaded from BASE_ZIP. They cannot be allowed to be
+	// loaded from the world.
+	ASSERT(preloadDTDs());
+
+	ASSERT(prependPath(conf.worldFilename));
 	BOOST_FOREACH(std::string pathname, conf.dataPath)
 		ASSERT(prependPath(pathname));
-	ASSERT(appendPath(conf.worldFilename));
-	ASSERT(appendPath(BASE_ZIP_PATH));
 
 	return true;
 }
@@ -133,7 +138,7 @@ ImageRef Resourcer::getImage(const std::string& name)
 	if (existing)
 		return existing;
 
-	BufferPtr buffer(read(name));
+	BufferPtr buffer(readBuffer(name));
 	if (!buffer)
 		return ImageRef();
 	Gosu::Bitmap bitmap;
@@ -154,7 +159,7 @@ bool Resourcer::getTiledImage(TiledImage& img, const std::string& name,
 		return true;
 	}
 
-	BufferPtr buffer(read(name));
+	BufferPtr buffer(readBuffer(name));
 	if (!buffer)
 		return false;
 	Gosu::Bitmap bitmap;
@@ -177,7 +182,7 @@ SampleRef Resourcer::getSample(const std::string& name)
 	if (existing)
 		return existing;
 
-	BufferPtr buffer(read(name));
+	BufferPtr buffer(readBuffer(name));
 	if (!buffer)
 		return SampleRef();
 	SampleRef result(new Sound(new Gosu::Sample(buffer->frontReader())));
@@ -195,7 +200,7 @@ SongRef Resourcer::getSong(const std::string& name)
 	if (existing)
 		return existing;
 
-	BufferPtr buffer(read(name));
+	BufferPtr buffer(readBuffer(name));
 	if (!buffer)
 		return SongRef();
 	SongRef result(new Gosu::Song(buffer->frontReader()));
@@ -211,7 +216,7 @@ XMLRef Resourcer::getXMLDoc(const std::string& name,
 	if (existing)
 		return existing;
 
-	XMLRef result(readXMLDocFromDisk(name, dtdFile));
+	XMLRef result(readXMLDoc(name, dtdFile));
 
 	xmls.momentaryPut(name, result);
 	return result;
@@ -223,7 +228,7 @@ bool Resourcer::runPythonScript(const std::string& name)
 	if (existing)
 		return pythonExec(existing);
 
-	std::string code = readStringFromDisk(name);
+	std::string code = readString(name);
 	PyCodeObject* result = code.size() ?
 		pythonCompile(name.c_str(), code.c_str()) : NULL;
 
@@ -237,7 +242,7 @@ std::string Resourcer::getText(const std::string& name)
 	if (existing)
 		return *existing.get();
 
-	StringRef result(new std::string(readStringFromDisk(name)));
+	StringRef result(new std::string(readString(name)));
 
 	texts.momentaryPut(name, result);
 	return *result.get();
@@ -251,6 +256,78 @@ void Resourcer::garbageCollect()
 	songs.garbageCollect();
 	xmls.garbageCollect();
 	texts.garbageCollect();
+}
+
+// FIXME: Should be moved to xml.cpp!!!!!!
+DTDRef Resourcer::parseDTD(const std::string& path)
+{
+	xmlCharEncoding enc = XML_CHAR_ENCODING_NONE;
+
+	std::string bytes = readString(path);
+	if (bytes.empty())
+		return DTDRef();
+
+	xmlParserInputBuffer* input = xmlParserInputBufferCreateMem(
+			bytes.c_str(), (int)bytes.size(), enc);
+	if (!input)
+		return DTDRef();
+
+	xmlDtd* dtd = xmlIOParseDTD(NULL, input, enc);
+	if (!dtd)
+		return DTDRef();
+
+	return DTDRef(dtd, xmlFreeDtd);
+}
+
+// FIXME: Should be moved to xml.cpp!!!!!!
+bool Resourcer::preloadDTDs()
+{
+	ASSERT(dtds["dtd/area.dtd"]   = parseDTD("dtd/area.dtd"));
+	ASSERT(dtds["dtd/entity.dtd"] = parseDTD("dtd/entity.dtd"));
+	ASSERT(dtds["dtd/world.dtd"]  = parseDTD("dtd/world.dtd"));
+	return true;
+}
+
+XMLDoc* Resourcer::readXMLDoc(const std::string& name,
+                              const std::string& dtdPath)
+{
+	std::string p = path(name);
+	std::string data = readString(name);
+	xmlDtd* dtd = getDTD(dtdPath);
+
+	if (!dtd || data.empty())
+		return NULL;
+	XMLDoc* doc = new XMLDoc;
+	if (!doc->init(p, data, dtd)) {
+		delete doc;
+		return NULL;
+	}
+	return doc;
+}
+
+xmlDtd* Resourcer::getDTD(const std::string& name)
+{
+	TextMap::iterator it = dtds.find(name);
+	return it == dtds.end() ? NULL : it->second.get();
+}
+
+Gosu::Buffer* Resourcer::readBuffer(const std::string& name)
+{
+	Gosu::Buffer* buf = new Gosu::Buffer();
+
+	if (readFromDisk(name, *buf)) {
+		return buf;
+	}
+	else {
+		delete buf;
+		return NULL;
+	}
+}
+
+std::string Resourcer::readString(const std::string& name)
+{
+	std::string str;
+	return readFromDisk(name, str) ? str : "";
 }
 
 template <class T>
@@ -309,46 +386,9 @@ bool Resourcer::readFromDisk(const std::string& name, T& buf)
 	return true;
 }
 
-XMLDoc* Resourcer::readXMLDocFromDisk(const std::string& name,
-		const std::string& dtdFile)
-{
-	using namespace boost;
-
-	XMLDoc* doc = new XMLDoc;
-	std::string data = readStringFromDisk(name);
-	if (data.size()) {
-		std::string p = path(name);
-		std::string dtdPath = str(format("%s/%s")
-				% XML_DTD_PATH % dtdFile);
-		if (!doc->init(p, data, dtdPath)) {
-			delete doc;
-			doc = NULL;
-		}
-	}
-	return doc;
-}
-
-std::string Resourcer::readStringFromDisk(const std::string& name)
-{
-	std::string str;
-	return readFromDisk(name, str) ? str : "";
-}
-
-Gosu::Buffer* Resourcer::read(const std::string& name)
-{
-	Gosu::Buffer* buf = new Gosu::Buffer();
-
-	if (readFromDisk(name, *buf)) {
-		return buf;
-	}
-	else {
-		delete buf;
-		return NULL;
-	}
-}
-
 std::string Resourcer::path(const std::string& entryName) const
 {
+	// XXX: archive might not be world
 	return conf.worldFilename + "/" + entryName;
 }
 

@@ -583,7 +583,7 @@ void Entity::runTileEntryScript()
 bool Entity::processDescriptor()
 {
 	Resourcer* rc = Resourcer::instance();
-	XMLRef doc = rc->getXMLDoc(descriptor, "entity.dtd");
+	XMLRef doc = rc->getXMLDoc(descriptor, "dtd/entity.dtd");
 	if (!doc)
 		return false;
 	const XMLNode root = doc->root(); // <entity>

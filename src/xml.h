@@ -50,7 +50,7 @@ public:
 	XMLDoc();
 	bool init(const std::string& path,
 	          const std::string& data,
-	          const std::string& dtdFile);
+	          xmlDtd* dtd);
 
 	XMLNode root();
 	xmlNode* temporaryGetRoot() const;
