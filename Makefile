@@ -14,3 +14,5 @@ profile:
 clean:
 	$(MAKE) -C src clean
 
+.PHONY: all debug release profile clean
+
