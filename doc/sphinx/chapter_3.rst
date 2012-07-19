@@ -115,6 +115,32 @@ When the first tile in the animation is placed on the map, it will be animated i
 Layers
 ======
 
+A layer is a subsection of a map, sharing the same x and y coordinates with all other layers, but having a different z coordinate. Tiles, entities, and other objects placed on higher layers are drawn above those on lower layers by the engine. In addition, properties, entities, and other objects on one layer do not have any affect on other layers. Tsunagari supports an infinite number of layers.
+
+Upon creating a new map, one "tile layer" already exists. The existing layers are listed in the "Layers" dialog at the right of the Tiled window.
+
+.. image:: _static/tiled_10.png
+
+Before starting, we need to add a property to this layer to tell Tsunagari its z coordinate. To do so, right click on the layer's name, and select the ``Layer Properties`` option. (You can also rename the layer by double clicking its name, although the name is unimportant to the engine.)
+
+.. image:: _static/tiled_11.png
+
+The layer's z coordinate is set in the "layer" property. Its value can be an integer or decimal number, positive or negative. The recommended starting layer for the player character is 0.
+
+You can add a new tile layer by right clicking inside the dialog and selecting ``Add Tile Layer``. You can see that there is also an ``Add Object Layer`` option; this is described in a later section. After adding a new layer, don't forget to set its "layer" property.
+
+.. image:: _static/tiled_12.png
+
+Note that in order for layers to display correctly in Tiled, they need to be kept in order in the dialog, top to bottom, based on their z coordinate. This can be done by clicking the layer's name and then clicking the up and down arrow buttons at the bottom of the layer dialog.
+
+Layers can be used for scenery only, or they can be moved and interacted upon by entities or the player. There are three ways to move entities and the player between layers:
+
+* Exits can move the player to an arbitrary x, y, and z coordinate on another map.
+* Layermods can move the player or an entity to another z coordinate in-place.
+* Event scripting can move the player or an entity anywhere.
+
+These methods are described in later sections.
+
 Placing Tiles
 =============
 

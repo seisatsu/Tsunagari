@@ -2,8 +2,8 @@
 Chapter 5 - Technical Details
 *****************************
 
-Config.h
-========
+Built-in Engine Defaults
+========================
 
 Data Path
 =========
@@ -11,9 +11,15 @@ Data Path
 Compiling Tsunagari
 ===================
 
-Doxygen Source Documentation
-============================
+Compiling on Linux
+------------------
 
-Sphinx Engine Documentation
-===========================
+Compiling on Windows
+--------------------
+
+Doxygen Source Documentation
+----------------------------
+
+Sphinx User's Manual
+--------------------
 
