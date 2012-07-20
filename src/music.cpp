@@ -33,44 +33,44 @@ std::string Music::getLoop()
 
 void Music::setIntro(const std::string& filename)
 {
-	Resourcer* rc = Resourcer::instance();
+	if (newIntro == filename)
+		return;
 
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
 	case PLAYING_LOOP:
-		if (newIntro != filename)
-			setState(CHANGED_INTRO);
-	default:
-		break;
+		setState(CHANGED_INTRO);
+	default: break;
 	}
-	if (newIntro != filename) {
-		newIntro = filename;
-		// Optimize XXX: Don't load until played.
-		introMusic = filename.size() ?
-			rc->getSong(filename) : SongRef();
-	}
+
+	Resourcer* rc = Resourcer::instance();
+
+	newIntro = filename;
+	// Optimize XXX: Don't load until played.
+	introMusic = filename.size() ?
+		rc->getSong(filename) : SongRef();
 }
 
 void Music::setLoop(const std::string& filename)
 {
-	Resourcer* rc = Resourcer::instance();
+	if (newLoop == filename)
+		return;
 
 	switch (state) {
 	case NOT_PLAYING:
 	case PLAYING_INTRO:
 	case PLAYING_LOOP:
-		if (newLoop != filename)
-			setState(CHANGED_LOOP);
-	default:
-		break;
+		setState(CHANGED_LOOP);
+	default: break;
 	}
-	if (newLoop != filename) {
-		newLoop = filename;
-		// Optimize XXX: Don't load until played.
-		loopMusic = filename.size() ?
-			rc->getSong(filename) : SongRef();
-	}
+
+	Resourcer* rc = Resourcer::instance();
+
+	newLoop = filename;
+	// Optimize XXX: Don't load until played.
+	loopMusic = filename.size() ?
+		rc->getSong(filename) : SongRef();
 }
 
 double Music::getVolume()
