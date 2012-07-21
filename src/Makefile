@@ -5,18 +5,7 @@
 
 ### --- VARIABLES SECTION --- ###
 
-# Compiler to use. (Suggested: "g++" or "clang")
-CXX = g++
-
-# Warning flags to enable.
-WFLAGS = -Wall -Wextra -Wconversion
-WFLAGS += -Wno-long-long # Disable warnings in Python code.
-
-# Compiler and linker flags.
-CXXFLAGS = $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
-	$(shell pkg-config --cflags python-2.7) $(shell xml2-config --cflags)
-LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
-	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
+include Makefile.common
 
 OBJECTS = animation.o area.o area-tmx.o bitrecord.o character.o client-conf.o \
           gosu-cbuffer.o image.o image-impl.o nbcl/nbcl.o entity.o log.o \
@@ -36,7 +25,7 @@ all: tsunagari $(BASEDATA) $(TESTWORLD)
 
 depend:
 	sed "/^### --- DO NOT DELETE THIS LINE --- ###/,$$$$d" Makefile > Mf
-	echo "### --- DO NOT DELETE THIS LINE --- ###\n" >> Mf
+	/bin/echo -e "### --- DO NOT DELETE THIS LINE --- ###\n" >> Mf
 	$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl >> Mf
 	mv Mf Makefile
 

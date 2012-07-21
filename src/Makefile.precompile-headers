@@ -1,0 +1,14 @@
+include Makefile.common
+
+CODE = $(wildcard *.h) $(wildcard *.cpp)
+
+build: all.gch
+
+all.gch: $(CODE)
+	sh grep-includes.sh
+	g++ -x c++-header -c all -o all.gch $(CXXFLAGS)
+
+clean:
+	rm -f all all.gch
+
+.PHONY: build clean
