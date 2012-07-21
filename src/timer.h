@@ -7,6 +7,9 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include <ctime> // for time_t
+#include <string>
+
 // Note: This will break if run long enough for the counter to overflow.
 
 //! A timer class for timing Python events.

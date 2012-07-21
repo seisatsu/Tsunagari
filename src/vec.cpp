@@ -13,10 +13,12 @@ struct vec2_to_python_tuple
 {
 	static PyObject* convert(const T& v)
 	{
-		using namespace boost::python;
+		// Prevent compilation name collisions with "object" by making
+		// it "bp::object".
+		namespace bp = boost::python;
 
-		object tuple = make_tuple(v.x, v.y);
-		return incref(tuple.ptr());
+		bp::object tuple = bp::make_tuple(v.x, v.y);
+		return bp::incref(tuple.ptr());
 	}
 };
 
@@ -25,10 +27,12 @@ struct vec3_to_python_tuple
 {
 	static PyObject* convert(const T& v)
 	{
-		using namespace boost::python;
+		// Prevent compilation name collisions with "object" by making
+		// it "bp::object".
+		namespace bp = boost::python;
 
-		object tuple = make_tuple(v.x, v.y, v.z);
-		return incref(tuple.ptr());
+		bp::object tuple = bp::make_tuple(v.x, v.y, v.z);
+		return bp::incref(tuple.ptr());
 	}
 };
 

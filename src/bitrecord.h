@@ -7,6 +7,7 @@
 #ifndef BITRECORD_H
 #define BITRECORD_H
 
+#include <cstring> // for size_t
 #include <vector>
 
 class BitRecord {

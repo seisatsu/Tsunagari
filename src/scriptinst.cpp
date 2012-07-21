@@ -132,11 +132,15 @@ struct topython_visitor : public boost::static_visitor<PyObject*>
 	{
 		using namespace boost::python;
 
-		object str;
+		// Prevent compilation name collisions with "object" by making
+		// it "bp::object".
+		namespace bp = boost::python;
+
+		bp::object str;
 		if (ref.funcname.size())
-			str = object(ref.filename + ":" + ref.funcname);
+			str = bp::object(ref.filename + ":" + ref.funcname);
 		else
-			str = object(ref.filename);
+			str = bp::object(ref.filename);
 		return incref(str.ptr());
 	}
 
@@ -184,6 +188,10 @@ struct scriptinst_from_python
 	{
 		using namespace boost::python;
 
+		// Prevent compilation name collisions with "object" by making
+		// it "bp::object".
+		namespace bp = boost::python;
+
 		void* storage =
 			((converter::rvalue_from_python_storage<ScriptInst>*)data)
 				->storage.bytes;
@@ -196,7 +204,7 @@ struct scriptinst_from_python
 			// By default, the PyObject is a borrowed reference,
 			// which means it hasn't been incref'd.
 			handle<> hndl(borrowed(obj));
-			new (storage) ScriptInst(object(hndl));
+			new (storage) ScriptInst(bp::object(hndl));
 		}
 
 		data->convertible = storage;
