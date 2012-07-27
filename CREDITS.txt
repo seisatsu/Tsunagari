@@ -88,39 +88,106 @@ License:
 
 === Sound Effects ===
 
-door.oga - Sampled from http://www.freesound.org/people/pagancow/sounds/15419/
-rockfall.oga - Sampled from http://www.freesound.org/people/Benboncan/sounds/60085/
-metal_clank.oga - http://www.freesound.org/people/farbin/sounds/36631/
-book.oga - Sampled from http://www.freesound.org/people/Koops/sounds/20233/
-splash.oga - Sampled from http://www.freesound.org/people/petenice/sounds/9508/
+door.oga
+	Copyrignt 2006 pagancow
+	License: https://creativecommons.org/licenses/sampling+/1.0/
+	Title: Heavy door open/close
+	URI: http://www.freesound.org/people/pagancow/sounds/15419/
+
+rockfall.oga
+	Copyright 2008 Benboncan
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: Inside an abandoned lead mine
+	URI: http://www.freesound.org/people/Benboncan/sounds/60085/
+
+metal_clank.oga
+	Copyright 2007 farbin
+	License: https://creativecommons.org/licenses/sampling+/1.0/
+	Title: metallic
+	URI: http://www.freesound.org/people/farbin/sounds/36631/
+
+book.oga
+	Copyright 2006 Koops
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: Paper Book Reading
+	URI: http://www.freesound.org/people/Koops/sounds/20233/
+
+splash.oga
+	Copyright 2005 petenice
+	License: http://creativecommons.org/licenses/sampling+/1.0/
+	Title: N/A
+	URI: http://www.freesound.org/people/petenice/sounds/9508/
 
 -----
 
 === Graphics ===
 
-cloud.png - http://opengameart.org/content/fluffy-clouds
-player.png - http://opengameart.org/content/twelve-16x18-rpg-sprites-plus-base
-wizard.png - http://opengameart.org/content/twelve-16x18-rpg-sprites-plus-base
+cloud.png
+	Copyright 2010 Daniel Gregory Benoy
+	License: http://creativecommons.org/licenses/by-sa/3.0/
+	Title: Fluffy Clouds
+	URI: http://opengameart.org/content/fluffy-clouds
 
-cave.png - http://opengameart.org/content/cave-tileset-0
-forest.png - http://opengameart.org/content/16x16-tileset-water-dirt-forest
-indoors.png - http://opengameart.org/content/16x16-indoor-rpg-tileset-the-baseline
-indoors_2.png - http://opengameart.org/content/rpg-indoor-tileset-expansion-1
-objects.png - http://opengameart.org/content/objects-for-16x16-tilesets
-baum.png - http://opengameart.org/content/gnarled-tree
+player.png
+	Copyright 2010 Antifarea
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: Twelve 16x18 RPG sprites, plus base
+	URI: http://opengameart.org/content/twelve-16x18-rpg-sprites-plus-base
+
+wizard.png
+	Copyright 2010 Antifarea
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: Twelve 16x18 RPG sprites, plus base
+	URI: http://opengameart.org/content/twelve-16x18-rpg-sprites-plus-base
+
+cave.png
+	Copyright 2011 MrBeast
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: Cave tileset
+	URI:http://opengameart.org/content/cave-tileset-0
+
+forest.png
+	Copyright 2010 Blarumyrran
+	License: http://creativecommons.org/licenses/by-sa/3.0/
+	Title: 16x16 tileset (with water, dirt & forest)
+	URI: http://opengameart.org/content/16x16-tileset-water-dirt-forest
+
+indoors.png
+	Copyright 2011 Redshrike
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: 16x16 indoor rpg tileset: the baseline
+	URI: http://opengameart.org/content/16x16-indoor-rpg-tileset-the-baseline
+
+indoors_2.png
+	Copyright 2011 Redshrike
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: RPG Indoor Tileset: Expansion 1
+	URI: http://opengameart.org/content/rpg-indoor-tileset-expansion-1
+
+objects.png
+	Copyright 2011 MrBeast
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: Objects for 16x16 tilesets
+	URI: http://opengameart.org/content/objects-for-16x16-tilesets
+
+baum.png
+	Copyright 2010 geloescht
+	License: http://creativecommons.org/licenses/by/3.0/
+	Title: Gnarled Tree
+	URI: http://opengameart.org/content/gnarled-tree
 
 -----
 
 === Music ===
 
 A_Travellers_Tale.oga:
-	Copyright <YR> MarkySpark
+	Copyright 2011 MarkySpark
 	License: http://creativecommons.org/licenses/by-nc-sa/3.0/
 	Title: A Traveller's Tale
 	URI: http://www.newgrounds.com/audio/listen/455328
 
 Devotion.oga:
-	Copyright <YR> MarkySpark
+	Copyright 2012 MarkySpark
 	License: http://creativecommons.org/licenses/by-nc-sa/3.0/
 	Title: Devotion
 	URI: http://www.newgrounds.com/audio/listen/483121
