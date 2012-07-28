@@ -197,8 +197,8 @@ protected:
 	// XML parsing functions used in constructing an Entity
 	bool processDescriptor();
 	bool processSprite(XMLNode node);
-	bool processPhases(XMLNode node, const TiledImage& tiles);
-	bool processPhase(const XMLNode node, const TiledImage& tiles);
+	bool processPhases(XMLNode node, const TiledImageRef& tiles);
+	bool processPhase(const XMLNode node, const TiledImageRef& tiles);
 	bool processMembers(XMLNode node, std::vector<ImageRef>& frames,
                             const TiledImage& tiles);
 	bool processMember(const XMLNode node, std::vector<ImageRef>& frames,

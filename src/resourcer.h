@@ -16,27 +16,22 @@
 #include <Python.h>
 
 #include "cache.h"
+#include "image.h"
 #include "sound.h"
+#include "tiledimage.h"
 #include "xml.h"
 
 namespace Gosu {
-	class Bitmap;
 	class Buffer;
-	class Image;
 	class Sample;
 	class Song;
 }
 
-using boost::shared_ptr;
-
 // We hand out and manage resources in these forms:
-typedef boost::shared_ptr<Gosu::Image> ImageRef;
 typedef boost::shared_ptr<Sound> SampleRef;
 typedef boost::shared_ptr<Gosu::Song> SongRef;
 typedef boost::shared_ptr<XMLDoc> XMLRef;
 typedef boost::shared_ptr<xmlDtd> DTDRef;
-typedef std::deque<ImageRef> TiledImage;
-typedef boost::shared_ptr<TiledImage> TiledImageRef;
 typedef boost::shared_ptr<std::string> StringRef;
 
 /**
@@ -66,10 +61,9 @@ public:
 	ImageRef getImage(const std::string& name);
 
 	//! Request an image resource from the World and splits it into a
-	//! number of tiles that each have width and height w by h. Returns
-	//! false if the source image is not found.
-	bool getTiledImage(TiledImage& img, const std::string& name,
-		int w, int h, bool tileable);
+	//! number of tiles that each have width and height w by h.
+	TiledImageRef getTiledImage(const std::string& name,
+		int w, int h);
 
 	//! Request a sound object from the World. The sound will be
 	//! completely loaded into memory at once.

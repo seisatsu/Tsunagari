@@ -51,7 +51,7 @@ bool Animation::needsRedraw(time_t now) const
 	return false;
 }
 
-Gosu::Image* Animation::frame(time_t now)
+Image* Animation::frame(time_t now)
 {
 	switch (frames.size()) {
 	case 0:

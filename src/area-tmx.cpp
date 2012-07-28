@@ -186,7 +186,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 */
 
 	TileSet* set;
-	TiledImage img;
+	TiledImageRef img;
 	int tilex, tiley;
 	int firstGid;
 
@@ -215,15 +215,15 @@ bool AreaTMX::processTileSet(XMLNode node)
 
 			// Load tileset image.
 			Resourcer* rc = Resourcer::instance();
-			bool found = rc->getTiledImage(img, source,
-				(unsigned)tilex, (unsigned)tiley, true);
-			if (!found) {
+			img = rc->getTiledImage(source, tilex, tiley);
+			if (!img) {
 				Log::err(descriptor, "tileset image not found");
 				return false;
 			}
 
 			// Initialize "vanilla" tile type array.
-			BOOST_FOREACH(ImageRef& tileImg, img) {
+			for (size_t i = 0; i < img->size(); i++) {
+				ImageRef& tileImg = (*img.get())[i];
 				TileType* type = new TileType(tileImg);
 				set->add(type);
 				gids.push_back(type);
@@ -232,7 +232,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 		else if (child.is("tile")) {
 			// Handle an explicitly declared "non-vanilla" type.
 
-			if (img.empty()) {
+			if (!img) {
 				Log::err(descriptor,
 				  "Tile type processed before tileset image loaded");
 				return false;
@@ -243,13 +243,13 @@ bool AreaTMX::processTileSet(XMLNode node)
 			int id;
 			ASSERT(child.intAttr("id", &id));
 
-			if (id < 0 || (int)img.size() <= id) {
+			if (id < 0 || (int)img->size() <= id) {
 				Log::err(descriptor, "tile type id is invalid");
 				return false;
 			}
 
 			// Initialize a default TileType, we'll build on that.
-			TileType* type = new TileType(img[id]);
+			TileType* type = new TileType((*img.get())[id]);
 			ASSERT(processTileType(child, *type, img, id));
 
 			// "gid" is the global area-wide id of the tile.
@@ -263,7 +263,8 @@ bool AreaTMX::processTileSet(XMLNode node)
 	return true;
 }
 
-bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int id)
+bool AreaTMX::processTileType(XMLNode node, TileType& type,
+		TiledImageRef& img, int id)
 {
 
 /*
@@ -338,12 +339,12 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type, TiledImage& img, int
 			// We already have one from TileType's constructor.
 			for (it = members.begin(); it < members.end(); it++) {
 				int idx = atoi(it->c_str());
-				if (idx < 0 || (int)img.size() <= idx) {
+				if (idx < 0 || (int)img->size() <= idx) {
 					Log::err(descriptor, "frame index out "
 						"of range for animated tile");
 					return false;
 				}
-				frames.push_back(img[idx]);
+				frames.push_back((*img.get())[idx]);
 			}
 		}
 		else if (name == "speed") {

@@ -608,14 +608,14 @@ bool Entity::processDescriptor()
 bool Entity::processSprite(XMLNode node)
 {
 	Resourcer* rc = Resourcer::instance();
-	TiledImage tiles;
+	TiledImageRef tiles;
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
 			std::string imageSheet = node.content();
 			ASSERT(node.intAttr("tile_width",  &imgw) &&
 			       node.intAttr("tile_height", &imgh));
-			ASSERT(rc->getTiledImage(tiles, imageSheet,
-			       imgw, imgh, false));
+			tiles = rc->getTiledImage(imageSheet, imgw, imgh);
+			ASSERT(tiles);
 		} else if (node.is("phases")) {
 			ASSERT(processPhases(node.childrenNode(), tiles));
 		}
@@ -623,7 +623,7 @@ bool Entity::processSprite(XMLNode node)
 	return true;
 }
 
-bool Entity::processPhases(XMLNode node, const TiledImage& tiles)
+bool Entity::processPhases(XMLNode node, const TiledImageRef& tiles)
 {
 	for (; node; node = node.next())
 		if (node.is("phase"))
@@ -631,7 +631,7 @@ bool Entity::processPhases(XMLNode node, const TiledImage& tiles)
 	return true;
 }
 
-bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
+bool Entity::processPhase(const XMLNode node, const TiledImageRef& tiles)
 {
 	/* Each phase requires a 'name' and 'members'. Additionally,
 	 * 'speed' is required if 'members' has more than one member.
@@ -652,12 +652,12 @@ bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 
 	if (isInteger(membersStr)) {
 		int member = atoi(membersStr.c_str());
-		if (member < 0 || (int)tiles.size() < member) {
+		if (member < 0 || (int)tiles->size() < member) {
 			Log::err(descriptor,
 				"<phase> members attribute index out of bounds");
 			return false;
 		}
-		const ImageRef& image = tiles[member];
+		const ImageRef& image = (*tiles.get())[member];
 		phases[name] = Animation(image);
 	}
 	else if (isRanges(membersStr)) {
@@ -671,12 +671,12 @@ bool Entity::processPhase(const XMLNode node, const TiledImage& tiles)
 		std::vector<int> members = parseRanges(membersStr);
 		std::vector<ImageRef> images;
 		BOOST_FOREACH(int i, members) {
-			if (i < 0 || (int)tiles.size() < i) {
+			if (i < 0 || (int)tiles->size() < i) {
 				Log::err(descriptor,
 					"<phase> members attribute index out of bounds");
 				return false;
 			}
-			images.push_back(tiles[i]);
+			images.push_back((*tiles.get())[i]);
 		}
 
 		phases[name] = Animation(images, (time_t)(1000.0 / fps));

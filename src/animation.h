@@ -9,11 +9,8 @@
 
 #include <vector>
 
+#include "image.h"
 #include "resourcer.h"
-
-namespace Gosu {
-	class Image;
-}
 
 /**
  * An Animation is a sequence of bitmap images (called frames) used to creates
@@ -72,7 +69,7 @@ public:
 	 *
 	 * @now current time in milliseconds
 	 */
-	Gosu::Image* frame(time_t now);
+	Image* frame(time_t now);
 
 private:
 

@@ -13,13 +13,13 @@
 #include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp>
-#include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
 
 #include "area.h"
 #include "entity.h"
 #include "log.h"
+#include "image.h"
 #include "npc.h"
 #include "overlay.h"
 #include "python.h"
@@ -534,7 +534,7 @@ void Area::drawTile(Tile& tile, int x, int y, double depth)
 	TileType* type = (TileType*)tile.parent;
 	if (type) {
 		time_t now = World::instance()->time();
-		const Gosu::Image* img = type->anim.frame(now);
+		const Image* img = type->anim.frame(now);
 		if (img)
 			img->draw((double)x*img->width(),
 				  (double)y*img->height(), depth);
