@@ -1,3 +1,9 @@
+/****************************
+** Tsunagari Tile Engine   **
+** tiledimage-impl.cpp     **
+** Copyright 2012 OmegaSDG **
+****************************/
+
 #include <Gosu/Bitmap.hpp>
 
 #include "gosu-cbuffer.h"
