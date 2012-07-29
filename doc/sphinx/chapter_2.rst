@@ -121,19 +121,19 @@ Example Entity Descriptor (Player Entity from Testing World)
 		<sprite>
 			<sheet tile_width="16" tile_height="18">entities/player/player.png</sheet>
 			<phases>
-				<phase name="down" members="7" />
-				<phase name="down-left" members="7" />
-				<phase name="left" members="10" />
-				<phase name="up-left" members="1" />
-				<phase name="up" members="1" />
-				<phase name="up-right" members="1" />
-				<phase name="right" members="4" />
-				<phase name="down-right" members="7" />
+				<phase name="down" frames="7" />
+				<phase name="down-left" frames="7" />
+				<phase name="left" frames="10" />
+				<phase name="up-left" frames="1" />
+				<phase name="up" frames="1" />
+				<phase name="up-right" frames="1" />
+				<phase name="right" frames="4" />
+				<phase name="down-right" frames="7" />
 
-				<phase name="moving up" speed="6" members="0,1,2,1" />
-				<phase name="moving right" speed="6" members="3,4,5,4" />
-				<phase name="moving down" speed="6" members="6,7,8,7" />
-				<phase name="moving left" speed="6" members="9,10,11,10" />
+				<phase name="moving up" speed="6" frames="0,1,2,1" />
+				<phase name="moving right" speed="6" frames="3,4,5,4" />
+				<phase name="moving down" speed="6" frames="6,7,8,7" />
+				<phase name="moving left" speed="6" frames="9,10,11,10" />
 			</phases>
 		</sprite>
 
@@ -175,17 +175,17 @@ Phases are defined inside the ``<phases> </phases>`` tags, which are **required*
 
 There are two kinds of phases -- still frames and animations. A still frame phase definition looks like this:
 
-``<phase name="down" members="7" />``
+``<phase name="down" frames="7" />``
 
-The name attribute defines the name of the phase as seen by the engine. The members attribute states the graphic's position in the sprite sheet. See the section on tile and sprite sheets for information on positioning.
+The name attribute defines the name of the phase as seen by the engine. The frames attribute states the graphic's position in the sprite sheet. See the section on tile and sprite sheets for information on positioning.
 
 The above phase section defines the entity's graphic for standing still while looking down.
 
 An animated phase definition looks like this:
 
-``<phase name="moving up" speed="6" members="0,1,2,1" />``
+``<phase name="moving up" speed="6" frames="0,1,2,1" />``
 
-The name attribute as before defines the phase's name. The speed attribute in an animated phase states the speed in frames per second of the phase's animation. The members attribute is a multi-ranged list which defines, in order, the members of the animation. Example: "5,7-10,12".
+The name attribute as before defines the phase's name. The speed attribute in an animated phase states the speed in frames per second of the phase's animation. The frames attribute is a multi-ranged list which defines, in order, the frames of the animation. Example: "5,7-10,12".
 
 The above phase section defines the entity's animation for moving upwards.
 

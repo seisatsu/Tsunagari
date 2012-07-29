@@ -51,7 +51,7 @@ $(PRECOMPILE_OBJ): $(PRECOMPILE_SRC)
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
 
 clean:
-	$(RM) tsunagari *.o $(PRECOMPILE_OBJ) $(BASEDATA) $(TESTWORLD)
+	$(RM) tsunagari *.o */*.o $(PRECOMPILE_OBJ) $(BASEDATA) $(TESTWORLD)
 
 
 ### --- DEPENDS SECTION --- ###

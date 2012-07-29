@@ -11,7 +11,7 @@
   <image source="areas/tiles/forest.png" width="272" height="304"/>
   <tile id="29">
    <properties>
-    <property name="members" value="29,58"/>
+    <property name="frames" value="29,58"/>
     <property name="speed" value="0.75"/>
    </properties>
   </tile>

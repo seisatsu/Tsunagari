@@ -656,8 +656,8 @@ bool Entity::processPhases(XMLNode node, const TiledImageRef& tiles)
 
 bool Entity::processPhase(const XMLNode node, const TiledImageRef& tiles)
 {
-	/* Each phase requires a 'name' and 'members'. Additionally,
-	 * 'speed' is required if 'members' has more than one member.
+	/* Each phase requires a 'name' and 'frames'. Additionally,
+	 * 'speed' is required if 'frames' has more than one member.
 	 */
 	const std::string name = node.attr("name");
 	if (name.empty()) {
@@ -665,25 +665,25 @@ bool Entity::processPhase(const XMLNode node, const TiledImageRef& tiles)
 		return false;
 	}
 
-	const std::string membersStr = node.attr("members");
+	const std::string framesStr = node.attr("frames");
 	const std::string speedStr = node.attr("speed");
 
-	if (membersStr.empty()) {
-		Log::err(descriptor, "<phase> members attribute empty");
+	if (framesStr.empty()) {
+		Log::err(descriptor, "<phase> frames attribute empty");
 		return false;
 	}
 
-	if (isInteger(membersStr)) {
-		int member = atoi(membersStr.c_str());
-		if (member < 0 || (int)tiles->size() < member) {
+	if (isInteger(framesStr)) {
+		int frame = atoi(framesStr.c_str());
+		if (frame < 0 || (int)tiles->size() < frame) {
 			Log::err(descriptor,
-				"<phase> members attribute index out of bounds");
+				"<phase> frames attribute index out of bounds");
 			return false;
 		}
-		const ImageRef& image = (*tiles.get())[member];
+		const ImageRef& image = (*tiles.get())[frame];
 		phases[name] = Animation(image);
 	}
-	else if (isRanges(membersStr)) {
+	else if (isRanges(framesStr)) {
 		if (!isDecimal(speedStr)) {
 			Log::err(descriptor,
 				"<phase> speed attribute must be present and "
@@ -691,12 +691,12 @@ bool Entity::processPhase(const XMLNode node, const TiledImageRef& tiles)
 		}
 		double fps = atof(speedStr.c_str());
 
-		std::vector<int> members = parseRanges(membersStr);
+		std::vector<int> frames = parseRanges(framesStr);
 		std::vector<ImageRef> images;
-		BOOST_FOREACH(int i, members) {
+		BOOST_FOREACH(int i, frames) {
 			if (i < 0 || (int)tiles->size() < i) {
 				Log::err(descriptor,
-					"<phase> members attribute index out of bounds");
+					"<phase> frames attribute index out of bounds");
 				return false;
 			}
 			images.push_back((*tiles.get())[i]);
@@ -706,7 +706,7 @@ bool Entity::processPhase(const XMLNode node, const TiledImageRef& tiles)
 	}
 	else {
 		Log::err(descriptor,
-			"<phase> members attribute not an int or int ranges");
+			"<phase> frames attribute not an int or int ranges");
 		return false;
 	}
 

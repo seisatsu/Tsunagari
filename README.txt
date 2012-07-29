@@ -11,7 +11,7 @@ ________                                _________________    ________
 Tsunagari Tile Engine
 <http://tileengine.org/>
 
-Alpha Preview Release 4 "Akatsuki" Revision 3
+Alpha Preview Release 4 "Akatsuki" Revision 4
 
 -----
 

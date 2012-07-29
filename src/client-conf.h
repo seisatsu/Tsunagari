@@ -14,7 +14,7 @@
 #include "vec.h"
 
 /* Release version. */
-#define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP4 Revision 3"
+#define TSUNAGARI_RELEASE_VERSION "Tsunagari Tile Engine AlphaP4 Revision 4"
 
 // === Required Data Paths ===
 	/* Tsunagari config file. */

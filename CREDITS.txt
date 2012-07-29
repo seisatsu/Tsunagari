@@ -12,7 +12,7 @@ Copyright (c) 2011-2012:
 	Paul Merrill
 
 License:
-	MIT License
+	MIT/Expat License
 	<http://www.opensource.org/licenses/mit-license.php>
 
 -----

@@ -11,9 +11,9 @@
 <!ELEMENT phases (phase+)>
 
 <!ELEMENT phase EMPTY>
-<!ATTLIST phase name    CDATA #REQUIRED
-                members CDATA #REQUIRED
-                speed   CDATA #IMPLIED>
+<!ATTLIST phase name   CDATA #REQUIRED
+                frames CDATA #REQUIRED
+                speed  CDATA #IMPLIED>
 
 <!ELEMENT sounds (sound*)>
 

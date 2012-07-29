@@ -278,7 +278,7 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
   </tile>
   <tile id="14">
    <properties>
-    <property name="members" value="1,2,3,4"/>
+    <property name="frames" value="1,2,3,4"/>
     <property name="speed" value="2"/>
    </properties>
   </tile>
@@ -288,7 +288,7 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 	// to worry about it.
 
 	// If a Tile is animated, it needs both member frames and a speed.
-	std::vector<ImageRef> frames;
+	std::vector<ImageRef> framesvec;
 	int cycles = ANIM_INFINITE_CYCLES;
 	int frameLen = -1;
 
@@ -321,15 +321,15 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 				return false;
 			type.useScript = filename;
 		}
-		else if (name == "members") {
+		else if (name == "frames") {
 			std::string memtemp;
-			std::vector<std::string> members;
+			std::vector<std::string> frames;
 			std::vector<std::string>::iterator it;
 			memtemp = value;
-			members = splitStr(memtemp, ",");
+			frames = splitStr(memtemp, ",");
 
 			// Make sure the first member is this tile.
-			if (atoi(members[0].c_str()) != id) {
+			if (atoi(frames[0].c_str()) != id) {
 				Log::err(descriptor, "first member of tile"
 					" id " + itostr(id) +
 					" animation must be itself.");
@@ -338,14 +338,14 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 
 			// Add frames to our animation.
 			// We already have one from TileType's constructor.
-			for (it = members.begin(); it < members.end(); it++) {
+			for (it = frames.begin(); it < frames.end(); it++) {
 				int idx = atoi(it->c_str());
 				if (idx < 0 || (int)img->size() <= idx) {
 					Log::err(descriptor, "frame index out "
 						"of range for animated tile");
 					return false;
 				}
-				frames.push_back((*img.get())[idx]);
+				framesvec.push_back((*img.get())[idx]);
 			}
 		}
 		else if (name == "speed") {
@@ -358,15 +358,15 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 		}
 	}
 
-	if (frames.size() || frameLen != -1) {
-		if (frames.empty() || frameLen == -1) {
+	if (framesvec.size() || frameLen != -1) {
+		if (framesvec.empty() || frameLen == -1) {
 			Log::err(descriptor, "tile type must either have both "
-				"members and speed or none");
+				"frames and speed or none");
 			return false;
 		}
 		// Add 'now' to Animation constructor??
 		time_t now = World::instance()->time();
-		type.anim = Animation(frames, frameLen);
+		type.anim = Animation(framesvec, frameLen);
 		type.anim.startOver(now, cycles);
 	}
 
