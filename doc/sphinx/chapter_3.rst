@@ -145,6 +145,32 @@ These methods are described in later sections.
 Placing Tiles
 =============
 
+So. We've walked through creating a new map, setting properties, adding tile sheets, and the basics of animations and layers. Now it's finally time to place some tiles on the map.
+
+Click on the type of tile you want to place in the "Tilesets" dialog. The bucket fill tool is useful for placing the initial groundwork; it's available from the topbar.
+
+.. image:: _static/tiled_13.png
+	:scale: 25
+
+Click anywhere on the map grid to fill the map. We'll place the floor at layer -0.1 -- the reasoning behind this will be explained in a moment.
+
+Now we'll add some walls. Use the stamp tool to place one tile at a time. Assuming that the player will start on layer 0, we should place the walls on or below that layer.
+
+.. image:: _static/tiled_14.png
+	:scale: 25
+
+Tiles, such as walls, which are conceptually on the same level as an entity should usually not be on a layer above that entity. If the entity, such as the player, is taller than one tile, their top portion can disappear under the wall when standing below it.
+
+Now, let's place a nice rug in the middle. We can put this on the same layer as the wall. By holding the shift key, you can make a rectangular selection of tiles in the "Tilesets" dialog to be placed.
+
+.. image:: _static/tiled_15.png
+	:scale: 25
+
+We now have a small basic map. Tiled has a bunch more features that are useful in this area, which can be found in its official documentation, or by just playing around.
+
+.. image:: _static/tiled_16.png
+	:scale: 25
+
 Placing Objects
 ===============
 
