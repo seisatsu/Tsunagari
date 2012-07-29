@@ -25,10 +25,11 @@ World* World::instance()
 }
 
 World::World()
-	: music(new Music()), lastTime(0), total(0), redraw(false),
+	: music(new Music()), total(0), redraw(false),
           userPaused(false), paused(0)
 {
 	globalWorld = this;
+	lastTime = GameWindow::instance().time();
 	pythonSetGlobal("World", this);
 }
 
@@ -245,11 +246,6 @@ void World::runAreaLoadScript(Area* area)
 
 time_t World::calculateDt(time_t now)
 {
-	if (lastTime == 0) {
-		lastTime = now;
-		return 0;
-	}
-
 	time_t dt = now - lastTime;
 	lastTime = now;
 	return dt;

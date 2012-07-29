@@ -289,6 +289,7 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 
 	// If a Tile is animated, it needs both member frames and a speed.
 	std::vector<ImageRef> frames;
+	int cycles = ANIM_INFINITE_CYCLES;
 	int frameLen = -1;
 
 	XMLNode child = node.childrenNode(); // <properties>
@@ -352,6 +353,9 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 			ASSERT(child.doubleAttr("value", &hertz));
 			frameLen = (int)(1000.0/hertz);
 		}
+		else if (name == "cycles") {
+			ASSERT(child.intAttr("value", &cycles));
+		}
 	}
 
 	if (frames.size() || frameLen != -1) {
@@ -360,7 +364,10 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 				"members and speed or none");
 			return false;
 		}
+		// Add 'now' to Animation constructor??
+		time_t now = World::instance()->time();
 		type.anim = Animation(frames, frameLen);
+		type.anim.startOver(now, cycles);
 	}
 
 	return true;

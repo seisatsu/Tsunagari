@@ -12,6 +12,8 @@
 #include "image.h"
 #include "resourcer.h"
 
+#define ANIM_INFINITE_CYCLES -1
+
 /**
  * An Animation is a sequence of bitmap images (called frames) used to creates
  * the illusion of motion. Frames are cycled over with an even amount of time
@@ -41,21 +43,25 @@ public:
 	/**
 	 * Constructs a Animation from a list of frames.
 	 *
-	 * If given more than one frame, frameLength must be a positive,
+	 * If given more than one frame, frameTime must be a positive,
 	 * non-zero value.
 	 *
 	 * @param frames list of frames to cycle through
-	 * @param frameLength length of time in milliseconds that each frame
+	 * @param frameTime length of time in milliseconds that each frame
 	 *        will display for
 	 */
-	Animation(const std::vector<ImageRef>& frames, time_t frameLength);
+	Animation(const std::vector<ImageRef>& frames, time_t frameTime);
 
 	/**
 	 * Starts the animation over.
 	 *
 	 * @now current time in milliseconds
+	 * @cycles number of animation cycles to play
+	 *   -1 : infinite
+	 *    0 : none, static image
+	 *   >0 : limited number of cycles, will stop on last frame of last cycle
 	 */
-	void startOver(time_t now);
+	void startOver(time_t now, int cycles);
 
 	/**
 	 * Has this Animation switched frames since frame() was last called?
@@ -79,14 +85,19 @@ private:
 	/** List of images in animation. */
 	ImageVec frames;
 
-	/** Are we animated? Equals frames.size() > 1 */
-	bool animated;
+	/**
+	 * How many animation cycles are we doing?
+	 * -1 : infinite
+	 *  0 : none, static image
+	 * >0 : limited number of cycles, will stop on last frame of last cycle
+	 */
+	int cycles;
 
 	/** Length of each frame in animation in milliseconds. */
-	time_t frameLen;
+	time_t frameTime;
 
 	/** Length of one complete cycle through animation in milliseconds. */
-	time_t animCycle;
+	time_t cycleTime;
 
 	/** Index of frame currently displaying on screen. */
 	size_t frameShowing;
