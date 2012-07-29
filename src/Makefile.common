@@ -1,9 +1,9 @@
 # Warning flags to enable.
-WFLAGS = -Wall -Wextra -Wconversion -Wdeprecated -Winvalid-pch
+WFLAGS += -Wall -Wextra -Wconversion -Wdeprecated -Winvalid-pch
 WFLAGS += -Wno-long-long # Disable warnings in Python code.
 
 # Compiler and linker flags.
-CXXFLAGS = -include all $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
+CXXFLAGS += -DUSE_PRECOMPILED_HEADERS $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
 	$(shell pkg-config --cflags python-2.7) $(shell xml2-config --cflags)
-LDFLAGS = $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
+LDFLAGS += $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
 	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)

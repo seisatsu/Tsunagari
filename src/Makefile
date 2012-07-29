@@ -3,7 +3,7 @@
 ############################################################
 
 
-### --- VARIABLES SECTION --- ###
+### --- BUILD SETUP --- ###
 
 include Makefile.common
 
@@ -19,7 +19,16 @@ BASEDATA = ../data/base.zip
 TESTWORLD = ../data/testing.world
 
 
-### --- MAIN SECTION --- ###
+### --- PRECOMPILED HEADERS --- ###
+
+PRECOMPILE_SRC = precompile.h
+PRECOMPILE_OBJ = precompile.h.gch
+
+CXXFLAGS += -fpch-preprocess -include precompile.h
+export CCACHE_SLOPPINESS=time_macros
+
+
+### --- RULES --- ###
 
 all: tsunagari $(BASEDATA) $(TESTWORLD)
 
@@ -29,8 +38,11 @@ depend:
 	$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl >> Mf
 	mv Mf Makefile
 
-tsunagari: $(OBJECTS)
+tsunagari: $(PRECOMPILE_OBJ) $(OBJECTS)
 	$(CXX) -o tsunagari $(OBJECTS) $(LDFLAGS)
+
+$(PRECOMPILE_OBJ): $(PRECOMPILE_SRC)
+	make -f Makefile.precompile
 
 %.zip:
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
@@ -39,7 +51,7 @@ tsunagari: $(OBJECTS)
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
 
 clean:
-	$(RM) tsunagari *.o */*.o $(BASEDATA) $(TESTWORLD)
+	$(RM) tsunagari *.o $(PRECOMPILE_OBJ) $(BASEDATA) $(TESTWORLD)
 
 
 ### --- DEPENDS SECTION --- ###
