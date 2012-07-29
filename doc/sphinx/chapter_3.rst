@@ -107,6 +107,7 @@ Right-click on the tile which will be the first frame of the animation, and sele
 
 * "speed": An integer or decimal value -- speed of the animation in frames per second.
 * "frames": A multi-ranged list of the numerical positions of the frames in this tile sheet. Example: "12,27,29-34,38". The first member of the list must be this tile. For more information on tile positions, see the chapter 2 section on sprite and tile sheets.
+* "cycles": This property is **optional**. If set to a number greater than 0, the animation will cycle that many times before stopping on the last frame.
 
 .. image:: _static/tiled_09.png
 
