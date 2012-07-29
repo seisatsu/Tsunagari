@@ -260,7 +260,7 @@ void pythonErr()
 
 	PyErr_NormalizeException(&exc, &val, &tb);
 
-	if (conf.halting == SCRIPT) {
+	if (conf.halting == HALT_SCRIPT) {
 		Log::fatal("Python", extractException(exc, val, tb));
 		exit(1);
 	}

@@ -79,7 +79,7 @@ void Log::info(std::string domain, std::string msg)
 
 void Log::err(std::string domain, std::string msg)
 {
-	if (conf.halting == ERROR) {
+	if (conf.halting == HALT_ERROR) {
 		Log::fatal(domain, msg);
 		exit(1);
 	}

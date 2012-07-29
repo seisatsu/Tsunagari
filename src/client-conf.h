@@ -41,7 +41,7 @@
 	#define CLIENT_CONF_PATH "./client.ini"
 
 	/* Base data file. */
-	#define BASE_ZIP_PATH "../data/base.zip"
+	#define BASE_ZIP_PATH "./data/base.zip"
 // ===
 
 // === Client.ini Default Values ===
@@ -65,9 +65,9 @@ enum movement_mode_t {
 
 //! Halting Mode
 enum halting_mode_t {
-	FATAL,
-	SCRIPT,
-	ERROR
+	HALT_FATAL,
+	HALT_SCRIPT,
+	HALT_ERROR
 };
 
 //! Engine-wide user-confurable values.

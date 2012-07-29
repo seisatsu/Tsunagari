@@ -48,11 +48,11 @@ Conf::Conf()
 	else if (!strcmp(DEF_ENGINE_VERBOSITY, "verbose"))
 		conf.verbosity = V_VERBOSE;
 	if (!strcmp(DEF_ENGINE_HALTING, "fatal"))
-		conf.halting = FATAL;
+		conf.halting = HALT_FATAL;
 	else if (!strcmp(DEF_ENGINE_HALTING, "script"))
-		conf.halting = SCRIPT;
+		conf.halting = HALT_SCRIPT;
 	else if (!strcmp(DEF_ENGINE_HALTING, "error"))
-		conf.halting = ERROR;
+		conf.halting = HALT_ERROR;
 	windowSize.x = DEF_WINDOW_WIDTH;
 	windowSize.y = DEF_WINDOW_HEIGHT;
 	fullscreen = DEF_WINDOW_FULLSCREEN;
@@ -189,11 +189,11 @@ bool parseConfig(const char* filename)
 	if (halting.empty())
 		;
 	else if (halting == "fatal")
-		conf.halting = FATAL;
+		conf.halting = HALT_FATAL;
 	else if (halting == "script")
-		conf.halting = SCRIPT;
+		conf.halting = HALT_SCRIPT;
 	else if (halting == "error")
-		conf.halting = ERROR;
+		conf.halting = HALT_ERROR;
 	else {
 		Log::err(filename, "unknown value for \"[engine] halting\", using default");
 	}
@@ -280,15 +280,15 @@ bool parseCommandLine(int argc, char* argv[])
 
 	int haltcount = 0;
 	if (cmd.check("--fatal-halt")) {
-		conf.halting = FATAL;
+		conf.halting = HALT_FATAL;
 		haltcount++;
 	}
 	if (cmd.check("--script-halt")) {
-		conf.halting = SCRIPT;
+		conf.halting = HALT_SCRIPT;
 		haltcount++;
 	}
 	if (cmd.check("--error-halt")) {
-		conf.halting = ERROR;
+		conf.halting = HALT_ERROR;
 		haltcount++;
 	}
 	if (haltcount > 1)
