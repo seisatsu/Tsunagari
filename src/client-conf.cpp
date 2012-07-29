@@ -80,8 +80,6 @@ static void defaultsQuery()
 		<< CLIENT_CONF_PATH << std::endl;
 	std::cerr << "BASE_ZIP_PATH:                       "
 		<< BASE_ZIP_PATH << std::endl;
-	std::cerr << "XML_DTD_PATH:                        "
-		<< XML_DTD_PATH << std::endl;
 	std::cerr << "DEF_ENGINE_VERBOSITY:                "
 		<< DEF_ENGINE_VERBOSITY << std::endl;
 	std::cerr << "DEF_ENGINE_HALTING:                  "

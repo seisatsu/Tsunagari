@@ -42,9 +42,6 @@
 
 	/* Base data file. */
 	#define BASE_ZIP_PATH "../data/base.zip"
-
-	/* Tsunagari XML DTD directory. */
-	#define XML_DTD_PATH "../data/dtd/"
 // ===
 
 // === Client.ini Default Values ===
