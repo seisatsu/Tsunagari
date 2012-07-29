@@ -515,7 +515,16 @@ vicoord Area::virt2virt(rcoord virt) const
 
 int Area::depthIndex(double depth) const
 {
-	return depth2idx.find(depth)->second;
+	using namespace boost;
+
+	boost::unordered_map<double, int>::const_iterator it;
+	it = depth2idx.find(depth);
+	if (it == depth2idx.end()) {
+		Log::fatal(descriptor, str(format(
+			"attempt to access invalid layer: %f") % depth));
+		exit(-1);
+	}
+	return it->second;
 }
 
 double Area::indexDepth(int idx) const
