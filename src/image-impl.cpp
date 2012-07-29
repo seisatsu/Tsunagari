@@ -76,7 +76,7 @@ void ImageImpl::drawSubrect(double dstX, double dstY, double z,
 	assert(img != NULL);
 
 	Gosu::Graphics& g = GameWindow::instance().graphics();
-	g.beginClipping(dstX + srcX, dstX + srcY, srcW, srcH);
+	g.beginClipping(dstX + srcX, dstY + srcY, srcW, srcH);
 	draw(dstX, dstY, z);
 	g.endClipping();
 }

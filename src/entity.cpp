@@ -71,10 +71,29 @@ void Entity::destroy()
 
 void Entity::draw()
 {
-	time_t now = World::instance()->time();
-	if (phase)
-		phase->frame(now)->draw(doff.x + r.x, doff.y + r.y, r.z);
 	redraw = false;
+	if (!phase)
+		return;
+
+	time_t now = World::instance()->time();
+	Image* img = phase->frame(now);
+	ivec2 tile = area->getTileDimensions();
+
+	// If an Entity spans multiple tiles, vertically, we split up the
+	// drawing process into one draw per vertical tile. Each tile "higher"
+	// we go, we add to the draw operation's Z-offset by Z_PER_TILE. This
+	// allows Entities behind one another to be correctly obscured.
+	int hoff = 0;
+	for (int i = 0; i < vtiles; i++) {
+		double z = r.z + (vtiles - i - 1) * Z_PER_TILE;
+		int height = i ? tile.y : imgsz.y % tile.y;
+		img->drawSubrect(
+			doff.x + r.x, doff.y + r.y, z,
+			0           , hoff,
+			imgsz.x     , height
+		);
+		hoff += height;
+	}
 }
 
 bool Entity::needsRedraw() const
@@ -338,7 +357,7 @@ void Entity::setArea(Area* a)
 {
 	leaveTile();
 	area = a;
-	calcDoff();
+	calcDraw();
 	setSpeed(speedMul); // Calculate new speed based on tile size.
 	enterTile();
 }
@@ -387,12 +406,16 @@ void Entity::erase()
 	throw "pure virtual function";
 }
 
-void Entity::calcDoff()
+void Entity::calcDraw()
 {
+	ivec2 tile = area->getTileDimensions();
+
 	// X-axis is centered on tile.
-	doff.x = (area->getTileDimensions().x - imgw) / 2;
+	doff.x = (tile.x - imgsz.x) / 2;
 	// Y-axis is aligned with bottom of tile.
-	doff.y = area->getTileDimensions().y - imgh - 1;
+	doff.y = tile.y - imgsz.y;
+	// We take up this many tiles, vertically.
+	vtiles = (int)ceilf((float)imgsz.y / (float)tile.y);
 }
 
 SampleRef Entity::getSound(const std::string& name) const
@@ -612,9 +635,9 @@ bool Entity::processSprite(XMLNode node)
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
 			std::string imageSheet = node.content();
-			ASSERT(node.intAttr("tile_width",  &imgw) &&
-			       node.intAttr("tile_height", &imgh));
-			tiles = rc->getTiledImage(imageSheet, imgw, imgh);
+			ASSERT(node.intAttr("tile_width",  &imgsz.x) &&
+			       node.intAttr("tile_height", &imgsz.y));
+			tiles = rc->getTiledImage(imageSheet, imgsz.x, imgsz.y);
 			ASSERT(tiles);
 		} else if (node.is("phases")) {
 			ASSERT(processPhases(node.childrenNode(), tiles));
