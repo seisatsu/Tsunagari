@@ -767,9 +767,9 @@ bool AreaTMX::splitTileFlags(const std::string& strOfFlags, unsigned* flags)
 		if (str == "nowalk")
 			*flags |= TILE_NOWALK;
 		else if (str == "nowalk_player")
-			*flags |= TILE_NOWALK_PLAYER
+			*flags |= TILE_NOWALK_PLAYER;
 		else if (str == "nowalk_npc")
-			*flags |= TILE_NOWALK_NPC
+			*flags |= TILE_NOWALK_NPC;
 		else {
 			Log::err(descriptor, "invalid tile flag: " + str);
 			return false;
