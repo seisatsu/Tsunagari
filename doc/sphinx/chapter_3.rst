@@ -174,8 +174,52 @@ We now have a small basic map. Tiled has a bunch more features that are useful i
 Placing Objects
 ===============
 
+Objects are rectangular selections of tiles which may have properties. Any tile falling within an object shares the same properties. Objects are used to add non-global properties to the map, as opposed to global properties, which are added in the tileset and affect all instances of a certain tile.
+
+To place an object, first an object layer must be created. Right click inside the "Layers" dialog and select the ``Add Object Layer`` option.
+
+.. image:: _static/tiled_17.png
+
+The name of the layer is unimportant, but like a tile layer, the object layer has a "layer" property which must be set. An object layer will only affect tiles on the same exact layer as itself. In this instance, we will set the object's "layer" property to 0, the same layer that the walls are on, and that the player should usually start on.
+
+As long as the player is on layer 0, they will be affected by objects on layer 0.
+
+To insert an object, first the object layer must be selected in the "Layers" dialog. Select the ``Insert Object`` option from the topbar -- it's the one with a picture of a cube.
+
+Hold control and the left mouse button, and drag across the screen to create an object. You must hold control to make the object rectangle snap to the tile grid; objects spanning fractions of tiles are not accepted by the engine.
+
+.. image:: _static/tiled_18.png
+	:scale: 25
+
+To move an object, use the ``Select Objects`` topbar option, again while holding control. To modify an object's properties, right click the object and select the ``Object Properties`` option.
+
+.. image:: _static/tiled_21.png
+
+The "Name" and "Type" fields in this dialog are unused.
+
 Tile Flags
 ==========
+
+Now that we've learned to make object layers, there's a major problem with this map that we can finally address:
+
+*How do we tell the engine that the walls are walls? The player can totally walk all over those.*
+
+This is solved with the "flags" property. This property controls the walkability of a tile. There are currently three possible values for the "flags" property:
+
+* "nowalk": Neither the player nor NPCs can walk on this tile.
+* "nowalk_player": The player cannot walk on this tile.
+* "nowalk_npc": NPCs cannot walk on this tile.
+
+Since we probably don't want anything climbing the walls, they should be set to "nowalk". First, create several objects to cover the walls.
+
+.. image:: _static/tiled_19.png
+	:scale: 25
+
+Right click each object, select the ``Object Properties`` option, and add the "flags" property, with a value of "nowalk".
+
+.. image:: _static/tiled_20.png
+
+The walls are now unwalkable.
 
 Event Triggers
 ==============
