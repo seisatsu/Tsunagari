@@ -70,7 +70,7 @@ That looks a little complicated. Let's break it down:
 	* ``<area>areas/grove01.tmx</area>`` gives the location of the starting area inside the world file. This area loads first, and the player is inserted here when the game starts.
 	* ``<player file="entities/player/player.xml" phase="down" />`` gives the location of the player entity descriptor, and its starting phase. These are described in later sections.
 	* ``<mode>tile</mode>`` states that this game is a "tile" mode game. Currently supported modes are "tile" and "turn". More game modes will be supported in the future. See the appendix for more information.
-	* ``<coords x="5" y="3" layer="0" />`` states that the player will be inserted into the starting area at tile coordinates 5 by 3, on layer 0.
+	* ``<coords x="5" y="3" layer="0" />`` states that the player will be inserted into the starting area at tile coordinates 5 by 3, on layer 0. Note that the engine will crash if the starting layer does not exist on the starting area.
 	* ``<viewport width="160" height="160" />`` states that the game window will scale to show at most 160 pixels of width and 160 pixels of height for each area. If the game's tiles are 16x16 pixels, then the window will show an area of 10 tiles by 10 tiles.
 
 * The ``<script> </script>`` tags denote the script section of world.conf. This section is **optional**, and contains the locations of event scripts to be run at certain times.

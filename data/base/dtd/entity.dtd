@@ -1,4 +1,4 @@
-<!ELEMENT entity (speed, sprite, sounds, scripts)>
+<!ELEMENT entity (speed, sprite, sounds?, scripts?)>
 
 <!ELEMENT speed (#PCDATA)>
 
