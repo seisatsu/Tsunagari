@@ -205,7 +205,7 @@ bool AreaTMX::processTileSet(XMLNode node)
  </tileset>
 */
 
-	TileSet* set;
+	TileSet* set = NULL;
 	TiledImageRef img;
 	int tilex, tiley;
 	int firstGid;
