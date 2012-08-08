@@ -28,4 +28,4 @@ The Timer
 
 The Action Queue
 ================
-The action queue will allow you to specify several actions to be performed in sequence. It is not supported in this release.
+

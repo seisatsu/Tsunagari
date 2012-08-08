@@ -20,6 +20,19 @@ Tsunagari is a tiling game engine inspired by the cult classic game Yume Nikki. 
 Features:
 Tsunagari will be a comprehensive game design suite for singleplayer 2D games. The engine will support several styles, such as roguelikes, and old console-style RPGs. Multiplayer support is planned for the second stable release. Tsunagari allows Python scripting for the event system, and for additional custom functionality. As a suite, Tsunagari aims to allow as much game variation as possible without direct modifications to the engine source code. Game design will require manual file editing during the Alpha and Beta phases, but a game editor suite will be shipped with the first major release.
 
+Current features include:
+* Yume Nikki-like and roguelike movement modes.
+* Music and sound effects handling.
+* Tile and sprite animations.
+* Intelligent viewport tracking.
+* Support for infinite graphical and walkable layers.
+* Resource caching for nonexistent load times.
+* Command line options for fine-tuning.
+* Subpixel rendering.
+* Looping areas support.
+* NPCs.
+* Event scripting interface in Python.
+
 Tsunagari is released under the MIT/Expat license.
 
 Requirements:

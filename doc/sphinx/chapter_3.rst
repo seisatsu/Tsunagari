@@ -221,14 +221,21 @@ Right click each object, select the ``Object Properties`` option, and add the "f
 
 The walls are now unwalkable.
 
-Event Triggers
-==============
-
 Layermod
 ========
 
-Lazy Layermods
---------------
+The "layermod" property allows an entity or the player to move between walkable layers without the use of event scripting. When an entity or the player steps on a tile with the "layermod" property attached, they will shift instantly to the stated layer.
+
+For example, the "layermod" property with a value of "2" will move the entity or player to layer 2 when stepped on. *The destination layer must exist in the map, or the engine could crash.*
+
+Layermods can take an integer or decimal layer value.
+
+Lazy Layermod
+-------------
+
+Sometimes a slightly different approach is required. A "lazy" layermod moves the entity or player to a new layer when they *exit* a tile. Lazy layermods have the property name "layermod:direction".
+
+For example, if a tile has the "layermod:up" property with a value of "2", the player or entity will be moved to layer 2 when exiting that tile in an upwards direction only. Valid directions are "up", "down", "left", and "right".
 
 Linking Areas with Exits
 ========================
@@ -238,4 +245,7 @@ Lazy Exits
 
 Wide Exits
 ----------
+
+Event Triggers
+==============
 
