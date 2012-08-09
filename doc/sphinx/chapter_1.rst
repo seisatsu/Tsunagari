@@ -41,7 +41,7 @@ The above settings and their effects are described below:
 
 * [engine] Section
 
-	* "world": This option sets the filename of the game world to be loaded and played by the engine at runtime.
+	* "world": This option sets the filename of the game world to be loaded and played by the engine at runtime. The path to a directory containing world data can also be given instead of a world file.
 	* "datapath": A comma delimited list of zip files to be prepended to the engine's data path. See section "Data Path" in chapter 5.
 	* "verbosity": This option sets the types of messages to be sent to the console. It has no noticeable effect unless the engine is run from the command line. It accepts the following values:
 
@@ -86,7 +86,7 @@ Command Line Options
 
 While the client config file is used for setting defaults, one-time options may be set from the command line. Command line options are used to temporarily override the settings in the config file, for purposes such as testing an alternative setting or trying out a new game world. Command line options may be used from a script (not discussed here), or from your operating system's command line interface.
 
-The world file to be run can be specified on the command line by giving its path as an argument.
+The world file to be run can be specified on the command line by giving its path as an argument. The path to a directory containing world data can also be given instead of a world file.
 
 If Tsunagari is run from the command line with no options, it simply uses the client config file. Note that engine messages can only be viewed when the engine is run from the command line.
 
