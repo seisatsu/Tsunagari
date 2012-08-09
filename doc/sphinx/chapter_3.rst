@@ -240,11 +240,69 @@ For example, if a tile has the "layermod:up" property with a value of "2", the p
 Linking Areas with Exits
 ========================
 
+We've covered about everything there is to know about creating a map, which is the descriptor for a Tsunagari area. There's just one thing left: how can you move from one area to another?
+
+A game world is made of areas. To link these all together, exits are used. An exit allows the player to move from one tile in one area to another tile in another area.
+
+To prepare, first we should clear out a wall tile and its nowalk property, as a point of exit.
+
+.. image:: _static/tiled_22.png
+	:scale: 25
+
+We'll also need a second map.
+
+.. image:: _static/tiled_23.png
+	:scale: 25
+
+Now, to link these together, we need to add the "exit" property to the tile which will be the point of exit. The exit property takes a list of comma-separated arguments, as such:
+
+.. image:: _static/tiled_24.png
+
+The arguments in order are:
+
+#. The path of the map to be linked to, relative to the top directory of the world.
+#. The X entry coordinate.
+#. The Y entry coordinate.
+#. The entry layer.
+
+Once finished, stepping on the first exit tile will lead to the second exit tile, and vice versa. An exit tile can link to any tile in any area -- there does not have to be an exit back.
+
+This is now the shape of our world:
+
+.. image:: _static/tiled_25.png
+	:scale: 50
+
 Lazy Exits
 ----------
 
+Just like layermod, exits also have a "lazy" subset. A lazy exit only activates when the player leaves the point of exit tile in the stated direction. Lazy exits have the property name "exit:direction".
+
+For example, an exit tile with the property "exit:left" will only activate when the player leaves the exit tile in a leftwards direction. Valid directions are "up", "down", "left", and "right".
+
 Wide Exits
 ----------
+
+Exits also have a "wide" subset. A wide exit is a special case for a point of exit larger than one tile. Wide exits automatically calculate where the player should enter into the target area. They should only be used for exits which lead to an opening of the same size and shape.
+
+Let's turn our example world's exits into lazy, wide exits. To do so, first we should make the exits bigger.
+
+.. image:: _static/tiled_26.png
+	:scale: 25
+
+Exits should only be wider than one tile horizontally *or* vertically, never both. The behavior of a rectangular wide exit is hard to predict.
+
+Once both maps are adjusted, we can change the properties.
+
+.. image:: _static/tiled_27.png
+
+Note that the property name has been changed to "exit:left"; this is a lazy exit property, discussed in the previous section. What is important here is the plus sign added to the y-coordinate in the property's value. The y-coordinate value has also been decreased.
+
+When making a vertical wide exit, the y-coordinate should correspond to the y-coordinate lowest in value which is a member of the target map's entry point, and vice versa for horizontal wide exits (which use the same rule, but for the x-coordinate). In this case, the wide exit leads to the x-coordinate 9, and the y-coordinates 3 through 6 on the linked map. Therefore, the y-coordinate has been changed to 3.
+
+The plus sign after the y-coordinate means the following: each tile of distance from the first tile in the exit adds one to the destination coordinate. This is more easily explained with a picture:
+
+.. image:: _static/tiled_28.png
+	:scale: 50
 
 Event Triggers
 ==============
