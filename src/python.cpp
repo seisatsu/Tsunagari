@@ -23,6 +23,9 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
 // IN THE SOFTWARE.
 // **********
+#ifdef __APPLE__
+#include <Python.h>
+#endif
 
 #include <algorithm> // for std::replace
 #include <signal.h> // for SIGINT and SIG_DFL
