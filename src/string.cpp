@@ -30,6 +30,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp> // for iequals
+#include <Gosu/Math.hpp>
 
 #include "log.h"
 #include "string.h"
@@ -151,6 +152,18 @@ bool parseBool(const std::string& s)
 	       boost::iequals(s, "yes") ||
 	       boost::iequals(s, "on") ||
 	    s == "1";
+}
+
+int parseUInt(const std::string& s)
+{
+	int i = atoi(s.c_str());
+	return Gosu::clamp(i, 0, INT_MAX);
+}
+
+int parseInt100(const std::string& s)
+{
+	int i = atoi(s.c_str());
+	return Gosu::clamp(i, 0, 100);
 }
 
 std::vector<std::string> splitStr(const std::string& input,

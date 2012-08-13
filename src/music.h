@@ -66,8 +66,8 @@ public:
 	void setIntro(const std::string& filename);
 	void setLoop(const std::string& filename);
 
-	double getVolume();
-	void setVolume(double level);
+	int getVolume();
+	void setVolume(int level);
 
 	bool isPaused();
 	void setPaused(bool p);
@@ -83,7 +83,6 @@ private:
 
 	SongRef musicInst, introMusic, loopMusic;
 
-	double volume;
 	bool paused;
 
 	MUSIC_STATE state;

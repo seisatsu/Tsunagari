@@ -25,14 +25,18 @@
 // **********
 
 #include <boost/shared_ptr.hpp>
+#include <Gosu/Math.hpp>
 
+#include "client-conf.h"
 #include "python.h"
 #include "resourcer.h"
 #include "sound.h"
 
 SoundInstance::SoundInstance(boost::optional<Gosu::SampleInstance> inst)
-	: inst(inst), volume(1.0), pan(0.0), speed(1.0)
+	: inst(inst), volume(conf.soundVolume), pan(0.0), speed(1.0)
 {
+	if (inst)
+		inst->changeVolume(volume / 100.0);
 }
 
 
@@ -64,16 +68,20 @@ void SoundInstance::setPaused(bool paused)
 }
 
 
-double SoundInstance::getVolume()
+int SoundInstance::getVolume()
 {
 	return volume;
 }
 
-void SoundInstance::setVolume(double volume)
+void SoundInstance::setVolume(int volume)
 {
+	if (0 < volume || volume > 100) {
+		Log::info("SoundInstance", "volume can only be set between 0 and 100");
+		volume = Gosu::clamp(volume, 0, 100);
+	}
 	this->volume = volume;
 	if (inst)
-		inst->changeVolume(volume);
+		inst->changeVolume(volume / 100.0);
 }
 
 

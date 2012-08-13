@@ -41,8 +41,8 @@ public:
 	bool isPaused();
 	void setPaused(bool paused);
 
-	double getVolume();
-	void setVolume(double volume);
+	int getVolume();
+	void setVolume(int volume);
 
 	double getPan();
 	void setPan(double pan);
@@ -52,7 +52,8 @@ public:
 
 private:
 	boost::optional<Gosu::SampleInstance> inst;
-	double volume, pan, speed;
+	int volume;
+	double pan, speed;
 };
 
 class Sound

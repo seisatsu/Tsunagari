@@ -24,12 +24,14 @@
 // IN THE SOFTWARE.
 // **********
 
+#include <Gosu/Math.hpp>
+
+#include "client-conf.h"
 #include "music.h"
 #include "python.h"
 
 Music::Music()
-	: volume(1.0),
-	  paused(false),
+	: paused(false),
 	  state(NOT_PLAYING)
 {
 	pythonSetGlobal("Music", this);
@@ -93,14 +95,18 @@ void Music::setLoop(const std::string& filename)
 		rc->getSong(filename) : SongRef();
 }
 
-double Music::getVolume()
+int Music::getVolume()
 {
-	return volume;
+	return conf.musicVolume;
 }
 
-void Music::setVolume(double level)
+void Music::setVolume(int level)
 {
-	volume = level;
+	if (0 < level || level > 100) {
+		Log::info("Music", "volume can only be set between 0 and 100");
+		level = Gosu::clamp(level, 0, 100);
+	}
+	conf.musicVolume = level;
 	if (musicInst)
 		musicInst->changeVolume(level);
 }
@@ -178,7 +184,7 @@ void Music::playIntro()
 		musicInst->stop();
 	curIntro = newIntro;
 	introMusic->play(false);
-	introMusic->changeVolume(volume);
+	introMusic->changeVolume(conf.musicVolume / 100.0);
 	musicInst = introMusic;
 	setState(PLAYING_INTRO);
 }
@@ -189,7 +195,7 @@ void Music::playLoop()
 		musicInst->stop();
 	curLoop = newLoop;
 	loopMusic->play(true);
-	loopMusic->changeVolume(volume);
+	loopMusic->changeVolume(conf.musicVolume / 100.0);
 	musicInst = loopMusic;
 	setState(PLAYING_LOOP);
 }

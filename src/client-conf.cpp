@@ -56,7 +56,9 @@ Conf::Conf()
 	windowSize.x = DEF_WINDOW_WIDTH;
 	windowSize.y = DEF_WINDOW_HEIGHT;
 	fullscreen = DEF_WINDOW_FULLSCREEN;
-	audioEnabled = DEF_AUDIO_ENABLED;
+	audioEnabled = true;
+	musicVolume = 100;
+	soundVolume = 100;
 	cacheEnabled = DEF_CACHE_ENABLED;
 	cacheTTL = DEF_CACHE_TTL;
 	cacheSize = DEF_CACHE_SIZE;
@@ -64,13 +66,13 @@ Conf::Conf()
 	persistCons = 0;
 }
 
-bool Conf::validate(const char* filename)
+bool Conf::validate(const std::string& filename)
 {
 	if (conf.worldFilename == "") {
 		Log::fatal(filename, "\"[engine] world\" option or equivalent command line option expected");
 		return false;
 	}
-		return true;
+	return true;
 }
 
 /* Output compiled-in engine defaults. */
@@ -90,8 +92,6 @@ static void defaultsQuery()
 		<< DEF_WINDOW_HEIGHT << std::endl;
 	std::cerr << "DEF_WINDOW_FULLSCREEN:               "
 		<< DEF_WINDOW_FULLSCREEN << std::endl;
-	std::cerr << "DEF_AUDIO_ENABLED:                   "
-		<< DEF_AUDIO_ENABLED << std::endl;
 	std::cerr << "DEF_CACHE_ENABLED:                   "
 		<< DEF_CACHE_ENABLED << std::endl;
 	std::cerr << "DEF_CACHE_TTL:                       "
@@ -110,13 +110,13 @@ static void defaultsQuery()
  *
  * @return false if error occured during processing
  */
-bool parseConfig(const char* filename)
+bool parseConfig(const std::string& filename)
 {
 	namespace pod = boost::program_options::detail;
 
 	conf.cacheEnabled = DEF_CACHE_TTL && DEF_CACHE_SIZE;
 
-	std::ifstream config(filename);
+	std::ifstream config(filename.c_str());
 	if (!config) {
 		Log::err(filename, "could not parse config");
 		return false;
@@ -136,10 +136,10 @@ bool parseConfig(const char* filename)
 		conf.dataPath = splitStr(parameters["engine.datapath"], ",");
 
 	if (!parameters["window.width"].empty())
-		conf.windowSize.x = atoi(parameters["window.width"].c_str());
+		conf.windowSize.x = parseUInt(parameters["window.width"]);
 
 	if (!parameters["window.height"].empty())
-		conf.windowSize.y = atoi(parameters["window.height"].c_str());
+		conf.windowSize.y = parseUInt(parameters["window.height"]);
 
 	if (!parameters["window.fullscreen"].empty())
 		conf.fullscreen = parseBool(parameters["window.fullscreen"]);
@@ -148,6 +148,12 @@ bool parseConfig(const char* filename)
 		conf.audioEnabled = parseBool(parameters["audio.enabled"]);
 	else
 		conf.audioEnabled = true;
+
+	if (parameters["audio.musicvolume"].size())
+		conf.audioEnabled = parseInt100(parameters["audio.musicvolume"]);
+
+	if (parameters["audio.soundvolume"].size())
+		conf.audioEnabled = parseInt100(parameters["audio.soundvolume"]);
 
 	if (!parameters["cache.enabled"].empty()) {
 		if (parseBool(parameters["cache.enabled"]))
@@ -159,17 +165,17 @@ bool parseConfig(const char* filename)
 	if (parameters["cache.ttl"].empty())
 		conf.cacheTTL = DEF_CACHE_TTL;
 	else {
-		if (atoi(parameters["cache.ttl"].c_str()) == 0)
+		if (parseUInt(parameters["cache.ttl"]) == 0)
 			conf.cacheEnabled = 0;
-		conf.cacheTTL = atoi(parameters["cache.ttl"].c_str());
+		conf.cacheTTL = parseUInt(parameters["cache.ttl"]);
 	}
 
 	if (parameters["cache.size"].empty())
 		conf.cacheSize = DEF_CACHE_SIZE;
 	else {
-		if (atoi(parameters["cache.size"].c_str()) == 0)
+		if (parseUInt(parameters["cache.size"]) == 0)
 			conf.cacheEnabled = 0;
-		conf.cacheSize = atoi(parameters["cache.size"].c_str());
+		conf.cacheSize = parseUInt(parameters["cache.size"]);
 	}
 
 	std::string verbosity = parameters["engine.verbosity"];
@@ -208,23 +214,25 @@ bool parseCommandLine(int argc, char* argv[])
 
 	cmd.setStrayArgsDesc("[WORLD FILE]");
 
-	cmd.insert("-h", "--help",        "",                "Display this help message");
-	cmd.insert("-c", "--config",      "<config file>",   "Client config file to use");
-	cmd.insert("-p", "--datapath",    "<file,file,...>", "Prepend zips to data path");
-	cmd.insert("-q", "--quiet",       "",                "Display only fatal errors");
-	cmd.insert("",   "--normal",      "",                "Display all errors");
-	cmd.insert("-v", "--verbose",     "",                "Display additional information");
-	cmd.insert("-t", "--cache-ttl",   "<seconds>",       "Cache time-to-live in seconds");
-	cmd.insert("-m", "--cache-size",  "<megabytes>",     "Cache size in megabytes");
-	cmd.insert("-s", "--size",        "<WxH>",           "Window dimensions");
-	cmd.insert("-f", "--fullscreen",  "",                "Run in fullscreen mode");
-	cmd.insert("-w", "--window",      "",                "Run in windowed mode");
-	cmd.insert("",   "--fatal-halt",  "",                "Stop engine only on fatal errors");
-	cmd.insert("",   "--script-halt", "",                "Stop engine on script errors");
-	cmd.insert("",   "--error-halt",  "",                "Stop engine on all errors");
-	cmd.insert("",   "--no-audio",    "",                "Disable audio");
-	cmd.insert("",   "--query",       "",                "Query compiled-in engine defaults");
-	cmd.insert("",   "--version",     "",                "Print the engine version string");
+	cmd.insert("-h", "--help",         "",                "Display this help message");
+	cmd.insert("-c", "--config",       "<config file>",   "Client config file to use");
+	cmd.insert("-p", "--datapath",     "<file,file,...>", "Prepend zips to data path");
+	cmd.insert("-q", "--quiet",        "",                "Display only fatal errors");
+	cmd.insert("",   "--normal",       "",                "Display all errors");
+	cmd.insert("-v", "--verbose",      "",                "Display additional information");
+	cmd.insert("-t", "--cache-ttl",    "<seconds>",       "Cache time-to-live in seconds");
+	cmd.insert("-m", "--cache-size",   "<megabytes>",     "Cache size in megabytes");
+	cmd.insert("-s", "--size",         "<WxH>",           "Window dimensions");
+	cmd.insert("-f", "--fullscreen",   "",                "Run in fullscreen mode");
+	cmd.insert("-w", "--window",       "",                "Run in windowed mode");
+	cmd.insert("",   "--fatal-halt",   "",                "Stop engine only on fatal errors");
+	cmd.insert("",   "--script-halt",  "",                "Stop engine on script errors");
+	cmd.insert("",   "--error-halt",   "",                "Stop engine on all errors");
+	cmd.insert("",   "--no-audio",     "",                "Disable audio");
+	cmd.insert("",   "--volume-music", "<0-100>",         "Set music volume");
+	cmd.insert("",   "--volume-sound", "<0-100>",         "Set sound effects volume");
+	cmd.insert("",   "--query",        "",                "Query compiled-in engine defaults");
+	cmd.insert("",   "--version",      "",                "Print the engine version string");
 
 	if (!cmd.parse()) {
 		cmd.usage();
@@ -255,7 +263,7 @@ bool parseCommandLine(int argc, char* argv[])
 	}
 
 	if (cmd.check("--config")) {
-		if (!parseConfig(cmd.get("--config").c_str()))
+		if (!parseConfig(cmd.get("--config")))
 			return false;
 	}
 
@@ -297,14 +305,20 @@ bool parseCommandLine(int argc, char* argv[])
 	if (cmd.check("--no-audio"))
 		conf.audioEnabled = false;
 
+	if (cmd.check("--volume-music"))
+		conf.musicVolume = parseInt100(cmd.get("--volume-music"));
+
+	if (cmd.check("--volume-sound"))
+		conf.soundVolume = parseInt100(cmd.get("--volume-sound"));
+
 	if (cmd.check("--cache-ttl")) {
-		conf.cacheTTL = atoi(cmd.get("--cache-ttl").c_str());
+		conf.cacheTTL = parseUInt(cmd.get("--cache-ttl"));
 		if (conf.cacheTTL == 0)
 			conf.cacheEnabled = false;
 	}
 
 	if (cmd.check("--cache-size")) {
-		conf.cacheSize = atoi(cmd.get("--cache-size").c_str());
+		conf.cacheSize = parseUInt(cmd.get("--cache-size"));
 		if (conf.cacheSize == 0)
 			conf.cacheEnabled = false;
 	}
@@ -315,8 +329,8 @@ bool parseCommandLine(int argc, char* argv[])
 			Log::fatal("cmdline", "invalid argument for -s/--size");
 			return false;
 		}
-		conf.windowSize.x = atoi(dim[0].c_str());
-		conf.windowSize.y = atoi(dim[1].c_str());
+		conf.windowSize.x = parseUInt(dim[0]);
+		conf.windowSize.y = parseUInt(dim[1]);
 	}
 
 	if (cmd.check("--fullscreen") && cmd.check("--window")) {

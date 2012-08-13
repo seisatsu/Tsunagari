@@ -50,7 +50,6 @@
 	#define DEF_WINDOW_WIDTH      640
 	#define DEF_WINDOW_HEIGHT     480
 	#define DEF_WINDOW_FULLSCREEN false
-	#define DEF_AUDIO_ENABLED     true
 	#define DEF_CACHE_ENABLED     true
 	#define DEF_CACHE_TTL         300
 	#define DEF_CACHE_SIZE        100
@@ -77,7 +76,7 @@ struct Conf {
 	/**
 	 * Check for missing required configuration variables.
 	 */
-	bool validate(const char* filename);
+	bool validate(const std::string& filename);
 
 	std::string worldFilename;
 	std::vector<std::string> dataPath;
@@ -87,6 +86,8 @@ struct Conf {
 	icoord windowSize;
 	bool fullscreen;
 	bool audioEnabled;
+	int musicVolume;
+	int soundVolume;
 	bool cacheEnabled;
 	int cacheTTL;
 	int cacheSize;
@@ -95,7 +96,7 @@ struct Conf {
 };
 extern Conf conf;
 
-bool parseConfig(const char* filename);
+bool parseConfig(const std::string& filename);
 bool parseCommandLine(int argc, char* argv[]);
 
 #endif

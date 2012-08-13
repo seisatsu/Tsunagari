@@ -43,6 +43,9 @@ bool isRanges(const std::string& s);
 //! Return a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);
 
+int parseUInt(const std::string& s);
+int parseInt100(const std::string& s);
+
 //! Split a string by a delimiter.
 std::vector<std::string> splitStr(const std::string& str,
 	const std::string& delimiter);
