@@ -110,7 +110,7 @@ void Entity::draw()
 		img->drawSubrect(
 			doff.x + r.x, doff.y + r.y, z,
 			0           , hoff,
-			imgsz.x     , height
+			imgsz.x + 1 , height + 1
 		);
 		hoff += height;
 	}
