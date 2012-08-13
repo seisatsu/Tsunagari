@@ -38,11 +38,6 @@
 #include "scriptinst.h"
 #include "python.h"
 
-/**
- * Z-height to add for each additional tile of height when drawing an Entity.
- */
-#define Z_PER_TILE 0.0000001
-
 class Animation;
 class Area;
 class Resourcer;
@@ -247,7 +242,6 @@ protected:
 	Area* area;
 	rcoord r; //!< real x,y position: hold partial pixel transversal
 	rcoord doff; //!< Drawing offset to center entity on tile.
-	int vtiles; //!< Number of tiles our image spans, vertically.
 
 	std::string descriptor;
 

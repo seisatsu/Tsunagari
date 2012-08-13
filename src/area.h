@@ -46,6 +46,8 @@
 #include "viewport.h"
 #include "xml.h"
 
+#define ISOMETRIC_ZOFF_PER_TILE 0.001
+
 namespace Gosu {
 	class Bitmap;
 	class Button;
@@ -131,6 +133,8 @@ public:
 	ivec3 getDimensions() const;
 	//! Return the pixel dimensions of a Tile graphic.
 	ivec2 getTileDimensions() const;
+	//! Return the isometric z-offset for an X-Y position in the Area.
+	double isometricZOff(rvec2 pos) const;
 	//! Returns a physical cubic range of Tiles that could be visible
 	//! on-screen.
 	icube visibleTileBounds() const;

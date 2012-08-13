@@ -326,6 +326,11 @@ ivec2 Area::getTileDimensions() const
 	return tileDim;
 }
 
+double Area::isometricZOff(rvec2 pos) const
+{
+	return pos.y / tileDim.y * ISOMETRIC_ZOFF_PER_TILE;
+}
+
 icube Area::visibleTileBounds() const
 {
 	rvec2 screen = view->getVirtRes();
@@ -564,9 +569,14 @@ void Area::drawTile(Tile& tile, int x, int y, double depth)
 	if (type) {
 		time_t now = World::instance()->time();
 		const Image* img = type->anim.frame(now);
-		if (img)
-			img->draw((double)x*img->width(),
-				  (double)y*img->height(), depth);
+		if (img) {
+			rvec2 drawPos(
+				double(x * img->width()),
+				double(y * img->height())
+			);
+			img->draw(drawPos.x, drawPos.y,
+			          depth + isometricZOff(drawPos));
+		}
 	}
 }
 
