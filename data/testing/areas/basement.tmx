@@ -6,15 +6,9 @@
   <property name="main_music" value=""/>
   <property name="name" value="Basement"/>
  </properties>
- <tileset firstgid="1" name="indoors.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/indoors.png" width="112" height="192"/>
- </tileset>
- <tileset firstgid="85" name="objects.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/objects.png" width="112" height="112"/>
- </tileset>
- <tileset firstgid="134" name="indoors_2.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/indoors_2.png" width="176" height="192"/>
- </tileset>
+ <tileset firstgid="1" source="areas/tiles/indoors.png.tsx"/>
+ <tileset firstgid="85" source="areas/tiles/objects.png.tsx"/>
+ <tileset firstgid="134" source="areas/tiles/indoors_2.png.tsx"/>
  <layer name="Tiles(-0.3)" width="6" height="6">
   <properties>
    <property name="layer" value="-0.3"/>

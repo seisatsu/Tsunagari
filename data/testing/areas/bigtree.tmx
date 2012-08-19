@@ -5,12 +5,8 @@
   <property name="main_music" value="music/Devotion.oga"/>
   <property name="name" value="Big Tree"/>
  </properties>
- <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/forest.png" width="272" height="304"/>
- </tileset>
- <tileset firstgid="324" name="baum.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/baum.png" width="128" height="128"/>
- </tileset>
+ <tileset firstgid="1" source="areas/tiles/forest.png.tsx"/>
+ <tileset firstgid="324" source="areas/tiles/baum.png.tsx"/>
  <layer name="Tiles(-0.2)" width="20" height="20">
   <properties>
    <property name="layer" value="-0.2"/>

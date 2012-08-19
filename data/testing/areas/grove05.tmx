@@ -4,9 +4,7 @@
   <property name="author" value="Paul Merrill"/>
   <property name="name" value="Grove 05"/>
  </properties>
- <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/forest.png" width="272" height="304"/>
- </tileset>
+ <tileset firstgid="1" source="areas/tiles/forest.png.tsx"/>
  <layer name="Tiles(-0.3)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.3"/>

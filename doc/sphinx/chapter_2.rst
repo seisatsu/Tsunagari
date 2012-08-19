@@ -33,7 +33,7 @@ Example World.conf (from Testing World)
 ::
 
 	<?xml version="1.0" encoding="UTF-8" ?>
-		<world>
+	<world>
 		<info>
 			<name>Testing World</name>
 			<author>OmegaSDG</author>

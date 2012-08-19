@@ -4,12 +4,8 @@
   <property name="author" value="Michael D. Reiley"/>
   <property name="name" value="Grove 02"/>
  </properties>
- <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/forest.png" width="272" height="304"/>
- </tileset>
- <tileset firstgid="324" name="objects.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/objects.png" width="112" height="112"/>
- </tileset>
+ <tileset firstgid="1" source="areas/tiles/forest.png.tsx"/>
+ <tileset firstgid="324" source="areas/tiles/objects.png.tsx"/>
  <layer name="Tiles(-0.2)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.2"/>

@@ -6,18 +6,8 @@
   <property name="on_load" value="areas/cave01.py:cave_load()"/>
   <property name="on_tick" value="areas/cave01.py:cave_tick()"/>
  </properties>
- <tileset firstgid="1" name="cave.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/cave.png" width="256" height="336"/>
- </tileset>
- <tileset firstgid="337" name="objects.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/objects.png" width="112" height="112"/>
-  <tile id="1">
-   <properties>
-    <property name="frames" value="1,8,15"/>
-    <property name="speed" value="1.5"/>
-   </properties>
-  </tile>
- </tileset>
+ <tileset firstgid="1" source="areas/tiles/cave.png.tsx"/>
+ <tileset firstgid="337" source="areas/tiles/objects.png.tsx"/>
  <layer name="Tiles(-0.2)" width="14" height="20">
   <properties>
    <property name="layer" value="-0.2"/>

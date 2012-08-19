@@ -7,15 +7,7 @@
   <property name="on_load" value="areas/grove01.py:grove01_load()"/>
   <property name="on_tick" value="areas/grove01.py:grove01_tick()"/>
  </properties>
- <tileset firstgid="1" name="forest.png" tilewidth="16" tileheight="16">
-  <image source="areas/tiles/forest.png" width="272" height="304"/>
-  <tile id="29">
-   <properties>
-    <property name="frames" value="29,58"/>
-    <property name="speed" value="0.75"/>
-   </properties>
-  </tile>
- </tileset>
+ <tileset firstgid="1" source="areas/tiles/forest.png.tsx"/>
  <layer name="Tiles(-0.2)" width="10" height="10">
   <properties>
    <property name="layer" value="-0.2"/>
