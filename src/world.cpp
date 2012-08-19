@@ -71,7 +71,10 @@ bool World::init()
 	loadScript.invoke();
 
 	Area* area = getArea(startArea);
-	ASSERT(area != NULL);
+	if (area == NULL) {
+		Log::fatal("World", "failed to load initial Area");
+		return false;
+	}
 	focusArea(area, startCoords);
 
 	return true;

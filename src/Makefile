@@ -16,7 +16,7 @@ OBJECTS = animation.o area.o area-tmx.o bitrecord.o character.o client-conf.o \
 
 # Name of testing world.
 BASEDATA = ../data/base.zip
-TESTWORLD = ../data/testing.world
+TESTWORLD = ../data/testing.world ../data/tsx.world
 
 
 ### --- PRECOMPILED HEADERS --- ###

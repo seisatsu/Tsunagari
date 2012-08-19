@@ -9,6 +9,10 @@
     http://creativecommons.org/licenses/by/3.0/
   last updated on
     2011-06-06
+
+  Modified by Paul Merrill on August 18th, 2012 for TSX format.
+  Modified by Paul Merrill on August 18th, 2012. Removed <image> subelement of
+    <tile>. Removed <data> subelement of <image>.
 -->
 
 <!ELEMENT map (properties?, tileset*, (layer | objectgroup)*)>
@@ -32,11 +36,7 @@
   value       CDATA   #REQUIRED
 >
 
-<!--
-  data is required when a child of tilset
-  data is not valid when a child of tile
--->
-<!ELEMENT image (data?)>
+<!ELEMENT image EMPTY>
 <!-- 
   format is required when a child of tileset
   format is not valid when a child of tile
@@ -51,15 +51,7 @@
   height      CDATA   #IMPLIED
 >
 
-<!--
-  #PCDATA when data is child of image
-  tile* when data is child of layer without compression
--->
-<!ELEMENT data (#PCDATA | tile)*>
-<!ATTLIST data
-  encoding    CDATA   #IMPLIED
-  compression CDATA   #IMPLIED
->
+<!ELEMENT data (tile)*>
 
 <!ELEMENT tileset (image*, tile*)>
 <!--
@@ -76,11 +68,7 @@
   margin      CDATA   #IMPLIED
 >
 
-<!--
-  image required when child of all but layer -> data
-  image not valid when child of layer -> data
--->
-<!ELEMENT tile (properties?, image?)>
+<!ELEMENT tile (properties?)>
 <!--
   id required when child of all but layer -> data
   id not valid when child of layer -> data

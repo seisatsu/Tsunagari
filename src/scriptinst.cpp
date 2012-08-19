@@ -52,7 +52,7 @@ struct validate_visitor : public boost::static_visitor<bool>
 
 		if (!rc->resourceExists(ref.filename)) {
 			Log::err(context,
-				ref.filename + "script file not found");
+				ref.filename + ": script file not found");
 			return false;
 		}
 

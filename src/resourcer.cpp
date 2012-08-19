@@ -302,6 +302,7 @@ bool Resourcer::preloadDTDs()
 {
 	ASSERT(dtds["dtd/area.dtd"]   = parseDTD("dtd/area.dtd"));
 	ASSERT(dtds["dtd/entity.dtd"] = parseDTD("dtd/entity.dtd"));
+	ASSERT(dtds["dtd/tsx.dtd"] = parseDTD("dtd/tsx.dtd"));
 	ASSERT(dtds["dtd/world.dtd"]  = parseDTD("dtd/world.dtd"));
 	return true;
 }

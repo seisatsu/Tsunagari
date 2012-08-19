@@ -205,14 +205,31 @@ bool AreaTMX::processTileSet(XMLNode node)
  </tileset>
 */
 
+	XMLRef doc;
+	std::string source;
+
 	TileSet* set = NULL;
 	TiledImageRef img;
 	int tilex, tiley;
 	int firstGid;
 
+	// Read firstgid from original node.
+	ASSERT(node.intAttr("firstgid", &firstGid));
+
+	// If this node is just a reference to an external TSX file, load it
+	// and process the root tileset element of the TSX, instead.
+	source = node.attr("source");
+	if (source.size()) {
+		Resourcer *rc = Resourcer::instance();
+		if (!(doc = rc->getXMLDoc(source, "dtd/tsx.dtd"))) {
+			Log::err(descriptor, source + ": failed to load valid TSX file");
+			return false;
+		}
+		ASSERT(node = doc->root()); // <tileset>
+	}
+
 	ASSERT(node.intAttr("tilewidth", &tilex));
 	ASSERT(node.intAttr("tileheight", &tiley));
-	ASSERT(node.intAttr("firstgid", &firstGid));
 
 	if (tileDim && tileDim != ivec2(tilex, tiley)) {
 		Log::err(descriptor,
@@ -713,7 +730,10 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	if (node.hasAttr("gid")) {
 		// This is one of Tiled's "Tile Objects". It is one tile wide
 		// and high.
-		y = y - 1; // Bug in tiled. The y is off by one.
+
+		// Bug in tiled. The y is off by one. The author of the format
+		// knows about this, but it will not change.
+		y = y - 1;
 		w = 1;
 		h = 1;
 
