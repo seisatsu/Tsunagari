@@ -9,7 +9,7 @@ This chapter covers the procedures for creating a Tsunagari game world from scra
 Anatomy of a World File
 =======================
 
-The Tsunagari Tile Engine is an interpreter for "world files", self-contained packages which consist of game data. World files themselves are simply zip archives with a ".world" file suffix (suffix not required). Inside these packages are several kinds of data, which together describe a game world. The different kinds of data files found inside a game world are described below.
+The Tsunagari Tile Engine is an interpreter for "world files", self-contained packages which consist of game data. World files themselves are simply zip (or 7zip) archives with a ".world" file suffix (suffix not required). Inside these packages are several kinds of data, which together describe a game world. The different kinds of data files found inside a game world are described below.
 
 World File Contents
 -------------------
@@ -242,9 +242,10 @@ Let's take a look at the directory tree of a simple world.
 		* player.png
 		* player.xml
 
-A world file is just a zip file. Using any zip creation utility, create a zip from the world directory tree, such that "world.conf" is in the top directory of the zip. In this case, "init_world.py", and the "areas", "sounds", "music", and "entities" folders would also be in the top directory of the zip.
+A world file is just a zip or 7zip file. Using any archive creation utility, create a supported archive from the world directory tree, such that "world.conf" is in the top directory of the archive. In this case, "init_world.py", and the "areas", "sounds", "music", and "entities" folders would also be in the top directory of the archive.
 
-Any zip file with "world.conf" in its top directory is treated as a world file by the Tsunagari Tile Engine. All filenames inside a world file are referenced by their path relative to the top directory of the world file. For example, door.oga is always referenced as "sounds/door.oga".
+Any zip or 7zip file with "world.conf" in its top directory is treated as a world file by the Tsunagari Tile Engine. All filenames inside a world file are referenced by their path relative to the top directory of the world file. For example, door.oga is always referenced as "sounds/door.oga".
 
-If possible, create the world file with compression level 0 to reduce load times.
+Creating the world file archive with compression level 0 may marginally reduce load times at the cost of increased file size.
 
+An unarchived folder containing the world directory structure may also be played by the engine, which may be useful for world development.

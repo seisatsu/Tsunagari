@@ -1,4 +1,4 @@
-************************
+\************************
 Chapter 1 - Engine Usage
 ************************
 
@@ -42,7 +42,7 @@ The above settings and their effects are described below:
 * [engine] Section
 
 	* "world": This option sets the filename of the game world to be loaded and played by the engine at runtime. The path to a directory containing world data can also be given instead of a world file.
-	* "datapath": A comma delimited list of zip files to be prepended to the engine's data path. See section "Data Path" in chapter 5.
+	* "datapath": A comma delimited list of zip or 7zip files to be prepended to the engine's data path. See section "Data Path" in chapter 5.
 	* "verbosity": This option sets the types of messages to be sent to the console. It has no noticeable effect unless the engine is run from the command line. It accepts the following values:
 
 		* "normal": Only error messages are sent to the console. Error type messages generally describe game world design oversights, or the cause of a sudden crash.
@@ -96,7 +96,7 @@ Command line options and the client config file options they override are descri
 
 * ``-h/--help``: Display a help message containing a summary of command line options.
 * ``-c/--config <config file>``: Read an alternative client config file.
-* ``-p/--datapath <file,file,...>``: Prepend zips to data path. See section "Data Path" in chapter 5.
+* ``-p/--datapath <file,file,...>``: Prepend zips/7zips to data path. See section "Data Path" in chapter 5.
 * ``-q/--quiet``: Override [engine] "verbosity". (Display only fatal errors in the console.)
 * ``--normal``: Override [engine] "verbosity". (Display all errors in the console.)
 * ``-v/--verbose``: Override [engine] "verbosity" (Display additional information in the console.)
