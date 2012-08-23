@@ -99,8 +99,10 @@ void World::buttonDown(const Gosu::Button btn)
 		redraw = true;
 		break;
 	default:
-		if (!paused && keyStates.empty())
+		if (!paused && keyStates.empty()) {
 			area->buttonDown(btn);
+			keydownScript.invoke();
+		}
 		break;
 	}
 }
@@ -111,8 +113,10 @@ void World::buttonUp(const Gosu::Button btn)
 	case Gosu::kbEscape:
 		break;
 	default:
-		if (!paused && keyStates.empty())
+		if (!paused && keyStates.empty()) {
 			area->buttonUp(btn);
+			keyupScript.invoke();
+		}
 		break;
 	}
 }
@@ -468,6 +472,8 @@ void exportWorld()
 		.def("focus",
 			static_cast<void (World::*) (Area*,int,int,double)>
 			(&World::focusArea))
+		.def_readwrite("on_key_down", &World::keydownScript)
+		.def_readwrite("on_key_up", &World::keyupScript)
 		;
 }
 

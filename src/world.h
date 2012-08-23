@@ -147,6 +147,9 @@ public:
 
 	void runAreaLoadScript(Area* area);
 
+
+	ScriptInst keydownScript, keyupScript;
+
 protected:
 	/**
 	 * Calculate time passed since engine state was last updated.
