@@ -571,8 +571,8 @@ void Area::drawTile(Tile& tile, int x, int y, double depth)
 		const Image* img = type->anim.frame(now);
 		if (img) {
 			rvec2 drawPos(
-				double(x * img->width()),
-				double(y * img->height())
+				double(x * (int)img->width()),
+				double(y * (int)img->height())
 			);
 			img->draw(drawPos.x, drawPos.y,
 			          depth + isometricZOff(drawPos));
