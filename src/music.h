@@ -27,19 +27,7 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#include <boost/optional/optional.hpp>
-#include <Gosu/Audio.hpp> // for Gosu::SampleInstance
-
-#include "resourcer.h"
-
-enum MUSIC_STATE
-{
-	NOT_PLAYING,
-	PLAYING_INTRO,
-	PLAYING_LOOP,
-	CHANGED_INTRO,
-	CHANGED_LOOP
-};
+#include <string>
 
 /**
  * State manager for currently playing music. Continuously controls which music
@@ -57,40 +45,21 @@ enum MUSIC_STATE
 class Music
 {
 public:
-	Music();
-	~Music();
+	static std::string getIntro();
+	static std::string getLoop();
 
-	std::string getIntro();
-	std::string getLoop();
+	static void setIntro(const std::string& filename);
+	static void setLoop(const std::string& filename);
 
-	void setIntro(const std::string& filename);
-	void setLoop(const std::string& filename);
+	static int getVolume();
+	static void setVolume(int level);
 
-	int getVolume();
-	void setVolume(int level);
+	static bool isPaused();
+	static void setPaused(bool p);
 
-	bool isPaused();
-	void setPaused(bool p);
+	static void stop();
 
-	void stop();
-
-	void tick();
-
-private:
-	void playIntro();
-	void playLoop();
-	void setState(MUSIC_STATE state);
-
-	SongRef musicInst, introMusic, loopMusic;
-
-	bool paused;
-
-	MUSIC_STATE state;
-
-	std::string newIntro;
-	std::string newLoop;
-	std::string curIntro;
-	std::string curLoop;
+	static void tick();
 };
 
 //! Register Music with Python.

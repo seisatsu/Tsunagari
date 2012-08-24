@@ -31,7 +31,7 @@
 #include "log.h"
 #include "music.h"
 #include "random.h"
-#include "resourcer.h"
+#include "reader.h"
 #include "scriptinst.h"
 #include "sound.h"
 #include "tile.h"
@@ -47,7 +47,7 @@ BOOST_PYTHON_MODULE(tsunagari)
 	exportLog();
 	exportMusic();
 	exportRandom();
-	exportResourcer();
+	exportReader();
 	exportScriptInst();
 	exportSound();
 	exportTile();

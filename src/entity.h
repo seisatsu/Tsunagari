@@ -34,13 +34,12 @@
 #include <libxml/parser.h>
 
 #include "tile.h" // for enum TileEventTrigger
-#include "resourcer.h"
+#include "reader.h"
 #include "scriptinst.h"
 #include "python.h"
 
 class Animation;
 class Area;
-class Resourcer;
 
 namespace Gosu {
 	class Bitmap;

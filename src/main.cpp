@@ -34,6 +34,7 @@
 #include "client-conf.h"
 #include "log.h"
 #include "python.h"
+#include "reader.h"
 #include "window.h"
 
 #ifdef _WIN32
@@ -44,7 +45,7 @@
 
 struct libraries
 {
-	libraries()
+	libraries(char* argv0)
 	{
 		// Initialize the C library's random seed.
 		srand((unsigned)time(NULL));
@@ -58,10 +59,15 @@ struct libraries
 
 		if (!pythonInit())
 			exit(1);
+
+		// Reader::init runs Python scripts.
+		if (!Reader::init(argv0))
+			exit(1);
 	}
 
 	~libraries()
 	{
+		Reader::deinit();
 		pythonFinalize();
 		xmlCleanupParser();
 	}
@@ -90,11 +96,12 @@ int main(int argc, char** argv)
 	Log::setVerbosity(conf.verbosity);
 	Log::reportVerbosityOnStartup();
 
-	// Init various libraries we use.
-	libraries libs;
-
 	GameWindow window;
-	ASSERT_RETURN1(window.init(argv[0]));
+
+	// Init various libraries we use.
+	libraries libs(argv[0]);
+
+	ASSERT_RETURN1(window.init());
 	window.show();
 	return 0;
 }

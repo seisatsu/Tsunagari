@@ -26,7 +26,7 @@
 
 #include "log.h"
 #include "python.h"
-#include "resourcer.h"
+#include "reader.h"
 #include "scriptinst.h"
 
 struct validate_visitor : public boost::static_visitor<bool>
@@ -42,15 +42,13 @@ struct validate_visitor : public boost::static_visitor<bool>
 
 	bool operator()(ScriptInst::strref ref) const
 	{
-		Resourcer* rc = Resourcer::instance();
-
 		if (ref.filename.empty()) {
 			Log::err(context,
 				"script filename is empty");
 			return false;
 		}
 
-		if (!rc->resourceExists(ref.filename)) {
+		if (!Reader::resourceExists(ref.filename)) {
 			Log::err(context,
 				ref.filename + ": script file not found");
 			return false;
@@ -74,14 +72,12 @@ struct invoke_visitor : public boost::static_visitor<bool>
 
 	bool operator()(ScriptInst::strref ref) const
 	{
-		Resourcer* rc = Resourcer::instance();
-
 		if (ref.funcname.size()) {
-			rc->runPythonScript(ref.filename);
+			Reader::runPythonScript(ref.filename);
 			return pythonExec(ref.funccall);
 		}
 		else {
-			return rc->runPythonScript(ref.filename);
+			return Reader::runPythonScript(ref.filename);
 		}
 	}
 

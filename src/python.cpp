@@ -37,7 +37,7 @@
 #include "log.h"
 #include "python.h"
 #include "python-bindings.h" // for pythonInitBindings
-#include "resourcer.h"
+#include "reader.h"
 #include "window.h"
 
 #include <Python-ast.h>
@@ -111,9 +111,8 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	// Search Python scripts inside World.
 	std::replace(name.begin(), name.end(), '.', '/');
 	name += ".py";
-	Resourcer* rc = Resourcer::instance();
-	if (rc->resourceExists(name)) {
-		rc->runPythonScript(name);
+	if (Reader::resourceExists(name)) {
+		Reader::runPythonScript(name);
 		return modMain.ptr(); // We have to return a module...
 	}
 

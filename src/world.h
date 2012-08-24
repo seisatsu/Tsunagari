@@ -36,7 +36,6 @@
 
 #include "bitrecord.h"
 #include "player.h"
-#include "resourcer.h"
 #include "scriptinst.h"
 #include "viewport.h"
 
@@ -45,8 +44,6 @@ namespace Gosu {
 }
 
 class Area;
-class Music;
-class Resourcer;
 class GameWindow;
 
 /**
@@ -208,8 +205,6 @@ protected:
 	Player player;
 	std::string playerPhase;
 	boost::shared_ptr<Viewport> view;
-	boost::shared_ptr<Music> music;
-	Resourcer* rc;
 
 
 	/**

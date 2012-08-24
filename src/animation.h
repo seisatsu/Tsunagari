@@ -31,7 +31,7 @@
 #include <vector>
 
 #include "image.h"
-#include "resourcer.h"
+#include "reader.h"
 
 #define ANIM_INFINITE_CYCLES -1
 

@@ -42,7 +42,6 @@
 #include <cstring>
 #include <ctime>
 #include <ctype.h>
-#include <deque>
 #include <errno.h>
 #include <Gosu/Gosu.hpp>
 #include <iostream>

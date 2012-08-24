@@ -91,5 +91,7 @@ private:
 	std::string path_;
 };
 
+typedef boost::shared_ptr<XMLDoc> XMLRef;
+
 #endif
 

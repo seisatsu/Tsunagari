@@ -29,7 +29,7 @@
 #include <Gosu/Timing.hpp>
 #include <Gosu/Utility.hpp>
 
-#include "resourcer.h"
+#include "reader.h"
 #include "world.h"
 #include "window.h"
 
@@ -78,11 +78,10 @@ GameWindow::~GameWindow()
 {
 }
 
-bool GameWindow::init(char* argv0)
+bool GameWindow::init()
 {
-	rc.reset(new Resourcer());
 	world.reset(new World());
-	return rc->init(argv0) && world->init();
+	return world->init();
 }
 
 int GameWindow::width() const
@@ -144,7 +143,7 @@ void GameWindow::update()
 
 	if (now > lastGCtime + GC_CALL_PERIOD) {
 		lastGCtime = now;
-		rc->garbageCollect();
+		Reader::garbageCollect();
 	}
 }
 

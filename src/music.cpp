@@ -24,17 +24,108 @@
 // IN THE SOFTWARE.
 // **********
 
+#include <Gosu/Audio.hpp> // for Gosu::SampleInstance
 #include <Gosu/Math.hpp>
 
 #include "client-conf.h"
 #include "music.h"
+#include "reader.h"
+#include "readercache.h"
 #include "python.h"
 
-Music::Music()
-	: paused(false),
-	  state(NOT_PLAYING)
+typedef boost::shared_ptr<Gosu::Song> SongRef;
+
+enum MUSIC_STATE
 {
-	pythonSetGlobal("Music", this);
+	NOT_PLAYING,
+	PLAYING_INTRO,
+	PLAYING_LOOP,
+	CHANGED_INTRO,
+	CHANGED_LOOP
+};
+
+static SongRef musicInst, introMusic, loopMusic;
+
+static bool paused = false;
+
+static MUSIC_STATE state = NOT_PLAYING;
+
+static std::string newIntro;
+static std::string newLoop;
+static std::string curIntro;
+static std::string curLoop;
+
+
+static SongRef genSong(const std::string& name)
+{
+	BufferPtr buffer(Reader::readBuffer(name));
+	if (!buffer)
+		return SongRef();
+	return SongRef(new Gosu::Song(buffer->frontReader()));
+}
+
+static ReaderCache<SongRef> songs(genSong);
+
+static SongRef getSong(const std::string& name)
+{
+	if (!conf.audioEnabled)
+		return SongRef();
+	return songs.lifetimeRequest(name);
+}
+
+
+/*
+static const char* stateStr(MUSIC_STATE state)
+{
+	switch (state) {
+	case NOT_PLAYING:
+		return "NOT_PLAYING";
+	case PLAYING_INTRO:
+		return "PLAYING_INTRO";
+	case PLAYING_LOOP:
+		return "PLAYING_LOOP";
+	case CHANGED_INTRO:
+		return "CHANGED_INTRO";
+	case CHANGED_LOOP:
+		return "CHANGED_LOOP";
+	default:
+		return "";
+	}
+}
+*/
+
+static void setState(MUSIC_STATE state_)
+{
+	// printf("State changed from %s to %s.\n", stateStr(this->state), stateStr(state));
+	state = state_;
+}
+
+static void playIntro()
+{
+	if (musicInst && musicInst->playing())
+		musicInst->stop();
+	curIntro = newIntro;
+	introMusic->play(false);
+	introMusic->changeVolume(conf.musicVolume / 100.0);
+	musicInst = introMusic;
+	setState(PLAYING_INTRO);
+}
+
+static void playLoop()
+{
+	if (musicInst && musicInst->playing())
+		musicInst->stop();
+	curLoop = newLoop;
+	loopMusic->play(true);
+	loopMusic->changeVolume(conf.musicVolume / 100.0);
+	musicInst = loopMusic;
+	setState(PLAYING_LOOP);
+}
+
+
+/*
+Music::Music()
+{
 }
 
 Music::~Music()
@@ -42,6 +133,7 @@ Music::~Music()
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
 }
+*/
 
 std::string Music::getIntro()
 {
@@ -66,12 +158,9 @@ void Music::setIntro(const std::string& filename)
 	default: break;
 	}
 
-	Resourcer* rc = Resourcer::instance();
-
 	newIntro = filename;
 	// Optimize XXX: Don't load until played.
-	introMusic = filename.size() ?
-		rc->getSong(filename) : SongRef();
+	introMusic = filename.size() ? getSong(filename) : SongRef();
 }
 
 void Music::setLoop(const std::string& filename)
@@ -87,12 +176,9 @@ void Music::setLoop(const std::string& filename)
 	default: break;
 	}
 
-	Resourcer* rc = Resourcer::instance();
-
 	newLoop = filename;
 	// Optimize XXX: Don't load until played.
-	loopMusic = filename.size() ?
-		rc->getSong(filename) : SongRef();
+	loopMusic = filename.size() ? getSong(filename) : SongRef();
 }
 
 int Music::getVolume()
@@ -178,56 +264,14 @@ void Music::tick()
 	}
 }
 
-void Music::playIntro()
-{
-	if (musicInst && musicInst->playing())
-		musicInst->stop();
-	curIntro = newIntro;
-	introMusic->play(false);
-	introMusic->changeVolume(conf.musicVolume / 100.0);
-	musicInst = introMusic;
-	setState(PLAYING_INTRO);
-}
-
-void Music::playLoop()
-{
-	if (musicInst && musicInst->playing())
-		musicInst->stop();
-	curLoop = newLoop;
-	loopMusic->play(true);
-	loopMusic->changeVolume(conf.musicVolume / 100.0);
-	musicInst = loopMusic;
-	setState(PLAYING_LOOP);
-}
-
-/*
-static const char* stateStr(MUSIC_STATE state)
-{
-	switch (state) {
-	case NOT_PLAYING:
-		return "NOT_PLAYING";
-	case PLAYING_INTRO:
-		return "PLAYING_INTRO";
-	case PLAYING_LOOP:
-		return "PLAYING_LOOP";
-	case CHANGED_INTRO:
-		return "CHANGED_INTRO";
-	case CHANGED_LOOP:
-		return "CHANGED_LOOP";
-	default:
-		return "";
-	}
-}
-*/
-
-void Music::setState(MUSIC_STATE state)
-{
-	// printf("State changed from %s to %s.\n", stateStr(this->state), stateStr(state));
-	this->state = state;
-}
 
 void exportMusic()
 {
+
+	// FIXME: Broken with shift to singleton. No instantiated object to bind.
+	// Fix will require a stub object.
+
+#if 0
 	boost::python::class_<Music>("MusicManager", boost::python::no_init)
 		.add_property("intro", &Music::getIntro, &Music::setIntro)
 		.add_property("loop", &Music::getLoop, &Music::setLoop)
@@ -235,4 +279,7 @@ void exportMusic()
 		.add_property("paused", &Music::isPaused, &Music::setPaused)
 		.def("stop", &Music::stop)
 		;
+
+	pythonSetGlobal("Music", this);
+#endif
 }

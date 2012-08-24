@@ -33,7 +33,7 @@
 #include <boost/optional.hpp>
 
 #include "animation.h"
-#include "resourcer.h" // for TiledImage
+#include "reader.h" // for TiledImage
 #include "scriptinst.h"
 
 class Area;

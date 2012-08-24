@@ -1,8 +1,8 @@
-/*********************************
-** Tsunagari Tile Engine        **
-** player.h                     **
-** Copyright 2011-2012 OmegaSDG **
-*********************************/
+/****************************
+** Tsunagari Tile Engine   **
+** readercache.h           **
+** Copyright 2012 OmegaSDG **
+****************************/
 
 // **********
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -24,45 +24,54 @@
 // IN THE SOFTWARE.
 // **********
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef READERCACHE_H
+#define READERCACHE_H
 
+#include <string>
 #include <vector>
 
-#include "character.h"
+#include "cache.h"
+#include "log.h"
 
-class Player : public Character
+template<class T>
+class ReaderCache
 {
 public:
-	Player();
-	bool init(const std::string& descriptor, const std::string& initialPhase);
-	void destroy();
+	typedef T (*GenFn)(const std::string& name);
 
-	//! Smooth continuous movement.
-	void startMovement(ivec2 delta);
-	void stopMovement(ivec2 delta);
+	ReaderCache(GenFn fn) : fn(fn) {}
 
-	//! Move the player by dx, dy. Not guaranteed to be smooth if called
-	//! on each update().
-	void moveByTile(ivec2 delta);
+	T momentaryRequest(const std::string& name)
+	{
+		T t = cache.momentaryRequest(name);
+		if (t)
+			return t;
 
-	//! Try to use an object in front of the player.
-	void useTile();
+		t = fn(name);
+		cache.momentaryPut(name, t);
+		return t;
+	}
 
-	void setFrozen(bool b);
+	T lifetimeRequest(const std::string& name)
+	{
+		T t = cache.lifetimeRequest(name);
+		if (t)
+			return t;
 
-protected:
-	void postMove();
+		t = fn(name);
+		cache.lifetimePut(name, t);
+		return t;
+	}
 
-	void takeExit(Exit* exit);
+	void garbageCollect()
+	{
+		cache.garbageCollect();
+	}
 
 private:
-	//! Stores intent to move continuously in some direction.
-	ivec2 velocity;
+	GenFn fn;
 
-	//! Stack storing depressed keyboard keys in the form of movement
-	//! vectors.
-	std::vector<ivec2> movements;
+	Cache<T> cache;
 };
 
 #endif

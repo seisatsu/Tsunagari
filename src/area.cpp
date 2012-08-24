@@ -40,10 +40,11 @@
 #include "entity.h"
 #include "log.h"
 #include "image.h"
+#include "music.h"
 #include "npc.h"
 #include "overlay.h"
 #include "python.h"
-#include "resourcer.h"
+#include "reader.h"
 #include "tile.h"
 #include "window.h"
 #include "world.h"
@@ -66,11 +67,9 @@ static T wrap(T min, T value, T max)
 
 Area::Area(Viewport* view,
            Player* player,
-           Music* music,
            const std::string& descriptor)
 	: view(view),
 	  player(player),
-	  music(music),
 	  colorOverlay(0, 0, 0, 0),
 	  dim(0, 0, 0),
 	  tileDim(0, 0),
@@ -98,10 +97,8 @@ void Area::focus()
 		runLoadScripts();
 	}
 
-	if (musicIntro)
-		music->setIntro(musicIntro.get());
-	if (musicLoop)
-		music->setLoop(musicLoop.get());
+	Music::setIntro(musicIntro);
+	Music::setLoop(musicLoop);
 
 	pythonSetGlobal("Area", this);
 	focusScript.invoke();
@@ -196,7 +193,7 @@ void Area::tick(unsigned long dt)
 	}
 
 	view->tick(dt);
-	music->tick();
+	Music::tick();
 }
 
 void Area::turn()

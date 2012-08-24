@@ -46,7 +46,7 @@ extern int inPythonScript;
 //! Initialize Python libraries for use.
 bool pythonInit();
 
-//! Free resourcers used by Python libraries and uninitialize them.
+//! Free resources used by Python libraries and uninitialize them.
 void pythonFinalize();
 
 //! Print last error received within Python.

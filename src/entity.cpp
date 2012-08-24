@@ -36,7 +36,7 @@
 #include "entity.h"
 #include "log.h"
 #include "python.h"
-#include "resourcer.h"
+#include "reader.h"
 #include "string.h"
 #include "world.h"
 #include "xml.h"
@@ -612,8 +612,7 @@ void Entity::runTileEntryScript()
 
 bool Entity::processDescriptor()
 {
-	Resourcer* rc = Resourcer::instance();
-	XMLRef doc = rc->getXMLDoc(descriptor, "dtd/entity.dtd");
+	XMLRef doc = Reader::getXMLDoc(descriptor, "dtd/entity.dtd");
 	if (!doc)
 		return false;
 	const XMLNode root = doc->root(); // <entity>
@@ -637,14 +636,13 @@ bool Entity::processDescriptor()
 
 bool Entity::processSprite(XMLNode node)
 {
-	Resourcer* rc = Resourcer::instance();
 	TiledImageRef tiles;
 	for (; node; node = node.next()) {
 		if (node.is("sheet")) {
 			std::string imageSheet = node.content();
 			ASSERT(node.intAttr("tile_width",  &imgsz.x) &&
 			       node.intAttr("tile_height", &imgsz.y));
-			tiles = rc->getTiledImage(imageSheet, imgsz.x, imgsz.y);
+			tiles = Reader::getTiledImage(imageSheet, imgsz.x, imgsz.y);
 			ASSERT(tiles);
 		} else if (node.is("phases")) {
 			ASSERT(processPhases(node.childrenNode(), tiles));
@@ -740,8 +738,7 @@ bool Entity::processSound(const XMLNode node)
 		return false;
 	}
 
-	Resourcer* rc = Resourcer::instance();
-	SampleRef s = rc->getSample(filename);
+	SampleRef s = Reader::getSample(filename);
 	if (s)
 		sounds[name] = s;
 	return true;

@@ -35,13 +35,11 @@
 
 class Viewport;
 class Player;
-class Music;
 
 class AreaTMX : public Area
 {
 public:
-	AreaTMX(Viewport* view, Player* player, Music* music,
-	     const std::string& filename);
+	AreaTMX(Viewport* view, Player* player, const std::string& filename);
 	virtual ~AreaTMX();
 
 	//! Parse the file specified in the constructor, generating a full Area

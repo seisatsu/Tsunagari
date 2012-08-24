@@ -37,7 +37,6 @@ namespace Gosu {
 	class Button;
 }
 
-class Resourcer;
 class World;
 
 //! GameWindow Class
@@ -57,7 +56,7 @@ public:
 	virtual ~GameWindow();
 
 	//! GameWindow Initializer
-	bool init(char* argv0);
+	bool init();
 
 	//! Width of the window in pixels.
 	int width() const;
@@ -87,7 +86,6 @@ protected:
 	//! Process persistent keyboard input
 	void handleKeyboardInput(time_t now);
 
-	boost::scoped_ptr<Resourcer> rc;
 	boost::scoped_ptr<World> world;
 
 	time_t now;

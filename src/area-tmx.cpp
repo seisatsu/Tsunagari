@@ -38,7 +38,7 @@
 #include "entity.h"
 #include "log.h"
 #include "python.h"
-#include "resourcer.h"
+#include "reader.h"
 #include "string.h"
 #include "tile.h"
 #include "window.h"
@@ -58,9 +58,8 @@
 
 AreaTMX::AreaTMX(Viewport* view,
            Player* player,
-           Music* music,
            const std::string& descriptor)
-	: Area(view, player, music, descriptor)
+	: Area(view, player, descriptor)
 {
 	// Add TileType #0. Not used, but Tiled's gids start from 1.
 	gids.push_back(NULL);
@@ -95,8 +94,7 @@ bool AreaTMX::processDescriptor()
 	XMLRef doc;
 	XMLNode root;
 
-	Resourcer* rc = Resourcer::instance();
-	ASSERT(doc = rc->getXMLDoc(descriptor, "dtd/area.dtd"));
+	ASSERT(doc = Reader::getXMLDoc(descriptor, "dtd/area.dtd"));
 	ASSERT(root = doc->root()); // <map>
 
 	ASSERT(root.intAttr("width", &dim.x));
@@ -146,10 +144,10 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		else if (name == "name")
 			this->name = value;
 		else if (name == "intro_music") {
-			musicIntro.reset(value);
+			musicIntro = value;
 		}
 		else if (name == "main_music") {
-			musicLoop.reset(value);
+			musicLoop = value;
 		}
 		else if (name == "on_load") {
 			std::string filename = value;
@@ -220,8 +218,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 	// and process the root tileset element of the TSX, instead.
 	source = node.attr("source");
 	if (source.size()) {
-		Resourcer *rc = Resourcer::instance();
-		if (!(doc = rc->getXMLDoc(source, "dtd/tsx.dtd"))) {
+		if (!(doc = Reader::getXMLDoc(source, "dtd/tsx.dtd"))) {
 			Log::err(descriptor, source + ": failed to load valid TSX file");
 			return false;
 		}
@@ -251,8 +248,7 @@ bool AreaTMX::processTileSet(XMLNode node)
 			set = &tileSets[source];
 
 			// Load tileset image.
-			Resourcer* rc = Resourcer::instance();
-			img = rc->getTiledImage(source, tilex, tiley);
+			img = Reader::getTiledImage(source, tilex, tiley);
 			if (!img) {
 				Log::err(descriptor, "tileset image not found");
 				return false;

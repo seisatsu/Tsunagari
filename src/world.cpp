@@ -29,6 +29,7 @@
 
 #include "area-tmx.h"
 #include "log.h"
+#include "music.h"
 #include "python.h"
 #include "timeout.h"
 #include "window.h"
@@ -45,8 +46,7 @@ World* World::instance()
 }
 
 World::World()
-	: music(new Music()), total(0), redraw(false),
-          userPaused(false), paused(0)
+	: total(0), redraw(false), userPaused(false), paused(0)
 {
 	globalWorld = this;
 	lastTime = GameWindow::instance().time();
@@ -60,7 +60,7 @@ World::~World()
 bool World::init()
 {
 	ASSERT(processDescriptor()); // Try to load in descriptor.
-	ASSERT(pauseInfo = rc->getImage("resource/pause_overlay.png"));
+	ASSERT(pauseInfo = Reader::getImage("resource/pause_overlay.png"));
 
 	ASSERT(player.init(playerEntity, playerPhase));
 	pythonSetGlobal("Player", (Entity*)&player);
@@ -193,7 +193,7 @@ Area* World::getArea(const std::string& filename)
 	if (entry != areas.end())
 		return entry->second;
 
-	Area* newArea = new AreaTMX(view.get(), &player, music.get(), filename);
+	Area* newArea = new AreaTMX(view.get(), &player, filename);
 
 	if (!newArea->init())
 		newArea = NULL;
@@ -234,9 +234,9 @@ void World::setPaused(bool b)
 	paused += b ? 1 : -1;
 
 	if (paused)
-		music->setPaused(true);
+		Music::setPaused(true);
 	else
-		music->setPaused(false);
+		Music::setPaused(false);
 
 	// If finally unpausing.
 	if (!paused)
@@ -354,8 +354,7 @@ bool World::processDescriptor()
 	XMLRef doc;
 	XMLNode root;
 
-	rc = Resourcer::instance();
-	ASSERT(doc = rc->getXMLDoc("world.conf", "dtd/world.dtd"));
+	ASSERT(doc = Reader::getXMLDoc("world.conf", "dtd/world.dtd"));
 	ASSERT(root = doc->root()); // <world>
 
 	for (XMLNode child = root.childrenNode(); child; child = child.next()) {

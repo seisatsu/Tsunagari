@@ -27,7 +27,6 @@
 #ifndef AREA_H
 #define AREA_H
 
-#include <map>
 #include <string>
 #include <vector>
 
@@ -36,15 +35,10 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/python/tuple.hpp>
-
 #include <Gosu/Color.hpp>
 
-#include "music.h"
-#include "player.h"
 #include "scriptinst.h"
 #include "tile.h"
-#include "viewport.h"
-#include "xml.h"
 
 #define ISOMETRIC_ZOFF_PER_TILE 0.001
 
@@ -54,14 +48,10 @@ namespace Gosu {
 	class Image;
 }
 
-class Area;
-class Entity;
-class GameWindow;
-class Music;
+class Character;
 class Overlay;
-class Resourcer;
-class Sprite;
-class World;
+class Player;
+class Viewport;
 
 //! An Area represents one map, or screen, in a World.
 /*!
@@ -77,8 +67,7 @@ class World;
 class Area
 {
 public:
-	Area(Viewport* view, Player* player, Music* music,
-	     const std::string& filename);
+	Area(Viewport* view, Player* player, const std::string& filename);
 	virtual ~Area();
 
 	//! Parse the file specified in the constructor, generating a full Area
@@ -207,7 +196,6 @@ protected:
 	Player* player;
 	boost::unordered_set<Character*> characters;
 	boost::unordered_set<Overlay*> overlays;
-	Music* music;
 	Gosu::Color colorOverlay;
 
 	typedef std::vector<Tile> row_t;
@@ -241,7 +229,7 @@ protected:
 
 	// The following contain filenames such that they may be loaded lazily.
 	const std::string descriptor;
-	boost::optional<std::string> musicIntro, musicLoop;
+	std::string musicIntro, musicLoop;
 };
 
 //! Register Areas with Python.

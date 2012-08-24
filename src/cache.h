@@ -110,7 +110,7 @@ public:
 				continue;
 			if (cache.lastUsed == IN_USE_NOW) {
 				cache.lastUsed = now;
-//				Log::info("Resourcer", name + ": unused");
+//				Log::info("Cache", name + ": unused");
 			}
 			else if (now > cache.lastUsed + conf.cacheTTL*1000) {
 				dead.push_back(name);

@@ -29,7 +29,7 @@
 
 #include "client-conf.h"
 #include "python.h"
-#include "resourcer.h"
+#include "reader.h"
 #include "sound.h"
 
 SoundInstance::SoundInstance(boost::optional<Gosu::SampleInstance> inst)
@@ -132,11 +132,9 @@ public:
 
 SoundInstance SoundManager::play(const std::string& path)
 {
-	Resourcer* rc;
 	SampleRef sample;
 
-	rc = Resourcer::instance();
-	sample = rc->getSample(path);
+	sample = Reader::getSample(path);
 	if (sample)
 		return sample->play();
 	else
