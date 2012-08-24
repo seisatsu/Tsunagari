@@ -1,8 +1,8 @@
-/****************************
-** Tsunagari Tile Engine   **
-** timeout.h               **
-** Copyright 2012 OmegaSDG **
-****************************/
+/*********************************
+** Tsunagari Tile Engine        **
+** timeout.h                    **
+** Copyright 2011-2012 OmegaSDG **
+*********************************/
 
 // **********
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
