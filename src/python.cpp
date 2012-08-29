@@ -120,7 +120,7 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	std::string msg = std::string("Module '") + _name + "' not found or "
 		"not allowed. Note that Tsunagari runs in a sandbox and does "
 		"not allow most external modules.";
-	PyErr_Format(PyExc_ImportError, msg.c_str());
+	PyErr_Format(PyExc_ImportError, "%s", msg.c_str());
 	return NULL;
 }
 
@@ -211,21 +211,39 @@ void pythonFinalize()
 	Py_Finalize();
 }
 
-static std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
+static std::string extractTracebackWLib(PyObject* exc, PyObject* val,
+                                        PyObject *tb)
 {
 	using namespace boost::python;
 
 	handle<> hexc(exc), hval(allow_null(val)), htb(allow_null(tb));
-	if (!hval) {
-		return extract<std::string>(str(hexc));
-	}
-	else {
+	try {
+		// format_exception can itself fail
 		bp::object traceback(import("traceback"));
 		bp::object format_exception(traceback.attr("format_exception"));
 		bp::object formatted_list(format_exception(hexc, hval, htb));
 		bp::object formatted(str("").join(formatted_list));
 		return extract<std::string>(formatted);
 	}
+	catch (bp::error_already_set) {
+		return "";
+	}
+}
+
+static std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
+{
+	using namespace boost;
+
+	if (!val)
+		return PyObject_REPR(exc);
+
+	std::string result = extractTracebackWLib(exc, val, tb);
+	if (result.size())
+		return result;
+
+	// This is bad. Python's exception handler failed.
+	// FIXME: repr() escapes the string. Not what we want.
+	return PyObject_REPR(val);
 }
 
 /*
@@ -306,21 +324,20 @@ bool pythonExec(PyCodeObject* code)
 	if (!code)
 		return false;
 
+	inPythonScript++;
+
+	// FIXME: locals, globals
+	PyObject* globals = dictMain.ptr();
+	PyObject* result = NULL;
+
 	try {
-		inPythonScript++;
-
-		// FIXME: locals, globals
-		PyObject* globals = dictMain.ptr();
-		PyObject* result = PyEval_EvalCode(code, globals, globals);
-
-		inPythonScript--;
-		if (!result)
-			pythonErr();
-		return result;
+		result = PyEval_EvalCode(code, globals, globals);
 	} catch (boost::python::error_already_set) {
-		inPythonScript--;
-		pythonErr();
-		return NULL;
 	}
+
+	inPythonScript--;
+	if (!result)
+		pythonErr();
+	return result;
 }
 
