@@ -72,6 +72,8 @@ GameWindow::GameWindow()
 {
 	globalWindow = this;
 	Gosu::enableUndocumentedRetrofication();
+
+	setIcon(Gosu::widen("tsunagari_logo.png"));
 }
 
 GameWindow::~GameWindow()
