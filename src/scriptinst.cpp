@@ -83,8 +83,8 @@ struct invoke_visitor : public boost::static_visitor<bool>
 
 	bool operator()(boost::python::object pyfn) const
 	{
+		inPythonScript++;
 		try {
-			inPythonScript++;
 			pyfn();
 			inPythonScript--;
 			return true;

@@ -31,6 +31,8 @@
 
 #include <boost/python.hpp>
 
+#include "scriptinst.h"
+
 class Timeout {
 public:
 	Timeout(boost::python::object callback, time_t delay);
@@ -45,7 +47,7 @@ public:
 	std::string repr() const;
 
 private:
-	boost::python::object callback;
+	ScriptInst callback;
 	time_t start, delay;
 	bool active;
 };

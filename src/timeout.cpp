@@ -86,14 +86,7 @@ time_t Timeout::readyTime() const
 
 void Timeout::execute()
 {
-	try {
-		inPythonScript++;
-		callback();
-		inPythonScript--;
-	} catch (boost::python::error_already_set) {
-		inPythonScript--;
-		pythonErr();
-	}
+	callback.invoke();
 }
 
 std::string Timeout::repr() const

@@ -232,8 +232,6 @@ static std::string extractTracebackWLib(PyObject* exc, PyObject* val,
 
 static std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
 {
-	using namespace boost;
-
 	if (!val)
 		return PyObject_REPR(exc);
 
@@ -242,7 +240,9 @@ static std::string extractException(PyObject* exc, PyObject* val, PyObject* tb)
 		return result;
 
 	// This is bad. Python's exception handler failed.
-	// FIXME: repr() escapes the string. Not what we want.
+
+	// FIXME: repr() escapes the string. Not what we want. Maybe str()? Will
+	//   need to include exc then b/c type is removed.
 	return PyObject_REPR(val);
 }
 
@@ -324,18 +324,13 @@ bool pythonExec(PyCodeObject* code)
 	if (!code)
 		return false;
 
-	inPythonScript++;
-
 	// FIXME: locals, globals
 	PyObject* globals = dictMain.ptr();
-	PyObject* result = NULL;
 
-	try {
-		result = PyEval_EvalCode(code, globals, globals);
-	} catch (boost::python::error_already_set) {
-	}
-
+	inPythonScript++;
+	PyObject* result = PyEval_EvalCode(code, globals, globals);
 	inPythonScript--;
+
 	if (!result)
 		pythonErr();
 	return result;

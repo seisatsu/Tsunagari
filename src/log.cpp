@@ -86,7 +86,6 @@ void Log::err(std::string domain, std::string msg)
 	std::string str = ts() + "Error [" + domain + "] - " + chomp(msg);
 	if (inPythonScript) {
 		PyErr_SetString(PyExc_RuntimeError, str.c_str());
-		boost::python::throw_error_already_set();
 	}
 	else {
 		if (verb > V_QUIET) {
@@ -103,7 +102,6 @@ void Log::fatal(std::string domain, std::string msg)
 	std::string str = ts() + "Fatal [" + domain + "] - " + chomp(msg);
 	if (inPythonScript) {
 		PyErr_SetString(PyExc_RuntimeError, str.c_str());
-		boost::python::throw_error_already_set();
 	}
 	else {
 		std::cerr << str << std::endl;
