@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="16" tileheight="16">
  <properties>
-  <property name="author" value="Michael D. Reiley"/>
   <property name="name" value="Grove 06"/>
  </properties>
  <tileset firstgid="1" source="areas/tiles/forest.png.tsx"/>

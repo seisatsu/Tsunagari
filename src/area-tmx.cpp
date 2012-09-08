@@ -124,7 +124,6 @@ bool AreaTMX::processMapProperties(XMLNode node)
 
 /*
  <properties>
-  <property name="author" value="Random J. Hacker"/>
   <property name="name" value="Wooded AreaTMX"/>
   <property name="intro_music" value="arrive.ogg"/>
   <property name="main_music" value="wind.ogg"/>
@@ -139,9 +138,7 @@ bool AreaTMX::processMapProperties(XMLNode node)
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
-		if (name == "author")
-			author = value;
-		else if (name == "name")
+		if (name == "name")
 			this->name = value;
 		else if (name == "intro_music") {
 			musicIntro = value;

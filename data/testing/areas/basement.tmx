@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="6" height="6" tilewidth="16" tileheight="16">
  <properties>
-  <property name="author" value="Michael D. Reiley"/>
   <property name="color_overlay" value="0,0,0,200"/>
   <property name="main_music" value=""/>
   <property name="name" value="Basement"/>

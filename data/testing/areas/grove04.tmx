@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="10" height="20" tilewidth="16" tileheight="16">
  <properties>
-  <property name="author" value="Michael D. Reiley"/>
   <property name="loop" value="y"/>
   <property name="name" value="Grove 04"/>
  </properties>

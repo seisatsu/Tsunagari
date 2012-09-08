@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="20" height="20" tilewidth="16" tileheight="16">
  <properties>
-  <property name="author" value="Michael D. Reiley"/>
   <property name="main_music" value="music/Devotion.oga"/>
   <property name="name" value="Big Tree"/>
  </properties>
