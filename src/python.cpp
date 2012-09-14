@@ -112,8 +112,12 @@ safeImport(PyObject*, PyObject* args, PyObject* kwds)
 	std::replace(name.begin(), name.end(), '.', '/');
 	name += ".py";
 	if (Reader::resourceExists(name)) {
-		Reader::runPythonScript(name);
-		return modMain.ptr(); // We have to return a module...
+		if (Reader::runPythonScript(name))
+			return modMain.ptr(); // We have to return a module...
+		else
+			// Error running imported script. Error is stored in
+			// Python. Return NULL here to 'rethrow' it.
+			return NULL;
 	}
 
 	// Nothing acceptable found.
