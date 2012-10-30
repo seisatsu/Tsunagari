@@ -38,6 +38,7 @@
 
 Conf conf; // Project-wide global configuration.
 
+// Initialize and set configuration defaults.
 Conf::Conf()
 {
 	worldFilename = "";
@@ -218,16 +219,16 @@ bool parseCommandLine(int argc, char* argv[])
 	cmd.insert("-c", "--config",       "<config file>",   "Client config file to use");
 	cmd.insert("-p", "--datapath",     "<file,file,...>", "Prepend zips to data path");
 	cmd.insert("-q", "--quiet",        "",                "Display only fatal errors");
-	cmd.insert("",   "--normal",       "",                "Display all errors");
+	cmd.insert("-n", "--normal",       "",                "Display all errors");
 	cmd.insert("-v", "--verbose",      "",                "Display additional information");
 	cmd.insert("-t", "--cache-ttl",    "<seconds>",       "Cache time-to-live in seconds");
 	cmd.insert("-m", "--cache-size",   "<megabytes>",     "Cache size in megabytes");
 	cmd.insert("-s", "--size",         "<WxH>",           "Window dimensions");
 	cmd.insert("-f", "--fullscreen",   "",                "Run in fullscreen mode");
 	cmd.insert("-w", "--window",       "",                "Run in windowed mode");
-	cmd.insert("",   "--fatal-halt",   "",                "Stop engine only on fatal errors");
-	cmd.insert("",   "--script-halt",  "",                "Stop engine on script errors");
-	cmd.insert("",   "--error-halt",   "",                "Stop engine on all errors");
+	cmd.insert("",   "--halt-fatal",   "",                "Stop engine only on fatal errors");
+	cmd.insert("",   "--halt-script",  "",                "Stop engine on script errors");
+	cmd.insert("",   "--halt-error",   "",                "Stop engine on all errors");
 	cmd.insert("",   "--no-audio",     "",                "Disable audio");
 	cmd.insert("",   "--volume-music", "<0-100>",         "Set music volume");
 	cmd.insert("",   "--volume-sound", "<0-100>",         "Set sound effects volume");
@@ -287,15 +288,15 @@ bool parseCommandLine(int argc, char* argv[])
 		Log::err("cmdline", "multiple verbosity flags on cmdline, using most verbose");
 
 	int haltcount = 0;
-	if (cmd.check("--fatal-halt")) {
+	if (cmd.check("--halt-fatal")) {
 		conf.halting = HALT_FATAL;
 		haltcount++;
 	}
-	if (cmd.check("--script-halt")) {
+	if (cmd.check("--halt-script")) {
 		conf.halting = HALT_SCRIPT;
 		haltcount++;
 	}
-	if (cmd.check("--error-halt")) {
+	if (cmd.check("--halt-error")) {
 		conf.halting = HALT_ERROR;
 		haltcount++;
 	}
