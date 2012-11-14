@@ -4,6 +4,8 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+// "OmegaSDG" is defined as Michael D. Reiley and Paul Merrill.
+
 // **********
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to 
@@ -78,16 +80,8 @@ static void defaultsQuery()
 		<< DEF_CACHE_SIZE << std::endl;
 }
 
-/**
- * Load the values we need to start initializing the game from an ini file.
- *
- * We need to know what size window to create and which World to load. This
- * information will be stored in an ini file which we parse here.
- *
- * @param filename Name of the ini file to load from.
- *
- * @return false if error occured during processing
- */
+// Parse and process the client config file, and set configuration defaults for
+// missing options.
 bool parseConfig(const std::string& filename)
 {
 	namespace pt = boost::property_tree;
@@ -166,7 +160,7 @@ bool parseConfig(const std::string& filename)
 	return true;
 }
 
-//! Parse and process command line options and arguments.
+// Parse and process command line options and arguments.
 bool parseCommandLine(int argc, char* argv[])
 {
 	NBCL cmd(argc, argv);
