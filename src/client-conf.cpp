@@ -28,9 +28,8 @@
 #include <fstream>
 
 #include <boost/config.hpp>
-#include <boost/program_options.hpp>
-#include <boost/program_options/detail/config_file.hpp>
-#include <boost/program_options/parsers.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
 
 #include "client-conf.h"
 #include "nbcl/nbcl.h"
@@ -41,28 +40,6 @@ Conf conf; // Project-wide global configuration.
 // Initialize and set configuration defaults.
 Conf::Conf()
 {
-	worldFilename = "";
-	if (!strcmp(DEF_ENGINE_VERBOSITY, "quiet"))
-		conf.verbosity = V_QUIET;
-	else if (!strcmp(DEF_ENGINE_VERBOSITY, "normal"))
-		conf.verbosity = V_NORMAL;
-	else if (!strcmp(DEF_ENGINE_VERBOSITY, "verbose"))
-		conf.verbosity = V_VERBOSE;
-	if (!strcmp(DEF_ENGINE_HALTING, "fatal"))
-		conf.halting = HALT_FATAL;
-	else if (!strcmp(DEF_ENGINE_HALTING, "script"))
-		conf.halting = HALT_SCRIPT;
-	else if (!strcmp(DEF_ENGINE_HALTING, "error"))
-		conf.halting = HALT_ERROR;
-	windowSize.x = DEF_WINDOW_WIDTH;
-	windowSize.y = DEF_WINDOW_HEIGHT;
-	fullscreen = DEF_WINDOW_FULLSCREEN;
-	audioEnabled = true;
-	musicVolume = 100;
-	soundVolume = 100;
-	cacheEnabled = DEF_CACHE_ENABLED;
-	cacheTTL = DEF_CACHE_TTL;
-	cacheSize = DEF_CACHE_SIZE;
 	persistInit = 0;
 	persistCons = 0;
 }
@@ -113,73 +90,50 @@ static void defaultsQuery()
  */
 bool parseConfig(const std::string& filename)
 {
-	namespace pod = boost::program_options::detail;
+	namespace pt = boost::property_tree;
+	pt::ptree ini;
 
 	conf.cacheEnabled = DEF_CACHE_TTL && DEF_CACHE_SIZE;
 
-	std::ifstream config(filename.c_str());
-	if (!config) {
+	try
+	{
+		pt::read_ini(filename.c_str(), ini);
+	}
+	catch (pt::ini_parser_error)
+	{
 		Log::err(filename, "could not parse config");
 		return false;
 	}
 
-	std::set<std::string> options;
-	std::map<std::string, std::string> parameters;
-	options.insert("*");
+	conf.worldFilename = ini.get("engine.world", "");
+	conf.dataPath = splitStr(ini.get("engine.datapath", ""), ",");
+	conf.windowSize.x = ini.get("window.width", DEF_WINDOW_WIDTH);
+	conf.windowSize.y = ini.get("window.height", DEF_WINDOW_HEIGHT);
+	conf.fullscreen = ini.get("window.fullscreen", DEF_WINDOW_FULLSCREEN);
+	conf.audioEnabled = ini.get("audio.enabled", true);
+	conf.cacheEnabled = ini.get("cache.enabled", DEF_CACHE_ENABLED);
 
-	for (pod::config_file_iterator i(config, options), e ; i != e; ++i)
-		parameters[i->string_key] = i->value[0];
+	conf.musicVolume = ini.get("audio.musicvolume", 100);
+	if (conf.musicVolume < 0)
+		conf.musicVolume = 0;
+	else if (conf.musicVolume > 100)
+		conf.musicVolume = 100;
 
-	if (!parameters["engine.world"].empty())
-		conf.worldFilename = parameters["engine.world"];
+	conf.soundVolume = ini.get("audio.soundvolume", 100);
+	if (conf.soundVolume < 0)
+		conf.soundVolume = 0;
+	else if (conf.soundVolume > 100)
+		conf.soundVolume = 100;
 
-	if (!parameters["engine.datapath"].empty())
-		conf.dataPath = splitStr(parameters["engine.datapath"], ",");
+	conf.cacheTTL = ini.get("cache.ttl", DEF_CACHE_TTL);
+	if (!conf.cacheTTL)
+		conf.cacheEnabled = false;
 
-	if (!parameters["window.width"].empty())
-		conf.windowSize.x = parseUInt(parameters["window.width"]);
+	conf.cacheSize = ini.get("cache.size", DEF_CACHE_SIZE);
+	if (!conf.cacheSize)
+		conf.cacheEnabled = false;
 
-	if (!parameters["window.height"].empty())
-		conf.windowSize.y = parseUInt(parameters["window.height"]);
-
-	if (!parameters["window.fullscreen"].empty())
-		conf.fullscreen = parseBool(parameters["window.fullscreen"]);
-
-	if (parameters["audio.enabled"].size())
-		conf.audioEnabled = parseBool(parameters["audio.enabled"]);
-	else
-		conf.audioEnabled = true;
-
-	if (parameters["audio.musicvolume"].size())
-		conf.audioEnabled = parseInt100(parameters["audio.musicvolume"]);
-
-	if (parameters["audio.soundvolume"].size())
-		conf.audioEnabled = parseInt100(parameters["audio.soundvolume"]);
-
-	if (!parameters["cache.enabled"].empty()) {
-		if (parseBool(parameters["cache.enabled"]))
-			conf.cacheEnabled = true;
-		else
-			conf.cacheEnabled = false;
-	}
-
-	if (parameters["cache.ttl"].empty())
-		conf.cacheTTL = DEF_CACHE_TTL;
-	else {
-		if (parseUInt(parameters["cache.ttl"]) == 0)
-			conf.cacheEnabled = 0;
-		conf.cacheTTL = parseUInt(parameters["cache.ttl"]);
-	}
-
-	if (parameters["cache.size"].empty())
-		conf.cacheSize = DEF_CACHE_SIZE;
-	else {
-		if (parseUInt(parameters["cache.size"]) == 0)
-			conf.cacheEnabled = 0;
-		conf.cacheSize = parseUInt(parameters["cache.size"]);
-	}
-
-	std::string verbosity = parameters["engine.verbosity"];
+	std::string verbosity = ini.get("engine.verbosity", DEF_ENGINE_VERBOSITY);
 	if (verbosity.empty())
 		;
 	else if (verbosity == "quiet")
@@ -192,7 +146,7 @@ bool parseConfig(const std::string& filename)
 		Log::err(filename, "unknown value for \"[engine] verbosity\", using default");
 	}
 
-	std::string halting = parameters["engine.halting"];
+	std::string halting = ini.get("engine.halting", DEF_ENGINE_HALTING);
 	if (halting.empty())
 		;
 	else if (halting == "fatal")
