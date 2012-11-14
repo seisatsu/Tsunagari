@@ -92,6 +92,8 @@ bool parseConfig(const std::string& filename)
 {
 	namespace pt = boost::property_tree;
 	pt::ptree ini;
+	
+	bool parse_error = false;
 
 	conf.cacheEnabled = DEF_CACHE_TTL && DEF_CACHE_SIZE;
 
@@ -102,7 +104,7 @@ bool parseConfig(const std::string& filename)
 	catch (pt::ini_parser_error)
 	{
 		Log::err(filename, "could not parse config");
-		return false;
+		parse_error = true;
 	}
 
 	conf.worldFilename = ini.get("engine.world", "");
@@ -159,6 +161,8 @@ bool parseConfig(const std::string& filename)
 		Log::err(filename, "unknown value for \"[engine] halting\", using default");
 	}
 
+	if (parse_error)
+		return false;
 	return true;
 }
 
