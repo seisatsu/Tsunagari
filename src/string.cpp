@@ -4,6 +4,8 @@
 ** Copyright 2011-2012 OmegaSDG **
 *********************************/
 
+// "OmegaSDG" is defined as Michael D. Reiley and Paul Merrill.
+
 // **********
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to 
