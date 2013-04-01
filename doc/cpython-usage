@@ -1,0 +1,20 @@
+Tsunagari allows world creators to control and change many aspects of the world
+in response to what a player does while playing. This is accomplished through
+the scripting language of Python.
+
+Tsunagari uses the CPython implementation of Python for its portability and
+body of established documentation. CPython is not without flaws, however, and
+we have concerns about its safety in Tsunagari. We at PariahSoft both do not
+understand CPython in its entirety well and we have been discouraged in its
+suitability for running unsanitized code from third parties. We have done our
+best to block the most dangerous attack vectors that we know about. Thus, it is
+with caution that we advocate our users download and run third party Tsunagari
+worlds as they may contain malicious Python that we have not anticipated.
+
+Regarding the future of Tsunagari scripting security, PyPy may be a possible
+alternative to CPython. At the time of this writing, April 2013, PariahSoft
+would like to keep options open for creating Android and iOS builds, but PyPy
+does not support ARM. More importantly, PyPy does not implement much of the C
+API which Tsunagari so intimately uses. In the future when PyPy supports ARM
+and the C API, ParahSoft may weigh switching to it as Tsunagari's scripting
+backend.
