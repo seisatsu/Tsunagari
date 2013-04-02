@@ -38,8 +38,8 @@
 void wFixConsole()
 {
 	if (AttachConsole(ATTACH_PARENT_PROCESS)) {
-		freopen("CONOUT$","wb",stdout);
-		freopen("CONOUT$","wb",stderr);
+		freopen("CONOUT$","wb",stdout); // Attach STDOUT.
+		freopen("CONOUT$","wb",stderr); // Attach STDERR.
 	}
 }
 

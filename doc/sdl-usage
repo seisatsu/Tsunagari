@@ -1,0 +1,26 @@
+As one may notice, Tsunagari powers graphical video games. To achieve smooth
+frame rates, graphics are accelerated with OpenGL.
+
+Rather than manipulate OpenGL directly, the Gosu library (libgosu.org) is
+employed. Gosu provides a simple interface for simple graphical manipulation. It
+was originally selected to work with as it was quick to get an application up
+and running.
+
+As Tsunagari has developed, it has started to run into limitations in Gosu. For
+instance, Gosu is unnecessarily slow when reading a large image that contains a
+two-dimensional array of subimages, a format used for tilesets. It also does not
+support a large number of platforms; Android is not supported at all.
+
+While trying to work around these limitations, at some point we ended up
+spending too much time patching and adding to Gosu and less working on our
+engine. Eventually we realized that the best course of action would likely be to
+abandon Gosu entirely in favor of a more developed alternative.
+
+SDL is a polished library used by numerous projects, especially games. It
+supports every platform for which support could conceivably exist, and while
+slightly less "pretty" to work with, it does not suffer the same technological
+limitations as Gosu. Moving forward, we have decided to use SDL instead of Gosu.
+
+Switching game libraries will be a lengthy and involved task, and will not be
+completed for some time.
+
