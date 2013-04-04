@@ -99,8 +99,10 @@ void Area::focus()
 		runLoadScripts();
 	}
 
-	Music::setIntro(musicIntro);
-	Music::setLoop(musicLoop);
+	if (musicIntroSet)
+		Music::setIntro(musicIntro);
+	if (musicLoopSet)
+		Music::setLoop(musicLoop);
 
 	pythonSetGlobal("Area", this);
 	focusScript.invoke();

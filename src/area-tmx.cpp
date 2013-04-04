@@ -137,6 +137,10 @@ bool AreaTMX::processMapProperties(XMLNode node)
   <property name="color_overlay" value="255,255,255,127"/>
  </properties>
 */
+
+	musicIntroSet = false;
+	musicLoopSet = false;
+
 	for (XMLNode child = node.childrenNode(); child; child = child.next()) {
 		std::string name = child.attr("name");
 		std::string value = child.attr("value");
@@ -144,9 +148,11 @@ bool AreaTMX::processMapProperties(XMLNode node)
 			this->name = value;
 		else if (name == "intro_music") {
 			musicIntro = value;
+			musicIntroSet = true;
 		}
 		else if (name == "main_music") {
 			musicLoop = value;
+			musicLoopSet = true;
 		}
 		else if (name == "on_load") {
 			std::string filename = value;
