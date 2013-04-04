@@ -1,0 +1,122 @@
+Pathfinding
+
+Pathfixing
+
+Path update queue
+
+
+A*
+
+Go as far as you can if a complete path is not found.
+
+Tile has Vertex and Edges
+
+Each Vertex has a tile.
+
+Each Edge is a connection to one vertex to another.
+
+Edges are bidirectional and weighted. The weight is primarily used for pathfixes.
+
+Data structures:
+
+Map, which provides an estimate of time from one tile to another
+
+Vertex, which contain edges outward
+
+And we have edges, which contain 
+
+getParent();
+setParent();
+getF();
+setF();
+getG();
+
+
+The edges are directed.
+
+We have an enter cost, a leave cost, and a fix cost.
+
+If pathfinding fails to get from point at to point be, it gets as close to point b as possible.
+
+3 Cases:
+
+No path
+We get to the tile that has the minimum value of H.
+
+Blocked by a squadee
+We get as closed to the squadee as possible
+
+Blosed by a pathfix door
+We execute the pathfix ( ie. open the door).
+
+
+
+If we are ever blocked, we run pathfind again.
+
+If we reach our close as possible destination, to squadee or no path, we will run pathfinding again
+when we get there.
+
+------------------------------
+
+Priority Path update Queue
+
+We have a bunch of ticks, and a priority queue.
+
+98% will be spent on regular pulls from the prioity queue.
+
+In the event the priority queue is filled to quickly, we will process a few clicks from lower priority
+queues.
+
+----------------------------
+
+Finish moving from a pathfind and not at destination.
+
+First step is trying to do a new pathfind immediantly.
+
+Then after that it removes itself from the pathing queue for a short period of time, 50 ms. 
+Then adds itself back again.
+
+We have a second queue that executes every 50 ms, every 10 tics
+
+------------------------------------
+
+Pathfixes, 
+
+openable
+destroyable
+removeable
+
+While navigating a person may be blocked by a thing that is openable, destroyable or removeable
+which a human would be able to take care of in navigating from point a to point B. In tsunagari we present
+a solution to this problem called pathfix. Which can handle these and other obsticales.
+
+When pathfinding, if a blockage has a pathfix associated with it, it is treated as navigatable. But it will have an extra cost
+associated with it.
+
+The cost is requested from the pathfix, and may depend on the location of the object that is trying to pathfind.
+
+Or it may depend on the object that is trying to pathfind's attack strength.
+
+If the pathfinding algorithm chooses a path that navigates thought a pathfix object. That path is dropped, and instead the pathfix
+object is asked to open itself. A pathfix object such as a door must generate a sequence to unlock it.
+
+The object that is pathfinding will stop pathfiding and instead follow this sequence of commands.
+
+Once these commands are completed, the object resumes normal pathfinding.
+
+------
+
+While an object is pathfinding, it queues another pathfind to be run periodically in case the path has changed.
+
+-----------
+
+In general a tile will have an associated cost of moving anywhere in a tile. So when moving from one tile to the next, the cost
+is half of the cost of the tile you are on and half of the cost of the "to" tile.
+
+The total cost of moving from one tile to another, is 50% of vertex A + 50% of the cost of vertex B, + 100% of the cost of pathfix on B.
+
+
+
+
+
+

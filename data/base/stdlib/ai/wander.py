@@ -49,4 +49,3 @@ class stdlib_ai_wander:
 			log("ai.wander: move: %d %d %.1f invalid" % (x, y, z))
 		e.move(dx, dy)
 
-
