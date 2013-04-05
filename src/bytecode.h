@@ -1,10 +1,8 @@
-/*********************************
-** Tsunagari Tile Engine        **
-** python-script.h              **
-** Copyright 2011-2012 OmegaSDG **
-*********************************/
-
-// "OmegaSDG" is defined as Michael D. Reiley and Paul Merrill.
+/***************************************
+** Tsunagari Tile Engine              **
+** python-script.h                    **
+** Copyright 2011-2013 PariahSoft LLC **
+***************************************/
 
 // **********
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
