@@ -43,7 +43,11 @@
 #include <boost/python/other.hpp>
 #include <boost/python/self.hpp>
 
+#include <string>
+
+
 extern int inPythonScript;
+
 
 //! Initialize Python libraries for use.
 bool pythonInit();
@@ -56,42 +60,46 @@ void pythonErr();
 
 
 //! Access to global namespace shared by all Python scripts.
-boost::python::object pythonGlobals();
+PyObject* pythonGlobals();
 
-//! Convenience function for binding a C++ object into the global Python
-//! namespace.
+//! Bind a C++ object into the global Python namespace.
 template<class T>
-void pythonSetGlobal(const char* name, T pointer)
+void pythonSetGlobal(const std::string& name, T pointer)
 {
+	using namespace boost::python;
+
+	PyObject* globals = NULL;
+	PyObject* wrapper = NULL;
+
+	if ((globals = pythonGlobals()) == NULL)
+		goto err;
 	try {
-		pythonGlobals()[name] = boost::python::ptr(pointer);
+		wrapper = incref(converter::arg_to_python<T>(pointer).get());
 	} catch (boost::python::error_already_set) {
-		pythonErr();
+		goto err;
 	}
+
+	PyDict_SetItemString(globals, name.c_str(), wrapper);
+	Py_DECREF(wrapper);
+
+	return;
+
+err:
+	pythonErr();
 }
 
 template<class Fn>
-void pythonAddFunction(const char* name, Fn fn)
+void pythonAddFunction(const std::string& name, Fn fn)
 {
 	using namespace boost::python;
 
 	try {
 		scope bltins(import("__builtin__"));
-		def(name, fn);
+		def(name.c_str(), fn);
 	} catch (error_already_set) {
 		pythonErr();
 	}
 }
-
-
-//! Compile a Python script. Must provide both a representative filename for
-//! any error messages along with a string containing the body of code to
-//! compile. Returns NULL on failure and prints any errors.
-PyCodeObject* pythonCompile(const char* fn, const char* code);
-
-//! Run a compiled Python script. Returns false on runtime error and prints the
-//! error.
-bool pythonExec(PyCodeObject* code);
 
 #endif
 

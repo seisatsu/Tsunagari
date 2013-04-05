@@ -1,10 +1,8 @@
-/*********************************
-** Tsunagari Tile Engine        **
-** scriptinst.h                 **
-** Copyright 2011-2012 OmegaSDG **
-*********************************/
-
-// "OmegaSDG" is defined as Michael D. Reiley and Paul Merrill.
+/**********************************
+** Tsunagari Tile Engine         **
+** pyworldfinder.h               **
+** Copyright 2013 PariahSoft LLC **
+**********************************/
 
 // **********
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,40 +24,12 @@
 // IN THE SOFTWARE.
 // **********
 
-#ifndef SCRIPTINST_H
-#define SCRIPTINST_H
-
-#include <string>
-
-#include <boost/python/object.hpp>
-#include <boost/variant.hpp>
-
-#include "bytecode.h"
-
-
-class ScriptInst
-{
-public:
-	ScriptInst(const std::string& source);
-	ScriptInst(boost::python::object callable);
-
-	bool validate();
-	bool invoke();
-
-private:
-	boost::variant<
-		BytecodeRef,
-		boost::python::object
-	> data;
-
-	friend struct validate_visitor;
-	friend struct invoke_visitor;
-	friend struct topython_visitor;
-	friend struct scriptinst_to_python;
-};
-
-
-void exportScriptInst();
-
-#endif
-
+/* Install a filter to Python's import statement that blocks illegal modules
+ * from being imported. All modules inside a world file are allowed, as are
+ * select packages from Python's base installation. Others are denied and will
+ * generate an ImportException in Python.
+ *
+ * This function does not add world files to Python's import path. This needs
+ * to happen seperately.
+ */
+bool add_worldfinder();

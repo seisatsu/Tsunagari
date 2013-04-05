@@ -187,7 +187,7 @@ private:
 public:
 	TileBase* parent;
 	unsigned flags;
-	ScriptInst enterScript, leaveScript, useScript;
+	boost::optional<ScriptInst> enterScript, leaveScript, useScript;
 };
 
 //! Contains properties unique to this tile.

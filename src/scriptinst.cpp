@@ -26,36 +26,28 @@
 // IN THE SOFTWARE.
 // **********
 
+// from Python
+#include <import.h>
+
 #include "log.h"
 #include "python.h"
 #include "reader.h"
 #include "scriptinst.h"
 
+
 struct validate_visitor : public boost::static_visitor<bool>
 {
-	std::string context;
-
-	validate_visitor(const std::string& context) : context(context) {}
-
-	bool operator()(void*) const
+	bool operator()(BytecodeRef bc) const
 	{
-		return true;
-	}
-
-	bool operator()(ScriptInst::strref ref) const
-	{
-		if (ref.filename.empty()) {
-			Log::err(context,
-				"script filename is empty");
+		if (!bc) {
+			Log::err("ScriptInst", "<null script>: script not valid");
 			return false;
 		}
-
-		if (!Reader::resourceExists(ref.filename)) {
-			Log::err(context,
-				ref.filename + ": script file not found");
+		if (!bc->valid()) {
+			Log::err("ScriptInst", bc->filename() +
+				": script not valid");
 			return false;
 		}
-
 		return true;
 	}
 
@@ -65,71 +57,53 @@ struct validate_visitor : public boost::static_visitor<bool>
 	}
 };
 
+
 struct invoke_visitor : public boost::static_visitor<bool>
 {
-	bool operator()(void*) const
+	bool operator()(BytecodeRef bc) const
 	{
-		return true;
+		return (bc && bc->valid()) ? bc->execute() : false;
 	}
 
-	bool operator()(ScriptInst::strref ref) const
+	bool operator()(boost::python::object callable) const
 	{
-		if (ref.funcname.size()) {
-			Reader::runPythonScript(ref.filename);
-			return pythonExec(ref.funccall);
-		}
-		else {
-			return Reader::runPythonScript(ref.filename);
-		}
-	}
-
-	bool operator()(boost::python::object pyfn) const
-	{
-		inPythonScript++;
 		try {
-			pyfn();
+			inPythonScript++;
+			callable();
 			inPythonScript--;
 			return true;
 		} catch (boost::python::error_already_set) {
 			inPythonScript--;
+			// XXX: How does this interact with a C++/Python callstack?
+			//Log::err("Python", "Originating from " + source + ":");
 			pythonErr();
 			return false;
 		}
 	}
 };
 
-ScriptInst::ScriptInst()
-	: data((void*)NULL)
-{
-}
 
-ScriptInst::ScriptInst(const std::string& strloc)
+
+ScriptInst::ScriptInst(const std::string& source)
+	: data(Reader::getBytecode(source))
 {
-	size_t colon = strloc.find(':');
-	strref ref;
-	if (colon == std::string::npos) {
-		ref.filename = strloc;
+	if (!validate()) {
+		Log::err("ScriptInst", "Error loading " + source);
 	}
-	else {
-		ref.filename = strloc.substr(0, colon);
-		ref.funcname = strloc.substr(colon + 1);
-		ref.funccall = pythonCompile(
-			"<Tsunagari trigger>",
-			(ref.funcname).c_str()
-		);
-	}
-	data = ref;
 }
 
-ScriptInst::ScriptInst(boost::python::object pyfn)
-	: data(pyfn)
+
+ScriptInst::ScriptInst(boost::python::object callable)
+	: data(callable)
 {
 }
 
-bool ScriptInst::validate(const std::string& context)
+
+bool ScriptInst::validate()
 {
-	return boost::apply_visitor(validate_visitor(context), data);
+	return boost::apply_visitor(validate_visitor(), data);
 }
+
 
 bool ScriptInst::invoke()
 {
@@ -137,42 +111,21 @@ bool ScriptInst::invoke()
 }
 
 
-
-
-
-
-
-
 struct topython_visitor : public boost::static_visitor<PyObject*>
 {
-	PyObject* operator()(void*) const
+	PyObject* operator()(BytecodeRef bc) const
 	{
-		using namespace boost::python;
-
-		return incref(Py_None);
-	}
-
-	PyObject* operator()(ScriptInst::strref ref) const
-	{
-		using namespace boost::python;
-
-		// Prevent compilation name collisions with "object" by making
-		// it "bp::object".
-		namespace bp = boost::python;
-
-		bp::object str;
-		if (ref.funcname.size())
-			str = bp::object(ref.filename + ":" + ref.funcname);
+		boost::python::object str;
+		if (bc)
+			str = boost::python::object(bc->filename());
 		else
-			str = bp::object(ref.filename);
-		return incref(str.ptr());
+			str = boost::python::object("");
+		return boost::python::incref(str.ptr());
 	}
 
-	PyObject* operator()(boost::python::object pyfn) const
+	PyObject* operator()(boost::python::object callable) const
 	{
-		using namespace boost::python;
-
-		return incref(pyfn.ptr());
+		return boost::python::incref(callable.ptr());
 	}
 };
 
@@ -199,6 +152,8 @@ struct scriptinst_from_python
 	// Can this be converted to a ScriptInst?
 	static void* convertible(PyObject* obj)
 	{
+		//bool callable = obj->ob_type->tp_call != NULL;
+		//const char* tp_name = obj->ob_type->tp_name;
 		// XXX: Return non-NULL only if string or
 		// callable (fn or lambda?).
 		return obj;
@@ -210,14 +165,12 @@ struct scriptinst_from_python
 		PyObject* obj,
 		boost::python::converter::rvalue_from_python_stage1_data* data)
 	{
-		using namespace boost::python;
-
 		// Prevent compilation name collisions with "object" by making
 		// it "bp::object".
 		namespace bp = boost::python;
 
 		void* storage =
-			((converter::rvalue_from_python_storage<ScriptInst>*)data)
+		    ((bp::converter::rvalue_from_python_storage<ScriptInst>*)data)
 				->storage.bytes;
 
 		if (PyString_Check(obj)) {
@@ -227,13 +180,14 @@ struct scriptinst_from_python
 		else {
 			// By default, the PyObject is a borrowed reference,
 			// which means it hasn't been incref'd.
-			handle<> hndl(borrowed(obj));
+			bp::handle<> hndl(bp::borrowed(obj));
 			new (storage) ScriptInst(bp::object(hndl));
 		}
 
 		data->convertible = storage;
 	}
 };
+
 
 void exportScriptInst()
 {

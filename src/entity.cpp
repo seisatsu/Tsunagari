@@ -69,9 +69,11 @@ Entity::Entity()
 
 Entity::~Entity()
 {
-	pythonSetGlobal("Area", area);
-	pythonSetGlobal("Entity", this);
-	deleteScript.invoke();
+	if (deleteScript) {
+		pythonSetGlobal("Area", area);
+		pythonSetGlobal("Entity", this);
+		deleteScript->invoke();
+	}
 }
 
 bool Entity::init(const std::string& descriptor)
@@ -577,34 +579,42 @@ void Entity::enterTile(Tile* t)
 
 void Entity::runTickScript()
 {
+	if (!tickScript)
+		return;
 	pythonSetGlobal("Area", area);
 	pythonSetGlobal("Entity", this);
 	pythonSetGlobal("Tile", getTile());
-	tickScript.invoke();
+	tickScript->invoke();
 }
 
 void Entity::runTurnScript()
 {
+	if (!turnScript)
+		return;
 	pythonSetGlobal("Area", area);
 	pythonSetGlobal("Entity", this);
 	pythonSetGlobal("Tile", getTile());
-	turnScript.invoke();
+	turnScript->invoke();
 }
 
 void Entity::runTileExitScript()
 {
+	if (!tileExitScript)
+		return;
 	pythonSetGlobal("Area", area);
 	pythonSetGlobal("Entity", this);
 	pythonSetGlobal("Tile", getTile());
-	tileExitScript.invoke();
+	tileExitScript->invoke();
 }
 
 void Entity::runTileEntryScript()
 {
+	if (!tileEntryScript)
+		return;
 	pythonSetGlobal("Area", area);
 	pythonSetGlobal("Entity", this);
 	pythonSetGlobal("Tile", getTile());
-	tileEntryScript.invoke();
+	tileEntryScript->invoke();
 }
 
 
@@ -767,7 +777,7 @@ bool Entity::processScript(const XMLNode node)
 	}
 
 	ScriptInst script(filename);
-	if (!script.validate(descriptor))
+	if (!script.validate())
 		return false;
 
 	if (!setScript(trigger, script)) {

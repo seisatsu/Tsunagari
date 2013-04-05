@@ -60,7 +60,7 @@ static std::string curLoop;
 
 static SongRef genSong(const std::string& name)
 {
-	BufferPtr buffer(Reader::readBuffer(name));
+	boost::scoped_ptr<Gosu::Buffer> buffer(Reader::readBuffer(name));
 	if (!buffer)
 		return SongRef();
 	return SongRef(new Gosu::Song(buffer->frontReader()));

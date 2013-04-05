@@ -172,21 +172,24 @@ void TileBase::setType(TileType* type)
 
 void TileBase::runEnterScript(Entity* triggeredBy)
 {
-	runScript(triggeredBy, enterScript);
+	if (enterScript)
+		runScript(triggeredBy, enterScript.get());
 	if (parent)
 		parent->runEnterScript(triggeredBy);
 }
 
 void TileBase::runLeaveScript(Entity* triggeredBy)
 {
-	runScript(triggeredBy, leaveScript);
+	if (leaveScript)
+		runScript(triggeredBy, leaveScript.get());
 	if (parent)
 		parent->runLeaveScript(triggeredBy);
 }
 
 void TileBase::runUseScript(Entity* triggeredBy)
 {
-	runScript(triggeredBy, useScript);
+	if (useScript)
+		runScript(triggeredBy, useScript.get());
 	if (parent)
 		parent->runUseScript(triggeredBy);
 }

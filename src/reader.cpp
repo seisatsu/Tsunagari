@@ -32,7 +32,6 @@
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/python.hpp>
-#include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Bitmap.hpp>
@@ -40,6 +39,7 @@
 #include <Gosu/IO.hpp>
 #include <physfs.h>
 
+#include "bytecode.h"
 #include "client-conf.h"
 #include "log.h"
 #include "python.h"
@@ -58,7 +58,7 @@ Cache<ImageRef> images;
 Cache<TiledImageRef> tiles;
 Cache<SampleRef> sounds;
 Cache<XMLRef> xmls;
-Cache<PyCodeObject*> codes;
+Cache<BytecodeRef> bytecodes;
 Cache<StringRef> texts;
 
 // DTDs don't expire. No garbage collection.
@@ -186,12 +186,12 @@ static XMLDoc* readXMLDoc(const std::string& name,
 static bool callInitpy(const std::string& archivePath)
 {
 	ASSERT(Reader::prependPath(archivePath));
-	bool exists = Reader::resourceExists("init.py");
+	bool exists = Reader::resourceExists("__init__.py");
 	Log::info(archivePath,
-		std::string("init.py: ") +
+		std::string("__init__.py: ") +
 		(exists ? "found" : "not found"));
 	if (exists)
-		ASSERT(Reader::runPythonScript("init.py"));
+		ASSERT(Reader::runPythonScript("__init__.py"));
 	ASSERT(Reader::rmPath(archivePath));
 	return true;
 }
@@ -282,6 +282,16 @@ bool Reader::resourceExists(const std::string& name)
 	return PHYSFS_exists(name.c_str());
 }
 
+bool Reader::directoryExists(const std::string& name)
+{
+	return resourceExists(name) && PHYSFS_isDirectory(name.c_str());
+}
+
+bool Reader::fileExists(const std::string& name)
+{
+	return resourceExists(name) && !PHYSFS_isDirectory(name.c_str());
+}
+
 Gosu::Buffer* Reader::readBuffer(const std::string& name)
 {
 	Gosu::Buffer* buf = new Gosu::Buffer();
@@ -307,7 +317,7 @@ ImageRef Reader::getImage(const std::string& name)
 	if (existing)
 		return existing;
 
-	BufferPtr buffer(readBuffer(name));
+	boost::scoped_ptr<Gosu::Buffer> buffer(readBuffer(name));
 	if (!buffer)
 		return ImageRef();
 
@@ -326,7 +336,7 @@ TiledImageRef Reader::getTiledImage(const std::string& name,
 	if (existing)
 		return existing;
 
-	BufferPtr buffer(readBuffer(name));
+	boost::scoped_ptr<Gosu::Buffer> buffer(readBuffer(name));
 	if (!buffer)
 		return TiledImageRef();
 
@@ -349,7 +359,7 @@ SampleRef Reader::getSample(const std::string& name)
 	if (existing)
 		return existing;
 
-	BufferPtr buffer(readBuffer(name));
+	boost::scoped_ptr<Gosu::Buffer> buffer(readBuffer(name));
 	if (!buffer)
 		return SampleRef();
 	SampleRef result(new Sound(new Gosu::Sample(buffer->frontReader())));
@@ -371,18 +381,35 @@ XMLRef Reader::getXMLDoc(const std::string& name,
 	return result;
 }
 
-bool Reader::runPythonScript(const std::string& name)
+BytecodeRef Reader::getBytecode(const std::string& path)
 {
-	PyCodeObject* existing = codes.momentaryRequest(name);
+	BytecodeRef existing = bytecodes.momentaryRequest(path);
 	if (existing)
-		return pythonExec(existing);
+		return existing;
 
-	std::string code = readString(name);
-	PyCodeObject* result = code.size() ?
-		pythonCompile(name.c_str(), code.c_str()) : NULL;
+	BytecodeRef result;
+	if (fileExists(path)) {
+		std::string code = readString(path);
+		Bytecode* script = new Bytecode(path, code);
+		result.reset(script);
+	}
 
-	codes.momentaryPut(name, result);
-	return pythonExec(result);
+	bytecodes.momentaryPut(path, result);
+	return result;
+}
+
+bool Reader::runPythonScript(const std::string& path)
+{
+	BytecodeRef bc = getBytecode(path);
+	if (bc && bc->valid()) {
+		bc->execute();
+		return true;
+	}
+	else {
+		Log::err("Script",
+		    bc->filename() + ": Attempt to run broken Python script");
+		return false;
+	}
 }
 
 std::string Reader::getText(const std::string& name)

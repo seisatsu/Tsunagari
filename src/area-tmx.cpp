@@ -157,30 +157,30 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		else if (name == "on_load") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
-			loadScript = filename;
+			loadScript = script;
 		}
 		else if (name == "on_focus") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
-			focusScript = filename;
+			focusScript = script;
 		}
 		else if (name == "on_tick") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
-			tickScript = filename;
+			tickScript = script;
 		}
 		else if (name == "on_turn") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
-			turnScript = filename;
+			turnScript = script;
 		}
 		else if (name == "loop") {
 			loopX = value.find('x') != std::string::npos;
@@ -341,23 +341,23 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 		else if (name == "on_enter") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
-			type.enterScript = filename;
+			type.enterScript = script;
 		}
 		else if (name == "on_leave") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
-			type.leaveScript = filename;
+			type.leaveScript = script;
 		}
 		else if (name == "on_use") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
-			type.useScript = filename;
+			type.useScript = script;
 		}
 		else if (name == "frames") {
 			std::string memtemp;
@@ -632,7 +632,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	// Gather object properties now. Assign them to tiles later.
 	bool wwide[5], hwide[5]; /* wide exit in dimensions: width, height */
 
-	ScriptInst enterScript, leaveScript, useScript;
+	boost::optional<ScriptInst> enterScript, leaveScript, useScript;
 	boost::scoped_ptr<Exit> exit[5];
 	boost::optional<double> layermods[5];
 	unsigned flags = 0x0;
@@ -652,21 +652,21 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		else if (name == "on_enter") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
 			enterScript = script;
 		}
 		else if (name == "on_leave") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
 			leaveScript = script;
 		}
 		else if (name == "on_use") {
 			std::string filename = value;
 			ScriptInst script(filename);
-			if (!script.validate(descriptor))
+			if (!script.validate())
 				return false;
 			useScript = script;
 		}

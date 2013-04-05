@@ -175,7 +175,7 @@ public:
 	//
 
 	//! Script hooks.
-	ScriptInst tickScript, turnScript, tileEntryScript,
+	boost::optional<ScriptInst> tickScript, turnScript, tileEntryScript,
 	           tileExitScript, deleteScript;
 
 

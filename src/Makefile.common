@@ -1,6 +1,7 @@
 # Warning flags to enable.
 WFLAGS += -Wall -Wextra -Wconversion -Wdeprecated -Winvalid-pch
 WFLAGS += -Wno-long-long # Disable warnings in Python code.
+WFLAGS += -Wno-missing-field-initializers # Nice when dealing with Python structs
 
 # Compiler and linker flags.
 CXXFLAGS += -DUSE_PRECOMPILED_HEADERS $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \

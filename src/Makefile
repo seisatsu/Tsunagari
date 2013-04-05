@@ -7,12 +7,12 @@
 
 include Makefile.common
 
-OBJECTS = animation.o area.o area-tmx.o bitrecord.o character.o client-conf.o \
-          gosu-cbuffer.o image.o image-impl.o nbcl/nbcl.o entity.o log.o \
-          main.o music.o npc.o overlay.o player.o python.o python-bindings.o \
-          random.o reader.o scriptinst.o sound.o string.o tile.o \
-          tiledimage.o tiledimage-impl.o timer.o timeout.o vec.o viewport.o \
-          window.o world.o xml.o
+OBJECTS = animation.o area.o area-tmx.o bitrecord.o bytecode.o character.o \
+          client-conf.o gosu-cbuffer.o image.o image-impl.o nbcl/nbcl.o \
+          entity.o log.o main.o music.o npc.o overlay.o player.o python.o \
+          python-bindings.o pyworldfinder.o random.o reader.o scriptinst.o \
+          sound.o string.o tile.o tiledimage.o tiledimage-impl.o timer.o \
+          timeout.o vec.o viewport.o window.o world.o xml.o
 
 # Name of testing world.
 BASEDATA = ../data/base.zip
@@ -64,32 +64,34 @@ clean:
 ### --- DO NOT DELETE THIS LINE --- ###
 
 #pragma GCC pch_preprocess "./precompile.h.gch"
-animation.o: animation.cpp animation.h cache.h client-conf.h image.h log.h \
- reader.h sound.h tiledimage.h vec.h window.h xml.h
+animation.o: animation.cpp animation.h bytecode.h cache.h client-conf.h \
+ image.h log.h reader.h sound.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h bitrecord.h cache.h \
- character.h client-conf.h entity.h image.h log.h player.h python.h reader.h \
- scriptinst.h sound.h string.h tile.h tiledimage.h vec.h viewport.h window.h \
- world.h xml.h
+area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h bitrecord.h \
+ bytecode.h cache.h character.h client-conf.h entity.h image.h log.h \
+ player.h python.h reader.h scriptinst.h sound.h string.h tile.h \
+ tiledimage.h vec.h viewport.h window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-area.o: animation.h area.cpp area.h bitrecord.h cache.h character.h \
- client-conf.h entity.h image.h log.h music.h npc.h overlay.h player.h \
- python.h reader.h scriptinst.h sound.h tile.h tiledimage.h vec.h viewport.h \
- window.h world.h xml.h
+area.o: animation.h area.cpp area.h bitrecord.h bytecode.h cache.h \
+ character.h client-conf.h entity.h image.h log.h music.h npc.h overlay.h \
+ player.h python.h reader.h scriptinst.h sound.h tile.h tiledimage.h vec.h \
+ viewport.h window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 bitrecord.o: bitrecord.cpp bitrecord.h window.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-character.o: animation.h area.h cache.h character.cpp character.h \
+bytecode.o: bytecode.cpp bytecode.h log.h python.h
+#pragma GCC pch_preprocess "./precompile.h.gch"
+character.o: animation.h area.h bytecode.h cache.h character.cpp character.h \
  client-conf.h entity.h image.h log.h python.h reader.h scriptinst.h sound.h \
  tile.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 client-conf.o: client-conf.cpp client-conf.h log.h string.h vec.h \
  nbcl/nbcl.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-entity.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
- entity.cpp entity.h image.h log.h player.h python.h reader.h scriptinst.h \
- sound.h string.h tile.h tiledimage.h vec.h viewport.h window.h world.h \
- xml.h
+entity.o: animation.h area.h bitrecord.h bytecode.h cache.h character.h \
+ client-conf.h entity.cpp entity.h image.h log.h player.h python.h reader.h \
+ scriptinst.h sound.h string.h tile.h tiledimage.h vec.h viewport.h window.h \
+ world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 gosu-cbuffer.o: gosu-cbuffer.cpp gosu-cbuffer.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
@@ -97,83 +99,91 @@ image-impl.o: gosu-cbuffer.h image-impl.cpp image-impl.h image.h window.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 image.o: image.cpp image.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-log.o: animation.h bitrecord.h cache.h character.h client-conf.h entity.h \
- image.h log.cpp log.h player.h python.h reader.h scriptinst.h sound.h \
- tile.h tiledimage.h vec.h viewport.h window.h world.h xml.h
+log.o: animation.h bitrecord.h bytecode.h cache.h character.h client-conf.h \
+ entity.h image.h log.cpp log.h player.h python.h reader.h scriptinst.h \
+ sound.h tile.h tiledimage.h vec.h viewport.h window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-main.o: cache.h client-conf.h image.h log.h main.cpp python.h reader.h \
- sound.h tiledimage.h vec.h window.h xml.h
+main.o: bytecode.h cache.h client-conf.h image.h log.h main.cpp python.h \
+ reader.h sound.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-music.o: cache.h client-conf.h image.h log.h music.cpp music.h python.h \
- reader.h readercache.h sound.h tiledimage.h vec.h window.h xml.h
+music.o: bytecode.h cache.h client-conf.h image.h log.h music.cpp music.h \
+ python.h reader.h readercache.h sound.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-npc.o: animation.h area.h cache.h character.h client-conf.h entity.h image.h \
- log.h npc.cpp npc.h python.h reader.h scriptinst.h sound.h tile.h \
- tiledimage.h vec.h window.h xml.h
+npc.o: animation.h area.h bytecode.h cache.h character.h client-conf.h \
+ entity.h image.h log.h npc.cpp npc.h python.h reader.h scriptinst.h sound.h \
+ tile.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 os-windows.o: os-windows.cpp
 #pragma GCC pch_preprocess "./precompile.h.gch"
-overlay.o: animation.h area.h cache.h client-conf.h entity.h image.h log.h \
- overlay.cpp overlay.h python.h reader.h scriptinst.h sound.h tile.h \
- tiledimage.h vec.h window.h xml.h
+overlay.o: animation.h area.h bytecode.h cache.h client-conf.h entity.h \
+ image.h log.h overlay.cpp overlay.h python.h reader.h scriptinst.h sound.h \
+ tile.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-player.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
- entity.h image.h log.h player.cpp player.h python.h reader.h scriptinst.h \
- sound.h tile.h tiledimage.h vec.h viewport.h window.h world.h xml.h
+player.o: animation.h area.h bitrecord.h bytecode.h cache.h character.h \
+ client-conf.h entity.h image.h log.h player.cpp player.h python.h reader.h \
+ scriptinst.h sound.h tile.h tiledimage.h vec.h viewport.h window.h world.h \
+ xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-python-bindings.o: animation.h area.h bitrecord.h cache.h character.h \
- client-conf.h entity.h image.h log.h music.h player.h python-bindings.cpp \
- python.h random.h reader.h scriptinst.h sound.h tile.h tiledimage.h \
- timeout.h timer.h vec.h viewport.h window.h world.h xml.h
+python-bindings.o: animation.h area.h bitrecord.h bytecode.h cache.h \
+ character.h client-conf.h entity.h image.h log.h music.h player.h \
+ python-bindings.cpp python.h random.h reader.h scriptinst.h sound.h tile.h \
+ tiledimage.h timeout.h timer.h vec.h viewport.h window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-python.o: cache.h client-conf.h image.h log.h python-bindings.h python.cpp \
- python.h reader.h sound.h tiledimage.h vec.h window.h xml.h
+python.o: bytecode.h cache.h client-conf.h image.h log.h python-bindings.h \
+ python.cpp python.h pyworldfinder.h reader.h sound.h tiledimage.h vec.h \
+ window.h xml.h
+#pragma GCC pch_preprocess "./precompile.h.gch"
+pyworldfinder.o: bytecode.h cache.h client-conf.h image.h log.h \
+ pyworldfinder.cpp reader.h sound.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 random.o: python.h random.cpp random.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-reader.o: cache.h client-conf.h image.h log.h python.h reader.cpp reader.h \
- sound.h tiledimage.h vec.h window.h xml.h
+reader.o: bytecode.h cache.h client-conf.h image.h log.h python.h reader.cpp \
+ reader.h sound.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-scriptinst.o: cache.h client-conf.h image.h log.h python.h reader.h \
- scriptinst.cpp scriptinst.h sound.h tiledimage.h vec.h window.h xml.h
+scriptinst.o: bytecode.h cache.h client-conf.h image.h log.h python.h \
+ reader.h scriptinst.cpp scriptinst.h sound.h tiledimage.h vec.h window.h \
+ xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-sound.o: cache.h client-conf.h image.h log.h python.h reader.h sound.cpp \
- sound.h tiledimage.h vec.h window.h xml.h
+sound.o: bytecode.h cache.h client-conf.h image.h log.h python.h reader.h \
+ sound.cpp sound.h tiledimage.h vec.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 string.o: log.h string.cpp string.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-tile.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
- entity.h image.h log.h player.h python-optional.h python.h reader.h \
- scriptinst.h sound.h string.h tile.cpp tile.h tiledimage.h vec.h viewport.h \
- window.h world.h xml.h
+tile.o: animation.h area.h bitrecord.h bytecode.h cache.h character.h \
+ client-conf.h entity.h image.h log.h player.h python-optional.h python.h \
+ reader.h scriptinst.h sound.h string.h tile.cpp tile.h tiledimage.h vec.h \
+ viewport.h window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 tiledimage-impl.o: gosu-cbuffer.h image-impl.h image.h tiledimage-impl.cpp \
  tiledimage-impl.h tiledimage.h window.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 tiledimage.o: image.h tiledimage.cpp tiledimage.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-timeout.o: animation.h bitrecord.h cache.h character.h client-conf.h \
- entity.h image.h log.h player.h python.h reader.h scriptinst.h sound.h \
- tile.h tiledimage.h timeout.cpp timeout.h vec.h viewport.h window.h world.h \
- xml.h
+timeout.o: animation.h bitrecord.h bytecode.h cache.h character.h \
+ client-conf.h entity.h image.h log.h player.h python.h reader.h \
+ scriptinst.h sound.h tile.h tiledimage.h timeout.cpp timeout.h vec.h \
+ viewport.h window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-timer.o: animation.h bitrecord.h cache.h character.h client-conf.h entity.h \
- image.h log.h player.h python.h reader.h scriptinst.h sound.h tile.h \
- tiledimage.h timer.cpp timer.h vec.h viewport.h window.h world.h xml.h
+timer.o: animation.h bitrecord.h bytecode.h cache.h character.h \
+ client-conf.h entity.h image.h log.h player.h python.h reader.h \
+ scriptinst.h sound.h tile.h tiledimage.h timer.cpp timer.h vec.h viewport.h \
+ window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 vec.o: vec.cpp vec.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-viewport.o: animation.h area.h cache.h client-conf.h entity.h image.h log.h \
- python.h reader.h scriptinst.h sound.h tile.h tiledimage.h vec.h \
- viewport.cpp viewport.h window.h xml.h
+viewport.o: animation.h area.h bytecode.h cache.h client-conf.h entity.h \
+ image.h log.h python.h reader.h scriptinst.h sound.h tile.h tiledimage.h \
+ vec.h viewport.cpp viewport.h window.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-window.o: animation.h bitrecord.h cache.h character.h client-conf.h entity.h \
- image.h log.h player.h python.h reader.h scriptinst.h sound.h tile.h \
- tiledimage.h vec.h viewport.h window.cpp window.h world.h xml.h
+window.o: animation.h bitrecord.h bytecode.h cache.h character.h \
+ client-conf.h entity.h image.h log.h player.h python.h reader.h \
+ scriptinst.h sound.h tile.h tiledimage.h vec.h viewport.h window.cpp \
+ window.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
-world.o: animation.h area-tmx.h area.h bitrecord.h cache.h character.h \
- client-conf.h entity.h image.h log.h music.h player.h python.h reader.h \
- scriptinst.h sound.h tile.h tiledimage.h timeout.h vec.h viewport.h \
- window.h world.cpp world.h xml.h
+world.o: animation.h area-tmx.h area.h bitrecord.h bytecode.h cache.h \
+ character.h client-conf.h entity.h image.h log.h music.h player.h python.h \
+ reader.h scriptinst.h sound.h tile.h tiledimage.h timeout.h vec.h \
+ viewport.h window.h world.cpp world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 xml.o: log.h string.h xml.cpp xml.h

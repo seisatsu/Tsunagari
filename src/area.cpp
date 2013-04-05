@@ -105,7 +105,8 @@ void Area::focus()
 		Music::setLoop(musicLoop);
 
 	pythonSetGlobal("Area", this);
-	focusScript.invoke();
+	if (focusScript)
+		focusScript->invoke();
 }
 
 void Area::buttonDown(const Gosu::Button btn)
@@ -179,7 +180,8 @@ void Area::requestRedraw()
 void Area::tick(unsigned long dt)
 {
 	pythonSetGlobal("Area", this);
-	tickScript.invoke();
+	if (tickScript)
+		tickScript->invoke();
 
 	BOOST_FOREACH(Overlay* o, overlays) {
 		pythonSetGlobal("Area", this);
@@ -203,7 +205,8 @@ void Area::tick(unsigned long dt)
 void Area::turn()
 {
 	pythonSetGlobal("Area", this);
-	turnScript.invoke();
+	if (turnScript)
+		turnScript->invoke();
 
 	pythonSetGlobal("Area", this);
 	player->turn();
@@ -546,7 +549,8 @@ void Area::runLoadScripts()
 	world->runAreaLoadScript(this);
 
 	pythonSetGlobal("Area", this);
-	loadScript.invoke();
+	if (loadScript)
+		loadScript->invoke();
 }
 
 void Area::drawTiles()

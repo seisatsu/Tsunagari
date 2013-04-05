@@ -34,8 +34,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
-#include <Python.h>
 
+#include "bytecode.h"
 #include "cache.h"
 #include "image.h"
 #include "sound.h"
@@ -49,7 +49,6 @@ namespace Gosu {
 }
 
 // We hand out and manage resources in these forms:
-typedef boost::scoped_ptr<Gosu::Buffer> BufferPtr;
 typedef boost::shared_ptr<Sound> SampleRef;
 
 /**
@@ -72,6 +71,8 @@ public:
 
 	//! Returns true if the World contains a resource by that name.
 	static bool resourceExists(const std::string& name);
+	static bool directoryExists(const std::string& name);
+	static bool fileExists(const std::string& name);
 
 	static Gosu::Buffer* readBuffer(const std::string& name);
 	static std::string readString(const std::string& name);
@@ -91,6 +92,8 @@ public:
 	//! Request an XML document from the World.
 	static XMLRef getXMLDoc(const std::string& name,
 		const std::string& dtdPath);
+
+	static BytecodeRef getBytecode(const std::string& path);
 
 	//! Request a Python script from the World be run.
 	static bool runPythonScript(const std::string& name);

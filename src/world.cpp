@@ -70,7 +70,8 @@ bool World::init()
 	view.reset(new Viewport(viewportSz));
 	view->trackEntity(&player);
 
-	loadScript.invoke();
+	if (loadScript)
+		loadScript->invoke();
 
 	Area* area = getArea(startArea);
 	if (area == NULL) {
@@ -103,7 +104,8 @@ void World::buttonDown(const Gosu::Button btn)
 	default:
 		if (!paused && keyStates.empty()) {
 			area->buttonDown(btn);
-			keydownScript.invoke();
+			if (keydownScript)
+				keydownScript->invoke();
 		}
 		break;
 	}
@@ -117,7 +119,8 @@ void World::buttonUp(const Gosu::Button btn)
 	default:
 		if (!paused && keyStates.empty()) {
 			area->buttonUp(btn);
-			keyupScript.invoke();
+			if (keyupScript)
+				keyupScript->invoke();
 		}
 		break;
 	}
@@ -270,7 +273,8 @@ void World::restoreKeys()
 void World::runAreaLoadScript(Area* area)
 {
 	pythonSetGlobal("Area", area);
-	areaLoadScript.invoke();
+	if (areaLoadScript)
+		areaLoadScript->invoke();
 }
 
 time_t World::calculateDt(time_t now)
@@ -439,13 +443,13 @@ bool World::processScript(XMLNode node)
 		ScriptInst script(filename);
 
 		if (node.is("on_init")) {
-			if (!script.validate("world.conf"))
+			if (!script.validate())
 				return false;
-			loadScript = filename;
+			loadScript = script;
 		} else if (node.is("on_area_init")) {
-			if (!script.validate("world.conf"))
+			if (!script.validate())
 				return false;
-			areaLoadScript = filename;
+			areaLoadScript = script;
 		}
 	}
 	return true;

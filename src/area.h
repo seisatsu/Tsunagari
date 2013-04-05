@@ -176,7 +176,7 @@ public:
 	//
 
 	// Script hooks.
-	ScriptInst loadScript, focusScript, tickScript, turnScript;
+	boost::optional<ScriptInst> loadScript, focusScript, tickScript, turnScript;
 
 
 protected:

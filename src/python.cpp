@@ -25,6 +25,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 // **********
+
 #ifdef __APPLE__
 #include <Python.h>
 #endif
@@ -39,6 +40,7 @@
 #include "log.h"
 #include "python.h"
 #include "python-bindings.h" // for pythonInitBindings
+#include "pyworldfinder.h"
 #include "reader.h"
 #include "window.h"
 
@@ -47,114 +49,34 @@
 
 namespace bp = boost::python;
 
-static bp::object modMain, modBltin;
-static bp::object dictMain, dictBltin;
+static PyObject* mainModule;
+static PyObject* mainDict;
 
 int inPythonScript = 0;
 
-//! List of known safe Python modules allowed for importing.
-static std::string moduleWhitelist[] = {
-	"__builtin__",
-	"__main__",
-	"math",
-	"traceback",
-	"",
-};
-
-static bool inWhitelist(const std::string& name)
-{
-	for (int i = 0; moduleWhitelist[i].size(); i++)
-		if (name == moduleWhitelist[i])
-			return true;
-	return false;
-}
-
-
-static void pythonIncludeModule(const char* name)
-{
-	bp::object module(bp::handle<>(PyImport_ImportModule(name)));
-	dictMain[name] = module;
-}
-
-static void pythonSetDefaultEncoding(const char* enc)
-{
-	if (PyUnicode_SetDefaultEncoding(enc) != 0) {
-		PyErr_Format(PyExc_SystemError,
-			"encoding %s not found", enc);
-		bp::throw_error_already_set();
-	}
-}
-
-
-static PyObject*
-safeImport(PyObject*, PyObject* args, PyObject* kwds)
-{
-	static const char* kwlist[] = {"name", "globals", "locals", "fromlist",
-		"level", 0};
-	char* _name;
-	std::string name;
-	PyObject* globals, *locals, *fromList;
-	int level = -1;
-
-	// Validate args from Python.
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|OOOi:__import__",
-			(char**)kwlist, &_name, &globals, &locals, &fromList,
-			&level))
-		return NULL;
-	name = _name;
-
-	// Search whitelisted Python modules.
-	if (inWhitelist(name))
-		return PyImport_ImportModuleLevel(_name, globals, locals,
-			fromList, level);
-
-	Log::info("Python", "import " + name);
-
-	// Search Python scripts inside World.
-	std::replace(name.begin(), name.end(), '.', '/');
-	name += ".py";
-	if (Reader::resourceExists(name)) {
-		if (Reader::runPythonScript(name))
-			return modMain.ptr(); // We have to return a module...
-		else
-			// Error running imported script. Error is stored in
-			// Python. Return NULL here to 'rethrow' it.
-			return NULL;
-	}
-
-	// Nothing acceptable found.
-	std::string msg = std::string("Module '") + _name + "' not found or "
-		"not allowed. Note that Tsunagari runs in a sandbox and does "
-		"not allow most external modules.";
-	PyErr_Format(PyExc_ImportError, "%s", msg.c_str());
-	return NULL;
-}
 
 static PyObject* nullExecfile(PyObject*, PyObject*)
 {
 	PyErr_SetString(PyExc_RuntimeError,
-	             "file(): Tsunagari runs scripts in a sandbox and "
-	             "does not allow accessing the standard filesystem");
+	             "file(): Tsunagari does not allow accessing the standard filesystem");
 	return NULL;
 }
 
 static PyObject* nullFile(PyObject*, PyObject*)
 {
 	PyErr_SetString(PyExc_RuntimeError,
-	             "file(): Tsunagari runs scripts in a sandbox and "
-	             "does not allow accessing the standard filesystem");
+	             "file(): Tsunagari does not allow accessing the standard filesystem");
 	return NULL;
 }
 
 static PyObject* nullOpen(PyObject*, PyObject*)
 {
 	PyErr_SetString(PyExc_RuntimeError,
-	             "open(): Tsunagari runs scripts in a sandbox and "
-	             "does not allow accessing the standard filesystem");
+	             "open(): Tsunagari does not allow accessing the standard filesystem");
 	return NULL;
 }
 
-static PyObject* nullPrint(PyObject*, PyObject*)
+static PyObject* nullPrint(PyObject*, PyObject*, PyObject*)
 {
 	PyErr_SetString(PyExc_RuntimeError,
 	             "print(): Tsunagari does not allow scripts to print");
@@ -169,51 +91,102 @@ static PyObject* nullReload(PyObject*, PyObject*)
 }
 
 PyMethodDef nullMethods[] = {
-	{"__import__", (PyCFunction)safeImport, METH_VARARGS | METH_KEYWORDS, ""},
-	{"execfile", nullExecfile, METH_VARARGS, ""},
-	{"file", nullFile, METH_VARARGS, ""},
-	{"open", nullOpen, METH_VARARGS, ""},
-	{"print", nullPrint, METH_VARARGS | METH_KEYWORDS, ""},
-	{"reload", nullReload, METH_O, ""},
-	{NULL, NULL, 0, NULL},
+	{"execfile", (PyCFunction)nullExecfile, METH_VARARGS, ""},
+	{"file", (PyCFunction)nullFile, METH_VARARGS, ""},
+	{"open", (PyCFunction)nullOpen, METH_VARARGS, ""},
+	{"print", (PyCFunction)nullPrint, METH_VARARGS | METH_KEYWORDS, ""},
+	{"reload", (PyCFunction)nullReload, METH_O, ""},
+	{NULL, NULL, 0, NULL}
 };
+
+static bool sysPathAppend(const std::string& path)
+{
+	PyObject* pypath = NULL;
+	PyObject* syspath = NULL;
+	int idx = -1;
+
+	pypath = PyString_FromString(path.c_str());
+	if (pypath == NULL)
+		goto err;
+
+	syspath = PySys_GetObject((char*)"path");
+	if (syspath == NULL || !PyList_Check(syspath)) {
+		Log::fatal("Python",
+			"sys.path must be a list of strings");
+		goto err;
+	}
+
+	idx = PyList_Append(syspath, pypath);
+	if (idx == -1) {
+		Log::fatal("Python", "failed to append to sys.path");
+		goto err;
+	}
+
+	Py_DECREF(pypath);
+	return true;
+
+err:
+	Py_XDECREF(pypath);
+	return false;
+}
 
 bool pythonInit()
 {
-	try {
-		PyImport_AppendInittab("tsunagari", &pythonInitBindings);
-		Py_Initialize();
-		pythonSetDefaultEncoding("utf-8");
+	PyObject* name = NULL;
+	PyObject* tsuModule = NULL;
 
-		modMain = bp::import("__main__");
-		dictMain = modMain.attr("__dict__");
-		modBltin = bp::import("__builtin__");
-		dictBltin = modBltin.attr("__dict__");
+	PyImport_AppendInittab("tsunagari", &pythonInitBindings);
+	Py_InitializeEx(0);
 
-		pythonIncludeModule("tsunagari");
-
-		// Hack in some rough safety. Disable external scripts and IO.
-		// InitModule doesn't remove existing modules, so we can use it to
-		// insert new methods into a pre-existing module.
-		PyObject* module = Py_InitModule("__builtin__", nullMethods);
-		if (module == NULL)
-			bp::throw_error_already_set();
-
-		// Restore the default SIGINT handler.
-		// Python messes with it. >:(
-		PyOS_setsig(SIGINT, SIG_DFL);
-	} catch (bp::error_already_set) {
-		Log::fatal("Python", "An error occured while populating the "
-			           "Python modules:");
-		Log::setVerbosity(V_NORMAL); // Assure message can be seen.
-		pythonErr();
-		return false;
+	if (PyUnicode_SetDefaultEncoding("utf-8")) {
+		PyErr_Format(PyExc_SystemError,
+			"encoding %s not found", "utf-8");
+		goto err;
 	}
+
+	if ((mainModule = PyImport_ImportModule("__main__")) == NULL)
+		goto err;
+	if ((mainDict = PyModule_GetDict(mainModule)) == NULL)
+		goto err;
+
+	if ((name = PyString_FromString("tsunagari")) == NULL)
+		goto err;
+	if ((tsuModule = PyImport_ImportModule("tsunagari")) == NULL)
+		goto err;
+	if (PyObject_SetAttr(mainModule, name, tsuModule) < 0)
+		goto err;
+
+	Py_DECREF(name);
+	Py_DECREF(tsuModule);
+
+	// Disable builtin filesystem IO.
+	if (Py_InitModule("__builtin__", nullMethods) == NULL)
+		goto err;
+
+	// Disable most Python system imports.
+	if (!add_worldfinder())
+		goto err;
+
+	// Add world to Python's sys.path.
+	if (!sysPathAppend(BASE_ZIP_PATH))
+		goto err;
+	BOOST_FOREACH(std::string archive, conf.dataPath)
+		if (!sysPathAppend(archive))
+			goto err;
+
 	return true;
+
+err:
+	Log::fatal("Python", "An error occured while populating the "
+			   "Python modules:");
+	Log::setVerbosity(V_NORMAL); // Assure message can be seen.
+	pythonErr();
+	return false;
 }
 
 void pythonFinalize()
 {
+	Py_DECREF(mainModule);
 	Py_Finalize();
 }
 
@@ -232,7 +205,7 @@ static std::string extractTracebackWLib(PyObject* exc, PyObject* val,
 		return extract<std::string>(formatted);
 	}
 	catch (bp::error_already_set) {
-		return "";
+		return std::string();
 	}
 }
 
@@ -293,52 +266,8 @@ void pythonErr()
 		Log::err("Python", extractException(exc, val, tb));
 }
 
-bp::object pythonGlobals()
+PyObject* pythonGlobals()
 {
-	return dictMain;
-}
-
-PyCodeObject* pythonCompile(const char* fn, const char* code)
-{
-	PyArena *arena = PyArena_New();
-	if (!arena) {
-		return NULL;
-	}
-
-	mod_ty mod = PyParser_ASTFromString(code, fn, Py_file_input, NULL, arena);
-	if (!mod) {
-		Log::err("Python",
-		         std::string(fn) + ": failed to parse");
-		pythonErr();
-		return NULL;
-	}
-
-	PyCodeObject* co = PyAST_Compile(mod, fn, NULL, arena);
-	if (!co) {
-		Log::err("Python",
-		         std::string(fn) + ": failed to compile");
-		pythonErr();
-		return NULL;
-	}
-
-	PyArena_Free(arena);
-	return co;
-}
-
-bool pythonExec(PyCodeObject* code)
-{
-	if (!code)
-		return false;
-
-	// FIXME: locals, globals
-	PyObject* globals = dictMain.ptr();
-
-	inPythonScript++;
-	PyObject* result = PyEval_EvalCode(code, globals, globals);
-	inPythonScript--;
-
-	if (!result)
-		pythonErr();
-	return result;
+	return mainDict;
 }
 

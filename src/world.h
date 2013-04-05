@@ -147,7 +147,7 @@ public:
 	void runAreaLoadScript(Area* area);
 
 
-	ScriptInst keydownScript, keyupScript;
+	boost::optional<ScriptInst> keydownScript, keyupScript;
 
 protected:
 	/**
@@ -197,8 +197,8 @@ protected:
 	vicoord startCoords;
 
 
-	ScriptInst loadScript;
-	ScriptInst areaLoadScript;
+	boost::optional<ScriptInst> loadScript;
+	boost::optional<ScriptInst> areaLoadScript;
 	ImageRef pauseInfo;
 
 
