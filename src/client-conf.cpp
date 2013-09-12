@@ -184,19 +184,26 @@ bool parseCommandLine(int argc, char* argv[])
 	cmd.insert("",   "--volume-sound", "<0-100>",         "Set sound effects volume");
 	cmd.insert("",   "--query",        "",                "Query compiled-in engine defaults");
 	cmd.insert("",   "--version",      "",                "Print the engine version string");
-
+	
 	if (!cmd.parse()) {
 		cmd.usage();
 		return false;
 	}
 
 	std::vector<std::string> strayArgs = cmd.getStrayArgsList();
+#ifdef __APPLE__
+	/* September 2013: Mac OSX 10.7 sends stray arguments to its applications, so we can have >1 stray argument. Allow passing a world file if it is the first argument and it is not a debug flag from XCode 4.6. */
+	/* FIXME: This kludge can be fixed by iterating through the stray arguments and trying each of them as a world. */
+	if (strayArgs.size() && strayArgs[0] != "YES")
+		conf.worldFilename = strayArgs[0];
+#else
 	if (strayArgs.size() > 1) {
 		cmd.usage();
 		return false;
 	}
 	else if (strayArgs.size() == 1)
 		conf.worldFilename = strayArgs[0];
+#endif
 
 	if (cmd.check("--help")) {
 		cmd.usage();

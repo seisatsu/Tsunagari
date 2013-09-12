@@ -41,6 +41,10 @@
 	#include "os-windows.h"
 #endif
 
+#ifdef __APPLE__
+	#include "os-mac.h"
+#endif
+
 #define ASSERT_RETURN1(x)  if (!(x)) { return 1; }
 
 struct libraries
@@ -83,6 +87,10 @@ int main(int argc, char** argv)
 {
 	#ifdef _WIN32
 		wFixConsole();
+	#endif
+	
+	#ifdef __APPLE__
+		macSetWorkingDirectory();
 	#endif
 
 	ASSERT_RETURN1(Log::init());

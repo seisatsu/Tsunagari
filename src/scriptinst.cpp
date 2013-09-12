@@ -24,7 +24,15 @@
 // IN THE SOFTWARE.
 // **********
 
+#ifdef __APPLE__
+# include <stdio.h> // Mac needs ssize_t defined for pyport.h
+#endif
+
 // from Python
+#ifdef __APPLE__
+# include <pyport.h>
+# include <object.h>
+#endif
 #include <import.h>
 
 #include "log.h"

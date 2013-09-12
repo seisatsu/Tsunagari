@@ -32,8 +32,9 @@
 #include <boost/shared_ptr.hpp>
 
 // from Python
-#include <code.h>
+#include <pyport.h>
 #include <object.h>
+#include <code.h>
 
 class Bytecode
 {

@@ -198,7 +198,7 @@ const std::string& XMLDoc::path() const
 
 XMLDoc::operator bool() const
 {
-	return doc;
+	return doc.get();
 }
 
 bool XMLDoc::unique() const
