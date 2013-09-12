@@ -28,6 +28,7 @@
 #include <signal.h> // for SIGINT and SIG_DFL
 #include <string.h> // for strrchr
 
+#include <iostream> // prevents compile error on Mac OSX 10.7, XCode 4.6, Boost 1.54.0
 #include <boost/python.hpp>
 
 #include "client-conf.h"
