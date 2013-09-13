@@ -181,7 +181,7 @@ protected:
 	bool processInput(XMLNode node);
 
 protected:
-	typedef boost::unordered_map<std::string, Area*> AreaMap;
+	typedef std::map<std::string, Area*> AreaMap;
 
 
 	std::string name;

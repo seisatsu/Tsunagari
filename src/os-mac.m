@@ -1,8 +1,8 @@
 /***********************************
- ** Tsunagari Tile Engine         **
- ** os-mac.m                      **
- ** Copyright 2013 PariahSoft LLC **
- **********************************/
+** Tsunagari Tile Engine          **
+** os-mac.m                       **
+** Copyright 2013 PariahSoft LLC  **
+***********************************/
 
 // **********
 // Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -30,7 +30,6 @@
 #include <string>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
 
 #include "bytecode.h"
