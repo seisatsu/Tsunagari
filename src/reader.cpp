@@ -27,7 +27,6 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/python.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -35,9 +34,11 @@
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
+#include <map>
 #include <physfs.h>
 
 #include "bytecode.h"
+#include "cache-template.cpp"
 #include "client-conf.h"
 #include "log.h"
 #include "python.h"
@@ -60,8 +61,8 @@ Cache<BytecodeRef> bytecodes;
 Cache<StringRef> texts;
 
 // DTDs don't expire. No garbage collection.
-typedef boost::unordered_map<std::string, DTDRef> TextMap;
-TextMap dtds;
+typedef std::map<std::string, DTDRef> DTDMap;
+DTDMap dtds;
 
 
 
@@ -160,7 +161,7 @@ static bool preloadDTDs()
 
 static xmlDtd* getDTD(const std::string& name)
 {
-	TextMap::iterator it = dtds.find(name);
+	DTDMap::iterator it = dtds.find(name);
 	return it == dtds.end() ? NULL : it->second.get();
 }
 
@@ -209,8 +210,10 @@ bool Reader::init(char* argv0)
 	ASSERT(PHYSFS_init(argv0) != 0);
 
 	// If any of our archives contain a file called "init.py", call it.
-	BOOST_FOREACH(std::string archive, conf.dataPath)
+	for (Conf::StringVector::const_iterator it = conf.dataPath.begin(); it != conf.dataPath.end(); it++) {
+		const std::string archive = *it;
 		ASSERT(callInitpy(archive));
+	}
 	ASSERT(callInitpy(BASE_ZIP_PATH));
 
 	ASSERT(prependPath(BASE_ZIP_PATH));
@@ -220,8 +223,10 @@ bool Reader::init(char* argv0)
 	ASSERT(preloadDTDs());
 
 	ASSERT(prependPath(conf.worldFilename));
-	BOOST_FOREACH(std::string pathname, conf.dataPath)
-		ASSERT(prependPath(pathname));
+	for (Conf::StringVector::const_iterator it = conf.dataPath.begin(); it != conf.dataPath.end(); it++) {
+		const std::string archive = *it;
+		ASSERT(prependPath(archive));
+	}
 
 	return true;
 }
@@ -434,7 +439,6 @@ void Reader::garbageCollect()
 
 void exportReader()
 {
-
 	// FIXME: Broken with shift to singleton. No instantiated object to bind.
 	// Fix will require a stub object.
 

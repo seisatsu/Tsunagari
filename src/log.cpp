@@ -28,6 +28,7 @@
 
 #include <Gosu/Timing.hpp>
 
+#include "client-conf.h"
 #include "log.h"
 #include "python.h"
 #include "world.h"
@@ -35,6 +36,10 @@
 #ifdef _WIN32
 	#include <windows.h>
 	#include "os-windows.h"
+#endif
+
+#ifdef __APPLE__
+	#include "os-mac.h"
 #endif
 
 static verbosity_t verb = V_NORMAL;
@@ -93,6 +98,9 @@ void Log::err(std::string domain, std::string msg)
 			#ifdef _WIN32
 				wMessageBox("Tsunagari - Error", str);
 			#endif
+			#ifdef __APPLE__
+				macMessageBox("Tsunagari - Error", str.c_str());
+			#endif
 		}
 	}
 }
@@ -107,6 +115,9 @@ void Log::fatal(std::string domain, std::string msg)
 		std::cerr << str << std::endl;
 		#ifdef _WIN32
 			wMessageBox("Tsunagari - Fatal", str);
+		#endif
+		#ifdef __APPLE__
+			macMessageBox("Tsunagari - Fatal", str.c_str());
 		#endif
 	}
 }

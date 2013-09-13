@@ -168,8 +168,9 @@ bool pythonInit()
 	// Add world to Python's sys.path.
 	if (!sysPathAppend(BASE_ZIP_PATH))
 		goto err;
-	BOOST_FOREACH(std::string archive, conf.dataPath)
-		if (!sysPathAppend(archive))
+	
+	for (Conf::StringVector::iterator it = conf.dataPath.begin(); it != conf.dataPath.end(); it++)
+		if (!sysPathAppend(*it))
 			goto err;
 
 	return true;

@@ -28,7 +28,6 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp> // for iequals
 #include <Gosu/Math.hpp>
 
@@ -186,8 +185,10 @@ std::vector<std::string> splitStr(const std::string& input,
 std::vector<int> parseRanges(const std::string& format)
 {
 	std::vector<int> ints;
-	std::vector<std::string> ranges = splitStr(format, ",");
-	BOOST_FOREACH(const std::string& range, ranges) {
+	typedef std::vector<std::string> StringVector;
+	StringVector ranges = splitStr(format, ",");
+	for (StringVector::const_iterator it = ranges.begin(); it != ranges.end(); it++) {
+		const std::string& range = *it;
 		size_t dash = range.find("-");
 		if (dash == std::string::npos) {
 			if (!isInteger(range)) {

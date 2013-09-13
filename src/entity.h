@@ -27,11 +27,13 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <map>
 #include <string>
 #include <vector>
 
-#include <boost/unordered_map.hpp>
 #include <libxml/parser.h>
+
+class Entity;
 
 #include "tile.h" // for enum TileEventTrigger
 #include "reader.h"
@@ -230,8 +232,8 @@ protected:
 
 
 protected:
-	typedef boost::unordered_map<std::string, Animation> AnimationMap;
-	typedef boost::unordered_map<std::string, SampleRef> SampleMap;
+	typedef std::map<std::string, Animation> AnimationMap;
+	typedef std::map<std::string, SampleRef> SampleMap;
 
 
 	//! Set to true if the Entity wants the screen to be redrawn.

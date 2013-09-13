@@ -1,6 +1,6 @@
 /***********************************
  ** Tsunagari Tile Engine         **
- ** os-mac.h                      **
+ ** formatter.h                   **
  ** Copyright 2013 PariahSoft LLC **
  **********************************/
 
@@ -24,21 +24,44 @@
 // IN THE SOFTWARE.
 // **********
 
-#if defined __APPLE__ && !defined OS_MAC_H
-#define OS_MAC_H
+#ifndef FORMATTER_H
+#define FORMATTER_H
 
-extern "C" {
-
-/**
- * Sets the current working directory to the "Resources" folder in the .app package.
- */
-void macSetWorkingDirectory();
+#include <assert.h>
+#include <string>
 
 /**
- * Displays a message box window.
+ * Formatter
+ *
+ * Sample usage:
+ *   Log::info(Formatter("coordinates are: % %") % x % y);
  */
-void macMessageBox(const char* title, const char* msg);
+class Formatter {
+public:
+	Formatter(std::string format);
+	~Formatter();
 
-}
+	template<class T>
+	Formatter& operator %(const T& data)
+	{
+		assert(pos < result.size());
+		
+		size_t markerSize = 1;
+		result.replace(pos, markerSize, format(data));
+		findNextPlaceholder();
+		return *this;
+	}
+
+	operator const std::string&();
+	
+private:
+	template<class T>
+	std::string format(const T& data);
+	
+	void findNextPlaceholder();
+	
+	std::string result;
+	size_t pos;
+};
 
 #endif

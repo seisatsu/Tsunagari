@@ -30,6 +30,7 @@
 #include <boost/format.hpp>
 
 #include "area.h"
+#include "log.h"
 #include "python.h"
 #include "python-optional.h"
 #include "string.h"

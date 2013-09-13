@@ -27,12 +27,12 @@
 #include <math.h>
 
 #include <boost/algorithm/string.hpp> // for iequals
-#include <boost/foreach.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
 
 #include "area.h"
+#include "client-conf.h"
 #include "entity.h"
 #include "log.h"
 #include "python.h"
@@ -706,9 +706,11 @@ bool Entity::processPhase(const XMLNode node, const TiledImageRef& tiles)
 		}
 		double fps = atof(speedStr.c_str());
 
-		std::vector<int> frames = parseRanges(framesStr);
+		typedef std::vector<int> IntVector;
+		IntVector frames = parseRanges(framesStr);
 		std::vector<ImageRef> images;
-		BOOST_FOREACH(int i, frames) {
+		for (IntVector::iterator it = frames.begin(); it != frames.end(); it++) {
+			int i = *it;
 			if (i < 0 || (int)tiles->size() < i) {
 				Log::err(descriptor,
 					"<phase> frames attribute index out of bounds");

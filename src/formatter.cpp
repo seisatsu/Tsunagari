@@ -1,6 +1,6 @@
 /***********************************
  ** Tsunagari Tile Engine         **
- ** os-mac.h                      **
+ ** formatter.cpp                 **
  ** Copyright 2013 PariahSoft LLC **
  **********************************/
 
@@ -24,21 +24,62 @@
 // IN THE SOFTWARE.
 // **********
 
-#if defined __APPLE__ && !defined OS_MAC_H
-#define OS_MAC_H
+#include "formatter.h"
 
-extern "C" {
-
-/**
- * Sets the current working directory to the "Resources" folder in the .app package.
- */
-void macSetWorkingDirectory();
-
-/**
- * Displays a message box window.
- */
-void macMessageBox(const char* title, const char* msg);
-
+Formatter::Formatter(std::string format)
+	: result(format), pos(0)
+{
+	findNextPlaceholder();
 }
 
-#endif
+Formatter::~Formatter()
+{
+}
+
+Formatter::operator const std::string&()
+{
+	assert(pos == result.size());
+
+	return result;
+}
+
+void Formatter::findNextPlaceholder()
+{
+	assert(pos <= result.size());
+
+	size_t next = result.find("%", pos);
+	if (next != std::string::npos)
+		pos = next;
+	else
+		pos = result.size();
+}
+
+
+template<>
+std::string Formatter::format(const int& data)
+{
+	char buf[512];
+	sprintf(buf, "%i", data);
+	return std::string(buf);
+}
+
+template<>
+std::string Formatter::format(const double& data)
+{
+	char buf[512];
+	sprintf(buf, "%f", data);
+	return std::string(buf);
+}
+
+typedef char* cstring;
+template<>
+std::string Formatter::format(const cstring& data)
+{
+	return std::string(data);
+}
+
+template<>
+std::string Formatter::format(const std::string& data)
+{
+	return data;
+}

@@ -27,7 +27,6 @@
 #include <math.h>
 #include <vector>
 
-#include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Image.hpp>
@@ -780,9 +779,11 @@ bool AreaTMX::processObject(XMLNode node, int z)
 
 bool AreaTMX::splitTileFlags(const std::string& strOfFlags, unsigned* flags)
 {
-	std::vector<std::string> strs = splitStr(strOfFlags, ",");
+	typedef std::vector<std::string> StringVector;
+	StringVector strs = splitStr(strOfFlags, ",");
 
-	BOOST_FOREACH(const std::string& str, strs) {
+	for (StringVector::const_iterator it = strs.begin(); it != strs.end(); it++) {
+		const std::string& str = *it;
 		if (str == "nowalk")
 			*flags |= TILE_NOWALK;
 		else if (str == "nowalk_player")

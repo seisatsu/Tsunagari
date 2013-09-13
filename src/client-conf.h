@@ -79,7 +79,8 @@ struct Conf {
 	bool validate(const std::string& filename);
 
 	std::string worldFilename;
-	std::vector<std::string> dataPath;
+	typedef std::vector<std::string> StringVector;
+	StringVector dataPath;
 	verbosity_t verbosity;
 	movement_mode_t moveMode;
 	halting_mode_t halting;

@@ -31,7 +31,7 @@ void macSetWorkingDirectory()
 	UInt8 pathBytes[512];
 	CFBundleRef mainBundle;
 	CFURLRef url;
-	NSString* appPath, *resPath;
+	NSString* appPath;
 
 	/* FIXME: memory leaks? */
 	mainBundle = CFBundleGetMainBundle();
@@ -43,10 +43,11 @@ void macSetWorkingDirectory()
 	chdir("Contents/Resources");
 }
 
-void macMessageBox(const char* msg)
+void macMessageBox(const char* title, const char* msg)
 {
-	NSString *str = [[NSString alloc] initWithCString:msg encoding:NSUTF8StringEncoding];
-	NSAlert *alert = [NSAlert alertWithMessageText:@"Debug" defaultButton:@"OK" alternateButton:NULL otherButton:NULL informativeTextWithFormat:str];
+	NSString *nsTitle = [[NSString alloc] initWithCString:title encoding:NSUTF8StringEncoding];
+	NSString *nsMsg = [[NSString alloc] initWithCString:msg encoding:NSUTF8StringEncoding];
+	NSAlert *alert = [NSAlert alertWithMessageText:nsTitle defaultButton:@"OK" alternateButton:NULL otherButton:NULL informativeTextWithFormat:nsMsg];
 	[alert runModal];
 }
 

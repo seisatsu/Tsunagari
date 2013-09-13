@@ -29,15 +29,15 @@
 #include <stdlib.h> // for exit(1) on fatal
 #include <vector>
 
-#include <boost/foreach.hpp>
-#include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
 
 #include "area.h"
+#include "client-conf.h"
 #include "entity.h"
+#include "formatter.h"
 #include "log.h"
 #include "image.h"
 #include "music.h"
@@ -148,12 +148,16 @@ bool Area::needsRedraw() const
 	if (player->needsRedraw())
 		return true;
 
-	BOOST_FOREACH(Character* c, characters)
+	for (CharacterSet::iterator it = characters.begin(); it != characters.end(); it++) {
+		Character* c = *it;
 		if (c->needsRedraw())
 			return true;
-	BOOST_FOREACH(Overlay* o, overlays)
+	}
+	for (OverlaySet::iterator it = overlays.begin(); it != overlays.end(); it++) {
+		Overlay* o = *it;
 		if (o->needsRedraw())
 			return true;
+	}
 
 	// Do any on-screen tile types need to update their animations?
 	const icube tiles = visibleTiles();
@@ -181,7 +185,8 @@ void Area::tick(unsigned long dt)
 	if (tickScript)
 		tickScript->invoke();
 
-	BOOST_FOREACH(Overlay* o, overlays) {
+	for (OverlaySet::iterator it = overlays.begin(); it != overlays.end(); it++) {
+		Overlay* o = *it;
 		pythonSetGlobal("Area", this);
 		o->tick(dt);
 	}
@@ -190,7 +195,8 @@ void Area::tick(unsigned long dt)
 		pythonSetGlobal("Area", this);
 		player->tick(dt);
 
-		BOOST_FOREACH(Character* c, characters) {
+		for (CharacterSet::iterator it = characters.begin(); it != characters.end(); it++) {
+			Character* c = *it;
 			pythonSetGlobal("Area", this);
 			c->tick(dt);
 		}
@@ -209,7 +215,8 @@ void Area::turn()
 	pythonSetGlobal("Area", this);
 	player->turn();
 
-	BOOST_FOREACH(Character* c, characters) {
+	for (CharacterSet::iterator it = characters.begin(); it != characters.end(); it++) {
+		Character* c = *it;
 		pythonSetGlobal("Area", this);
 		c->turn();
 	}
@@ -524,11 +531,11 @@ int Area::depthIndex(double depth) const
 {
 	using namespace boost;
 
-	boost::unordered_map<double, int>::const_iterator it;
+	std::map<double, int>::const_iterator it;
 	it = depth2idx.find(depth);
 	if (it == depth2idx.end()) {
-		Log::fatal(descriptor, str(format(
-			"attempt to access invalid layer: %f") % depth));
+		Log::fatal(descriptor, Formatter(
+			"attempt to access invalid layer: %") % depth);
 		exit(-1);
 	}
 	return it->second;
@@ -585,10 +592,12 @@ void Area::drawTile(Tile& tile, int x, int y, double depth)
 
 void Area::drawEntities()
 {
-	BOOST_FOREACH(Character* c, characters) {
+	for (CharacterSet::iterator it = characters.begin(); it != characters.end(); it++) {
+		Character* c = *it;
 		c->draw();
 	}
-	BOOST_FOREACH(Overlay* o, overlays) {
+	for (OverlaySet::iterator it = overlays.begin(); it != overlays.end(); it++) {
+		Overlay* o = *it;
 		o->draw();
 	}
 	player->draw();
@@ -611,15 +620,16 @@ void Area::drawColorOverlay()
 	}
 }
 
-boost::python::tuple Area::pyGetDimensions()
-{
-	using namespace boost::python;
-
-	list zs;
-	BOOST_FOREACH(double dep, idx2depth)
-		zs.append(dep);
-	return make_tuple(dim.x, dim.y, zs);
-}
+/* FIXME: Don't expose boost::python::tuple to the header file. */
+//boost::python::tuple Area::pyGetDimensions()
+//{
+//	using namespace boost::python;
+//
+//	list zs;
+//	BOOST_FOREACH(double dep, idx2depth)
+//		zs.append(dep);
+//	return make_tuple(dim.x, dim.y, zs);
+//}
 
 void exportArea()
 {
@@ -627,7 +637,7 @@ void exportArea()
 
 	class_<Area>("Area", no_init)
 		.add_property("descriptor", &Area::getDescriptor)
-		.add_property("dimensions", &Area::pyGetDimensions)
+//		.add_property("dimensions", &Area::pyGetDimensions)
 		.def("redraw", &Area::requestRedraw)
 		.def("tileset", &Area::getTileSet,
 		    return_value_policy<reference_existing_object>())

@@ -32,9 +32,15 @@
 
 #include <boost/optional.hpp>
 
+class Tile;
+class TileType;
+class TileSet;
+
+#include "area.h"
 #include "animation.h"
 #include "reader.h" // for TiledImage
 #include "scriptinst.h"
+#include "vec.h"
 
 class Area;
 class Entity;

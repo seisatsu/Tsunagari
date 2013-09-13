@@ -27,18 +27,20 @@
 #ifndef AREA_H
 #define AREA_H
 
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
 
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/python/tuple.hpp>
+// #include <boost/python/tuple.hpp>
 #include <Gosu/Color.hpp>
 
+#include "entity.h"
 #include "scriptinst.h"
 #include "tile.h"
+#include "vec.h"
 
 #define ISOMETRIC_ZOFF_PER_TILE 0.001
 
@@ -166,7 +168,7 @@ public:
 	vicoord virt2virt(rcoord virt) const;
 
 	// For Python interface.
-	boost::python::tuple pyGetDimensions();
+//	boost::python::tuple pyGetDimensions();
 
 
 	//
@@ -194,9 +196,12 @@ protected:
 protected:
 	Viewport* view;
 	Player* player;
-	boost::unordered_set<Character*> characters;
-	boost::unordered_set<Overlay*> overlays;
 	Gosu::Color colorOverlay;
+
+	typedef std::set<Character*> CharacterSet;
+	CharacterSet characters;
+	typedef std::set<Overlay*> OverlaySet;
+	OverlaySet overlays;
 
 	typedef std::vector<Tile> row_t;
 	typedef std::vector<row_t> grid_t;
@@ -216,7 +221,7 @@ protected:
 	tilesets_t tileSets;
 
 	//! Maps virtual float-point depths to an index in our map array.
-	boost::unordered_map<double, int> depth2idx;
+	std::map<double, int> depth2idx;
 
 	//! Maps an index in our map array to a virtual float-point depth.
 	std::vector<double> idx2depth;

@@ -29,6 +29,7 @@
 #include <Gosu/Timing.hpp>
 #include <Gosu/Utility.hpp>
 
+#include "client-conf.h"
 #include "reader.h"
 #include "world.h"
 #include "window.h"

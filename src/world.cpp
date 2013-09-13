@@ -28,6 +28,7 @@
 #include <Gosu/Utility.hpp>
 
 #include "area-tmx.h"
+#include "client-conf.h"
 #include "log.h"
 #include "music.h"
 #include "python.h"
@@ -255,11 +256,13 @@ void World::restoreKeys()
 {
 	BitRecord now = BitRecord::fromGosuInput();
 	BitRecord then = keyStates.top();
-	std::vector<size_t> diffs = now.diff(then);
+	typedef std::vector<size_t> Size_tVector;
+	Size_tVector diffs = now.diff(then);
 
 	keyStates.pop();
 
-	BOOST_FOREACH(size_t id, diffs) {
+	for (Size_tVector::iterator it = diffs.begin(); it != diffs.end(); it++) {
+		size_t id = *it;
 		Gosu::Button btn((unsigned)id);
 		if (now[id])
 			buttonDown(btn);

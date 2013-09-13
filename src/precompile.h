@@ -28,8 +28,6 @@
 
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
-#include <boost/format.hpp>
 #include <boost/optional.hpp>
 #include <boost/python.hpp>
 #include <boost/scoped_array.hpp>

@@ -24,9 +24,11 @@
 // IN THE SOFTWARE.
 // **********
 
+#include <boost/scoped_ptr.hpp>
 #include <Gosu/Audio.hpp> // for Gosu::SampleInstance
 #include <Gosu/Math.hpp>
 
+#include "cache-template.cpp"
 #include "client-conf.h"
 #include "music.h"
 #include "reader.h"

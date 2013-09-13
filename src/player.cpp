@@ -25,12 +25,12 @@
 // **********
 
 #include <boost/foreach.hpp>
-#include <boost/format.hpp>
 #include <Gosu/Audio.hpp>
 #include <Gosu/Input.hpp>
 #include <Gosu/Math.hpp>
 
 #include "area.h"
+#include "client-conf.h"
 #include "entity.h"
 #include "log.h"
 #include "player.h"

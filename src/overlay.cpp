@@ -25,6 +25,7 @@
 // **********
 
 #include "area.h"
+#include "client-conf.h"
 #include "overlay.h"
 
 Overlay::Overlay()
