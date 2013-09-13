@@ -31,7 +31,7 @@
 #include <Gosu/Image.hpp>
 
 #include "gosu-cbuffer.h"
-#include "image-impl.h"
+#include "gosu-image.h"
 #include "window.h"
 
 
