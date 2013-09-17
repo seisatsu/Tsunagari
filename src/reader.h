@@ -32,7 +32,6 @@
 #include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 
-#include "bytecode.h"
 #include "cache.h"
 #include "image.h"
 #include "sound.h"
@@ -89,11 +88,6 @@ public:
 	//! Request an XML document from the World.
 	static XMLRef getXMLDoc(const std::string& name,
 		const std::string& dtdPath);
-
-	static BytecodeRef getBytecode(const std::string& path);
-
-	//! Request a Python script from the World be run.
-	static bool runPythonScript(const std::string& name);
 
 	//! Request a text file from the World.
 	static std::string getText(const std::string& name);

@@ -27,8 +27,6 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include <boost/format.hpp>
-#include <boost/python.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Gosu/Bitmap.hpp>
@@ -37,12 +35,14 @@
 #include <map>
 #include <physfs.h>
 
-#include "bytecode.h"
 #include "cache-template.cpp"
 #include "client-conf.h"
+#include "formatter.h"
 #include "log.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "reader.h"
+#include "script.h"
 #include "window.h"
 #include "xml.h"
 
@@ -57,7 +57,6 @@ Cache<ImageRef> images;
 Cache<TiledImageRef> tiles;
 Cache<SampleRef> sounds;
 Cache<XMLRef> xmls;
-Cache<BytecodeRef> bytecodes;
 Cache<StringRef> texts;
 
 // DTDs don't expire. No garbage collection.
@@ -75,37 +74,34 @@ static std::string path(const std::string& entryName)
 template <class T>
 static bool readFromDisk(const std::string& name, T& buf)
 {
-	using namespace boost;
-
 	PHYSFS_sint64 size;
 	PHYSFS_File* zf;
 
 	if (!PHYSFS_exists(name.c_str())) {
-		Log::err("Reader", str(format("%s: file missing")
-				% path(name)));
+		Log::err("Reader", Formatter("%: file missing")
+				% path(name));
 		return false;
 	}
 
 	zf = PHYSFS_openRead(name.c_str());
 	if (!zf) {
-		Log::err("Reader", str(format("%s: error opening file: %s")
-				% path(name) % PHYSFS_getLastError()));
+		Log::err("Reader", Formatter("%: error opening file: %")
+				% path(name) % PHYSFS_getLastError());
 		return false;
 	}
 
 	size = PHYSFS_fileLength(zf);
 	if (size == -1) {
-		Log::err("Reader", str(
-				format("%s: could not determine file size: %s")
-				% path(name) % PHYSFS_getLastError()));
+		Log::err("Reader", Formatter("%: could not determine file size: %")
+				% path(name) % PHYSFS_getLastError());
 		PHYSFS_close(zf);
 		return false;
 	}
 	if (size > std::numeric_limits<uint32_t>::max()) {
 		// FIXME: Technically, we just need to issue multiple calls to
 		// PHYSFS_read. Fix when needed.
-		Log::err("Reader", str(format("%s: file too long (>4GB)")
-				% path(name)));
+		Log::err("Reader", Formatter("%: file too long (>4GB)")
+				% path(name));
 		PHYSFS_close(zf);
 		return false;
 	}
@@ -118,8 +114,8 @@ static bool readFromDisk(const std::string& name, T& buf)
 
 	if (PHYSFS_read(zf, (char*)(buf.data()),
 			(PHYSFS_uint32)size, 1) != 1) {
-		Log::err("Reader", str(format("%s: error reading file: %s")
-				% path(name) % PHYSFS_getLastError()));
+		Log::err("Reader", Formatter("%: error reading file: %")
+				% path(name) % PHYSFS_getLastError());
 		PHYSFS_close(zf);
 		return false;
 	}
@@ -190,7 +186,8 @@ static bool callInitpy(const std::string& archivePath)
 		std::string("__init__.py: ") +
 		(exists ? "found" : "not found"));
 	if (exists)
-		ASSERT(Reader::runPythonScript("__init__.py"));
+		// FIXME: Python will cache the __init__ module with no path prefix
+		ASSERT(Script::create("__init__"));
 	ASSERT(Reader::rmPath(archivePath));
 	return true;
 }
@@ -209,7 +206,7 @@ bool Reader::init(char* argv0)
 {
 	ASSERT(PHYSFS_init(argv0) != 0);
 
-	// If any of our archives contain a file called "init.py", call it.
+	// If any of our archives contain a file called "__init__.py", call it.
 	for (Conf::StringVector::const_iterator it = conf.dataPath.begin(); it != conf.dataPath.end(); it++) {
 		const std::string archive = *it;
 		ASSERT(callInitpy(archive));
@@ -238,42 +235,38 @@ void Reader::deinit()
 
 bool Reader::prependPath(const std::string& path)
 {
-	using namespace boost;
-
 	int err = PHYSFS_mount(path.c_str(), NULL, 0);
 	if (err == 0) {
-		Log::fatal("Reader", str(
-				format("%s: could not open archive: %s")
-				% path % PHYSFS_getLastError()));
+		Log::fatal("Reader", Formatter("%: could not open archive: %")
+				% path % PHYSFS_getLastError());
 		return false;
 	}
+
+	pythonPrependPath(path);
 
 	return true;
 }
 
 bool Reader::appendPath(const std::string& path)
 {
-	using namespace boost;
-
 	int err = PHYSFS_mount(path.c_str(), NULL, 1);
 	if (err == 0) {
-		Log::fatal("Reader", str(
-				format("%s: could not open archive: %s")
-				% path % PHYSFS_getLastError()));
+		Log::fatal("Reader", Formatter("%: could not open archive: %")
+				% path % PHYSFS_getLastError());
 		return false;
 	}
+
+	pythonRmPath(path);
 
 	return true;
 }
 
 bool Reader::rmPath(const std::string& path)
 {
-	using namespace boost;
-
 	int err = PHYSFS_removeFromSearchPath(path.c_str());
 	if (err == 0) {
-		Log::err("Reader", str(format("libphysfs: %s: %s")
-				% path % PHYSFS_getLastError()));
+		Log::err("Reader", Formatter("libphysfs: %: %")
+				% path % PHYSFS_getLastError());
 		return false;
 	}
 
@@ -382,37 +375,6 @@ XMLRef Reader::getXMLDoc(const std::string& name,
 
 	xmls.momentaryPut(name, result);
 	return result;
-}
-
-BytecodeRef Reader::getBytecode(const std::string& path)
-{
-	BytecodeRef existing = bytecodes.momentaryRequest(path);
-	if (existing)
-		return existing;
-
-	BytecodeRef result;
-	if (fileExists(path)) {
-		std::string code = readString(path);
-		Bytecode* script = new Bytecode(path, code);
-		result.reset(script);
-	}
-
-	bytecodes.momentaryPut(path, result);
-	return result;
-}
-
-bool Reader::runPythonScript(const std::string& path)
-{
-	BytecodeRef bc = getBytecode(path);
-	if (bc && bc->valid()) {
-		bc->execute();
-		return true;
-	}
-	else {
-		Log::err("Script",
-		    bc->filename() + ": Attempt to run broken Python script");
-		return false;
-	}
 }
 
 std::string Reader::getText(const std::string& name)

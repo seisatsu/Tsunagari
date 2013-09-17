@@ -29,6 +29,7 @@
 
 #include "client-conf.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "reader.h"
 #include "sound.h"
 

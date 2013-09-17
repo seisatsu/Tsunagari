@@ -1,6 +1,6 @@
 /***************************************
 ** Tsunagari Tile Engine              **
-** pyworldfinder.cpp                  **
+** python-importer.cpp                **
 ** Copyright 2011-2013 PariahSoft LLC **
 ***************************************/
 
@@ -27,8 +27,10 @@
 
 #include <Python.h>
 
+#include "formatter.h"
 #include "log.h"
 #include "reader.h"
+#include "python-importer.h"
 
 
 //! List of known safe Python modules allowed for importing.
@@ -40,7 +42,7 @@ static const char* module_whitelist[] = {
 	NULL
 };
 
-static bool wf_in_whitelist(const char* name)
+static bool wi_in_whitelist(const char* name)
 {
 	for (int i = 0; module_whitelist[i]; i++)
 		if (!strcmp(name, module_whitelist[i]))
@@ -48,7 +50,7 @@ static bool wf_in_whitelist(const char* name)
 	return false;
 }
 
-static PyObject* wf_find_module(PyObject* /*self*/, PyObject* args)
+static PyObject* wi_find_module(PyObject* /*self*/, PyObject* args)
 {
 	PyObject* fullname = NULL;
 	PyObject* path = NULL; // dummy
@@ -67,8 +69,10 @@ static PyObject* wf_find_module(PyObject* /*self*/, PyObject* args)
 	std::string slashname(dotname); // "foo/bar.py"
 	std::replace(slashname.begin(), slashname.end(), '.', '/');
 
+	Log::info("PyWorldImporter", Formatter("%: requested") % dotname);
+
 	// Returning Py_None allows the import to continue. NULL stops it.
-	if (wf_in_whitelist(dotname)) {
+	if (wi_in_whitelist(dotname)) {
 		Py_INCREF(Py_None);
 		return Py_None;
 	}
@@ -88,78 +92,78 @@ static PyObject* wf_find_module(PyObject* /*self*/, PyObject* args)
 
 typedef struct {
 	PyObject_HEAD
-} worldfinderobject;
+} worldimporterobject;
 
-static PyMethodDef pyworldfinder_methods[] = {
-	{"find_module", (PyCFunction)wf_find_module, METH_VARARGS, NULL},
+static PyMethodDef pyworldimporter_methods[] = {
+	{"find_module", (PyCFunction)wi_find_module, METH_VARARGS, NULL},
 	{NULL, NULL, 0, NULL},
 };
 
 static bool initted = false;
-static PyTypeObject worldfinder_type = {
+static PyTypeObject worldimporter_type = {
 	PyObject_HEAD_INIT(&PyType_Type)
 };
 
-static bool wf_init_type()
+static bool wi_init_type()
 {
 	if (!initted) {
 		initted = false;
 
-		worldfinder_type.tp_name = "worldfinder";
-		worldfinder_type.tp_basicsize = sizeof(worldfinderobject);
-		worldfinder_type.tp_getattro = PyObject_GenericGetAttr;
-		worldfinder_type.tp_flags = Py_TPFLAGS_DEFAULT;
-		worldfinder_type.tp_methods = pyworldfinder_methods;
+		worldimporter_type.tp_name = "worldimporter";
+		worldimporter_type.tp_basicsize = sizeof(worldimporterobject);
+		worldimporter_type.tp_getattro = PyObject_GenericGetAttr;
+		worldimporter_type.tp_flags = Py_TPFLAGS_DEFAULT;
+		worldimporter_type.tp_methods = pyworldimporter_methods;
 
-		if (PyType_Ready(&worldfinder_type) < 0) {
-			Py_FatalError("Can't initialize worldfinder type");
+		if (PyType_Ready(&worldimporter_type) < 0) {
+			Py_FatalError("Can't initialize worldimporter type");
 			return false;
 		}
 	}
 	return true;
 }
 
-static PyObject* wf_worldfinder_new()
+static PyObject* wi_worldimporter_new()
 {
-	wf_init_type();
-	return (PyObject*)PyObject_New(worldfinderobject, &worldfinder_type);
+	wi_init_type();
+	return (PyObject*)PyObject_New(worldimporterobject, &worldimporter_type);
 }
 
 
 /** Public functions **/
 
-bool add_worldfinder()
+bool pythonImporterInstall()
 {
 	PyObject* meta_path = NULL;
-	PyObject* finder = NULL;
+	PyObject* importer = NULL;
 	int idx = -1;
 
 	/* meta_path is a borrowed reference; no decref */
 	meta_path = PySys_GetObject((char*)"meta_path");
 	if (meta_path == NULL || !PyList_Check(meta_path)) {
-		Log::fatal("Python",
+		Log::fatal("Python Importer",
 			"sys.meta_path must be a list of import hooks");
 		goto err;
 	}
 
-	finder = wf_worldfinder_new();
-	if (finder == NULL) {
-		Log::fatal("Python",
-			"failed to create PyWorldFinder object");
+	importer = wi_worldimporter_new();
+	if (importer == NULL) {
+		Log::fatal("Python Importer",
+			"failed to create PyWorldImporter object");
 		goto err;
 	}
 
-	idx = PyList_Append(meta_path, finder);
+	idx = PyList_Append(meta_path, importer);
 	if (idx == -1) {
-		Log::fatal("Python", "failed to append to sys.meta_path");
+		Log::fatal("Python Importer", "failed to append to sys.meta_path");
 		goto err;
 	}
 
-	Py_DECREF(finder);
+	Py_DECREF(importer);
 	return true;
 
 err:
-	Py_XDECREF(finder);
+	Py_XDECREF(importer);
 	return false;
 }
 

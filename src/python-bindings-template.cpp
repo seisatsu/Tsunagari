@@ -1,6 +1,6 @@
 /***************************************
 ** Tsunagari Tile Engine              **
-** scriptinst.h                       **
+** python-bindings-template.h         **
 ** Copyright 2011-2013 PariahSoft LLC **
 ***************************************/
 
@@ -24,40 +24,53 @@
 // IN THE SOFTWARE.
 // **********
 
-#ifndef SCRIPTINST_H
-#define SCRIPTINST_H
+#include <iostream> // Including this fixes a compilation-order error on
+					// XCode 4.6
 
-#include <string>
-
+// In this file.
+#include <boost/python/def.hpp>
+#include <boost/python/errors.hpp>
+#include <boost/python/import.hpp>
 #include <boost/python/object.hpp>
-#include <boost/variant.hpp>
+#include <boost/python/ptr.hpp>
+#include <boost/python/scope.hpp>
 
-#include "bytecode.h"
+// For bindings.
+#include <boost/python/class.hpp>
+#include <boost/python/operators.hpp>
+#include <boost/python/other.hpp>
+#include <boost/python/self.hpp>
 
+#include "python.h"
 
-class ScriptInst
+//! Bind a C++ object into the global Python namespace.
+template<class T>
+void pythonSetGlobal(const std::string& name, T pointer)
 {
-public:
-	ScriptInst(const std::string& source);
-	ScriptInst(boost::python::object callable);
+	using namespace boost::python;
 
-	bool validate();
-	bool invoke();
+	object obj(ptr(pointer));
+	PyObject* globals = NULL;
 
-private:
-	boost::variant<
-		BytecodeRef,
-		boost::python::object
-	> data;
+	if ((globals = pythonGlobals()) == NULL)
+		goto err;
+	PyDict_SetItemString(globals, name.c_str(), obj.ptr());
 
-	friend struct validate_visitor;
-	friend struct invoke_visitor;
-	friend struct topython_visitor;
-	friend struct scriptinst_to_python;
-};
+	return;
 
+err:
+	pythonErr();
+}
 
-void exportScriptInst();
-
-#endif
-
+template<class Fn>
+void pythonAddFunction(const std::string& name, Fn fn)
+{
+	using namespace boost::python;
+	
+	try {
+		scope bltins(import("__builtin__"));
+		def(name.c_str(), fn);
+	} catch (error_already_set) {
+		pythonErr();
+	}
+}

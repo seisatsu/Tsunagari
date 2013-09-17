@@ -31,11 +31,11 @@
 
 #include <boost/python.hpp>
 
-#include "scriptinst.h"
+#include "script.h"
 
 class Timeout {
 public:
-	Timeout(boost::python::object callback, time_t delay);
+//	Timeout(boost::python::object callback, time_t delay);
 	void cancel();
 
 	bool isActive() const;
@@ -47,7 +47,7 @@ public:
 	std::string repr() const;
 
 private:
-	ScriptInst callback;
+	ScriptRef callback;
 	time_t start, delay;
 	bool active;
 };

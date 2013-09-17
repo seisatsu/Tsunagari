@@ -368,7 +368,7 @@
   <object x="80" y="32" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
-    <property name="on_use" value="areas/grove02.py:grove02_open_chest()"/>
+    <property name="on_use" value="areas.grove02:open_chest"/>
    </properties>
   </object>
   <object x="16" y="0" width="16" height="16">

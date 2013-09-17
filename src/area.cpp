@@ -44,6 +44,7 @@
 #include "npc.h"
 #include "overlay.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "reader.h"
 #include "tile.h"
 #include "window.h"
@@ -653,9 +654,9 @@ void exportArea()
 		    return_value_policy<reference_existing_object>())
 		.def("new_overlay", &Area::spawnOverlay,
 		    return_value_policy<reference_existing_object>())
-		.def_readwrite("on_focus", &Area::focusScript)
-		.def_readwrite("on_tick", &Area::tickScript)
-		.def_readwrite("on_turn", &Area::turnScript)
+//		.def_readwrite("on_focus", &Area::focusScript)
+//		.def_readwrite("on_tick", &Area::tickScript)
+//		.def_readwrite("on_turn", &Area::turnScript)
 		;
 }
 

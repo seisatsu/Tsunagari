@@ -31,10 +31,10 @@
 #include "client-conf.h"
 #include "log.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "world.h"
 
 #ifdef _WIN32
-	#include <windows.h>
 	#include "os-windows.h"
 #endif
 
@@ -148,8 +148,6 @@ static void pythonLogInfo(std::string msg)
 
 void exportLog()
 {
-	using namespace boost::python;
-
 	pythonAddFunction("log", pythonLogInfo);
 }
 

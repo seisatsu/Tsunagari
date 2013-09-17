@@ -42,7 +42,7 @@ public:
 	~Formatter();
 
 	template<class T>
-	Formatter& operator %(const T& data)
+	Formatter& operator %(T data)
 	{
 		assert(pos < result.size());
 		
@@ -56,8 +56,8 @@ public:
 	
 private:
 	template<class T>
-	std::string format(const T& data);
-	
+	std::string format(const T data);
+
 	void findNextPlaceholder();
 	
 	std::string result;

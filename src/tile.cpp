@@ -32,7 +32,7 @@
 #include "area.h"
 #include "log.h"
 #include "python.h"
-#include "python-optional.h"
+#include "python-bindings-template.cpp"
 #include "string.h"
 #include "tile.h"
 #include "world.h"
@@ -172,7 +172,7 @@ void TileBase::setType(TileType* type)
 void TileBase::runEnterScript(Entity* triggeredBy)
 {
 	if (enterScript)
-		runScript(triggeredBy, enterScript.get());
+		runScript(triggeredBy, enterScript);
 	if (parent)
 		parent->runEnterScript(triggeredBy);
 }
@@ -180,7 +180,7 @@ void TileBase::runEnterScript(Entity* triggeredBy)
 void TileBase::runLeaveScript(Entity* triggeredBy)
 {
 	if (leaveScript)
-		runScript(triggeredBy, leaveScript.get());
+		runScript(triggeredBy, leaveScript);
 	if (parent)
 		parent->runLeaveScript(triggeredBy);
 }
@@ -188,16 +188,16 @@ void TileBase::runLeaveScript(Entity* triggeredBy)
 void TileBase::runUseScript(Entity* triggeredBy)
 {
 	if (useScript)
-		runScript(triggeredBy, useScript.get());
+		runScript(triggeredBy, useScript);
 	if (parent)
 		parent->runUseScript(triggeredBy);
 }
 
-void TileBase::runScript(Entity* triggeredBy, ScriptInst& script)
+void TileBase::runScript(Entity* triggeredBy, ScriptRef& script)
 {
 	pythonSetGlobal("Entity", triggeredBy);
 	pythonSetGlobal("Tile", this);
-	script.invoke();
+	script->invoke();
 }
 
 
@@ -220,7 +220,7 @@ icoord Tile::moveDest(icoord here, ivec2 facing) const
 {
 	icoord dest = here + icoord(facing.x, facing.y, 0);
 
-	boost::optional<double> layermod = layermodAt(facing);
+	double* layermod = layermodAt(facing);
 	if (layermod)
 		dest = area->virt2phys(vicoord(dest.x, dest.y, *layermod));
 	return dest;
@@ -256,10 +256,10 @@ Exit* Tile::exitAt(ivec2 dir) const
 	return idx == -1 ? NULL : exits[idx];
 }
 
-boost::optional<double> Tile::layermodAt(ivec2 dir) const
+double* Tile::layermodAt(ivec2 dir) const
 {
 	int idx = ivec2_to_dir(dir);
-	return idx == -1 ? boost::optional<double>() : layermods[idx];
+	return idx == -1 ? NULL : layermods[idx];
 }
 
 
@@ -362,9 +362,9 @@ void exportTile()
 		        (&TileBase::getType),
 		      return_value_policy<reference_existing_object>()),
 		    &TileBase::setType)
-		.def_readwrite("on_enter", &TileBase::enterScript)
-		.def_readwrite("on_leave", &TileBase::leaveScript)
-		.def_readwrite("on_use", &TileBase::useScript)
+//		.def_readwrite("on_enter", &TileBase::enterScript)
+//		.def_readwrite("on_leave", &TileBase::leaveScript)
+//		.def_readwrite("on_use", &TileBase::useScript)
 		.def("run_enter_script", &TileBase::runEnterScript)
 		.def("run_leave_script", &TileBase::runLeaveScript)
 		.def("run_use_script", &TileBase::runUseScript)

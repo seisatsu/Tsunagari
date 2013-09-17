@@ -38,7 +38,7 @@
 #include <Gosu/Color.hpp>
 
 #include "entity.h"
-#include "scriptinst.h"
+#include "script.h"
 #include "tile.h"
 #include "vec.h"
 
@@ -176,7 +176,7 @@ public:
 	//
 
 	// Script hooks.
-	boost::optional<ScriptInst> loadScript, focusScript, tickScript, turnScript;
+	ScriptRef loadScript, focusScript, tickScript, turnScript;
 
 
 protected:

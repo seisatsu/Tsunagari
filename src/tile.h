@@ -30,8 +30,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/optional.hpp>
-
 class Tile;
 class TileType;
 class TileSet;
@@ -39,7 +37,7 @@ class TileSet;
 #include "area.h"
 #include "animation.h"
 #include "reader.h" // for TiledImage
-#include "scriptinst.h"
+#include "script.h"
 #include "vec.h"
 
 class Area;
@@ -186,12 +184,12 @@ public:
 	void runUseScript(Entity* triggeredBy);
 
 private:
-	void runScript(Entity* triggeredBy, ScriptInst& script);
+	void runScript(Entity* triggeredBy, ScriptRef& script);
 
 public:
 	TileBase* parent;
 	unsigned flags;
-	boost::optional<ScriptInst> enterScript, leaveScript, useScript;
+	ScriptRef enterScript, leaveScript, useScript;
 };
 
 //! Contains properties unique to this tile.
@@ -226,7 +224,7 @@ public:
 	void setNormalExit(Exit exit);
 
 	Exit* exitAt(ivec2 dir) const;
-	boost::optional<double> layermodAt(ivec2 dir) const;
+	double* layermodAt(ivec2 dir) const;
 
 public:
 	Area* area;
@@ -239,7 +237,7 @@ public:
 	 */
 	int x, y, z;
 	Exit* exits[EXITS_LENGTH];
-	boost::optional<double> layermods[EXITS_LENGTH];
+	double* layermods[EXITS_LENGTH];
 	int entCnt; //!< Number of entities on this Tile.
 };
 

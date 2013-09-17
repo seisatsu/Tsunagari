@@ -36,6 +36,7 @@
 #include "entity.h"
 #include "log.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "reader.h"
 #include "string.h"
 #include "world.h"
@@ -529,7 +530,7 @@ void Entity::postMove()
 	moving = false;
 
 	if (destTile) {
-		boost::optional<double> layermod = destTile->layermods[EXIT_NORMAL];
+		double* layermod = destTile->layermods[EXIT_NORMAL];
 		if (layermod)
 			r.z = *layermod;
 	}
@@ -776,8 +777,8 @@ bool Entity::processScript(const XMLNode node)
 		return false;
 	}
 
-	ScriptInst script(filename);
-	if (!script.validate())
+	ScriptRef script = Script::create(filename);
+	if (!script || !script->validate())
 		return false;
 
 	if (!setScript(trigger, script)) {
@@ -789,7 +790,7 @@ bool Entity::processScript(const XMLNode node)
 	return true;
 }
 
-bool Entity::setScript(const std::string& trigger, ScriptInst& script)
+bool Entity::setScript(const std::string& trigger, ScriptRef& script)
 {
 	if (boost::iequals(trigger, "on_tick")) {
 		tickScript = script;
@@ -846,11 +847,11 @@ void exportEntity()
 		.def("can_move",
 		    static_cast<bool (Entity::*) (int,int,double)>
 		      (&Entity::canMove))
-		.def_readwrite("on_tick", &Entity::tickScript)
-		.def_readwrite("on_turn", &Entity::turnScript)
-		.def_readwrite("on_tile_entry", &Entity::tileEntryScript)
-		.def_readwrite("on_tile_exit", &Entity::tileExitScript)
-		.def_readwrite("on_delete", &Entity::deleteScript)
+//		.def_readwrite("on_tick", &Entity::tickScript)
+//		.def_readwrite("on_turn", &Entity::turnScript)
+//		.def_readwrite("on_tile_entry", &Entity::tileEntryScript)
+//		.def_readwrite("on_tile_exit", &Entity::tileExitScript)
+//		.def_readwrite("on_delete", &Entity::deleteScript)
 		;
 }
 

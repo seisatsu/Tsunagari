@@ -34,6 +34,7 @@
 #include "reader.h"
 #include "readercache.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 
 typedef boost::shared_ptr<Gosu::Song> SongRef;
 
@@ -269,7 +270,6 @@ void Music::tick()
 
 void exportMusic()
 {
-
 	// FIXME: Broken with shift to singleton. No instantiated object to bind.
 	// Fix will require a stub object.
 

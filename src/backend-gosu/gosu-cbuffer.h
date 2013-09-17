@@ -24,8 +24,8 @@
 // IN THE SOFTWARE.
 // **********
 
-#ifndef CBUFFER_H
-#define CBUFFER_H
+#ifndef GOSU_CBUFFER_H
+#define GOSU_CBUFFER_H
 
 #include <Gosu/IO.hpp>
 

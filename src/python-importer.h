@@ -1,6 +1,6 @@
 /***************************************
 ** Tsunagari Tile Engine              **
-** pyworldfinder.h                    **
+** python-importer.h                  **
 ** Copyright 2011-2013 PariahSoft LLC **
 ***************************************/
 
@@ -24,6 +24,9 @@
 // IN THE SOFTWARE.
 // **********
 
+#ifndef PYTHON_IMPORTER_H
+#define PYTHON_IMPORTER_H
+
 /* Install a filter to Python's import statement that blocks illegal modules
  * from being imported. All modules inside a world file are allowed, as are
  * select packages from Python's base installation. Others are denied and will
@@ -32,4 +35,7 @@
  * This function does not add world files to Python's import path. This needs
  * to happen seperately.
  */
-bool add_worldfinder();
+bool pythonImporterInstall();
+
+#endif
+

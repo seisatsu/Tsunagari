@@ -24,7 +24,9 @@
 // IN THE SOFTWARE.
 // **********
 
+
 #include "formatter.h"
+
 
 Formatter::Formatter(std::string format)
 	: result(format), pos(0)
@@ -32,9 +34,11 @@ Formatter::Formatter(std::string format)
 	findNextPlaceholder();
 }
 
+
 Formatter::~Formatter()
 {
 }
+
 
 Formatter::operator const std::string&()
 {
@@ -42,6 +46,7 @@ Formatter::operator const std::string&()
 
 	return result;
 }
+
 
 void Formatter::findNextPlaceholder()
 {
@@ -56,30 +61,67 @@ void Formatter::findNextPlaceholder()
 
 
 template<>
-std::string Formatter::format(const int& data)
+std::string Formatter::format(int data)
 {
 	char buf[512];
-	sprintf(buf, "%i", data);
+	sprintf(buf, "%d", data);
 	return std::string(buf);
 }
 
+
 template<>
-std::string Formatter::format(const double& data)
+std::string Formatter::format(unsigned int data)
+{
+	char buf[512];
+	sprintf(buf, "%u", data);
+	return std::string(buf);
+}
+
+
+template<>
+std::string Formatter::format(long data)
+{
+	char buf[512];
+	sprintf(buf, "%ld", data);
+	return std::string(buf);
+}
+
+
+template<>
+std::string Formatter::format(double data)
 {
 	char buf[512];
 	sprintf(buf, "%f", data);
 	return std::string(buf);
 }
 
-typedef char* cstring;
+
 template<>
-std::string Formatter::format(const cstring& data)
+std::string Formatter::format(const char* data)
 {
 	return std::string(data);
 }
+
 
 template<>
 std::string Formatter::format(const std::string& data)
 {
 	return data;
 }
+
+
+template<>
+std::string Formatter::format(const std::string data)
+{
+	return data;
+}
+
+
+template<>
+std::string Formatter::format(void* data)
+{
+	char buf[512];
+	sprintf(buf, "%p", data);
+	return std::string(buf);
+}
+

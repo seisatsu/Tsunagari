@@ -1,6 +1,6 @@
 /***************************************
 ** Tsunagari Tile Engine              **
-** random.cpp                         **
+** script.cpp                         **
 ** Copyright 2011-2013 PariahSoft LLC **
 ***************************************/
 
@@ -24,26 +24,12 @@
 // IN THE SOFTWARE.
 // **********
 
-#include "python.h"
-#include "python-bindings-template.cpp"
-#include "random.h"
+#include "script.h"
 
-int randInt(int min, int max)
+Script::Script() { }
+Script::~Script() { }
+
+
+void exportScript()
 {
-	return rand() % ((max+1)-min) + min;
 }
-
-double randFloat(double min, double max)
-{
-        int i = rand();
-        double d = (double)i / RAND_MAX;
-        return d * (max-min) + min;
-}
-
-void exportRandom()
-{
-	using namespace boost::python;
-	pythonAddFunction("randint", randInt);
-	pythonAddFunction("randfloat", randFloat);
-}
-

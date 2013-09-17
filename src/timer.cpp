@@ -24,9 +24,9 @@
 // IN THE SOFTWARE.
 // **********
 
-#include <boost/format.hpp>
-
+#include "formatter.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "timer.h"
 #include "world.h"
 
@@ -87,10 +87,8 @@ double Timer::count()
 
 std::string Timer::repr() const
 {
-	using namespace boost;
-
-	return str(format("<timer count=%.02fsec running=%s />")
-			% count() % (isRunning() ? "true" : "false"));
+	return Formatter("<timer count=%.02fsec running=%s />")
+			% count() % (isRunning() ? "true" : "false");
 }
 
 void exportTimer()

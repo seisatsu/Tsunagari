@@ -27,22 +27,9 @@
 #ifndef PYTHON_H
 #define PYTHON_H
 
-// In this file.
-#include <boost/python/def.hpp>
-#include <boost/python/errors.hpp>
-#include <boost/python/import.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/ptr.hpp>
-#include <boost/python/scope.hpp>
-
-// For bindings.
-#include <boost/python/class.hpp>
-#include <boost/python/operators.hpp>
-#include <boost/python/other.hpp>
-#include <boost/python/self.hpp>
-
 #include <string>
 
+typedef struct _object PyObject;
 
 extern int inPythonScript;
 
@@ -57,47 +44,21 @@ void pythonFinalize();
 void pythonErr();
 
 
+bool pythonPrependPath(const std::string& path);
+bool pythonRmPath(const std::string& path);
+
+
 //! Access to global namespace shared by all Python scripts.
 PyObject* pythonGlobals();
 
 //! Bind a C++ object into the global Python namespace.
 template<class T>
-void pythonSetGlobal(const std::string& name, T pointer)
-{
-	using namespace boost::python;
-
-	PyObject* globals = NULL;
-	PyObject* wrapper = NULL;
-
-	if ((globals = pythonGlobals()) == NULL)
-		goto err;
-	try {
-		wrapper = incref(converter::arg_to_python<T>(pointer).get());
-	} catch (boost::python::error_already_set) {
-		goto err;
-	}
-
-	PyDict_SetItemString(globals, name.c_str(), wrapper);
-	Py_DECREF(wrapper);
-
-	return;
-
-err:
-	pythonErr();
-}
+void pythonSetGlobal(const std::string& name, T pointer);
 
 template<class Fn>
-void pythonAddFunction(const std::string& name, Fn fn)
-{
-	using namespace boost::python;
+void pythonAddFunction(const std::string& name, Fn fn);
 
-	try {
-		scope bltins(import("__builtin__"));
-		def(name.c_str(), fn);
-	} catch (error_already_set) {
-		pythonErr();
-	}
-}
+void pythonDumpGlobals();
 
 #endif
 

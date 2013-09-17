@@ -36,7 +36,7 @@
 
 #include "bitrecord.h"
 #include "player.h"
-#include "scriptinst.h"
+#include "script.h"
 #include "viewport.h"
 
 namespace Gosu {
@@ -102,7 +102,7 @@ public:
 	 *
 	 *                       MOVE MODE
 	 *                 TURN     TILE     NOTILE
-	 * Area		   yes      yes      yes
+	 * Area	           yes      yes      yes
 	 * Character       no       yes      yes
 	 * Overlay         yes      yes      yes
 	 */
@@ -113,7 +113,7 @@ public:
 	 *
 	 *                       MOVE MODE
 	 *                 TURN     TILE     NOTILE
-	 * Area		   yes      no       no
+	 * Area	           yes      no       no
 	 * Character       yes      no       no
 	 * Overlay         yes      no       no
 	 */
@@ -145,7 +145,7 @@ public:
 	void runAreaLoadScript(Area* area);
 
 
-	boost::optional<ScriptInst> keydownScript, keyupScript;
+	ScriptRef keydownScript, keyupScript;
 
 protected:
 	/**
@@ -195,8 +195,8 @@ protected:
 	vicoord startCoords;
 
 
-	boost::optional<ScriptInst> loadScript;
-	boost::optional<ScriptInst> areaLoadScript;
+	ScriptRef loadScript;
+	ScriptRef areaLoadScript;
 	ImageRef pauseInfo;
 
 

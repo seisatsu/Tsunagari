@@ -32,7 +32,7 @@
 #include "music.h"
 #include "random.h"
 #include "reader.h"
-#include "scriptinst.h"
+#include "script.h"
 #include "sound.h"
 #include "tile.h"
 #include "timer.h"
@@ -48,7 +48,7 @@ BOOST_PYTHON_MODULE(tsunagari)
 	exportMusic();
 	exportRandom();
 	exportReader();
-	exportScriptInst();
+	exportScript();
 	exportSound();
 	exportTile();
 	exportTimeout();

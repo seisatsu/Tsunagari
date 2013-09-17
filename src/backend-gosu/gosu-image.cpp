@@ -1,6 +1,6 @@
 /***************************************
 ** Tsunagari Tile Engine              **
-** image-impl.cpp                     **
+** gosu-image.cpp                     **
 ** Copyright 2011-2013 PariahSoft LLC **
 ***************************************/
 

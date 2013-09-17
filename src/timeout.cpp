@@ -26,43 +26,45 @@
 
 #include <list>
 
-#include <boost/format.hpp>
-
+#include "formatter.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "timeout.h"
 #include "world.h"
 
 static std::list<Timeout*> timeouts;
 
-static Timeout* pythonSetTimeout(boost::python::object callback, float delay)
-{
-	if (delay < 0.0)
-		delay = 0.0;
+/* These require Script::create(boost::python::object) */
 
-	time_t delayi = (time_t)(1000 * delay);
-	time_t now = World::instance()->time();
-	time_t end = now + delayi;
+//static Timeout* pythonSetTimeout(boost::python::object callback, float delay)
+//{
+//	if (delay < 0.0)
+//		delay = 0.0;
+//
+//	time_t delayi = (time_t)(1000 * delay);
+//	time_t now = World::instance()->time();
+//	time_t end = now + delayi;
+//
+//	// Insert sorted by resolution time.
+//	std::list<Timeout*>::iterator it;
+//	for (it = timeouts.begin(); it != timeouts.end(); it++) {
+//		Timeout* t = *it;
+//		if (end < t->readyTime())
+//			break;
+//	}
+//
+//	Timeout* t = new Timeout(callback, delay);
+//	timeouts.insert(it, t);
+//	return t;
+//}
 
-	// Insert sorted by resolution time.
-	std::list<Timeout*>::iterator it;
-	for (it = timeouts.begin(); it != timeouts.end(); it++) {
-		Timeout* t = *it;
-		if (end < t->readyTime())
-			break;
-	}
-
-	Timeout* t = new Timeout(callback, delayi);
-	timeouts.insert(it, t);
-	return t;
-}
-
-Timeout::Timeout(boost::python::object callback, time_t delay)
-	: callback(callback),
-	  start(World::instance()->time()),
-	  delay(delay),
-	  active(true)
-{
-}
+//Timeout::Timeout(boost::python::object callback, time_t delay)
+//	: callback(Script::create(callback)),
+//	  start(World::instance()->time()),
+//	  delay(delay),
+//	  active(true)
+//{
+//}
 
 void Timeout::cancel()
 {
@@ -86,18 +88,15 @@ time_t Timeout::readyTime() const
 
 void Timeout::execute()
 {
-	callback.invoke();
+	callback->invoke();
 }
 
 std::string Timeout::repr() const
 {
-	using namespace boost;
-
 	time_t now = World::instance()->time();
-	return str(format("<timeout time_remaining=%dms active=%s />")
+	return Formatter("<timeout time_remaining=%dms active=%s />")
 			% (start + delay - now)
-			% (isActive() ? "true" : "false")
-	);
+			% (isActive() ? "true" : "false");
 }
 
 void updateTimeouts()
@@ -131,7 +130,7 @@ void exportTimeout()
 		.def("__repr__", &Timeout::repr)
 		;
 
-	pythonAddFunction("timeout", make_function(pythonSetTimeout,
-		return_value_policy<reference_existing_object>()));
+//	pythonAddFunction("timeout", make_function(pythonSetTimeout,
+//		return_value_policy<reference_existing_object>()));
 }
 

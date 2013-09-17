@@ -2,8 +2,8 @@
 <map version="1.0" orientation="orthogonal" width="14" height="20" tilewidth="16" tileheight="16">
  <properties>
   <property name="name" value="Cave 01"/>
-  <property name="on_load" value="areas/cave01.py:cave_load()"/>
-  <property name="on_tick" value="areas/cave01.py:cave_tick()"/>
+  <property name="on_load" value="areas.cave01:load"/>
+  <property name="on_tick" value="areas.cave01:tick"/>
  </properties>
  <tileset firstgid="1" source="areas/tiles/cave.png.tsx"/>
  <tileset firstgid="337" source="areas/tiles/objects.png.tsx"/>
@@ -663,7 +663,7 @@
   <object x="96" y="176" width="16" height="16">
    <properties>
     <property name="flags" value="nowalk"/>
-    <property name="on_use" value="areas/sounds.py:sound_ouch()"/>
+    <property name="on_use" value="areas.sounds:sound_ouch"/>
    </properties>
   </object>
   <object x="0" y="176" width="16" height="80">

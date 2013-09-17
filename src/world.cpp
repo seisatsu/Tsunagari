@@ -32,6 +32,7 @@
 #include "log.h"
 #include "music.h"
 #include "python.h"
+#include "python-bindings-template.cpp"
 #include "timeout.h"
 #include "window.h"
 #include "world.h"
@@ -441,15 +442,22 @@ bool World::processScript(XMLNode node)
 {
 	for (node = node.childrenNode(); node; node = node.next()) {
 		std::string filename = node.content();
-		ScriptInst script(filename);
+		ScriptRef script = Script::create(filename);
+
+		if (!script)
+			return false;
 
 		if (node.is("on_init")) {
-			if (!script.validate())
+			if (!script->validate()) {
+				Log::err("World", "on_init: " + filename + ": invalid");
 				return false;
+			}
 			loadScript = script;
 		} else if (node.is("on_area_init")) {
-			if (!script.validate())
+			if (!script->validate()) {
+				Log::err("World", "on_area_init: " + filename + ": invalid");
 				return false;
+			}
 			areaLoadScript = script;
 		}
 	}
@@ -478,8 +486,8 @@ void exportWorld()
 		.def("focus",
 			static_cast<void (World::*) (Area*,int,int,double)>
 			(&World::focusArea))
-		.def_readwrite("on_key_down", &World::keydownScript)
-		.def_readwrite("on_key_up", &World::keyupScript)
+//		.def_readwrite("on_key_down", &World::keydownScript)
+//		.def_readwrite("on_key_up", &World::keyupScript)
 		;
 }
 

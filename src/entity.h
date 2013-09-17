@@ -37,8 +37,7 @@ class Entity;
 
 #include "tile.h" // for enum TileEventTrigger
 #include "reader.h"
-#include "scriptinst.h"
-#include "python.h"
+#include "script.h"
 
 class Animation;
 class Area;
@@ -175,7 +174,7 @@ public:
 	//
 
 	//! Script hooks.
-	boost::optional<ScriptInst> tickScript, turnScript, tileEntryScript,
+	ScriptRef tickScript, turnScript, tileEntryScript,
 	           tileExitScript, deleteScript;
 
 
@@ -228,7 +227,7 @@ protected:
 	bool processSound(const XMLNode node);
 	bool processScripts(XMLNode node);
 	bool processScript(const XMLNode node);
-	bool setScript(const std::string& trigger, ScriptInst& script);
+	bool setScript(const std::string& trigger, ScriptRef& script);
 
 
 protected:

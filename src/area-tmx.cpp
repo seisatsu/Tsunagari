@@ -153,29 +153,29 @@ bool AreaTMX::processMapProperties(XMLNode node)
 		}
 		else if (name == "on_load") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			loadScript = script;
 		}
 		else if (name == "on_focus") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			focusScript = script;
 		}
 		else if (name == "on_tick") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			tickScript = script;
 		}
 		else if (name == "on_turn") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			turnScript = script;
 		}
@@ -337,22 +337,22 @@ bool AreaTMX::processTileType(XMLNode node, TileType& type,
 		}
 		else if (name == "on_enter") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			type.enterScript = script;
 		}
 		else if (name == "on_leave") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			type.leaveScript = script;
 		}
 		else if (name == "on_use") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			type.useScript = script;
 		}
@@ -629,9 +629,9 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	// Gather object properties now. Assign them to tiles later.
 	bool wwide[5], hwide[5]; /* wide exit in dimensions: width, height */
 
-	boost::optional<ScriptInst> enterScript, leaveScript, useScript;
+	ScriptRef enterScript, leaveScript, useScript;
 	boost::scoped_ptr<Exit> exit[5];
-	boost::optional<double> layermods[5];
+	boost::scoped_ptr<double> layermods[5];
 	unsigned flags = 0x0;
 
 	XMLNode child = node.childrenNode(); // <properties>
@@ -648,22 +648,22 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		}
 		else if (name == "on_enter") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			enterScript = script;
 		}
 		else if (name == "on_leave") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			leaveScript = script;
 		}
 		else if (name == "on_use") {
 			std::string filename = value;
-			ScriptInst script(filename);
-			if (!script.validate())
+			ScriptRef script = Script::create(filename);
+			if (!script || !script->validate())
 				return false;
 			useScript = script;
 		}
@@ -691,28 +691,28 @@ bool AreaTMX::processObject(XMLNode node, int z)
 		else if (name == "layermod") {
 			double mod;
 			ASSERT(child.doubleAttr("value", &mod));
-			layermods[EXIT_NORMAL].reset(mod);
+			layermods[EXIT_NORMAL].reset(new double(mod));
 			flags |= TILE_NOWALK_NPC;
 		}
 		else if (name == "layermod:up") {
 			double mod;
 			ASSERT(child.doubleAttr("value", &mod));
-			layermods[EXIT_UP].reset(mod);
+			layermods[EXIT_UP].reset(new double(mod));
 		}
 		else if (name == "layermod:down") {
 			double mod;
 			ASSERT(child.doubleAttr("value", &mod));
-			layermods[EXIT_DOWN].reset(mod);
+			layermods[EXIT_DOWN].reset(new double(mod));
 		}
 		else if (name == "layermod:left") {
 			double mod;
 			ASSERT(child.doubleAttr("value", &mod));
-			layermods[EXIT_LEFT].reset(mod);
+			layermods[EXIT_LEFT].reset(new double(mod));
 		}
 		else if (name == "layermod:right") {
 			double mod;
 			ASSERT(child.doubleAttr("value", &mod));
-			layermods[EXIT_RIGHT].reset(mod);
+			layermods[EXIT_RIGHT].reset(new double(mod));
 		}
 	}
 
@@ -766,8 +766,7 @@ bool AreaTMX::processObject(XMLNode node, int z)
 				}
 			}
 			for (int i = 0; i < 5; i++)
-				if (layermods[i])
-					tile.layermods[i] = layermods[i];
+				tile.layermods[i] = layermods[i] ? new double(*layermods[i].get()) : NULL;
 			tile.enterScript = enterScript;
 			tile.leaveScript = leaveScript;
 			tile.useScript = useScript;

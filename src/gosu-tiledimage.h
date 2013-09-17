@@ -1,6 +1,6 @@
 /***************************************
 ** Tsunagari Tile Engine              **
-** tiledimage-impl.h                  **
+** gosu-tiledimage.h                  **
 ** Copyright 2011-2013 PariahSoft LLC **
 ***************************************/
 
@@ -24,8 +24,8 @@
 // IN THE SOFTWARE.
 // **********
 
-#ifndef TILEDIMAGE_IMPL_H
-#define TILEDIMAGE_IMPL_H
+#ifndef GOSU_TILEDIMAGE_H
+#define GOSU_TILEDIMAGE_H
 
 #include <vector>
 

@@ -1,6 +1,6 @@
 /***************************************
 ** Tsunagari Tile Engine              **
-** random.cpp                         **
+** script.h                           **
 ** Copyright 2011-2013 PariahSoft LLC **
 ***************************************/
 
@@ -24,26 +24,30 @@
 // IN THE SOFTWARE.
 // **********
 
-#include "python.h"
-#include "python-bindings-template.cpp"
-#include "random.h"
+#ifndef SCRIPT_H
+#define SCRIPT_H
 
-int randInt(int min, int max)
-{
-	return rand() % ((max+1)-min) + min;
-}
+#include <boost/shared_ptr.hpp>
 
-double randFloat(double min, double max)
-{
-        int i = rand();
-        double d = (double)i / RAND_MAX;
-        return d * (max-min) + min;
-}
+class Script;
+typedef boost::shared_ptr<Script> ScriptRef;
 
-void exportRandom()
+class Script
 {
-	using namespace boost::python;
-	pythonAddFunction("randint", randInt);
-	pythonAddFunction("randfloat", randFloat);
-}
+public:
+	template<class T>
+	static ScriptRef create(T t);
+
+	virtual ~Script() = 0;
+
+	virtual bool validate() = 0;
+	virtual bool invoke() = 0;
+
+protected:
+	Script(); // this is the abstract class; see script-python.h for impl
+};
+
+void exportScript();
+
+#endif
 

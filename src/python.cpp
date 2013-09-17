@@ -38,7 +38,7 @@
 #include "log.h"
 #include "python.h"
 #include "python-bindings.h" // for pythonInitBindings
-#include "pyworldfinder.h"
+#include "python-importer.h"
 #include "reader.h"
 #include "window.h"
 
@@ -47,8 +47,8 @@
 
 namespace bp = boost::python;
 
-static PyObject* mainModule;
-static PyObject* mainDict;
+//static PyObject* mainModule;
+//static PyObject* mainDict;
 
 int inPythonScript = 0;
 
@@ -97,14 +97,12 @@ PyMethodDef nullMethods[] = {
 	{NULL, NULL, 0, NULL}
 };
 
-static bool sysPathAppend(const std::string& path)
+bool pythonPrependPath(const std::string& path)
 {
 	PyObject* pypath = NULL;
 	PyObject* syspath = NULL;
-	int idx = -1;
 
-	pypath = PyString_FromString(path.c_str());
-	if (pypath == NULL)
+	if ((pypath = PyString_FromString(path.c_str())) == NULL)
 		goto err;
 
 	syspath = PySys_GetObject((char*)"path");
@@ -114,8 +112,7 @@ static bool sysPathAppend(const std::string& path)
 		goto err;
 	}
 
-	idx = PyList_Append(syspath, pypath);
-	if (idx == -1) {
+	if (PyList_Insert(syspath, 0, pypath) == -1) {
 		Log::fatal("Python", "failed to append to sys.path");
 		goto err;
 	}
@@ -128,13 +125,47 @@ err:
 	return false;
 }
 
+
+bool pythonRmPath(const std::string& path)
+{
+	PyObject* pypath = NULL;
+	PyObject* syspath = NULL;
+
+	if ((pypath = PyString_FromString(path.c_str())) == NULL)
+		goto err;
+
+	syspath = PySys_GetObject((char*)"path");
+	if (syspath == NULL || !PyList_Check(syspath)) {
+		Log::fatal("Python",
+				   "sys.path must be a list of strings");
+		goto err;
+	}
+
+	if (PyList_SetSlice(syspath, 0, 1, NULL) == -1) {
+		Log::err("Python", "failed to pop sys.path");
+		goto err;
+	}
+
+	Py_DECREF(pypath);
+	return true;
+
+err:
+	Py_XDECREF(pypath);
+	return false;
+}
+
+
+
 bool pythonInit()
 {
-	PyObject* name = NULL;
-	PyObject* tsuModule = NULL;
+	PyObject* module = NULL;
 
 	PyImport_AppendInittab("tsunagari", &pythonInitBindings);
 	Py_InitializeEx(0);
+
+	if ((module = PyImport_ImportModule("tsunagari")) == NULL)
+		goto err;
+	Py_DECREF(module);
 
 	if (PyUnicode_SetDefaultEncoding("utf-8")) {
 		PyErr_Format(PyExc_SystemError,
@@ -142,36 +173,13 @@ bool pythonInit()
 		goto err;
 	}
 
-	if ((mainModule = PyImport_ImportModule("__main__")) == NULL)
-		goto err;
-	if ((mainDict = PyModule_GetDict(mainModule)) == NULL)
-		goto err;
-
-	if ((name = PyString_FromString("tsunagari")) == NULL)
-		goto err;
-	if ((tsuModule = PyImport_ImportModule("tsunagari")) == NULL)
-		goto err;
-	if (PyObject_SetAttr(mainModule, name, tsuModule) < 0)
-		goto err;
-
-	Py_DECREF(name);
-	Py_DECREF(tsuModule);
-
 	// Disable builtin filesystem IO.
 	if (Py_InitModule("__builtin__", nullMethods) == NULL)
 		goto err;
 
 	// Disable most Python system imports.
-	if (!add_worldfinder())
+	if (!pythonImporterInstall())
 		goto err;
-
-	// Add world to Python's sys.path.
-	if (!sysPathAppend(BASE_ZIP_PATH))
-		goto err;
-	
-	for (Conf::StringVector::iterator it = conf.dataPath.begin(); it != conf.dataPath.end(); it++)
-		if (!sysPathAppend(*it))
-			goto err;
 
 	return true;
 
@@ -185,7 +193,7 @@ err:
 
 void pythonFinalize()
 {
-	Py_DECREF(mainModule);
+//	Py_DECREF(mainModule);
 	Py_Finalize();
 }
 
@@ -267,6 +275,22 @@ void pythonErr()
 
 PyObject* pythonGlobals()
 {
-	return mainDict;
+	PyObject* bltins = NULL, *dict = NULL;
+
+	if ((bltins = PyImport_ImportModule("__builtin__")) == NULL)
+		goto err;
+	if ((dict = PyModule_GetDict(bltins)) == NULL)
+		goto err;
+	Py_DECREF(bltins);
+	return dict;
+
+err:
+	Py_XDECREF(bltins);
+	return NULL;
 }
 
+
+void pythonDumpGlobals()
+{
+	Log::info("globals-state", PyString_AsString(PyObject_Repr(pythonGlobals())));
+}
