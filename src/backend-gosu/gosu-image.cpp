@@ -32,7 +32,7 @@
 
 #include "gosu-cbuffer.h"
 #include "gosu-image.h"
-#include "window.h"
+#include "../window.h"
 
 
 Image* Image::create(void* data, size_t length)

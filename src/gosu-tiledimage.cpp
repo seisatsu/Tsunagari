@@ -26,8 +26,8 @@
 
 #include <Gosu/Bitmap.hpp>
 
-#include "gosu-cbuffer.h"
-#include "gosu-image.h"
+#include "backend-gosu/gosu-cbuffer.h"
+#include "backend-gosu/gosu-image.h"
 #include "gosu-tiledimage.h"
 #include "window.h"
 
