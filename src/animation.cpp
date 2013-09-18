@@ -32,12 +32,16 @@
 
 Animation::Animation()
 	: cycles(0),
+	  frameTime(1),
+	  cycleTime(1),
 	  frameShowing(0)
 {
 }
 
 Animation::Animation(const ImageRef& frame)
 	: cycles(0),
+	  frameTime(1),
+	  cycleTime(1),
 	  frameShowing(0)
 {
 	frames.push_back(frame);
@@ -46,6 +50,7 @@ Animation::Animation(const ImageRef& frame)
 Animation::Animation(const std::vector<ImageRef>& _frames, time_t frameTime)
 	: cycles(0),
 	  frameTime(frameTime),
+	  cycleTime(1),
 	  frameShowing(0),
 	  offset(0)
 {
