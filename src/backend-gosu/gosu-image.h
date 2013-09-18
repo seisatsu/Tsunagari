@@ -27,7 +27,7 @@
 #ifndef GOSU_IMAGE_H
 #define GOSU_IMAGE_H
 
-#include "image.h"
+#include "../image.h"
 
 namespace Gosu { class Bitmap; }
 namespace Gosu { class Image; }
