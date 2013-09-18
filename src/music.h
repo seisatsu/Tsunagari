@@ -27,7 +27,12 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
+#include <Gosu/Audio.hpp> // for Gosu::SampleInstance
+
 #include <string>
+
+#include "cache-template.cpp"
+#include "readercache.h"
 
 /**
  * State manager for currently playing music. Continuously controls which music
@@ -45,21 +50,55 @@
 class Music
 {
 public:
-	static std::string getIntro();
-	static std::string getLoop();
+	Music();
+	~Music();
 
-	static void setIntro(const std::string& filename);
-	static void setLoop(const std::string& filename);
+	std::string getIntro();
+	std::string getLoop();
 
-	static int getVolume();
-	static void setVolume(int level);
+	void setIntro(const std::string& filename);
+	void setLoop(const std::string& filename);
 
-	static bool isPaused();
-	static void setPaused(bool p);
+	int getVolume();
+	void setVolume(int level);
 
-	static void stop();
+	bool isPaused();
+	void setPaused(bool p);
 
-	static void tick();
+	void stop();
+
+	void tick();
+	
+	typedef boost::shared_ptr<Gosu::Song> SongRef;
+
+private:
+	enum MUSIC_STATE
+	{
+		NOT_PLAYING,
+		PLAYING_INTRO,
+		PLAYING_LOOP,
+		CHANGED_INTRO,
+		CHANGED_LOOP
+	};
+
+	void setState(MUSIC_STATE state_);
+	void playIntro();
+	void playLoop();
+	
+	SongRef getSong(const std::string& name);
+
+	ReaderCache<SongRef> songs;
+
+	SongRef musicInst, introMusic, loopMusic;
+	
+	bool paused;
+	
+	MUSIC_STATE state;
+	
+	std::string newIntro;
+	std::string newLoop;
+	std::string curIntro;
+	std::string curLoop;
 };
 
 //! Register Music with Python.

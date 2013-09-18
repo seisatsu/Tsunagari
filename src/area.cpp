@@ -99,9 +99,9 @@ void Area::focus()
 	}
 
 	if (musicIntroSet)
-		Music::setIntro(musicIntro);
+		World::instance()->getMusic()->setIntro(musicIntro);
 	if (musicLoopSet)
-		Music::setLoop(musicLoop);
+		World::instance()->getMusic()->setLoop(musicLoop);
 
 	pythonSetGlobal("Area", this);
 	if (focusScript)
@@ -204,7 +204,7 @@ void Area::tick(unsigned long dt)
 	}
 
 	view->tick(dt);
-	Music::tick();
+	World::instance()->getMusic()->tick();
 }
 
 void Area::turn()

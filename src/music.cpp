@@ -25,51 +25,25 @@
 // **********
 
 #include <boost/scoped_ptr.hpp>
-#include <Gosu/Audio.hpp> // for Gosu::SampleInstance
 #include <Gosu/Math.hpp>
 
-#include "cache-template.cpp"
 #include "client-conf.h"
 #include "music.h"
 #include "reader.h"
-#include "readercache.h"
 #include "python.h"
 #include "python-bindings-template.cpp"
 
-typedef boost::shared_ptr<Gosu::Song> SongRef;
-
-enum MUSIC_STATE
-{
-	NOT_PLAYING,
-	PLAYING_INTRO,
-	PLAYING_LOOP,
-	CHANGED_INTRO,
-	CHANGED_LOOP
-};
-
-static SongRef musicInst, introMusic, loopMusic;
-
-static bool paused = false;
-
-static MUSIC_STATE state = NOT_PLAYING;
-
-static std::string newIntro;
-static std::string newLoop;
-static std::string curIntro;
-static std::string curLoop;
-
-
-static SongRef genSong(const std::string& name)
+static Music::SongRef genSong(const std::string& name)
 {
 	boost::scoped_ptr<Gosu::Buffer> buffer(Reader::readBuffer(name));
 	if (!buffer)
-		return SongRef();
-	return SongRef(new Gosu::Song(buffer->frontReader()));
+		return Music::SongRef();
+	return Music::SongRef(new Gosu::Song(buffer->frontReader()));
 }
 
-static ReaderCache<SongRef> songs(genSong);
 
-static SongRef getSong(const std::string& name)
+
+Music::SongRef Music::getSong(const std::string& name)
 {
 	if (!conf.audioEnabled)
 		return SongRef();
@@ -97,13 +71,13 @@ static const char* stateStr(MUSIC_STATE state)
 }
 */
 
-static void setState(MUSIC_STATE state_)
+void Music::setState(MUSIC_STATE state_)
 {
 	// printf("State changed from %s to %s.\n", stateStr(this->state), stateStr(state));
 	state = state_;
 }
 
-static void playIntro()
+void Music::playIntro()
 {
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
@@ -114,7 +88,7 @@ static void playIntro()
 	setState(PLAYING_INTRO);
 }
 
-static void playLoop()
+void Music::playLoop()
 {
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
@@ -126,8 +100,8 @@ static void playLoop()
 }
 
 
-/*
-Music::Music()
+
+Music::Music() : songs(genSong), paused(false), state(NOT_PLAYING)
 {
 }
 
@@ -136,7 +110,6 @@ Music::~Music()
 	if (musicInst && musicInst->playing())
 		musicInst->stop();
 }
-*/
 
 std::string Music::getIntro()
 {
@@ -270,10 +243,6 @@ void Music::tick()
 
 void exportMusic()
 {
-	// FIXME: Broken with shift to singleton. No instantiated object to bind.
-	// Fix will require a stub object.
-
-#if 0
 	boost::python::class_<Music>("MusicManager", boost::python::no_init)
 		.add_property("intro", &Music::getIntro, &Music::setIntro)
 		.add_property("loop", &Music::getLoop, &Music::setLoop)
@@ -281,7 +250,5 @@ void exportMusic()
 		.add_property("paused", &Music::isPaused, &Music::setPaused)
 		.def("stop", &Music::stop)
 		;
-
-	pythonSetGlobal("Music", this);
-#endif
 }
+

@@ -3,13 +3,12 @@ import areas.sounds
 opened_chest = False
 
 def toggle_music():
-#	if Music.paused:
-#		Music.paused = False
-#		log('Unpausing music!')
-#	else:
-#		Music.paused = True
-#		log('Pausing music!')
-	pass
+	if Music.paused:
+		Music.paused = False
+		log('Unpausing music!')
+	else:
+		Music.paused = True
+		log('Pausing music!')
 
 def open_chest():
 	# This function is called when the chest in grove02.tmx is activated by

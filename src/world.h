@@ -35,6 +35,7 @@
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
 #include "bitrecord.h"
+#include "music.h"
 #include "player.h"
 #include "script.h"
 #include "viewport.h"
@@ -144,6 +145,7 @@ public:
 
 	void runAreaLoadScript(Area* area);
 
+	Music* getMusic();
 
 	ScriptRef keydownScript, keyupScript;
 
@@ -202,6 +204,7 @@ protected:
 
 	AreaMap areas;
 	Area* area;
+	Music music;
 	Player player;
 	std::string playerPhase;
 	boost::shared_ptr<Viewport> view;

@@ -70,6 +70,8 @@ bool World::init()
 	view.reset(new Viewport(viewportSz));
 	view->trackEntity(&player);
 
+	pythonSetGlobal("Music", &music);
+
 	if (loadScript)
 		loadScript->invoke();
 
@@ -239,9 +241,9 @@ void World::setPaused(bool b)
 	paused += b ? 1 : -1;
 
 	if (paused)
-		Music::setPaused(true);
+		music.setPaused(true);
 	else
-		Music::setPaused(false);
+		music.setPaused(false);
 
 	// If finally unpausing.
 	if (!paused)
@@ -277,6 +279,11 @@ void World::runAreaLoadScript(Area* area)
 	pythonSetGlobal("Area", area);
 	if (areaLoadScript)
 		areaLoadScript->invoke();
+}
+
+Music* World::getMusic()
+{
+	return &music;
 }
 
 time_t World::calculateDt(time_t now)
