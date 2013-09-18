@@ -26,10 +26,10 @@
 
 #include <Gosu/Bitmap.hpp>
 
-#include "backend-gosu/gosu-cbuffer.h"
-#include "backend-gosu/gosu-image.h"
+#include "gosu-cbuffer.h"
+#include "gosu-image.h"
 #include "gosu-tiledimage.h"
-#include "window.h"
+#include "../window.h"
 
 TiledImage* TiledImage::create(void* data, size_t length,
 		unsigned tileW, unsigned tileH)

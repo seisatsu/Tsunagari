@@ -29,7 +29,7 @@
 
 #include <vector>
 
-#include "tiledimage.h"
+#include "../tiledimage.h"
 
 class TiledImageImpl : public TiledImage
 {

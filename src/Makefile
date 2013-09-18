@@ -8,12 +8,12 @@
 include Makefile.common
 
 OBJECTS = animation.o area.o area-tmx.o bitrecord.o cache-template.o \
-character.o client-conf.o entity.o formatter.o gosu-tiledimage.o image.o \
-log.o main.o music.o npc.o os-windows.o overlay.o player.o python-bindings.o \
+character.o client-conf.o entity.o formatter.o image.o log.o main.o music.o \
+npc.o os-windows.o overlay.o player.o python-bindings.o \
 python-bindings-template.o python.o python-importer.o random.o reader.o \
 script.o script-python.o sound.o string.o tile.o tiledimage.o timeout.o \
 timer.o vec.o viewport.o window.o world.o xml.o backend-gosu/gosu-cbuffer.o \
-backend-gosu/gosu-image.o nbcl/nbcl.o
+backend-gosu/gosu-image.o backend-gosu/gosu-tiledimage.o nbcl/nbcl.o
 
 # Name of testing world.
 BASEDATA = ../data/base.zip
@@ -95,10 +95,6 @@ entity.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
  viewport.h world.h xml.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 formatter.o: formatter.cpp formatter.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-gosu-tiledimage.o: gosu-tiledimage.cpp gosu-tiledimage.h image.h \
- tiledimage.h window.h backend-gosu/gosu-cbuffer.h backend-gosu/gosu-image.h \
- backend-gosu/../image.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
 image.o: image.cpp image.h
 #pragma GCC pch_preprocess "./precompile.h.gch"
