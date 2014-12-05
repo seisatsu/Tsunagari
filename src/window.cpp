@@ -24,7 +24,6 @@
 // IN THE SOFTWARE.
 // **********
 
-#include <boost/foreach.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Graphics
 #include <Gosu/Timing.hpp>
 #include <Gosu/Utility.hpp>

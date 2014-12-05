@@ -28,9 +28,9 @@
 #define WINDOW_H
 
 #include <map>
+#include <memory>
 #include <string>
 
-#include <boost/scoped_ptr.hpp>
 #include <Gosu/Window.hpp> // for Gosu::Window
 
 namespace Gosu {
@@ -86,7 +86,7 @@ protected:
 	//! Process persistent keyboard input
 	void handleKeyboardInput(time_t now);
 
-	boost::scoped_ptr<World> world;
+	std::unique_ptr<World> world;
 
 	time_t now;
 	time_t lastGCtime;
