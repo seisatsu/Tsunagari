@@ -26,10 +26,8 @@
 
 #include <stdlib.h> // for exit(1) on fatal
 
-#include <boost/foreach.hpp>
-#include <boost/format.hpp>
-
 #include "area.h"
+#include "formatter.h"
 #include "log.h"
 #include "python.h"
 #include "python-bindings-template.cpp"
@@ -307,12 +305,10 @@ void TileSet::set(int idx, TileType* type)
 
 TileType* TileSet::get(int x, int y)
 {
-	using namespace boost;
-
 	size_t i = idx(x, y);
 	if (i > types.size()) {
-		Log::err("TileSet", str(format("get(%d, %d): out of bounds")
-				% x % y));
+		Log::err("TileSet",
+			Formatter("get(%, %): out of bounds") % x % y);
 		return NULL;
 	}
 	return types[i];
