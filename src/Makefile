@@ -20,15 +20,6 @@ BASEDATA = ../data/base.zip
 TESTWORLD = ../data/testing.world
 
 
-### --- PRECOMPILED HEADERS --- ###
-
-PRECOMPILE_SRC = precompile.h
-PRECOMPILE_OBJ = precompile.h.gch
-
-CXXFLAGS += -fpch-preprocess -include precompile.h
-export CCACHE_SLOPPINESS=time_macros
-
-
 ### --- RULES --- ###
 
 all: tsunagari $(BASEDATA) $(TESTWORLD)
@@ -39,11 +30,8 @@ depend:
 	$(CXX) $(CXXFLAGS) -MM *.cpp | perl ../scripts/filter-depend.pl >> Mf
 	mv Mf Makefile
 
-tsunagari: $(PRECOMPILE_OBJ) $(OBJECTS)
+tsunagari: $(OBJECTS)
 	$(CXX) -o tsunagari $(OBJECTS) $(LDFLAGS)
-
-$(PRECOMPILE_OBJ): $(PRECOMPILE_SRC)
-	make -f Makefile.precompile
 
 %.zip:
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
@@ -52,7 +40,7 @@ $(PRECOMPILE_OBJ): $(PRECOMPILE_SRC)
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
 
 clean:
-	$(RM) tsunagari *.o */*.o $(PRECOMPILE_OBJ) $(BASEDATA) $(TESTWORLD)
+	$(RM) tsunagari *.o */*.o $(BASEDATA) $(TESTWORLD)
 
 
 ### --- DEPENDS SECTION --- ###
@@ -63,125 +51,96 @@ clean:
 # a #include anywhere or if you add/remove a C++ file.
 
 ### --- DO NOT DELETE THIS LINE --- ###
-
-#pragma GCC pch_preprocess "./precompile.h.gch"
 animation.o: animation.cpp animation.h cache.h image.h reader.h sound.h \
  tiledimage.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-area.o: animation.h area.cpp area.h bitrecord.h cache.h character.h \
- client-conf.h entity.h formatter.h image.h log.h music.h npc.h overlay.h \
- player.h python-bindings-template.cpp python.h reader.h script.h sound.h \
+area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h bitrecord.h \
+ cache-template.cpp cache.h character.h client-conf.h entity.h image.h log.h \
+ music.h player.h python.h reader.h readercache.h script.h sound.h string.h \
  tile.h tiledimage.h vec.h viewport.h window.h world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h bitrecord.h cache.h \
- character.h entity.h image.h log.h player.h python.h reader.h script.h \
- sound.h string.h tile.h tiledimage.h vec.h viewport.h window.h world.h \
- xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+area.o: animation.h area.cpp area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.h formatter.h image.h log.h music.h npc.h \
+ overlay.h player.h python-bindings-template.cpp python.h reader.h \
+ readercache.h script.h sound.h tile.h tiledimage.h vec.h viewport.h \
+ window.h world.h xml.h
 bitrecord.o: bitrecord.cpp bitrecord.h window.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 cache-template.o: cache-template.cpp cache.h client-conf.h log.h vec.h \
  window.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 character.o: animation.h area.h cache.h character.cpp character.h entity.h \
  image.h reader.h script.h sound.h tile.h tiledimage.h vec.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 client-conf.o: client-conf.cpp client-conf.h log.h string.h vec.h \
  nbcl/nbcl.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-entity.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
- entity.cpp entity.h image.h log.h player.h python-bindings-template.cpp \
- python.h reader.h script.h sound.h string.h tile.h tiledimage.h vec.h \
- viewport.h world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-formatter.o: formatter.cpp formatter.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-image.o: image.cpp image.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-log.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
- entity.h image.h log.cpp log.h player.h python-bindings-template.cpp \
- python.h reader.h script.h sound.h tile.h tiledimage.h vec.h viewport.h \
+entity.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.cpp entity.h image.h log.h music.h \
+ player.h python-bindings-template.cpp python.h reader.h readercache.h \
+ script.h sound.h string.h tile.h tiledimage.h vec.h viewport.h window.h \
  world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-main.o: cache.h client-conf.h image.h log.h main.cpp python.h reader.h \
- sound.h tiledimage.h vec.h window.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+formatter.o: formatter.cpp formatter.h
+image.o: image.cpp image.h
+log.o: animation.h area.h bitrecord.h cache-template.cpp cache.h character.h \
+ client-conf.h entity.h image.h log.cpp log.h music.h os-mac.h player.h \
+ python-bindings-template.cpp python.h reader.h readercache.h script.h \
+ sound.h tile.h tiledimage.h vec.h viewport.h window.h world.h xml.h
+main.o: cache.h client-conf.h image.h log.h main.cpp os-mac.h python.h \
+ reader.h sound.h tiledimage.h vec.h window.h xml.h
 music.o: cache-template.cpp cache.h client-conf.h image.h log.h music.cpp \
  music.h python-bindings-template.cpp python.h reader.h readercache.h \
  sound.h tiledimage.h vec.h window.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 npc.o: animation.h area.h cache.h character.h entity.h image.h npc.cpp npc.h \
  reader.h script.h sound.h tile.h tiledimage.h vec.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 os-windows.o: os-windows.cpp
-#pragma GCC pch_preprocess "./precompile.h.gch"
 overlay.o: animation.h area.h cache.h client-conf.h entity.h image.h log.h \
  overlay.cpp overlay.h reader.h script.h sound.h tile.h tiledimage.h vec.h \
  xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-player.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
- entity.h image.h log.h player.cpp player.h reader.h script.h sound.h tile.h \
- tiledimage.h vec.h viewport.h window.h world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-python-bindings.o: animation.h area.h bitrecord.h cache.h character.h \
- entity.h image.h log.h music.h player.h python-bindings.cpp random.h \
- reader.h script.h sound.h tile.h tiledimage.h timeout.h timer.h vec.h \
- viewport.h world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+player.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.h image.h log.h music.h player.cpp \
+ player.h reader.h readercache.h script.h sound.h tile.h tiledimage.h vec.h \
+ viewport.h window.h world.h xml.h
 python-bindings-template.o: python-bindings-template.cpp python.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+python-bindings.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.h image.h log.h music.h player.h \
+ python-bindings.cpp random.h reader.h readercache.h script.h sound.h tile.h \
+ tiledimage.h timeout.h timer.h vec.h viewport.h window.h world.h xml.h
+python-importer.o: cache.h formatter.h image.h log.h python-importer.cpp \
+ python-importer.h reader.h sound.h tiledimage.h xml.h
 python.o: cache.h client-conf.h image.h log.h python-bindings.h \
  python-importer.h python.cpp python.h reader.h sound.h tiledimage.h vec.h \
  window.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-python-importer.o: cache.h formatter.h image.h log.h python-importer.cpp \
- python-importer.h reader.h sound.h tiledimage.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 random.o: python-bindings-template.cpp python.h random.cpp random.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 reader.o: cache-template.cpp cache.h client-conf.h formatter.h image.h log.h \
  python-bindings-template.cpp python.h reader.cpp reader.h script.h sound.h \
  tiledimage.h vec.h window.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-script.o: script.cpp script.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 script-python.o: cache.h image.h log.h python.h reader.h script-python.cpp \
  script-python.h script.h sound.h tiledimage.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+script.o: script.cpp script.h
 sound.o: cache.h client-conf.h image.h log.h python-bindings-template.cpp \
  python.h reader.h sound.cpp sound.h tiledimage.h vec.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 string.o: log.h string.cpp string.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-tile.o: animation.h area.h bitrecord.h cache.h character.h entity.h image.h \
- log.h player.h python-bindings-template.cpp python.h reader.h script.h \
- sound.h string.h tile.cpp tile.h tiledimage.h vec.h viewport.h world.h \
- xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+tile.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.h image.h log.h music.h player.h \
+ python-bindings-template.cpp python.h reader.h readercache.h script.h \
+ sound.h string.h tile.cpp tile.h tiledimage.h vec.h viewport.h window.h \
+ world.h xml.h
 tiledimage.o: image.h tiledimage.cpp tiledimage.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-timeout.o: animation.h area.h bitrecord.h cache.h character.h entity.h \
- formatter.h image.h player.h python-bindings-template.cpp python.h reader.h \
+timeout.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.h formatter.h image.h log.h music.h \
+ player.h python-bindings-template.cpp python.h reader.h readercache.h \
  script.h sound.h tile.h tiledimage.h timeout.cpp timeout.h vec.h viewport.h \
- world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-timer.o: animation.h area.h bitrecord.h cache.h character.h entity.h \
- formatter.h image.h player.h python-bindings-template.cpp python.h reader.h \
+ window.h world.h xml.h
+timer.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.h formatter.h image.h log.h music.h \
+ player.h python-bindings-template.cpp python.h reader.h readercache.h \
  script.h sound.h tile.h tiledimage.h timer.cpp timer.h vec.h viewport.h \
- world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+ window.h world.h xml.h
 vec.o: vec.cpp vec.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
 viewport.o: animation.h area.h cache.h entity.h image.h reader.h script.h \
  sound.h tile.h tiledimage.h vec.h viewport.cpp viewport.h window.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-window.o: animation.h area.h bitrecord.h cache.h character.h client-conf.h \
- entity.h image.h log.h player.h reader.h script.h sound.h tile.h \
- tiledimage.h vec.h viewport.h window.cpp window.h world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
-world.o: animation.h area-tmx.h area.h bitrecord.h cache.h character.h \
- client-conf.h entity.h image.h log.h music.h player.h \
- python-bindings-template.cpp python.h reader.h script.h sound.h tile.h \
- tiledimage.h timeout.h vec.h viewport.h window.h world.cpp world.h xml.h
-#pragma GCC pch_preprocess "./precompile.h.gch"
+window.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
+ character.h client-conf.h entity.h image.h log.h music.h player.h reader.h \
+ readercache.h script.h sound.h tile.h tiledimage.h vec.h viewport.h \
+ window.cpp window.h world.h xml.h
+world.o: animation.h area-tmx.h area.h bitrecord.h cache-template.cpp \
+ cache.h character.h client-conf.h entity.h image.h log.h music.h player.h \
+ python-bindings-template.cpp python.h reader.h readercache.h script.h \
+ sound.h tile.h tiledimage.h timeout.h vec.h viewport.h window.h world.cpp \
+ world.h xml.h
 xml.o: log.h string.h xml.cpp xml.h

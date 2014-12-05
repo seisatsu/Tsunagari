@@ -4,7 +4,9 @@ WFLAGS += -Wno-long-long # Disable warnings in Python code.
 WFLAGS += -Wno-missing-field-initializers # Nice when dealing with Python structs
 
 # Compiler and linker flags.
-CXXFLAGS += -DUSE_PRECOMPILED_HEADERS $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
-	$(shell pkg-config --cflags python-2.7) $(shell xml2-config --cflags)
+CXXFLAGS += $(BLDCFLAGS) -pipe -pedantic $(WFLAGS) \
+	$(shell pkg-config --cflags python-2.7) $(shell xml2-config --cflags) \
+	-I/usr/local/include -std=c++11
 LDFLAGS += $(BLDLDFLAGS) -lboost_program_options -lboost_python -lgosu \
-	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs)
+	-lphysfs $(shell pkg-config --libs python-2.7) $(shell xml2-config --libs) \
+	-L/usr/local/lib
