@@ -40,6 +40,9 @@ bool isDecimal(const std::string& s);
 bool isRanges(const std::string& s);
 
 
+//! Whether two strings are case-insensative equals.
+bool iequals(const std::string& a, const std::string& b);
+
 //! Return a bool from a "true"/"false" string.
 bool parseBool(const std::string& s);
 
