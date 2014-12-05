@@ -27,6 +27,7 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
+#include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp> // for Gosu::SampleInstance
 
 #include <string>
