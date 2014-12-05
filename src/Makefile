@@ -19,6 +19,9 @@ backend-gosu/gosu-image.o backend-gosu/gosu-tiledimage.o nbcl/nbcl.o
 BASEDATA = ../data/base.zip
 TESTWORLD = ../data/testing.world
 
+MAC_OBJECTS = os-mac.o
+MAC_LDFLAGS = -framework Foundation -framework AppKit
+
 
 ### --- RULES --- ###
 
@@ -32,6 +35,9 @@ depend:
 
 tsunagari: $(OBJECTS)
 	$(CXX) -o tsunagari $(OBJECTS) $(LDFLAGS)
+
+tsunagari-mac: $(OBJECTS) $(MAC_OBJECTS)
+	$(CXX) -o tsunagari $(OBJECTS) $(MAC_OBJECTS) $(LDFLAGS) $(MAC_LDFLAGS)
 
 %.zip:
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *

@@ -26,6 +26,9 @@
 
 #ifdef __APPLE__
 
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+
 void macSetWorkingDirectory()
 {
 	UInt8 pathBytes[512];
@@ -47,7 +50,7 @@ void macMessageBox(const char* title, const char* msg)
 {
 	NSString *nsTitle = [[NSString alloc] initWithCString:title encoding:NSUTF8StringEncoding];
 	NSString *nsMsg = [[NSString alloc] initWithCString:msg encoding:NSUTF8StringEncoding];
-	NSAlert *alert = [NSAlert alertWithMessageText:nsTitle defaultButton:@"OK" alternateButton:NULL otherButton:NULL informativeTextWithFormat:nsMsg];
+	NSAlert *alert = [NSAlert alertWithMessageText:nsTitle defaultButton:@"OK" alternateButton:NULL otherButton:NULL informativeTextWithFormat:@"%@", nsMsg];
 	[alert runModal];
 }
 
