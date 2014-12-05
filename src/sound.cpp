@@ -24,7 +24,6 @@
 // IN THE SOFTWARE.
 // **********
 
-#include <boost/shared_ptr.hpp>
 #include <Gosu/Math.hpp>
 
 #include "client-conf.h"
@@ -33,39 +32,35 @@
 #include "reader.h"
 #include "sound.h"
 
-SoundInstance::SoundInstance(boost::optional<Gosu::SampleInstance> inst)
+SoundInstance::SoundInstance(Gosu::SampleInstance inst)
 	: inst(inst), volume(conf.soundVolume), pan(0.0), speed(1.0)
 {
-	if (inst)
-		inst->changeVolume(volume / 100.0);
+	inst.changeVolume(volume / 100.0);
 }
 
 
 bool SoundInstance::isPlaying()
 {
-	return inst && inst->playing();
+	return inst.playing();
 }
 
 void SoundInstance::stop()
 {
-	if (inst)
-	       inst->stop();
+       inst.stop();
 }
 
 
 bool SoundInstance::isPaused()
 {
-	return inst ? inst->paused() : false;
+	return inst.paused();
 }
 
 void SoundInstance::setPaused(bool paused)
 {
-	if (inst) {
-		if (paused)
-			inst->pause();
-		else
-			inst->resume();
-	}
+	if (paused)
+		inst.pause();
+	else
+		inst.resume();
 }
 
 
@@ -81,8 +76,7 @@ void SoundInstance::setVolume(int volume)
 		volume = Gosu::clamp(volume, 0, 100);
 	}
 	this->volume = volume;
-	if (inst)
-		inst->changeVolume(volume / 100.0);
+	inst.changeVolume(volume / 100.0);
 }
 
 
@@ -94,8 +88,7 @@ double SoundInstance::getPan()
 void SoundInstance::setPan(double pan)
 {
 	this->pan = pan;
-	if (inst)
-		inst->changePan(pan);
+	inst.changePan(pan);
 }
 
 
@@ -107,8 +100,7 @@ double SoundInstance::getSpeed()
 void SoundInstance::setSpeed(double speed)
 {
 	this->speed = speed;
-	if (inst)
-		inst->changeSpeed(speed);
+	inst.changeSpeed(speed);
 }
 
 
@@ -128,24 +120,26 @@ SoundInstance Sound::play()
 class SoundManager
 {
 public:
-	SoundInstance play(const std::string& path);
+	SoundInstanceRef play(const std::string& path);
 };
 
-SoundInstance SoundManager::play(const std::string& path)
+SoundInstanceRef SoundManager::play(const std::string& path)
 {
 	SampleRef sample;
 
 	sample = Reader::getSample(path);
 	if (sample)
-		return sample->play();
+		return SoundInstanceRef(new SoundInstance(sample->play()));
 	else
-		return SoundInstance(NULL);
+		return SoundInstanceRef(NULL);
 }
 
 void exportSound()
 {
-	boost::python::class_<SoundInstance>
-		("SoundInstance", boost::python::no_init)
+	using namespace boost::python;
+
+	class_<SoundInstance, SoundInstanceRef>
+		("SoundInstance", no_init)
 		.add_property("paused",
 		    &SoundInstance::isPaused, &SoundInstance::setPaused)
 		.add_property("volume",
@@ -157,8 +151,8 @@ void exportSound()
 		.add_property("playing", &SoundInstance::isPlaying)
 		.def("stop", &SoundInstance::stop)
 		;
-	boost::python::class_<SoundManager>
-		("SoundManager", boost::python::no_init)
+	class_<SoundManager>
+		("SoundManager", no_init)
 		.def("play", &SoundManager::play)
 		;
 	pythonSetGlobal("Sound", new SoundManager);

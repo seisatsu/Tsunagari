@@ -27,13 +27,14 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include <boost/optional.hpp>
+#include <memory>
+
 #include <Gosu/Audio.hpp>
 
 class SoundInstance
 {
 public:
-	SoundInstance(boost::optional<Gosu::SampleInstance> inst);
+	SoundInstance(Gosu::SampleInstance inst);
 
 	bool isPlaying();
 	void stop();
@@ -51,10 +52,12 @@ public:
 	void setSpeed(double speed);
 
 private:
-	boost::optional<Gosu::SampleInstance> inst;
+	Gosu::SampleInstance inst;
 	int volume;
 	double pan, speed;
 };
+
+typedef std::shared_ptr<SoundInstance> SoundInstanceRef;
 
 class Sound
 {
@@ -65,6 +68,8 @@ public:
 private:
 	Gosu::Sample* source;
 };
+
+typedef std::shared_ptr<Sound> SampleRef;
 
 void exportSound();
 
