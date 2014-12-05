@@ -28,8 +28,7 @@
 #define IMAGE_H
 
 #include <cstring> // for size_t
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Image
 {
@@ -51,7 +50,7 @@ private:
 	friend class ImageImpl;
 };
 
-typedef boost::shared_ptr<Image> ImageRef;
+typedef std::shared_ptr<Image> ImageRef;
 
 #endif
 
