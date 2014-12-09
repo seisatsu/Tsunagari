@@ -27,9 +27,7 @@
 #include <algorithm>
 #include <math.h>
 #include <stdlib.h> // for exit(1) on fatal
-#include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
@@ -530,8 +528,6 @@ vicoord Area::virt2virt(rcoord virt) const
 
 int Area::depthIndex(double depth) const
 {
-	using namespace boost;
-
 	std::map<double, int>::const_iterator it;
 	it = depth2idx.find(depth);
 	if (it == depth2idx.end()) {
