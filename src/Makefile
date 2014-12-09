@@ -57,8 +57,8 @@ clean:
 # a #include anywhere or if you add/remove a C++ file.
 
 ### --- DO NOT DELETE THIS LINE --- ###
-animation.o: animation.cpp animation.h cache.h image.h reader.h sound.h \
- tiledimage.h xml.h
+animation.o: animation.cpp animation.h image.h reader.h sound.h tiledimage.h \
+ xml.h
 area-tmx.o: animation.h area-tmx.cpp area-tmx.h area.h bitrecord.h \
  cache-template.cpp cache.h character.h client-conf.h entity.h image.h log.h \
  music.h player.h python.h reader.h readercache.h script.h sound.h string.h \
@@ -71,8 +71,8 @@ area.o: animation.h area.cpp area.h bitrecord.h cache-template.cpp cache.h \
 bitrecord.o: bitrecord.cpp bitrecord.h window.h
 cache-template.o: cache-template.cpp cache.h client-conf.h log.h vec.h \
  window.h
-character.o: animation.h area.h cache.h character.cpp character.h entity.h \
- image.h reader.h script.h sound.h tile.h tiledimage.h vec.h xml.h
+character.o: animation.h area.h character.cpp character.h entity.h image.h \
+ reader.h script.h sound.h tile.h tiledimage.h vec.h xml.h
 client-conf.o: client-conf.cpp client-conf.h log.h string.h vec.h \
  nbcl/nbcl.h
 entity.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
@@ -86,15 +86,15 @@ log.o: animation.h area.h bitrecord.h cache-template.cpp cache.h character.h \
  client-conf.h entity.h image.h log.cpp log.h music.h os-mac.h player.h \
  python-bindings-template.cpp python.h reader.h readercache.h script.h \
  sound.h tile.h tiledimage.h vec.h viewport.h window.h world.h xml.h
-main.o: cache.h client-conf.h image.h log.h main.cpp os-mac.h python.h \
- reader.h sound.h tiledimage.h vec.h window.h xml.h
+main.o: client-conf.h image.h log.h main.cpp os-mac.h python.h reader.h \
+ sound.h tiledimage.h vec.h window.h xml.h
 music.o: cache-template.cpp cache.h client-conf.h image.h log.h music.cpp \
  music.h python-bindings-template.cpp python.h reader.h readercache.h \
  sound.h tiledimage.h vec.h window.h xml.h
-npc.o: animation.h area.h cache.h character.h entity.h image.h npc.cpp npc.h \
+npc.o: animation.h area.h character.h entity.h image.h npc.cpp npc.h \
  reader.h script.h sound.h tile.h tiledimage.h vec.h xml.h
 os-windows.o: os-windows.cpp
-overlay.o: animation.h area.h cache.h client-conf.h entity.h image.h log.h \
+overlay.o: animation.h area.h client-conf.h entity.h image.h log.h \
  overlay.cpp overlay.h reader.h script.h sound.h tile.h tiledimage.h vec.h \
  xml.h
 player.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
@@ -106,26 +106,25 @@ python-bindings.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
  character.h client-conf.h entity.h image.h log.h music.h player.h \
  python-bindings.cpp random.h reader.h readercache.h script.h sound.h tile.h \
  tiledimage.h timeout.h timer.h vec.h viewport.h window.h world.h xml.h
-python-importer.o: cache.h formatter.h image.h log.h python-importer.cpp \
+python-importer.o: formatter.h image.h log.h python-importer.cpp \
  python-importer.h reader.h sound.h tiledimage.h xml.h
-python.o: cache.h client-conf.h image.h log.h python-bindings.h \
- python-importer.h python.cpp python.h reader.h sound.h tiledimage.h vec.h \
- window.h xml.h
+python.o: client-conf.h image.h log.h python-bindings.h python-importer.h \
+ python.cpp python.h reader.h sound.h tiledimage.h vec.h window.h xml.h
 random.o: python-bindings-template.cpp python.h random.cpp random.h
 reader.o: cache-template.cpp cache.h client-conf.h formatter.h image.h log.h \
  python-bindings-template.cpp python.h reader.cpp reader.h script.h sound.h \
  tiledimage.h vec.h window.h xml.h
-script-python.o: cache.h image.h log.h python.h reader.h script-python.cpp \
+script-python.o: image.h log.h python.h reader.h script-python.cpp \
  script-python.h script.h sound.h tiledimage.h xml.h
 script.o: script.cpp script.h
-sound.o: cache.h client-conf.h image.h log.h python-bindings-template.cpp \
- python.h reader.h sound.cpp sound.h tiledimage.h vec.h xml.h
+sound.o: client-conf.h image.h log.h python-bindings-template.cpp python.h \
+ reader.h sound.cpp sound.h tiledimage.h vec.h xml.h
 string.o: log.h string.cpp string.h
 tile.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
- character.h client-conf.h entity.h image.h log.h music.h player.h \
- python-bindings-template.cpp python.h reader.h readercache.h script.h \
- sound.h string.h tile.cpp tile.h tiledimage.h vec.h viewport.h window.h \
- world.h xml.h
+ character.h client-conf.h entity.h formatter.h image.h log.h music.h \
+ player.h python-bindings-template.cpp python.h reader.h readercache.h \
+ script.h sound.h string.h tile.cpp tile.h tiledimage.h vec.h viewport.h \
+ window.h world.h xml.h
 tiledimage.o: image.h tiledimage.cpp tiledimage.h
 timeout.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
  character.h client-conf.h entity.h formatter.h image.h log.h music.h \
@@ -138,8 +137,8 @@ timer.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
  script.h sound.h tile.h tiledimage.h timer.cpp timer.h vec.h viewport.h \
  window.h world.h xml.h
 vec.o: vec.cpp vec.h
-viewport.o: animation.h area.h cache.h entity.h image.h reader.h script.h \
- sound.h tile.h tiledimage.h vec.h viewport.cpp viewport.h window.h xml.h
+viewport.o: animation.h area.h entity.h image.h reader.h script.h sound.h \
+ tile.h tiledimage.h vec.h viewport.cpp viewport.h window.h xml.h
 window.o: animation.h area.h bitrecord.h cache-template.cpp cache.h \
  character.h client-conf.h entity.h image.h log.h music.h player.h reader.h \
  readercache.h script.h sound.h tile.h tiledimage.h vec.h viewport.h \
