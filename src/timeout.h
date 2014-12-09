@@ -29,7 +29,7 @@
 
 #include <string>
 
-#include <boost/python.hpp>
+//#include <boost/python.hpp>
 
 #include "script.h"
 
