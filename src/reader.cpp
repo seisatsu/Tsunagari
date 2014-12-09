@@ -51,15 +51,15 @@ typedef std::shared_ptr<std::string> StringRef;
 
 
 // Caches that store processed, game-ready objects. Garbage collected.
-Cache<ImageRef> images;
-Cache<TiledImageRef> tiles;
-Cache<SampleRef> sounds;
-Cache<XMLRef> xmls;
-Cache<StringRef> texts;
+static Cache<ImageRef> images;
+static Cache<TiledImageRef> tiles;
+static Cache<SampleRef> sounds;
+static Cache<XMLRef> xmls;
+static Cache<StringRef> texts;
 
 // DTDs don't expire. No garbage collection.
 typedef std::map<std::string, DTDRef> DTDMap;
-DTDMap dtds;
+static DTDMap dtds;
 
 
 
