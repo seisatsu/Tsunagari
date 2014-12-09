@@ -27,7 +27,6 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include <boost/utility.hpp> // for boost::noncopyable
 #include <string>
 
 enum verbosity_t {
@@ -36,7 +35,7 @@ enum verbosity_t {
 	V_VERBOSE  //! Display fatals, errors and info.
 };
 
-class Log : boost::noncopyable
+class Log
 {
 public:
 	/**
@@ -73,6 +72,10 @@ public:
 
 private:
 	Log();
+	Log(const Log&) = delete;
+	Log(Log&&) = delete;
+	Log& operator=(const Log&) = delete;
+	Log& operator=(Log&&) = delete;
 };
 
 /**
