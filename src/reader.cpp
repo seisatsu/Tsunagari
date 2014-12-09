@@ -33,6 +33,7 @@
 #include <map>
 #include <physfs.h>
 
+#include "cache.h"
 #include "cache-template.cpp"
 #include "client-conf.h"
 #include "formatter.h"

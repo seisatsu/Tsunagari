@@ -31,7 +31,6 @@
 
 #include <libxml/parser.h>
 
-#include "cache.h"
 #include "image.h"
 #include "sound.h"
 #include "tiledimage.h"
