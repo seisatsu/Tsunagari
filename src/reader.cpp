@@ -95,7 +95,7 @@ static bool readFromDisk(const std::string& name, T& buf)
 		PHYSFS_close(zf);
 		return false;
 	}
-	if (size > std::numeric_limits<uint32_t>::max()) {
+	else if (size > std::numeric_limits<uint32_t>::max()) {
 		// FIXME: Technically, we just need to issue multiple calls to
 		// PHYSFS_read. Fix when needed.
 		Log::err("Reader", Formatter("%: file too long (>4GB)")
@@ -103,8 +103,14 @@ static bool readFromDisk(const std::string& name, T& buf)
 		PHYSFS_close(zf);
 		return false;
 	}
+	else if (size < -1) {
+		Log::err("Reader", Formatter("%: invalid file size: %")
+				% path(name) % PHYSFS_getLastError());
+		PHYSFS_close(zf);
+		return false;
+	}
 
-	buf.resize(size);
+	buf.resize((size_t)size);
 	if (size == 0) {
 		PHYSFS_close(zf);
 		return true;
@@ -330,12 +336,16 @@ TiledImageRef Reader::getTiledImage(const std::string& name,
 	if (existing)
 		return existing;
 
+	if (w <= 0 || h <= 0)
+		return TiledImageRef();
+
 	std::unique_ptr<Gosu::Buffer> buffer(readBuffer(name));
 	if (!buffer)
 		return TiledImageRef();
 
 	TiledImageRef result(
-		TiledImage::create(buffer->data(), buffer->size(), w, h)
+		TiledImage::create(buffer->data(), buffer->size(),
+			(unsigned int)w, (unsigned int)h)
 	);
 	if (!result)
 		return TiledImageRef();
