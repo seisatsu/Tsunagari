@@ -39,6 +39,10 @@ tsunagari: $(OBJECTS)
 tsunagari-mac: $(OBJECTS) $(MAC_OBJECTS)
 	$(CXX) -o tsunagari $(OBJECTS) $(MAC_OBJECTS) $(LDFLAGS) $(MAC_LDFLAGS)
 
+data:
+	$(RM) $(BASEDATA) $(TESTWORLD)
+	$(MAKE) $(BASEDATA) $(TESTWORLD)
+
 %.zip:
 	cd $(basename $@) && zip --symlinks -r -0 ../$@ *
 
