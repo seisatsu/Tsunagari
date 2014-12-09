@@ -49,6 +49,7 @@ bool pythonRmPath(const std::string& path);
 
 
 //! Access to global namespace shared by all Python scripts.
+//! Object is borrowed, so don't Py_DECREF it.
 PyObject* pythonGlobals();
 
 //! Bind a C++ object into the global Python namespace.

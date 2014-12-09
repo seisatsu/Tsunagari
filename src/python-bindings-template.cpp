@@ -25,7 +25,7 @@
 // **********
 
 #include <iostream> // Including this fixes a compilation-order error on
-					// XCode 4.6
+                    // XCode 4.6
 
 // In this file.
 #include <boost/python/def.hpp>
