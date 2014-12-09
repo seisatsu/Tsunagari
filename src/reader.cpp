@@ -27,8 +27,6 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <Gosu/Bitmap.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/IO.hpp>
@@ -48,8 +46,8 @@
 
 #define ASSERT(x)  if (!(x)) { return false; }
 
-typedef boost::shared_ptr<xmlDtd> DTDRef;
-typedef boost::shared_ptr<std::string> StringRef;
+typedef std::shared_ptr<xmlDtd> DTDRef;
+typedef std::shared_ptr<std::string> StringRef;
 
 
 // Caches that store processed, game-ready objects. Garbage collected.
@@ -313,7 +311,7 @@ ImageRef Reader::getImage(const std::string& name)
 	if (existing)
 		return existing;
 
-	boost::scoped_ptr<Gosu::Buffer> buffer(readBuffer(name));
+	std::unique_ptr<Gosu::Buffer> buffer(readBuffer(name));
 	if (!buffer)
 		return ImageRef();
 
@@ -332,7 +330,7 @@ TiledImageRef Reader::getTiledImage(const std::string& name,
 	if (existing)
 		return existing;
 
-	boost::scoped_ptr<Gosu::Buffer> buffer(readBuffer(name));
+	std::unique_ptr<Gosu::Buffer> buffer(readBuffer(name));
 	if (!buffer)
 		return TiledImageRef();
 
@@ -355,7 +353,7 @@ SampleRef Reader::getSample(const std::string& name)
 	if (existing)
 		return existing;
 
-	boost::scoped_ptr<Gosu::Buffer> buffer(readBuffer(name));
+	std::unique_ptr<Gosu::Buffer> buffer(readBuffer(name));
 	if (!buffer)
 		return SampleRef();
 	SampleRef result(new Sound(new Gosu::Sample(buffer->frontReader())));

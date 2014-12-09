@@ -29,7 +29,6 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <libxml/parser.h>
 
 #include "cache.h"
@@ -43,9 +42,6 @@ namespace Gosu {
 	class Sample;
 	class Song;
 }
-
-// We hand out and manage resources in these forms:
-typedef boost::shared_ptr<Sound> SampleRef;
 
 /**
  * FIXME

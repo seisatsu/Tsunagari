@@ -27,9 +27,9 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#include <boost/shared_ptr.hpp>
 #include <Gosu/Audio.hpp> // for Gosu::SampleInstance
 
+#include <memory>
 #include <string>
 
 #include "cache-template.cpp"
@@ -70,7 +70,7 @@ public:
 
 	void tick();
 	
-	typedef boost::shared_ptr<Gosu::Song> SongRef;
+	typedef std::shared_ptr<Gosu::Song> SongRef;
 
 private:
 	enum MUSIC_STATE

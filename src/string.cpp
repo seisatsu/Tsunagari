@@ -28,7 +28,6 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include <boost/algorithm/string.hpp> // for iequals
 #include <Gosu/Math.hpp>
 
 #include "log.h"
@@ -144,12 +143,27 @@ bool isRanges(const std::string& s)
 	return true;
 }
 
+bool iequals(const std::string& a, const std::string& b)
+{
+	if (a.length() != b.length())
+		return false;
+	size_t len = a.length();
+	for (int i = 0; i < len; i++) {
+		if (tolower(a[i]) != tolower(b[i]))
+			return false;
+	}
+	return true;
+}
+
 bool parseBool(const std::string& s)
 {
-	// boost::equals is case-insensative
-	return boost::iequals(s, "true") ||
-	       boost::iequals(s, "yes") ||
-	       boost::iequals(s, "on") ||
+	static std::string true_ = "true";
+	static std::string yes = "yes";
+	static std::string on = "on";
+
+	return iequals(s, true_) ||
+	       iequals(s, yes) ||
+	       iequals(s, on) ||
 	    s == "1";
 }
 

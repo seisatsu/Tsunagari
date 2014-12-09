@@ -27,9 +27,9 @@
 #ifndef XML_H
 #define XML_H
 
+#include <memory>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <libxml/tree.h>
 
 #ifndef LIBXML_TREE_ENABLED
@@ -87,11 +87,11 @@ public:
 	operator bool() const;
 
 private:
-	boost::shared_ptr<xmlDoc> doc;
+	std::shared_ptr<xmlDoc> doc;
 	std::string path_;
 };
 
-typedef boost::shared_ptr<XMLDoc> XMLRef;
+typedef std::shared_ptr<XMLDoc> XMLRef;
 
 #endif
 

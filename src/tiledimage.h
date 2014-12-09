@@ -27,7 +27,7 @@
 #ifndef TILEDIMAGE_H
 #define TILEDIMAGE_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "image.h"
 
@@ -49,7 +49,7 @@ private:
 	friend class TiledImageImpl;
 };
 
-typedef boost::shared_ptr<TiledImage> TiledImageRef;
+typedef std::shared_ptr<TiledImage> TiledImageRef;
 
 #endif
 

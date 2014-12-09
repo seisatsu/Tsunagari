@@ -26,7 +26,6 @@
 
 #include <math.h>
 
-#include <boost/algorithm/string.hpp> // for iequals
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
 #include <Gosu/Timing.hpp>
@@ -792,23 +791,23 @@ bool Entity::processScript(const XMLNode node)
 
 bool Entity::setScript(const std::string& trigger, ScriptRef& script)
 {
-	if (boost::iequals(trigger, "on_tick")) {
+	if (trigger == "on_tick") {
 		tickScript = script;
 		return true;
 	}
-	if (boost::iequals(trigger, "on_turn")) {
+	if (trigger == "on_turn") {
 		turnScript = script;
 		return true;
 	}
-	if (boost::equals(trigger, "on_tile_entry")) {
+	if (trigger == "on_tile_entry") {
 		tileEntryScript = script;
 		return true;
 	}
-	if (boost::iequals(trigger, "on_tile_exit")) {
+	if (trigger == "on_tile_exit") {
 		tileExitScript = script;
 		return true;
 	}
-	if (boost::iequals(trigger, "on_delete")) {
+	if (trigger == "on_delete") {
 		deleteScript = script;
 		return true;
 	}

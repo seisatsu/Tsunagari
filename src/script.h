@@ -27,10 +27,10 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Script;
-typedef boost::shared_ptr<Script> ScriptRef;
+typedef std::shared_ptr<Script> ScriptRef;
 
 class Script
 {

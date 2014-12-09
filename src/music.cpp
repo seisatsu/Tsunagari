@@ -24,7 +24,6 @@
 // IN THE SOFTWARE.
 // **********
 
-#include <boost/scoped_ptr.hpp>
 #include <Gosu/Math.hpp>
 
 #include "client-conf.h"
@@ -35,7 +34,7 @@
 
 static Music::SongRef genSong(const std::string& name)
 {
-	boost::scoped_ptr<Gosu::Buffer> buffer(Reader::readBuffer(name));
+	std::unique_ptr<Gosu::Buffer> buffer(Reader::readBuffer(name));
 	if (!buffer)
 		return Music::SongRef();
 	return Music::SongRef(new Gosu::Song(buffer->frontReader()));
@@ -243,7 +242,9 @@ void Music::tick()
 
 void exportMusic()
 {
-	boost::python::class_<Music>("MusicManager", boost::python::no_init)
+	using namespace boost::python;
+
+	class_<Music>("MusicManager", no_init)
 		.add_property("intro", &Music::getIntro, &Music::setIntro)
 		.add_property("loop", &Music::getLoop, &Music::setLoop)
 		.add_property("volume", &Music::getVolume, &Music::setVolume)

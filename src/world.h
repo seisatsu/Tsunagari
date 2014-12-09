@@ -27,11 +27,11 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <memory>
 #include <stack>
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp> // for Gosu::Transform
 
 #include "bitrecord.h"
@@ -207,7 +207,7 @@ protected:
 	Music music;
 	Player player;
 	std::string playerPhase;
-	boost::shared_ptr<Viewport> view;
+	std::shared_ptr<Viewport> view;
 
 
 	/**

@@ -25,9 +25,9 @@
 // **********
 
 #include <math.h>
+#include <memory>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include <Gosu/Graphics.hpp>
 #include <Gosu/Image.hpp>
 #include <Gosu/Math.hpp>
@@ -630,8 +630,8 @@ bool AreaTMX::processObject(XMLNode node, int z)
 	bool wwide[5], hwide[5]; /* wide exit in dimensions: width, height */
 
 	ScriptRef enterScript, leaveScript, useScript;
-	boost::scoped_ptr<Exit> exit[5];
-	boost::scoped_ptr<double> layermods[5];
+	std::unique_ptr<Exit> exit[5];
+	std::unique_ptr<double> layermods[5];
 	unsigned flags = 0x0;
 
 	XMLNode child = node.childrenNode(); // <properties>
