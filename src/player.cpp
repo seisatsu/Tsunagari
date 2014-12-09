@@ -24,7 +24,6 @@
 // IN THE SOFTWARE.
 // **********
 
-#include <boost/foreach.hpp>
 #include <Gosu/Audio.hpp>
 #include <Gosu/Input.hpp>
 #include <Gosu/Math.hpp>
