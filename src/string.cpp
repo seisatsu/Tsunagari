@@ -24,6 +24,7 @@
 // IN THE SOFTWARE.
 // **********
 
+#include <climits>
 #include <ctype.h>
 #include <sstream>
 #include <stdlib.h>
